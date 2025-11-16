@@ -19,10 +19,13 @@ set(PROJECT_SOURCES
         mainwindow.ui
 )
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/resource.rc")
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AutoController2
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${app_icon_resource_windows}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
