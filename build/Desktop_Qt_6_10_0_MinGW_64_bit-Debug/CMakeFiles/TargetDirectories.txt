@@ -1,9 +1,0 @@
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/AutoController2.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/list_install_components.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/install.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/install/local.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/install/strip.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/AutoController2_autogen_timestamp_deps.dir
-D:/Brian_Data/Qt Projects/AutoController2/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/CMakeFiles/AutoController2_autogen.dir
