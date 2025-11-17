@@ -10,6 +10,11 @@
 *.dll
 *.dylib
 
+*.d
+*.elf
+*.map
+Hex/output.log
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug
