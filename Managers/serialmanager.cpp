@@ -18,6 +18,8 @@ SerialManager::SerialManager
 
 void SerialManager::RefreshList()
 {
+    m_list->clear();
+
     for (QSerialPortInfo const& info : QSerialPortInfo::availablePorts())
     {
         m_list->addItem(info.portName() + ": " + info.description(), info.portName());
