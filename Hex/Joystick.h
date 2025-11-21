@@ -110,40 +110,34 @@ typedef struct {
 // Custom button mapping, only provide one combination per enum type
 typedef enum {
 	NOTHING 	= 0,
-	A			= 1UL << 1,
-	B			= 1UL << 2,
-	X           = 1UL << 3,
-	Y           = 1UL << 4,
-	L           = 1UL << 5,
-	R           = 1UL << 6,
-	ZL          = 1UL << 7,
-	ZR          = 1UL << 8,
-	PLUS        = 1UL << 9,
-	MINUS       = 1UL << 10,
-	HOME        = 1UL << 11,
-	CAPTURE     = 1UL << 12,
-	LCLICK      = 1UL << 13,
-	UP          = 1UL << 14,
-	DOWN       	= 1UL << 15,
-	LEFT        = 1UL << 16,
-	RIGHT       = 1UL << 17,
-	RCLICK      = 1UL << 18,
-	RUP         = 1UL << 19,
-	RDOWN       = 1UL << 20,
-	RLEFT       = 1UL << 21,
-	RRIGHT      = 1UL << 22,
-	DPAD_UP     = 1UL << 23,
-	DPAD_DOWN   = 1UL << 24,
-	DPAD_LEFT   = 1UL << 25,
-	DPAD_RIGHT  = 1UL << 26,
-	BUTTON_SPAM = 1UL << 27, // does not apply to analog sticks
+	A			= 1UL << 0,
+	B			= 1UL << 1,
+	X           = 1UL << 2,
+	Y           = 1UL << 3,
+	L           = 1UL << 4,
+	R           = 1UL << 5,
+	ZL          = 1UL << 6,
+	ZR          = 1UL << 7,
+	PLUS        = 1UL << 8,
+	MINUS       = 1UL << 9,
+	HOME        = 1UL << 10,
+	CAPTURE     = 1UL << 11,
+	LCLICK      = 1UL << 12,
+	UP          = 1UL << 13,
+	DOWN       	= 1UL << 14,
+	LEFT        = 1UL << 15,
+	RIGHT       = 1UL << 16,
+	RCLICK      = 1UL << 17,
+	RUP         = 1UL << 18,
+	RDOWN       = 1UL << 19,
+	RLEFT       = 1UL << 20,
+	RRIGHT      = 1UL << 21,
+	DPAD_UP     = 1UL << 22,
+	DPAD_DOWN   = 1UL << 23,
+	DPAD_LEFT   = 1UL << 24,
+	DPAD_RIGHT  = 1UL << 25,
+	BUTTON_SPAM = 1UL << 26, // does not apply to analog sticks
 } Buttons_t;
-
-// Structure used for button array sequence
-typedef struct {
-	Buttons_t button;
-	uint16_t duration;
-} Command; 
 
 // Function Prototypes
 // Setup all necessary hardware, including USB initialization.

@@ -105,7 +105,11 @@ void EVENT_USB_Device_ControlRequest(void) {
 	// Not used here, it looks like we don't receive control request from the Switch.
 }
 
+#define ECHOES 5
+int echoes = ECHOES;
+
 uint32_t button_flag = 0;
+bool waiting_input = false;
 bool should_spam = false;
 
 // Process and deliver data from IN and OUT endpoints.
@@ -149,26 +153,40 @@ void HID_Task(void) {
 		Endpoint_ClearIN();
 	}
 	
-	// read 5 bytes, first bytes must match current version
-	if (uart_available() >= 5)
+	// Check first byte in the queue, if not the mode we want, clear everything
+	if (!waiting_input && uart_available() > 0)
 	{
-		if (uart_getchar() == VERSION)
+		echoes = 0;
+		button_flag = 0;
+		
+		if (uart_getchar() == 0xFF)
 		{
-			button_flag = 0;
-			for (uint8_t i = 0; i < 4; i++)
+			waiting_input = true;
+		}
+		else
+		{
+			while (uart_available() > 0)
 			{
-				button_flag |= ((uint32_t)(uart_getchar()) << (8UL * i));
+				uart_getchar();
 			}
 		}
+	}
+	else if (waiting_input && uart_available() >= 4)
+	{
+		button_flag = 0;
+		for (uint8_t i = 0; i < 4; i++)
+		{
+			button_flag |= ((uint32_t)(uart_getchar()) << (8UL * i));
+		}
 		
-		// echo back current version
-		uart_putchar((char)VERSION);
-		
-		// discard junk data
+		// Discard the rest
 		while (uart_available() > 0)
 		{
 			uart_getchar();
 		}
+		
+		uart_putchar((char)VERSION);
+		waiting_input = false;
 	}
 }
 
@@ -185,9 +203,17 @@ void GetNextReport(USB_JoystickReport_Input_t* const ReportData) {
 	ReportData->RY = STICK_CENTER;
 	ReportData->HAT = HAT_CENTER;
 	
+	// Repeat ECHOES times the last report
+	if (echoes > 0)
+	{
+		memcpy(ReportData, &last_report, sizeof(USB_JoystickReport_Input_t));
+		echoes--;
+		return;
+	}
+	
 	// check if this frame should spam button or not
 	bool has_button_input = true;
-	if (CHECK_BIT(button_flag, 27))
+	if (CHECK_BIT(button_flag, 26))
 	{
 		should_spam = !should_spam;
 		has_button_input = should_spam;
@@ -312,4 +338,6 @@ void GetNextReport(USB_JoystickReport_Input_t* const ReportData) {
 
 	// Prepare to echo this report
 	memcpy(&last_report, ReportData, sizeof(USB_JoystickReport_Input_t));
+	
+	echoes = ECHOES;
 }
