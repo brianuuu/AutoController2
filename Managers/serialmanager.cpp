@@ -4,6 +4,7 @@
 
 SerialManager::SerialManager
 (
+    QWidget* parent,
     QComboBox *list,
     QPushButton *btnRefresh,
     QPushButton *btnConnect
@@ -12,6 +13,8 @@ SerialManager::SerialManager
     , m_btnRefresh(btnRefresh)
     , m_btnConnect(btnConnect)
 {
+    connect(this, &SerialManager::SignalClose, parent, &QWidget::close);
+
     connect(m_btnRefresh, &QPushButton::clicked, this, &SerialManager::OnRefreshList);
     connect(m_btnConnect, &QPushButton::clicked, this, &SerialManager::OnConnectClicked);
 
@@ -19,6 +22,20 @@ SerialManager::SerialManager
     connect(&m_serialPort, &QSerialPort::errorOccurred, this, &SerialManager::OnErrorOccured);
 
     OnRefreshList();
+}
+
+bool SerialManager::OnCloseEvent(QCloseEvent *event)
+{
+    if (m_serialPort.isOpen())
+    {
+        m_aboutToClose = true;
+        Disconnect();
+
+        event->ignore();
+        return false;
+    }
+
+    return true;
 }
 
 //-----------------------------------------------------------
@@ -90,18 +107,6 @@ void SerialManager::OnConnectTimeout()
         m_btnRefresh->setEnabled(false);
         m_btnConnect->setEnabled(true);
         m_btnConnect->setText("Disconnect");
-
-        // TODO: remove
-        uint32_t m_buttonFlag = 1UL << 24 | 1UL << 26;
-
-        QByteArray ba;
-        ba.append((char)0xFF); // mode = FF
-        ba.append((char)(m_buttonFlag & 0x000000FF));
-        ba.append((char)((m_buttonFlag & 0x0000FF00) >> 8));
-        ba.append((char)((m_buttonFlag & 0x00FF0000) >> 16));
-        ba.append((char)((m_buttonFlag & 0xFF000000) >> 24));
-        m_serialPort.write(ba);
-
         return;
     }
 
@@ -135,6 +140,12 @@ void SerialManager::OnDisconnectTimeout()
     m_btnConnect->setText("Connect");
 
     m_serialState = SerialState::Disconnected;
+
+    if (m_aboutToClose)
+    {
+        m_aboutToClose = false;
+        emit SignalClose();
+    }
 }
 
 //-----------------------------------------------------------
@@ -161,11 +172,7 @@ void SerialManager::Connect(const QString &port)
         QTimer::singleShot(500, this, &SerialManager::OnConnectTimeout);
 
         // Send a nothing command and check if it returns a feedback
-        // TODO: use common function
-        QByteArray ba;
-        ba.append((char)0xFF);
-        ba.append(4, (char)0);
-        m_serialPort.write(ba);
+        SendButton(0);
     }
     else
     {
@@ -176,22 +183,36 @@ void SerialManager::Connect(const QString &port)
 
 void SerialManager::Disconnect()
 {
-    if (m_serialState == SerialState::Disconnecting)
-    {
-        return;
-    }
+    if (m_serialState == SerialState::Disconnecting) return;
 
     if (m_serialPort.isOpen())
     {
-        // clear button
+        // clear button, we don't want feedback
         QByteArray ba;
         ba.append((char)0);
         m_serialPort.write(ba);
 
         QTimer::singleShot(50, this, &SerialManager::OnDisconnectTimeout);
-    }
 
-    m_serialState = SerialState::Disconnecting;
-    m_btnConnect->setEnabled(false);
-    m_btnConnect->setText("Disconnecting...");
+        m_serialState = SerialState::Disconnecting;
+        m_btnConnect->setEnabled(false);
+        m_btnConnect->setText("Disconnecting...");
+    }
+    else
+    {
+        OnDisconnectTimeout();
+    }
+}
+
+void SerialManager::SendButton(quint32 buttonFlag)
+{
+    if (!m_serialPort.isOpen()) return;
+
+    QByteArray ba;
+    ba.append((char)0xFF); // mode = FF
+    ba.append((char)(buttonFlag & 0x000000FF));
+    ba.append((char)((buttonFlag & 0x0000FF00) >> 8));
+    ba.append((char)((buttonFlag & 0x00FF0000) >> 16));
+    ba.append((char)((buttonFlag & 0xFF000000) >> 24));
+    m_serialPort.write(ba);
 }

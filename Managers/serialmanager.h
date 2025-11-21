@@ -1,6 +1,7 @@
 #ifndef SERIALMANAGER_H
 #define SERIALMANAGER_H
 
+#include <QCloseEvent>
 #include <QComboBox>
 #include <QMessageBox>
 #include <QPushButton>
@@ -16,10 +17,13 @@ class SerialManager : public QWidget
 public:
     SerialManager
     (
+        QWidget* parent,
         QComboBox* list,
         QPushButton* btnRefresh,
         QPushButton* btnConnect
     );
+
+    bool OnCloseEvent(QCloseEvent *event);
 
 private: // types
     enum class SerialState
@@ -32,8 +36,13 @@ private: // types
         Connected,
     };
 
+signals:
+    void SignalClose();
+
 private slots:
     void OnRefreshList();
+
+    // serial
     void OnReadyRead();
     void OnErrorOccured(QSerialPort::SerialPortError error);
     void OnConnectClicked();
@@ -41,10 +50,16 @@ private slots:
     void OnDisconnectTimeout();
 
 private:
+    // serial
     void Connect(QString const& port);
     void Disconnect();
 
+    // command
+    void SendButton(quint32 buttonFlag);
+
 private:
+    bool m_aboutToClose = false;
+
     QComboBox* m_list = Q_NULLPTR;
     QPushButton* m_btnRefresh = Q_NULLPTR;
     QPushButton* m_btnConnect = Q_NULLPTR;
@@ -52,6 +67,8 @@ private:
     QSerialPort m_serialPort;
     SerialState m_serialState = SerialState::Disconnected;
     quint8 m_serialVersion = 0;
+
+    QString m_command;
 };
 
 #endif // SERIALMANAGER_H
