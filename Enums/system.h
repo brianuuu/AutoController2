@@ -75,12 +75,12 @@ static QString ButtonToString(ButtonType button)
 
 static ButtonType StringToButton(QString const& str)
 {
-    if (str == "none" || str == "nothing")
+    QString const lower = str.toLower();
+    if (lower == "none" || lower == "nothing")
     {
         return BTN_None;
     }
 
-    QString const lower = str.toLower();
     for (int i = 0; i < BTN_COUNT; i++)
     {
         ButtonType type = (ButtonType)(1UL << i);
