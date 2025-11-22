@@ -25,6 +25,10 @@ public:
 
     bool OnCloseEvent(QCloseEvent *event);
 
+    // command
+    bool VerifyCommand(QString const& command, QString& errorMsg);
+    bool SendCommand(QString const& command);
+
 private: // types
     enum class SerialState
     {
@@ -49,6 +53,9 @@ private slots:
     void OnConnectTimeout();
     void OnDisconnectTimeout();
 
+    // command
+    void OnSendCurrentCommand();
+
 private:
     // serial
     void Connect(QString const& port);
@@ -60,15 +67,20 @@ private:
 private:
     bool m_aboutToClose = false;
 
+    // UI
     QComboBox* m_list = Q_NULLPTR;
     QPushButton* m_btnRefresh = Q_NULLPTR;
     QPushButton* m_btnConnect = Q_NULLPTR;
 
+    // serial
     QSerialPort m_serialPort;
     SerialState m_serialState = SerialState::Disconnected;
     quint8 m_serialVersion = 0;
 
+    // command
     QString m_command;
+    int m_commandIndex = 0;
+    QVector<int> m_commandLoopCounts;
 };
 
 #endif // SERIALMANAGER_H

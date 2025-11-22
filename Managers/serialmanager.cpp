@@ -1,6 +1,7 @@
 #include "serialmanager.h"
 
 #include "defines.h"
+#include "Enums/system.h"
 
 SerialManager::SerialManager
 (
@@ -35,6 +36,111 @@ bool SerialManager::OnCloseEvent(QCloseEvent *event)
         return false;
     }
 
+    return true;
+}
+
+bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
+{
+    if (command.count('(') != command.count(')'))
+    {
+        errorMsg = "Number of '(' is not matching number of ')'";
+        return false;
+    }
+
+    bool isLoopCount = false;
+    for (int i = 0; i < command.size();)
+    {
+        qsizetype endIndex = command.indexOf(',', i + 1);
+        QString str = command.mid(i, endIndex == -1 ? -1 : endIndex - i);
+
+        // look for loop start
+        qsizetype const loopStartIndex = str.indexOf('(');
+        if (loopStartIndex > 0)
+        {
+            errorMsg = "Loop start '(' is not expected at index " + QString::number(i + loopStartIndex);
+            return false;
+        }
+        else if (loopStartIndex == 0)
+        {
+            i++;
+            continue;
+        }
+
+        // look for loop end
+        qsizetype const loopEndIndex = str.indexOf(')');
+        if (loopEndIndex >= 0)
+        {
+            if (loopEndIndex == 0)
+            {
+                // first index is ')' expecting loop count next
+                i++;
+                isLoopCount = true;
+                continue;
+            }
+            else
+            {
+                // remove all char after ')' so number remains
+                str = str.mid(0, loopEndIndex);
+                endIndex = i + loopEndIndex - 1;
+            }
+        }
+
+        qDebug() << str;
+        QStringList const buttons = str.split('|');
+        if (buttons.empty() || (buttons.size() == 1 && !isLoopCount))
+        {
+            errorMsg = "Command '" + str + "' is invalid at index " + QString::number(i) + ", expecting Button1|Button2|...|Duration";
+            return false;
+        }
+
+        for (int b = 0; b < buttons.size() - 1; b++)
+        {
+            QString const& button = buttons[b];
+            if (StringToButton(button) == BTN_COUNT)
+            {
+                errorMsg = "Command '" + button + "' is not a recognized command at index " + QString::number(i);
+                return false;
+            }
+        }
+
+        bool ok = false;
+        int duration = buttons.back().toInt(&ok);
+        if (!ok)
+        {
+            errorMsg = "Duration/Loop Count '" + str + "' is invalid at index " + QString::number(i);
+            return false;
+        }
+
+        if (endIndex == -1)
+        {
+            break;
+        }
+        else
+        {
+            i = endIndex + 1;
+        }
+    }
+
+    return true;
+}
+
+bool SerialManager::SendCommand(const QString &command)
+{
+    // TODO: serial is open
+    // TODO: cancel QTimer event
+
+    QString errorMsg;
+    if (!VerifyCommand(command, errorMsg))
+    {
+        // TODO: log
+        return false;
+    }
+
+    m_command = command;
+    m_commandIndex = 0;
+    m_commandLoopCounts.clear();
+
+    OnSendCurrentCommand();
     return true;
 }
 
@@ -146,6 +252,18 @@ void SerialManager::OnDisconnectTimeout()
         m_aboutToClose = false;
         emit SignalClose();
     }
+}
+
+void SerialManager::OnSendCurrentCommand()
+{
+    // TODO: serial is open
+    if (m_commandIndex >= m_command.size())
+    {
+        // finished
+        SendButton(0);
+        return;
+    }
+
 }
 
 //-----------------------------------------------------------
