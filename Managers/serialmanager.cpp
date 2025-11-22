@@ -22,6 +22,8 @@ SerialManager::SerialManager
     connect(&m_serialPort, &QSerialPort::readyRead, this, &SerialManager::OnReadyRead);
     connect(&m_serialPort, &QSerialPort::errorOccurred, this, &SerialManager::OnErrorOccured);
 
+    connect(&m_commandTimer, &QTimer::timeout, this, [this]{ OnSendCurrentCommand(); } );
+
     OnRefreshList();
 }
 
@@ -85,7 +87,6 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
             }
         }
 
-        qDebug() << str;
         QStringList const buttons = str.split('|');
         if (buttons.empty() || (buttons.size() == 1 && !isLoopCount))
         {
@@ -126,6 +127,8 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
 
 bool SerialManager::SendCommand(const QString &command)
 {
+    ClearCommand();
+
     // TODO: serial is open
     // TODO: cancel QTimer event
 
@@ -137,11 +140,16 @@ bool SerialManager::SendCommand(const QString &command)
     }
 
     m_command = command;
-    m_commandIndex = 0;
-    m_commandLoopCounts.clear();
-
     OnSendCurrentCommand();
     return true;
+}
+
+void SerialManager::ClearCommand()
+{
+    m_command.clear();
+    m_commandIndex = 0;
+    m_commandLoopCounts.clear();
+    m_commandTimer.stop();
 }
 
 //-----------------------------------------------------------
@@ -240,12 +248,14 @@ void SerialManager::OnDisconnectTimeout()
         // TODO: log
     }
 
+    m_serialState = SerialState::Disconnected;
+
     m_list->setEnabled(true);
     m_btnRefresh->setEnabled(true);
     m_btnConnect->setEnabled(true);
     m_btnConnect->setText("Connect");
 
-    m_serialState = SerialState::Disconnected;
+    ClearCommand();
 
     if (m_aboutToClose)
     {
@@ -254,16 +264,119 @@ void SerialManager::OnDisconnectTimeout()
     }
 }
 
-void SerialManager::OnSendCurrentCommand()
+void SerialManager::OnSendCurrentCommand(bool isLoopCount)
 {
     // TODO: serial is open
-    if (m_commandIndex >= m_command.size())
+    if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
     {
         // finished
         SendButton(0);
+        ClearCommand();
         return;
     }
 
+    qsizetype endIndex = m_command.indexOf(',', m_commandIndex + 1);
+    QString str = m_command.mid(m_commandIndex, endIndex == -1 ? -1 : endIndex - m_commandIndex);
+
+    // look for loop start
+    qsizetype const loopStartIndex = str.indexOf('(');
+    if (loopStartIndex == 0)
+    {
+        m_commandIndex++;
+        m_commandLoopCounts.push_back(-1);
+        OnSendCurrentCommand();
+        return;
+    }
+
+    // look for loop end
+    qsizetype const loopEndIndex = str.indexOf(')');
+    if (loopEndIndex >= 0)
+    {
+        if (loopEndIndex == 0)
+        {
+            // first index is ')' expecting loop count next
+            m_commandIndex++;
+            OnSendCurrentCommand(true);
+            return;
+        }
+        else
+        {
+            // remove all char after ')' so number remains
+            str = str.mid(0, loopEndIndex);
+            endIndex = m_commandIndex + loopEndIndex - 1;
+        }
+    }
+
+    quint32 buttonFlag = 0;
+    QStringList const buttons = str.split('|');
+    for (int b = 0; b < buttons.size() - 1; b++)
+    {
+        QString const& button = buttons[b];
+        buttonFlag |= StringToButton(button);
+    }
+
+    int duration = buttons.back().toInt();
+    if (isLoopCount)
+    {
+        // found a loop count
+        int& loopLeft = m_commandLoopCounts.back();
+        if (loopLeft == -1)
+        {
+            loopLeft = duration;
+        }
+
+        if (loopLeft == 1)
+        {
+            m_commandLoopCounts.pop_back();
+        }
+        else
+        {
+            m_commandIndex--;
+            if (loopLeft > 1)
+            {
+                // if loopCount is 0 it loops forever
+                loopLeft--;
+            }
+
+            // roll back to '('
+            int loopEndCount = 0;
+            while (m_commandIndex > 0)
+            {
+                m_commandIndex--;
+                if (m_command[m_commandIndex] == ')')
+                {
+                    loopEndCount++;
+                }
+                else if (m_command[m_commandIndex] == '(')
+                {
+                    if (loopEndCount == 0)
+                    {
+                        m_commandIndex++;
+                        OnSendCurrentCommand();
+                        return;
+                    }
+                    else
+                    {
+                        loopEndCount--;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        SendButton(buttonFlag);
+        m_commandTimer.start(duration);
+    }
+
+    if (endIndex == -1)
+    {
+        m_commandIndex = -1;
+    }
+    else
+    {
+        m_commandIndex = endIndex + 1;
+    }
 }
 
 //-----------------------------------------------------------
@@ -315,6 +428,8 @@ void SerialManager::Disconnect()
         m_serialState = SerialState::Disconnecting;
         m_btnConnect->setEnabled(false);
         m_btnConnect->setText("Disconnecting...");
+
+        ClearCommand();
     }
     else
     {
