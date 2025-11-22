@@ -105,9 +105,9 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
 
         bool ok = false;
         int duration = buttons.back().toInt(&ok);
-        if (!ok)
+        if (!ok || (isLoopCount && duration < 0) || (!isLoopCount && duration <= 0))
         {
-            errorMsg = "Duration/Loop Count '" + str + "' is invalid at index " + QString::number(i);
+            errorMsg = QString(isLoopCount ? "Loop Count" : "Duration") + " '" + buttons.back() + "' is invalid at index " + QString::number(i);
             return false;
         }
 
