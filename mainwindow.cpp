@@ -18,28 +18,26 @@ MainWindow::MainWindow(QWidget *parent)
         ui->PB_SerialConnect
     );
 
+    m_audioManager = new AudioManager(
+        this,
+        ui->CB_AudioInput,
+        ui->CB_AudioOutput,
+        ui->CB_AudioDisplay,
+        ui->HS_Volume
+    );
+
     m_videoManager = new VideoManager(
         this,
         ui->CB_CameraDevice,
         ui->CB_Resolution,
         ui->PB_CameraStart
     );
-
-    const QList<QAudioDevice> audioDevices = QMediaDevices::audioInputs();
-    for (const QAudioDevice &device : audioDevices)
-    {
-        qDebug() << "Description: " << device.description();
-    }
-
-    const QList<QAudioDevice> audioOutputs = QMediaDevices::audioOutputs();
-    for (const QAudioDevice &device : audioOutputs)
-    {
-        qDebug() << "Description: " << device.description();
-    }
 }
 
 MainWindow::~MainWindow()
 {
+    delete m_videoManager;
+    delete m_audioManager;
     delete m_serialManager;
     delete ui;
 }

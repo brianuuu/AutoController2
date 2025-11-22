@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "Managers/audiomanager.h"
 #include "Managers/videomanager.h"
 #include "Managers/serialmanager.h"
 
@@ -27,6 +28,7 @@ private:
 
     // managers
     SerialManager* m_serialManager = Q_NULLPTR;
+    AudioManager* m_audioManager = Q_NULLPTR;
     VideoManager* m_videoManager = Q_NULLPTR;
 };
 #endif // MAINWINDOW_H
