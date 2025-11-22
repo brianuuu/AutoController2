@@ -99,7 +99,7 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
             QString const& button = buttons[b];
             if (StringToButton(button) == BTN_COUNT)
             {
-                errorMsg = "Command '" + button + "' is not a recognized command at index " + QString::number(i);
+                errorMsg = "'" + button + "' is not a recognized button at index " + QString::number(i);
                 return false;
             }
         }
@@ -129,8 +129,7 @@ bool SerialManager::SendCommand(const QString &command)
 {
     ClearCommand();
 
-    // TODO: serial is open
-    // TODO: cancel QTimer event
+    if (!m_serialPort.isOpen()) return false;
 
     QString errorMsg;
     if (!VerifyCommand(command, errorMsg))
@@ -266,7 +265,8 @@ void SerialManager::OnDisconnectTimeout()
 
 void SerialManager::OnSendCurrentCommand(bool isLoopCount)
 {
-    // TODO: serial is open
+    if (!m_serialPort.isOpen()) return;
+
     if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
     {
         // finished

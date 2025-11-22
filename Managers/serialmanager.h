@@ -45,6 +45,7 @@ signals:
     void SignalClose();
 
 private slots:
+    // UI
     void OnRefreshList();
 
     // serial
