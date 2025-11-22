@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "Managers/videomanager.h"
 #include "Managers/serialmanager.h"
 
 QT_BEGIN_NAMESPACE
@@ -26,5 +27,6 @@ private:
 
     // managers
     SerialManager* m_serialManager = Q_NULLPTR;
+    VideoManager* m_videoManager = Q_NULLPTR;
 };
 #endif // MAINWINDOW_H
