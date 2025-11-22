@@ -108,7 +108,7 @@ void EVENT_USB_Device_ControlRequest(void) {
 #define ECHOES 5
 int echoes = ECHOES;
 
-uint32_t button_flag = 0;
+uint32_t button_flag = 2;
 bool waiting_input = false;
 bool should_spam = false;
 
@@ -156,15 +156,14 @@ void HID_Task(void) {
 	// Check first byte in the queue, if not the mode we want, clear everything
 	if (!waiting_input && uart_available() > 0)
 	{
-		echoes = 0;
-		button_flag = 0;
-		
 		if (uart_getchar() == 0xFF)
 		{
 			waiting_input = true;
 		}
 		else
 		{
+			echoes = 0;
+			button_flag = 0;
 			while (uart_available() > 0)
 			{
 				uart_getchar();
@@ -173,6 +172,7 @@ void HID_Task(void) {
 	}
 	else if (waiting_input && uart_available() >= 4)
 	{
+		echoes = 0;
 		button_flag = 0;
 		for (uint8_t i = 0; i < 4; i++)
 		{
