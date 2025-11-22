@@ -28,6 +28,7 @@ public:
     // command
     bool VerifyCommand(QString const& command, QString& errorMsg);
     bool SendCommand(QString const& command);
+    void ClearCommand();
 
 private: // types
     enum class SerialState
@@ -54,7 +55,7 @@ private slots:
     void OnDisconnectTimeout();
 
     // command
-    void OnSendCurrentCommand();
+    void OnSendCurrentCommand(bool isLoopCount = false);
 
 private:
     // serial
@@ -81,6 +82,7 @@ private:
     QString m_command;
     int m_commandIndex = 0;
     QVector<int> m_commandLoopCounts;
+    QTimer m_commandTimer;
 };
 
 #endif // SERIALMANAGER_H
