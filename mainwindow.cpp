@@ -55,4 +55,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
         return;
     }
+
+    QMainWindow::closeEvent(event);
 }

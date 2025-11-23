@@ -11,7 +11,8 @@ VideoManager::VideoManager
     , m_resolutionList(resolutionList)
     , m_btnCameraStart(btnCameraStart)
 {
-    this->resize(1280,720);
+    m_displaySize = QSize(1280,720);
+    this->resize(m_displaySize);
     this->setWindowTitle("Camera View");
 
     m_capture.setCamera(&m_camera);
@@ -41,13 +42,72 @@ void VideoManager::closeEvent(QCloseEvent *event)
     {
         Stop();
     }
+
+    QWidget::closeEvent(event);
 }
 
 void VideoManager::paintEvent(QPaintEvent *event)
 {
-    // Draw current frame
     QPainter painter(this);
-    painter.drawImage(this->rect(), m_frame);
+
+    // Keep aspect ratio of the camera tp 16:9
+    QRect drawRect = this->rect();
+    if (this->width() * 9 / 16 > this->height())
+    {
+        int const expectedWidth = this->height() * 16 / 9;
+        drawRect.setLeft((this->width() - expectedWidth) / 2);
+        drawRect.setWidth(expectedWidth);
+    }
+    else if (this->height() * 16 / 9 > this->width())
+    {
+        int const expectedHeight = this->width() * 9 / 16;
+        drawRect.setTop((this->height() - expectedHeight) / 2);
+        drawRect.setHeight(expectedHeight);
+    }
+
+    // Draw current frame
+    painter.drawImage(drawRect, m_frame);
+    m_displaySize = drawRect.size();
+}
+
+void VideoManager::mousePressEvent(QMouseEvent *event)
+{
+    static QVector<QSize> fixedSizes =
+    {
+        { 640, 360 },
+        { 960, 540 },
+        { 1280, 720 },
+        { 1920, 1080 },
+        { 2560, 1440 },
+    };
+
+    if (event->button() == Qt::LeftButton)
+    {
+        // scale up
+        for (QSize const size : fixedSizes)
+        {
+            if (size.width() > m_displaySize.width())
+            {
+                resize(size);
+                break;
+            }
+        }
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        // scale down
+        for (int i = fixedSizes.size() - 1; i >= 0 ; i--)
+        {
+            QSize const& size = fixedSizes.at(i);
+            if (size.width() < m_displaySize.width())
+            {
+                resize(size);
+                break;
+            }
+        }
+    }
+
+    QWidget::mousePressEvent(event);
 }
 
 void VideoManager::OnRefreshList()
@@ -175,6 +235,9 @@ void VideoManager::Start()
                     m_camera.setCameraDevice(device);
                     m_camera.setCameraFormat(format);
                     m_camera.start();
+
+                    m_frame = QImage(format.resolution(), QImage::Format_RGBA8888_Premultiplied);
+                    m_frame.fill(Qt::black);
 
                     this->show();
                     return;

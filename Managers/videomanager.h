@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QMediaCaptureSession>
 #include <QMediaDevices>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
 #include <QVideoSink>
@@ -28,6 +29,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
     // UI
@@ -57,6 +59,7 @@ private:
     QCamera                 m_camera;
     QVideoSink              m_sink;
     QImage                  m_frame;
+    QSize                   m_displaySize;
 };
 
 #endif // VIDEOMANAGER_H
