@@ -21,14 +21,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void closeEvent (QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
 
     // managers
-    SerialManager* m_serialManager = Q_NULLPTR;
-    AudioManager* m_audioManager = Q_NULLPTR;
-    VideoManager* m_videoManager = Q_NULLPTR;
+    SerialManager*  m_serialManager = Q_NULLPTR;
+    AudioManager*   m_audioManager = Q_NULLPTR;
+    VideoManager*   m_videoManager = Q_NULLPTR;
 };
 #endif // MAINWINDOW_H

@@ -23,7 +23,7 @@ public:
         QPushButton* btnConnect
     );
 
-    bool OnCloseEvent(QCloseEvent *event);
+    bool OnCloseEvent();
 
     // command
     bool VerifyCommand(QString const& command, QString& errorMsg);

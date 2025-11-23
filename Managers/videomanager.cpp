@@ -11,10 +11,43 @@ VideoManager::VideoManager
     , m_resolutionList(resolutionList)
     , m_btnCameraStart(btnCameraStart)
 {
+    this->resize(1280,720);
+    this->setWindowTitle("Camera View");
+
+    m_capture.setCamera(&m_camera);
+    m_capture.setVideoSink(&m_sink);
+
     connect(m_cameraList, &QComboBox::currentTextChanged, this, &VideoManager::OnCameraChanged);
+    connect(m_btnCameraStart, &QPushButton::clicked, this, &VideoManager::OnCameraClicked);
     connect(&m_devices, &QMediaDevices::videoInputsChanged, this, &VideoManager::OnRefreshList);
+    connect(&m_sink, &QVideoSink::videoFrameChanged, this, &VideoManager::OnFrameChanged);
 
     OnRefreshList();
+}
+
+bool VideoManager::OnCloseEvent()
+{
+    // main window is closing
+    if (m_camera.isActive())
+    {
+        Stop();
+    }
+    return true;
+}
+
+void VideoManager::closeEvent(QCloseEvent *event)
+{
+    if (m_camera.isActive())
+    {
+        Stop();
+    }
+}
+
+void VideoManager::paintEvent(QPaintEvent *event)
+{
+    // Draw current frame
+    QPainter painter(this);
+    painter.drawImage(this->rect(), m_frame);
 }
 
 void VideoManager::OnRefreshList()
@@ -37,6 +70,24 @@ void VideoManager::OnCameraChanged(const QString &str)
 
     // if we are here there's no camera available
     m_btnCameraStart->setEnabled(false);
+}
+
+void VideoManager::OnCameraClicked()
+{
+    if (m_camera.isActive())
+    {
+        Stop();
+    }
+    else
+    {
+        Start();
+    }
+}
+
+void VideoManager::OnFrameChanged(const QVideoFrame &frame)
+{
+    m_frame = frame.toImage();
+    this->update();
 }
 
 void VideoManager::PopulateCameraList()
@@ -101,4 +152,44 @@ void VideoManager::PopulateResolution(const QCameraDevice &device)
 
     // only allow camera start if there are available resolutions
     m_btnCameraStart->setEnabled(m_resolutionList->count());
+}
+
+void VideoManager::Start()
+{
+    // find QCameraDevice
+    QString const currentCamera = m_cameraList->currentText();
+    for (const QCameraDevice &device : QMediaDevices::videoInputs())
+    {
+        if (device.description() == currentCamera)
+        {
+            // find QCameraFormat
+            QStringList const resData = m_resolutionList->currentData().toString().split('|');
+            QSize const size(resData[0].toInt(),resData[1].toInt());
+            int const fps = resData[2].toInt();
+
+            for (auto const& format : device.videoFormats())
+            {
+                if (format.resolution() == size && format.maxFrameRate() == fps)
+                {
+                    m_btnCameraStart->setText("Stop Camera");
+                    m_camera.setCameraDevice(device);
+                    m_camera.setCameraFormat(format);
+                    m_camera.start();
+
+                    this->show();
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void VideoManager::Stop()
+{
+    m_btnCameraStart->setText("Start Camera");
+    m_camera.stop();
+    m_frame.fill(Qt::black);
+
+    this->update();
+    this->hide();
 }

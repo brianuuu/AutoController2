@@ -27,14 +27,13 @@ SerialManager::SerialManager
     OnRefreshList();
 }
 
-bool SerialManager::OnCloseEvent(QCloseEvent *event)
+bool SerialManager::OnCloseEvent()
 {
+    // main window is closing
     if (m_serialPort.isOpen())
     {
         m_aboutToClose = true;
         Disconnect();
-
-        event->ignore();
         return false;
     }
 

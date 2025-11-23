@@ -38,13 +38,13 @@ private slots:
 
 private:
     // UI
-    QComboBox* m_listInput = Q_NULLPTR;
-    QComboBox* m_listOutput = Q_NULLPTR;
-    QComboBox* m_listDisplay = Q_NULLPTR;
-    QSlider* m_volumeSlider = Q_NULLPTR;
+    QComboBox*  m_listInput = Q_NULLPTR;
+    QComboBox*  m_listOutput = Q_NULLPTR;
+    QComboBox*  m_listDisplay = Q_NULLPTR;
+    QSlider*    m_volumeSlider = Q_NULLPTR;
 
-    QMediaDevices m_devices;
-    QAudioFormat m_audioFormat;
+    QMediaDevices   m_devices;
+    QAudioFormat    m_audioFormat;
 };
 
 #endif // AUDIOMANAGER_H

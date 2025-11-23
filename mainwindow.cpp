@@ -44,8 +44,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (!m_serialManager->OnCloseEvent(event))
+    if (!m_serialManager->OnCloseEvent())
     {
+        event->ignore();
+        return;
+    }
+
+    if (!m_videoManager->OnCloseEvent())
+    {
+        event->ignore();
         return;
     }
 }
