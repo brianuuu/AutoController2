@@ -118,8 +118,7 @@ void VideoManager::OnRefreshList()
 void VideoManager::OnCameraChanged(const QString &str)
 {
     // a different camera is selected, populate resolution
-    const QList<QCameraDevice> videoDevices = QMediaDevices::videoInputs();
-    for (const QCameraDevice &device : videoDevices)
+    for (const QCameraDevice &device : QMediaDevices::videoInputs())
     {
         if (device.description() == str)
         {
@@ -158,8 +157,7 @@ void VideoManager::PopulateCameraList()
     m_cameraList->clear();
 
     bool foundPreviousCamera = false;
-    const QList<QCameraDevice> videoDevices = QMediaDevices::videoInputs();
-    for (const QCameraDevice &device : videoDevices)
+    for (const QCameraDevice &device : QMediaDevices::videoInputs())
     {
         m_cameraList->addItem(device.description());
         if (!foundPreviousCamera && device.description() == previousCamera)
@@ -231,7 +229,10 @@ void VideoManager::Start()
             {
                 if (format.resolution() == size && format.maxFrameRate() == fps)
                 {
+                    m_cameraList->setEnabled(false);
+                    m_resolutionList->setEnabled(false);
                     m_btnCameraStart->setText("Stop Camera");
+
                     m_camera.setCameraDevice(device);
                     m_camera.setCameraFormat(format);
                     m_camera.start();
@@ -245,10 +246,14 @@ void VideoManager::Start()
             }
         }
     }
+
+    QMessageBox::critical(this, "Error", "Unable to start camera!", QMessageBox::Ok);
 }
 
 void VideoManager::Stop()
 {
+    m_cameraList->setEnabled(true);
+    m_resolutionList->setEnabled(true);
     m_btnCameraStart->setText("Start Camera");
     m_camera.stop();
     m_frame.fill(Qt::black);

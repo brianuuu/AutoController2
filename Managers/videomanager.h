@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QMediaCaptureSession>
 #include <QMediaDevices>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
