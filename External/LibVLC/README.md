@@ -20,8 +20,8 @@ LibVLC/
 │   ├── access_output/
 │   └── ...
 ├── .gitignore
-├── libvlc.def
+├── libvlc.lib
 ├── libvlc.dll
-├── libvlccore.def
+├── libvlccore.lib
 ├── libvlccore.dll
 ├── README.md
