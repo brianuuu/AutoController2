@@ -15,8 +15,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS SerialPort)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
- #dependencies directory headers
+set(LibVLC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/LibVLC")
+
+#dependencies directory headers
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${LibVLC_DIR}/include)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -59,6 +62,25 @@ endif()
 target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(AutoController2 PRIVATE Qt6::SerialPort)
 target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
+target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
+target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
+
+#copy files and folders
+add_custom_command(
+    TARGET AutoController2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${LibVLC_DIR}/libvlc.dll" "${CMAKE_BINARY_DIR}/libvlc.dll"
+)
+add_custom_command(
+    TARGET AutoController2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${LibVLC_DIR}/libvlccore.dll" "${CMAKE_BINARY_DIR}/libvlccore.dll"
+)
+add_custom_target(
+    LibVLC_COPY_PLUGINS
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${LibVLC_DIR}/plugins"
+    "${CMAKE_BINARY_DIR}/plugins"
+)
+add_dependencies(AutoController2 LibVLC_COPY_PLUGINS)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
