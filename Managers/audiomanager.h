@@ -2,6 +2,8 @@
 #define AUDIOMANAGER_H
 
 #include <QAudioDevice>
+#include <QAudioInput>
+#include <QAudioOutput>
 #include <QComboBox>
 #include <QMediaDevices>
 #include <QSlider>
@@ -35,6 +37,8 @@ private slots:
     // UI
     void OnRefreshInputList();
     void OnRefreshOutputList();
+    void OnInputChanged(QString const& str);
+    void OnOutputChanged(QString const& str);
 
 private:
     // UI
@@ -45,6 +49,8 @@ private:
 
     QMediaDevices   m_devices;
     QAudioFormat    m_audioFormat;
+    QAudioInput     m_audioInput;
+    QAudioOutput    m_audioOutput;
 };
 
 #endif // AUDIOMANAGER_H

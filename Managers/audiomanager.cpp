@@ -19,6 +19,8 @@ AudioManager::AudioManager
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
     m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Float);
 
+    connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
+    connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
     connect(&m_devices, &QMediaDevices::audioInputsChanged, this, &AudioManager::OnRefreshInputList);
     connect(&m_devices, &QMediaDevices::audioOutputsChanged, this, &AudioManager::OnRefreshOutputList);
 
@@ -33,8 +35,7 @@ void AudioManager::OnRefreshInputList()
     m_listInput->clear();
 
     bool foundPreviousInput = false;
-    const QList<QAudioDevice> audioDevices = QMediaDevices::audioInputs();
-    for (const QAudioDevice &device : audioDevices)
+    for (const QAudioDevice &device : QMediaDevices::audioInputs())
     {
         m_listInput->addItem(device.description());
         if (!foundPreviousInput && device.description() == previousInput)
@@ -57,8 +58,7 @@ void AudioManager::OnRefreshOutputList()
     m_listOutput->clear();
 
     bool foundPreviousOutput = false;
-    const QList<QAudioDevice> audioDevices = QMediaDevices::audioOutputs();
-    for (const QAudioDevice &device : audioDevices)
+    for (const QAudioDevice &device : QMediaDevices::audioOutputs())
     {
         m_listOutput->addItem(device.description());
         if (!foundPreviousOutput && device.description() == previousOutput)
@@ -71,5 +71,29 @@ void AudioManager::OnRefreshOutputList()
     if (foundPreviousOutput)
     {
         m_listInput->setCurrentText(previousOutput);
+    }
+}
+
+void AudioManager::OnInputChanged(QString const& str)
+{
+    for (const QAudioDevice &device : QMediaDevices::audioInputs())
+    {
+        if (device.description() == str)
+        {
+            m_audioInput.setDevice(device);
+            return;
+        }
+    }
+}
+
+void AudioManager::OnOutputChanged(QString const& str)
+{
+    for (const QAudioDevice &device : QMediaDevices::audioOutputs())
+    {
+        if (device.description() == str)
+        {
+            m_audioOutput.setDevice(device);
+            return;
+        }
     }
 }
