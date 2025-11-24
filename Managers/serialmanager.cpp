@@ -5,12 +5,13 @@
 
 SerialManager::SerialManager
 (
-    QWidget* parent,
     QComboBox *list,
     QPushButton *btnRefresh,
-    QPushButton *btnConnect
+    QPushButton *btnConnect,
+    QWidget* parent
 )
-    : m_list(list)
+    : QWidget(parent)
+    , m_list(list)
     , m_btnRefresh(btnRefresh)
     , m_btnConnect(btnConnect)
 {

@@ -17,10 +17,10 @@ class SerialManager : public QWidget
 public:
     SerialManager
     (
-        QWidget* parent,
         QComboBox* list,
         QPushButton* btnRefresh,
-        QPushButton* btnConnect
+        QPushButton* btnConnect,
+        QWidget* parent = nullptr
     );
 
     bool OnCloseEvent();

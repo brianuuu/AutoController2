@@ -15,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
         this,
         ui->CB_SerialPort,
         ui->PB_SerialRefresh,
-        ui->PB_SerialConnect
+        ui->PB_SerialConnect,
+        this
     );
 
     m_audioManager = new AudioManager(
