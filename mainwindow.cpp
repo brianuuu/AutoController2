@@ -12,34 +12,26 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     m_serialManager = new SerialManager(
-        this,
         ui->CB_SerialPort,
         ui->PB_SerialRefresh,
         ui->PB_SerialConnect,
         this
     );
 
-    m_audioManager = new AudioManager(
-        this,
+    m_vlcManager = new VlcManager(
+        ui->CB_CameraDevice,
+        ui->CB_Resolution,
         ui->CB_AudioInput,
         ui->CB_AudioOutput,
         ui->CB_AudioDisplay,
-        ui->HS_Volume
-    );
-
-    m_videoManager = new VideoManager(
-        this,
-        ui->CB_CameraDevice,
-        ui->CB_Resolution,
+        ui->HS_Volume,
         ui->PB_CameraStart
     );
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_videoManager;
-    delete m_audioManager;
-    delete m_serialManager;
+    delete m_vlcManager;
     delete ui;
 }
 
@@ -51,7 +43,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 
-    if (!m_videoManager->OnCloseEvent())
+    if (!m_vlcManager->OnCloseEvent())
     {
         event->ignore();
         return;

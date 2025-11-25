@@ -3,9 +3,8 @@
 
 #include <QMainWindow>
 
-#include "Managers/audiomanager.h"
-#include "Managers/videomanager.h"
 #include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,7 +27,6 @@ private:
 
     // managers
     SerialManager*  m_serialManager = Q_NULLPTR;
-    AudioManager*   m_audioManager = Q_NULLPTR;
-    VideoManager*   m_videoManager = Q_NULLPTR;
+    VlcManager*     m_vlcManager = Q_NULLPTR;
 };
 #endif // MAINWINDOW_H

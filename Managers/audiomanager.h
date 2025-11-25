@@ -16,12 +16,17 @@ class AudioManager : public QWidget
 public:
     AudioManager
     (
-        QWidget* parent,
         QComboBox* listInput,
         QComboBox* listOutput,
         QComboBox* listDisplay,
-        QSlider* volumeSlider
+        QSlider* volumeSlider,
+        QWidget* parent = nullptr
     );
+
+    QAudioFormat const GetAudioFormat() const { return m_audioFormat; }
+
+    void Start();
+    void Stop();
 
 private: // types
     enum class AudioDisplayType

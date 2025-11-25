@@ -2,13 +2,14 @@
 
 AudioManager::AudioManager
 (
-    QWidget* parent,
     QComboBox* listInput,
     QComboBox* listOutput,
     QComboBox* listDisplay,
-    QSlider* volumeSlider
+    QSlider* volumeSlider,
+    QWidget* parent
 )
-    : m_listInput(listInput)
+    : QWidget(parent)
+    , m_listInput(listInput)
     , m_listOutput(listOutput)
     , m_listDisplay(listDisplay)
     , m_volumeSlider(volumeSlider)
@@ -17,7 +18,7 @@ AudioManager::AudioManager
     m_audioFormat.setSampleRate(48000);
     m_audioFormat.setChannelCount(2);
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
-    m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Float);
+    m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int32);
 
     connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
@@ -26,6 +27,16 @@ AudioManager::AudioManager
 
     OnRefreshInputList();
     OnRefreshOutputList();
+}
+
+void AudioManager::Start()
+{
+    m_listInput->setEnabled(false);
+}
+
+void AudioManager::Stop()
+{
+    m_listInput->setEnabled(true);
 }
 
 void AudioManager::OnRefreshInputList()
