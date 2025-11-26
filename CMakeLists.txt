@@ -12,8 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #dependencies
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS SerialPort)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
+find_package(Qt6 REQUIRED COMPONENTS Concurrent)
 
 set(LibVLC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/LibVLC")
 
@@ -41,6 +43,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/videomanager.h Managers/videomanager.cpp
         Managers/audiomanager.h Managers/audiomanager.cpp
         Managers/vlcmanager.h Managers/vlcmanager.cpp
+        Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -63,8 +67,10 @@ endif()
 target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(AutoController2 PRIVATE Qt6::SerialPort)
 target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
+target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
+target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 #copy files and folders
 add_custom_command(
