@@ -75,6 +75,6 @@ void MediaDiscoverer::run()
         CoUninitialize();
 
         std::sort(list.begin(), list.end());
-        emit SignalResult(list);
+        emit finished(list);
     }
 }

@@ -19,7 +19,7 @@ protected:
     void run() override;
 
 signals:
-    void SignalResult(QStringList const& list);
+    void finished(QStringList const& list);
 
 private:
     bool m_isAudio = false;

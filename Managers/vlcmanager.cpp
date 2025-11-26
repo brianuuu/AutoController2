@@ -39,6 +39,7 @@ VlcManager::VlcManager
     QComboBox *listAudioOutput,
     QComboBox *listAudioDisplay,
     QSlider *volumeSlider,
+    QPushButton *btnCameraRefresh,
     QPushButton *btnCameraStart,
     QWidget *parent
 )
@@ -55,7 +56,7 @@ VlcManager::VlcManager
     // Video
     int constexpr MAX_WIDTH = 3840;
     int constexpr MAX_HEIGHT = 2160;
-    ctxVideo.m_manager = new VideoManager(listCamera, listResolution, btnCameraStart, this);
+    ctxVideo.m_manager = new VideoManager(listCamera, listResolution, btnCameraRefresh, btnCameraStart, this);
     ctxVideo.m_pixels = new uchar[MAX_WIDTH * MAX_HEIGHT * 4];
     memset(ctxVideo.m_pixels, 0, MAX_WIDTH * MAX_HEIGHT * 4);
 
@@ -131,18 +132,13 @@ void VlcManager::Start()
     libvlc_media_add_option(m_media, adevOption.toStdString().c_str());
 
     // Aspect ratio, resolution
-    QStringList const resolutionData = ctxVideo.m_manager->GetResolutionData();
-    QSize const resolution(resolutionData[0].toInt(), resolutionData[1].toInt());
-    QString const dshowSize = ":dshow-size=" + resolutionData[0] + "x" + resolutionData[1];
-    if (vdev != "OBS Virtual Camera")
-    {
-        libvlc_media_add_option(m_media, dshowSize.toStdString().c_str());
-    }
+    QSize const resolution = ctxVideo.m_manager->GetResolution();
+    QString const dshowSize = ":dshow-size=" + QString::number(resolution.width()) + "x" + QString::number(resolution.height());
     libvlc_media_add_option(m_media, ":dshow-aspect-ratio=16:9");
 
     // Frame rate
-    QString const frameRate = ":dshow-fps=" + resolutionData[2];
-    libvlc_media_add_option(m_media, frameRate.toStdString().c_str());
+    //QString const frameRate = ":dshow-fps=" + QString::number(fps);
+    //libvlc_media_add_option(m_media, frameRate.toStdString().c_str());
 
     // Audio samples
     libvlc_media_add_option(m_media, ":dshow-audio-samplerate=48000");

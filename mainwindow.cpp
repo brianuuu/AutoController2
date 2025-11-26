@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->CB_AudioOutput,
         ui->CB_AudioDisplay,
         ui->HS_Volume,
+        ui->PB_CameraRefresh,
         ui->PB_CameraStart
     );
 }

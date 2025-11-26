@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QMediaCaptureSession>
 #include <QMediaDevices>
+#include <QMetaEnum>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
@@ -21,12 +22,13 @@ public:
     (
         QComboBox* listCamera,
         QComboBox* listResolution,
+        QPushButton* btnCameraRefresh,
         QPushButton* btnCameraStart,
         QWidget* parent = nullptr
     );
 
     QString GetDeviceName() const;
-    QStringList GetResolutionData() const;
+    QSize GetResolution() const;
 
     void Start();
     void Stop();
@@ -37,21 +39,18 @@ protected:
 private slots:
     // UI
     void OnRefreshList();
-    void OnCameraChanged(QString const& str);
+    void OnDiscovereFinish(QStringList const& list);
 
 private:
     // UI
-    void PopulateCameraList();
-    void PopulateResolution(QCameraDevice const& device);
+    void PopulateResolution();
 
 private:
     // UI
     QComboBox*      m_listCamera = Q_NULLPTR;
     QComboBox*      m_listResolution = Q_NULLPTR;
+    QPushButton*    m_btnCameraRefresh = Q_NULLPTR;
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
-
-    // Members
-    QMediaDevices   m_devices;
 };
 
 #endif // VIDEOMANAGER_H

@@ -37,6 +37,7 @@ public:
         QComboBox* listAudioOutput,
         QComboBox* listAudioDisplay,
         QSlider* volumeSlider,
+        QPushButton* btnCameraRefresh,
         QPushButton* btnCameraStart,
         QWidget *parent = nullptr
     );
