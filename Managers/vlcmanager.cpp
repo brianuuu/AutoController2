@@ -67,6 +67,7 @@ VlcManager::VlcManager
     //connect(ctxVideo.m_manager, &VideoManager::timeout, this, &VLCWrapper::timeout);
 
     // Setup layout
+    this->setWindowTitle("Media View");
     this->resize(1280,720);
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     //vBoxLayout->addWidget(ctxAudio.m_manager);
@@ -112,6 +113,39 @@ void VlcManager::OnCameraClicked()
     else
     {
         Start();
+    }
+}
+
+void VlcManager::OnCameraStartTimeout()
+{
+    libvlc_state_t state = libvlc_media_player_get_state(m_mediaPlayer);
+    switch (state)
+    {
+    case libvlc_Opening:
+    {
+        // still opening, wait
+        QTimer::singleShot(500, this, &VlcManager::OnCameraStartTimeout);
+        break;
+    }
+    case libvlc_Playing:
+    {
+        // success
+        m_btnCameraStart->setText("Stop Camera");
+        m_btnCameraStart->setEnabled(true);
+        break;
+    }
+    default:
+    {
+        // state not expected
+        Stop();
+        QMessageBox::critical(this, "Error",
+            "Failed to start camera!\n"
+            "1. Chroma may not be supported for current resolution\n"
+            "2. Resolution not matching source (required for OBS Virtual Camera etc.)",
+            QMessageBox::Ok
+        );
+        break;
+    }
     }
 }
 
@@ -165,7 +199,7 @@ void VlcManager::Start()
     int result = libvlc_media_player_play(m_mediaPlayer);
     if (result == -1)
     {
-        QMessageBox::critical(this, "Error", "An error occured when starting camera!", QMessageBox::Ok);
+        QMessageBox::critical(this, "Error", "Unable to start VLC media player!", QMessageBox::Ok);
     }
     else
     {
@@ -178,6 +212,7 @@ void VlcManager::Start()
         ctxAudio.m_manager->Start();
 
         libvlc_video_set_adjust_int(m_mediaPlayer, libvlc_video_adjust_option_t::libvlc_adjust_Enable, true);
+        QTimer::singleShot(500, this, &VlcManager::OnCameraStartTimeout);
 
         this->show();
     }

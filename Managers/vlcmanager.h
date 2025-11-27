@@ -7,6 +7,7 @@
 #include <QMutex>
 #include <QPushButton>
 #include <QSpacerItem>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -51,6 +52,7 @@ protected:
 
 private slots:
     void OnCameraClicked();
+    void OnCameraStartTimeout();
 
 private:
     void Start();
