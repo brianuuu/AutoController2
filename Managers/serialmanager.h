@@ -42,7 +42,7 @@ private: // types
     };
 
 signals:
-    void SignalClose();
+    void notifyClose();
 
 private slots:
     // UI

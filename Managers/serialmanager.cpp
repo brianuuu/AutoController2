@@ -15,7 +15,7 @@ SerialManager::SerialManager
     , m_btnRefresh(btnRefresh)
     , m_btnConnect(btnConnect)
 {
-    connect(this, &SerialManager::SignalClose, parent, &QWidget::close);
+    connect(this, &SerialManager::notifyClose, parent, &QWidget::close);
 
     connect(m_btnRefresh, &QPushButton::clicked, this, &SerialManager::OnRefreshList);
     connect(m_btnConnect, &QPushButton::clicked, this, &SerialManager::OnConnectClicked);
@@ -259,7 +259,7 @@ void SerialManager::OnDisconnectTimeout()
     if (m_aboutToClose)
     {
         m_aboutToClose = false;
-        emit SignalClose();
+        emit notifyClose();
     }
 }
 
