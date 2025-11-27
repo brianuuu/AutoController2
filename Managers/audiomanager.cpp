@@ -22,6 +22,7 @@ AudioManager::AudioManager
 
     connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
+    connect(m_volumeSlider, &QSlider::valueChanged, this, &AudioManager::OnVolumeChanged);
     connect(&m_devices, &QMediaDevices::audioInputsChanged, this, &AudioManager::OnRefreshInputList);
     connect(&m_devices, &QMediaDevices::audioOutputsChanged, this, &AudioManager::OnRefreshOutputList);
 
@@ -42,6 +43,7 @@ void AudioManager::Start()
     m_mutex.lock();
     {
         m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
+        m_audioSink->setVolume((qreal)m_volumeSlider->value() * 0.01);
         m_audioDevice = m_audioSink->start();
     }
     m_mutex.unlock();
@@ -154,5 +156,14 @@ void AudioManager::OnOutputChanged(QString const& str)
             }
             return;
         }
+    }
+}
+
+void AudioManager::OnVolumeChanged(int value)
+{
+    qreal const norm = (qreal)value * 0.01;
+    if (m_audioSink)
+    {
+        m_audioSink->setVolume(norm);
     }
 }

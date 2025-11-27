@@ -49,6 +49,7 @@ private slots:
     void OnRefreshOutputList();
     void OnInputChanged(QString const& str);
     void OnOutputChanged(QString const& str);
+    void OnVolumeChanged(int value);
 
 private:
     // UI
