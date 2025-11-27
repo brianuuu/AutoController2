@@ -69,7 +69,7 @@ VlcManager::VlcManager
     // Setup layout
     this->resize(1280,720);
     QVBoxLayout* vBoxLayout = new QVBoxLayout();
-    vBoxLayout->addWidget(ctxAudio.m_manager);
+    //vBoxLayout->addWidget(ctxAudio.m_manager);
     vBoxLayout->addWidget(ctxVideo.m_manager);
     this->setLayout(vBoxLayout);
 }
@@ -133,6 +133,7 @@ void VlcManager::Start()
     // Aspect ratio, resolution
     QSize const resolution = ctxVideo.m_manager->GetResolution();
     QString const dshowSize = ":dshow-size=" + QString::number(resolution.width()) + "x" + QString::number(resolution.height());
+    libvlc_media_add_option(m_media, dshowSize.toStdString().c_str());
     libvlc_media_add_option(m_media, ":dshow-aspect-ratio=16:9");
 
     // Frame rate
