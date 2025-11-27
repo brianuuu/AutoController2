@@ -56,8 +56,9 @@ void VideoManager::Stop()
 
 void VideoManager::PushFrameData(const unsigned char *data)
 {
-    QImage& freeFrame = m_useBackBuffer ? m_frame[0] : m_frame[1];
-    m_useBackBuffer = !m_useBackBuffer;
+    bool const useBackBuffer = m_useBackBuffer.load();
+    QImage& freeFrame = useBackBuffer ? m_frame[0] : m_frame[1];
+    m_useBackBuffer.store(!useBackBuffer);
 
     QSize const resolution = GetResolution();
     freeFrame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
@@ -68,7 +69,7 @@ void VideoManager::PushFrameData(const unsigned char *data)
 void VideoManager::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    painter.drawImage(this->rect(), m_useBackBuffer ? m_frame[1] : m_frame[0]);
+    painter.drawImage(this->rect(), m_useBackBuffer.load() ? m_frame[1] : m_frame[0]);
 }
 
 void VideoManager::OnRefreshList()
