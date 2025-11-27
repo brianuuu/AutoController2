@@ -117,6 +117,8 @@ void VlcManager::OnCameraClicked()
 
 void VlcManager::OnCameraStartTimeout()
 {
+    if (!m_started) return;
+
     libvlc_state_t state = libvlc_media_player_get_state(m_mediaPlayer);
     switch (state)
     {
