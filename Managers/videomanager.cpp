@@ -17,6 +17,7 @@ VideoManager::VideoManager
     , m_btnCameraStart(btnCameraStart)
 {
     connect(m_btnCameraRefresh, &QPushButton::clicked, this, &VideoManager::OnRefreshList);
+    connect(this, &VideoManager::notifyDraw, this, &VideoManager::OnDraw);
 
     OnRefreshList();
     PopulateResolution();
@@ -37,6 +38,13 @@ void VideoManager::Start()
     m_listCamera->setEnabled(false);
     m_listResolution->setEnabled(false);
     m_btnCameraRefresh->setEnabled(false);
+
+    QSize const resolution = GetResolution();
+    m_frame[0] = QImage(resolution, QImage::Format_ARGB32);
+    m_frame[1] = QImage(resolution, QImage::Format_ARGB32);
+    m_frame[0].fill(Qt::black);
+    m_frame[1].fill(Qt::black);
+    this->update();
 }
 
 void VideoManager::Stop()
@@ -46,9 +54,21 @@ void VideoManager::Stop()
     m_btnCameraRefresh->setEnabled(true);
 }
 
+void VideoManager::PushFrameData(const unsigned char *data)
+{
+    QImage& freeFrame = m_useBackBuffer ? m_frame[0] : m_frame[1];
+    m_useBackBuffer = !m_useBackBuffer;
+
+    QSize const resolution = GetResolution();
+    freeFrame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
+
+    emit notifyDraw();
+}
+
 void VideoManager::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.drawImage(this->rect(), m_useBackBuffer ? m_frame[1] : m_frame[0]);
 }
 
 void VideoManager::OnRefreshList()
@@ -82,6 +102,11 @@ void VideoManager::OnDiscovereFinish(const QStringList &list)
 
     // only allow camera start if there are available cameras
     m_btnCameraStart->setEnabled(m_listCamera->count());
+}
+
+void VideoManager::OnDraw()
+{
+    this->update();
 }
 
 void VideoManager::PopulateResolution()
