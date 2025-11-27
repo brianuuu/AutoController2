@@ -33,13 +33,19 @@ public:
     void Start();
     void Stop();
 
+    void PushFrameData(unsigned char const* data);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
+
+signals:
+    void notifyDraw();
 
 private slots:
     // UI
     void OnRefreshList();
     void OnDiscovereFinish(QStringList const& list);
+    void OnDraw();
 
 private:
     // UI
@@ -51,6 +57,10 @@ private:
     QComboBox*      m_listResolution = Q_NULLPTR;
     QPushButton*    m_btnCameraRefresh = Q_NULLPTR;
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
+
+    // Frame data
+    std::atomic<bool>   m_useBackBuffer = false;
+    QImage              m_frame[2];
 };
 
 #endif // VIDEOMANAGER_H

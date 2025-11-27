@@ -16,8 +16,7 @@ static void cbVideoUnlock(void *opaque, void *picture, void *const *planes)
     struct contextVideo *ctx = (contextVideo *)opaque;
     unsigned char const* data = (unsigned char const*)*planes;
 
-    // TODO:
-    //ctx->m_manager->pushVideoData(data);
+    ctx->m_manager->PushFrameData(data);
     ctx->m_mutex.unlock();
 }
 
