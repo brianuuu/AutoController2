@@ -56,6 +56,7 @@ void VideoManager::Stop()
 
 void VideoManager::PushFrameData(const unsigned char *data)
 {
+    // this is called from LibVLC thread, not thread safe
     QSize const resolution = GetResolution();
     QImage& freeFrame = m_useBackBuffer.load() ? m_frame[0] : m_frame[1];
     freeFrame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);

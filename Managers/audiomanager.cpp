@@ -18,7 +18,7 @@ AudioManager::AudioManager
     m_audioFormat.setSampleRate(48000);
     m_audioFormat.setChannelCount(2);
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
-    m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int32);
+    m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int16);
 
     connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
@@ -29,14 +29,55 @@ AudioManager::AudioManager
     OnRefreshOutputList();
 }
 
+QString AudioManager::GetDeviceName() const
+{
+    return m_listInput->currentText();
+}
+
 void AudioManager::Start()
 {
+    Stop();
     m_listInput->setEnabled(false);
+
+    m_mutex.lock();
+    {
+        m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
+        m_audioDevice = m_audioSink->start();
+    }
+    m_mutex.unlock();
 }
 
 void AudioManager::Stop()
 {
+    m_mutex.lock();
+    {
+        if (m_audioSink)
+        {
+            m_audioSink->stop();
+            delete m_audioSink;
+
+            m_audioSink = Q_NULLPTR;
+            m_audioDevice = Q_NULLPTR;
+        }
+    }
+    m_mutex.unlock();
+
     m_listInput->setEnabled(true);
+}
+
+void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_t pts)
+{
+    size_t const sampleSize = count * m_audioFormat.bytesPerFrame();
+
+    // this is called from LibVLC thread, not thread safe
+    if (m_mutex.tryLock())
+    {
+        if (m_audioDevice)
+        {
+            m_audioDevice->write((const char*)samples, sampleSize);
+        }
+        m_mutex.unlock();
+    }
 }
 
 void AudioManager::OnRefreshInputList()
@@ -104,6 +145,12 @@ void AudioManager::OnOutputChanged(QString const& str)
         if (device.description() == str)
         {
             m_audioOutput.setDevice(device);
+
+            // device changed, may have to start audio again
+            if (m_audioSink)
+            {
+                Start();
+            }
             return;
         }
     }

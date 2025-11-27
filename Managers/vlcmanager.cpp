@@ -25,9 +25,8 @@ static void cbAudioPlay(void* p_audio_data, const void *samples, unsigned int co
     struct contextAudio *ctx = (contextAudio *)p_audio_data;
     if (!ctx->m_manager) return;
 
-    // TODO:
     // Pass new raw data to manager
-    //ctx->m_manager->pushAudioData(samples, count, pts);
+    ctx->m_manager->PushAudioData(samples, count, pts);
 }
 
 VlcManager::VlcManager
@@ -161,7 +160,7 @@ void VlcManager::Start()
 
     // Audio
     QString adevOption = ":dshow-adev=";
-    QString const adev = "";
+    QString const adev = ctxAudio.m_manager->GetDeviceName();
     adevOption += adev.isEmpty() ? "none" : adev;
     libvlc_media_add_option(m_media, adevOption.toStdString().c_str());
 
@@ -193,7 +192,7 @@ void VlcManager::Start()
     // Set callback to extract raw PCM data
     QAudioFormat const format = ctxAudio.m_manager->GetAudioFormat();
     libvlc_audio_set_callbacks(m_mediaPlayer, cbAudioPlay, nullptr, nullptr, nullptr, nullptr, &ctxAudio);
-    libvlc_audio_set_format(m_mediaPlayer, "FL32", format.sampleRate(), format.channelCount());
+    libvlc_audio_set_format(m_mediaPlayer, "S16N", format.sampleRate(), format.channelCount());
 
     // Play media
     int result = libvlc_media_player_play(m_mediaPlayer);

@@ -4,8 +4,10 @@
 #include <QAudioDevice>
 #include <QAudioInput>
 #include <QAudioOutput>
+#include <QAudioSink>
 #include <QComboBox>
 #include <QMediaDevices>
+#include <QMutex>
 #include <QSlider>
 #include <QWidget>
 
@@ -24,9 +26,12 @@ public:
     );
 
     QAudioFormat const GetAudioFormat() const { return m_audioFormat; }
+    QString GetDeviceName() const;
 
     void Start();
     void Stop();
+
+    void PushAudioData(const void *samples, unsigned int count, int64_t pts);
 
 private: // types
     enum class AudioDisplayType
@@ -56,6 +61,10 @@ private:
     QAudioFormat    m_audioFormat;
     QAudioInput     m_audioInput;
     QAudioOutput    m_audioOutput;
+
+    QMutex          m_mutex;
+    QAudioSink*     m_audioSink = Q_NULLPTR;
+    QIODevice*      m_audioDevice = Q_NULLPTR;
 };
 
 #endif // AUDIOMANAGER_H
