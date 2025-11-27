@@ -141,21 +141,9 @@ void AudioManager::OnInputChanged(QString const& str)
 
 void AudioManager::OnOutputChanged(QString const& str)
 {
-    if (m_listOutput->currentText() == "Default")
-    {
-        m_audioOutput.setDevice(QMediaDevices::defaultAudioOutput());
-
-        // device changed, may have to start audio again
-        if (m_audioSink)
-        {
-            Start();
-        }
-        return;
-    }
-
     for (const QAudioDevice &device : QMediaDevices::audioOutputs())
     {
-        if (device.description() == str)
+        if (device.description() == str || (device.isDefault() && m_listOutput->currentText() == "Default"))
         {
             m_audioOutput.setDevice(device);
 
