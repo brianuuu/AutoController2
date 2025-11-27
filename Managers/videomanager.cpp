@@ -72,6 +72,11 @@ void VideoManager::paintEvent(QPaintEvent *event)
     painter.drawImage(this->rect(), m_useBackBuffer.load() ? m_frame[1] : m_frame[0]);
 }
 
+int VideoManager::heightForWidth(int width) const
+{
+    return width * 9 / 16;
+}
+
 void VideoManager::OnRefreshList()
 {
     MediaDiscoverer* discoverer = new MediaDiscoverer(false, this);

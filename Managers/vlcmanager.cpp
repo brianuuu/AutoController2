@@ -68,10 +68,11 @@ VlcManager::VlcManager
 
     // Setup layout
     this->resize(1280,720);
-    QVBoxLayout* vBoxLayout = new QVBoxLayout();
+    QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     //vBoxLayout->addWidget(ctxAudio.m_manager);
     vBoxLayout->addWidget(ctxVideo.m_manager);
-    this->setLayout(vBoxLayout);
+    vBoxLayout->addItem(new QSpacerItem(20, 440, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    vBoxLayout->setContentsMargins(0,0,0,0);
 }
 
 VlcManager::~VlcManager()

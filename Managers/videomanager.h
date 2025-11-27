@@ -38,6 +38,9 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
 
+    int heightForWidth(int width) const override;
+    bool hasHeightForWidth() const override { return true; }
+
 signals:
     void notifyDraw();
 

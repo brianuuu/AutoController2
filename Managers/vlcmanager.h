@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QMutex>
 #include <QPushButton>
+#include <QSpacerItem>
 #include <QVBoxLayout>
 #include <QWidget>
 
