@@ -29,6 +29,7 @@ public:
 
     QString GetDeviceName() const;
     QSize GetResolution() const;
+    bool HasFrameData() const { return m_hasData; }
 
     void Start();
     void Stop();
@@ -64,6 +65,7 @@ private:
     // Frame data
     std::atomic<bool>   m_useBackBuffer = false;
     QImage              m_frame[2];
+    bool                m_hasData = false;
 };
 
 #endif // VIDEOMANAGER_H

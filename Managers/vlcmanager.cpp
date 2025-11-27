@@ -125,18 +125,19 @@ void VlcManager::OnCameraStartTimeout()
     case libvlc_Opening:
     {
         // still opening, wait
-        QTimer::singleShot(500, this, &VlcManager::OnCameraStartTimeout);
-        break;
-    }
-    case libvlc_Playing:
-    {
-        // success
-        m_btnCameraStart->setText("Stop Camera");
-        m_btnCameraStart->setEnabled(true);
+        QTimer::singleShot(3000, this, &VlcManager::OnCameraStartTimeout);
         break;
     }
     default:
     {
+        if (state == libvlc_Playing && ctxVideo.m_manager->HasFrameData())
+        {
+            // success
+            m_btnCameraStart->setText("Stop Camera");
+            m_btnCameraStart->setEnabled(true);
+            break;
+        }
+
         // state not expected
         Stop();
         QMessageBox::critical(this, "Error",
@@ -213,7 +214,7 @@ void VlcManager::Start()
         ctxAudio.m_manager->Start();
 
         libvlc_video_set_adjust_int(m_mediaPlayer, libvlc_video_adjust_option_t::libvlc_adjust_Enable, true);
-        QTimer::singleShot(500, this, &VlcManager::OnCameraStartTimeout);
+        QTimer::singleShot(3000, this, &VlcManager::OnCameraStartTimeout);
 
         this->show();
     }

@@ -35,6 +35,8 @@ QSize VideoManager::GetResolution() const
 
 void VideoManager::Start()
 {
+    m_hasData = false;
+
     m_listCamera->setEnabled(false);
     m_listResolution->setEnabled(false);
     m_btnCameraRefresh->setEnabled(false);
@@ -113,6 +115,7 @@ void VideoManager::OnDiscovereFinish(const QStringList &list)
 
 void VideoManager::OnDraw()
 {
+    m_hasData = true;
     this->update();
 }
 
