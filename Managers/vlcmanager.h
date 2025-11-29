@@ -13,6 +13,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "logmanager.h"
 #include "audiomanager.h"
 #include "videomanager.h"
 
@@ -35,6 +36,7 @@ class VlcManager : public QWidget
 public:
     VlcManager
     (
+        LogManager* logManager,
         QComboBox* listCamera,
         QComboBox* listResolution,
         QComboBox* listAudioInput,
@@ -74,8 +76,9 @@ private:
     struct contextAudio ctxAudio;
 
     // UI
-    QPushButton* m_btnCameraStart = Q_NULLPTR;
-    QPushButton* m_btnScreenshot = Q_NULLPTR;
+    LogManager*     m_logManager = Q_NULLPTR;
+    QPushButton*    m_btnCameraStart = Q_NULLPTR;
+    QPushButton*    m_btnScreenshot = Q_NULLPTR;
 
     // Members
     bool    m_started = false;

@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_logManager = new LogManager();
 
     m_serialManager = new SerialManager(
+        m_logManager,
         ui->CB_SerialPort,
         ui->PB_SerialRefresh,
         ui->PB_SerialConnect,
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     );
 
     m_vlcManager = new VlcManager(
+        m_logManager,
         ui->CB_CameraDevice,
         ui->CB_Resolution,
         ui->CB_AudioInput,

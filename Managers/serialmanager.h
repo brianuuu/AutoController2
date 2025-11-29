@@ -9,6 +9,7 @@
 #include <QSerialPortInfo>
 #include <QTimer>
 
+#include "logmanager.h"
 
 class SerialManager : public QWidget
 {
@@ -17,6 +18,7 @@ class SerialManager : public QWidget
 public:
     SerialManager
     (
+        LogManager* logManager,
         QComboBox* list,
         QPushButton* btnRefresh,
         QPushButton* btnConnect,
@@ -70,20 +72,21 @@ private:
     bool m_aboutToClose = false;
 
     // UI
-    QComboBox* m_list = Q_NULLPTR;
-    QPushButton* m_btnRefresh = Q_NULLPTR;
-    QPushButton* m_btnConnect = Q_NULLPTR;
+    LogManager*     m_logManager = Q_NULLPTR;
+    QComboBox*      m_list = Q_NULLPTR;
+    QPushButton*    m_btnRefresh = Q_NULLPTR;
+    QPushButton*    m_btnConnect = Q_NULLPTR;
 
     // serial
-    QSerialPort m_serialPort;
-    SerialState m_serialState = SerialState::Disconnected;
-    quint8 m_serialVersion = 0;
+    QSerialPort     m_serialPort;
+    SerialState     m_serialState = SerialState::Disconnected;
+    quint8          m_serialVersion = 0;
 
     // command
-    QString m_command;
-    int m_commandIndex = 0;
-    QVector<int> m_commandLoopCounts;
-    QTimer m_commandTimer;
+    QString         m_command;
+    int             m_commandIndex = 0;
+    QVector<int>    m_commandLoopCounts;
+    QTimer          m_commandTimer;
 };
 
 #endif // SERIALMANAGER_H

@@ -5,12 +5,14 @@
 
 SerialManager::SerialManager
 (
+    LogManager* logManager,
     QComboBox *list,
     QPushButton *btnRefresh,
     QPushButton *btnConnect,
     QWidget* parent
 )
     : QWidget(parent)
+    , m_logManager(logManager)
     , m_list(list)
     , m_btnRefresh(btnRefresh)
     , m_btnConnect(btnConnect)
@@ -144,7 +146,7 @@ bool SerialManager::SendCommand(const QString &command)
     QString errorMsg;
     if (!VerifyCommand(command, errorMsg))
     {
-        // TODO: log
+        m_logManager->PrintLog("System", errorMsg, LOG_Error);
         return false;
     }
 
@@ -225,7 +227,8 @@ void SerialManager::OnConnectTimeout()
     if (m_serialState == SerialState::FeedbackOK)
     {
         m_serialState = SerialState::Connected;
-        // TODO: log
+        m_logManager->PrintLog("System", "Serial Connected", LOG_Success);
+
         m_list->setEnabled(false);
         m_btnRefresh->setEnabled(false);
         m_btnConnect->setEnabled(true);
@@ -254,7 +257,7 @@ void SerialManager::OnDisconnectTimeout()
     if (m_serialPort.isOpen())
     {
         m_serialPort.close();
-        // TODO: log
+        m_logManager->PrintLog("System", "Serial Disconnected", LOG_Success);
     }
 
     m_serialState = SerialState::Disconnected;

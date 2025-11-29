@@ -48,17 +48,13 @@ void LogManager::SetClearLogEnabled(bool enable)
 
 void LogManager::PrintLog(const QString &category, const QString &log, LogType type)
 {
-    QString const str = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - "
-                        + "[" + category + "]"
-                        + LogTypeDisplayText(type)
-                        + " " + log;
-
+    QString const header = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - [" + category + "]";
     QColor const color = LogTypeToColor(type);
     QString r,g,b;
     r.setNum(color.red(), 16); if (color.red() < 0x10) r = "0" + r;
     g.setNum(color.green(), 16); if (color.green() < 0x10) g = "0" + g;
     b.setNum(color.blue(), 16); if (color.blue() < 0x10) b = "0" + b;
-    QString const html = "<font color=\"#FF" + r + g + b + "\">" + str + "</font>";
+    QString const html = "<font color=\"#FF" + r + g + b + "\">" + header + " " + log + "</font>";
 
     m_logCount++;
     m_browser->append(html);
@@ -69,7 +65,7 @@ void LogManager::PrintLog(const QString &category, const QString &log, LogType t
         if(file.open(QIODevice::Append))
         {
             QTextStream stream(&file);
-            stream << str + "\n";
+            stream << header + LogTypeDisplayText(type) + " " + log + "\n";
             file.close();
         }
     }
