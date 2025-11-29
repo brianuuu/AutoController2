@@ -46,12 +46,22 @@ void LogManager::SetClearLogEnabled(bool enable)
     m_btnClear->setEnabled(enable);
 }
 
-void LogManager::PrintLog(const QString &log)
+void LogManager::PrintLog(const QString &category, const QString &log, LogType type)
 {
-    QString str = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - " + log;
+    QString const str = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - "
+                        + "[" + category + "]"
+                        + LogTypeDisplayText(type)
+                        + " " + log;
+
+    QColor const color = LogTypeToColor(type);
+    QString r,g,b;
+    r.setNum(color.red(), 16); if (color.red() < 0x10) r = "0" + r;
+    g.setNum(color.green(), 16); if (color.green() < 0x10) g = "0" + g;
+    b.setNum(color.blue(), 16); if (color.blue() < 0x10) b = "0" + b;
+    QString const html = "<font color=\"#FF" + r + g + b + "\">" + str + "</font>";
 
     m_logCount++;
-    m_browser->append(str);
+    m_browser->append(html);
 
     if (!m_logFile.isEmpty())
     {

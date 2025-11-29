@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->PB_Screenshot
     );
 
-    m_logManager->PrintLog("[System] Initialization completed");
+    m_logManager->PrintLog("System", "Initialization completed");
 }
 
 MainWindow::~MainWindow()
