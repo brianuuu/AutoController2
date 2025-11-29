@@ -4,6 +4,8 @@
 #include <vlc/vlc.h>
 
 #include <QComboBox>
+#include <QDateTime>
+#include <QDir>
 #include <QMutex>
 #include <QPushButton>
 #include <QSpacerItem>
@@ -41,6 +43,7 @@ public:
         QSlider* volumeSlider,
         QPushButton* btnCameraRefresh,
         QPushButton* btnCameraStart,
+        QPushButton* btnScreenshot,
         QWidget *parent = nullptr
     );
     ~VlcManager();
@@ -53,6 +56,7 @@ protected:
 private slots:
     void OnCameraClicked();
     void OnCameraStartTimeout();
+    void OnScreenshot();
 
 private:
     void Start();
@@ -71,6 +75,7 @@ private:
 
     // UI
     QPushButton* m_btnCameraStart = Q_NULLPTR;
+    QPushButton* m_btnScreenshot = Q_NULLPTR;
 
     // Members
     bool m_started = false;

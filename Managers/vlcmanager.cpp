@@ -39,10 +39,12 @@ VlcManager::VlcManager
     QSlider *volumeSlider,
     QPushButton *btnCameraRefresh,
     QPushButton *btnCameraStart,
+    QPushButton* btnScreenshot,
     QWidget *parent
 )
     : QWidget(parent)
     , m_btnCameraStart(btnCameraStart)
+    , m_btnScreenshot(btnScreenshot)
 {
     const char* const vlc_args[] = {
         "--intf", "dummy",
@@ -63,7 +65,7 @@ VlcManager::VlcManager
 
     // connections
     connect(m_btnCameraStart, &QPushButton::clicked, this, &VlcManager::OnCameraClicked);
-    //connect(ctxVideo.m_manager, &VideoManager::timeout, this, &VLCWrapper::timeout);
+    connect(m_btnScreenshot, &QPushButton::clicked, this, &VlcManager::OnScreenshot);
 
     // Setup layout
     this->setWindowTitle("Media View");
@@ -135,6 +137,7 @@ void VlcManager::OnCameraStartTimeout()
             // success
             m_btnCameraStart->setText("Stop Camera");
             m_btnCameraStart->setEnabled(true);
+            m_btnScreenshot->setEnabled(true);
             break;
         }
 
@@ -149,6 +152,20 @@ void VlcManager::OnCameraStartTimeout()
         break;
     }
     }
+}
+
+void VlcManager::OnScreenshot()
+{
+    QString const path = "../Screenshots/";
+    if (!QDir(path).exists())
+    {
+        QDir().mkdir(path);
+    }
+
+    QString const nameWithTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + "_screenshot.png";
+    QImage const frame = ctxVideo.m_manager->GetFrameData();
+    frame.save(path + nameWithTime);
+    // TODO: log
 }
 
 void VlcManager::Start()
@@ -227,6 +244,7 @@ void VlcManager::Stop()
 
     m_btnCameraStart->setText("Start Camera");
     m_btnCameraStart->setEnabled(true);
+    m_btnScreenshot->setEnabled(false);
 
     ctxVideo.m_manager->Stop();
     ctxAudio.m_manager->Stop();

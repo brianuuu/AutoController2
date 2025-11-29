@@ -66,6 +66,11 @@ void VideoManager::PushFrameData(const unsigned char *data)
     emit notifyDraw();
 }
 
+QImage VideoManager::GetFrameData() const
+{
+    return m_useBackBuffer.load() ? m_frame[1] : m_frame[0];
+}
+
 void VideoManager::paintEvent(QPaintEvent *event)
 {
     // swap buffer

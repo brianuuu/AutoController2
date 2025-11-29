@@ -35,6 +35,7 @@ public:
     void Stop();
 
     void PushFrameData(unsigned char const* data);
+    QImage GetFrameData() const;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
