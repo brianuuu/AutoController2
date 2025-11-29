@@ -231,6 +231,7 @@ void VlcManager::Start()
     else
     {
         m_started = true;
+        m_startVerifyTimer.setSingleShot(true);
         m_startVerifyTimer.start(3000);
 
         m_btnCameraStart->setText("Starting...");
