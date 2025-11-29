@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "Managers/logmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 
@@ -26,6 +27,7 @@ private:
     Ui::MainWindow *ui;
 
     // managers
+    LogManager*     m_logManager = Q_NULLPTR;
     SerialManager*  m_serialManager = Q_NULLPTR;
     VlcManager*     m_vlcManager = Q_NULLPTR;
 };

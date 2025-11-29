@@ -44,6 +44,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/audiomanager.h Managers/audiomanager.cpp
         Managers/vlcmanager.h Managers/vlcmanager.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
+        Managers/logmanager.h Managers/logmanager.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

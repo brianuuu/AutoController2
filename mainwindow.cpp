@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    m_logManager = new LogManager();
+
     m_serialManager = new SerialManager(
         ui->CB_SerialPort,
         ui->PB_SerialRefresh,
@@ -29,11 +31,14 @@ MainWindow::MainWindow(QWidget *parent)
         ui->PB_CameraStart,
         ui->PB_Screenshot
     );
+
+    m_logManager->PrintLog("[System] Initialization completed");
 }
 
 MainWindow::~MainWindow()
 {
     delete m_vlcManager;
+    delete m_logManager;
     delete ui;
 }
 
@@ -46,6 +51,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 
     if (!m_vlcManager->OnCloseEvent())
+    {
+        event->ignore();
+        return;
+    }
+
+    if (!m_logManager->OnCloseEvent())
     {
         event->ignore();
         return;
