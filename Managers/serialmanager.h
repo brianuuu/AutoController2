@@ -64,7 +64,7 @@ private:
     void Disconnect();
 
     // command
-    void SendButton(quint32 buttonFlag);
+    void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
 
 private:
     bool m_aboutToClose = false;

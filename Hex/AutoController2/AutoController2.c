@@ -109,6 +109,11 @@ void EVENT_USB_Device_ControlRequest(void) {
 int echoes = ECHOES;
 
 uint32_t button_flag = 2;
+uint8_t left_x = STICK_CENTER;
+uint8_t left_y = STICK_CENTER;
+uint8_t right_x = STICK_CENTER;
+uint8_t right_y = STICK_CENTER;
+
 bool waiting_input = false;
 bool should_spam = false;
 
@@ -164,13 +169,18 @@ void HID_Task(void) {
 		{
 			echoes = 0;
 			button_flag = 0;
+			left_x = STICK_CENTER;
+			left_y = STICK_CENTER;
+			right_x = STICK_CENTER;
+			right_y = STICK_CENTER;
+			
 			while (uart_available() > 0)
 			{
 				uart_getchar();
 			}
 		}
 	}
-	else if (waiting_input && uart_available() >= 4)
+	else if (waiting_input && uart_available() >= 8)
 	{
 		echoes = 0;
 		button_flag = 0;
@@ -178,6 +188,11 @@ void HID_Task(void) {
 		{
 			button_flag |= ((uint32_t)(uart_getchar()) << (8UL * i));
 		}
+		
+		left_x = uart_getchar();
+		left_y = uart_getchar();
+		right_x = uart_getchar();
+		right_y = uart_getchar();
 		
 		// Discard the rest
 		while (uart_available() > 0)
@@ -291,6 +306,12 @@ void GetNextReport(USB_JoystickReport_Input_t* const ReportData) {
 			ReportData->HAT = HAT_RIGHT;
 		}
 	}
+	
+	// Actual stick values
+	ReportData->LX = left_x;
+	ReportData->LY = left_y;
+	ReportData->RX = right_x;
+	ReportData->RY = right_y;
 	
 	// L-Stick
 	up = CHECK_BIT(button_flag, 13);

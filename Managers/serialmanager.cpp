@@ -96,8 +96,18 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
 
         for (int b = 0; b < buttons.size() - 1; b++)
         {
-            QString const& button = buttons[b];
-            if (StringToButton(button) == BTN_COUNT)
+            QString const& button = buttons[b].toLower();
+            if (button.startsWith("lx") || button.startsWith("ly") || button.startsWith("rx") || button.startsWith("ry"))
+            {
+                bool ok = false;
+                qreal const stickPos = button.mid(2).toDouble(&ok);
+                if (!ok || qAbs(stickPos) > 1.0)
+                {
+                    errorMsg = "'" + button + "' does not have valid stick pos [0.0-1.0] at index " + QString::number(i);
+                    return false;
+                }
+            }
+            else if (StringToButton(button) == BTN_COUNT)
             {
                 errorMsg = "'" + button + "' is not a recognized button at index " + QString::number(i);
                 return false;
@@ -308,11 +318,28 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     }
 
     quint32 buttonFlag = 0;
+    quint8 lx = 128;
+    quint8 ly = 128;
+    quint8 rx = 128;
+    quint8 ry = 128;
+
     QStringList const buttons = str.split('|');
     for (int b = 0; b < buttons.size() - 1; b++)
     {
-        QString const& button = buttons[b];
-        buttonFlag |= StringToButton(button);
+        QString const& button = buttons[b].toLower();
+        if (button.startsWith("lx") || button.startsWith("ly") || button.startsWith("rx") || button.startsWith("ry"))
+        {
+            qreal const stickPos = button.mid(2).toDouble();
+            quint8 const actualPos = (quint8)((stickPos + 1.0) * 0.5 * 255);
+            if (button.startsWith("lx")) lx = actualPos;
+            if (button.startsWith("ly")) ly = 255 - actualPos;
+            if (button.startsWith("rx")) rx = actualPos;
+            if (button.startsWith("ry")) ry = 255 - actualPos;
+        }
+        else
+        {
+            buttonFlag |= StringToButton(button);
+        }
     }
 
     int duration = buttons.back().toInt();
@@ -365,7 +392,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     }
     else
     {
-        SendButton(buttonFlag);
+        SendButton(buttonFlag, lx, ly, rx, ry);
         m_commandTimer.start(duration);
     }
 
@@ -437,15 +464,22 @@ void SerialManager::Disconnect()
     }
 }
 
-void SerialManager::SendButton(quint32 buttonFlag)
+void SerialManager::SendButton(quint32 buttonFlag, quint8 lx, quint8 ly, quint8 rx, quint8 ry)
 {
     if (!m_serialPort.isOpen()) return;
 
     QByteArray ba;
     ba.append((char)0xFF); // mode = FF
+
     ba.append((char)(buttonFlag & 0x000000FF));
     ba.append((char)((buttonFlag & 0x0000FF00) >> 8));
     ba.append((char)((buttonFlag & 0x00FF0000) >> 16));
     ba.append((char)((buttonFlag & 0xFF000000) >> 24));
+
+    ba.append((char)lx);
+    ba.append((char)ly);
+    ba.append((char)rx);
+    ba.append((char)ry);
+
     m_serialPort.write(ba);
 }
