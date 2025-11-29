@@ -1,5 +1,7 @@
 #include "vlcmanager.h"
 
+#define SCREENSHOT_PATH "../Screenshots/"
+
 static void* cbVideoLock(void *opaque, void **planes)
 {
     struct contextVideo *ctx = (contextVideo *)opaque;
@@ -46,6 +48,11 @@ VlcManager::VlcManager
     , m_btnCameraStart(btnCameraStart)
     , m_btnScreenshot(btnScreenshot)
 {
+    if (!QDir(SCREENSHOT_PATH).exists())
+    {
+        QDir().mkdir(SCREENSHOT_PATH);
+    }
+
     const char* const vlc_args[] = {
         "--intf", "dummy",
         "--vout", "dummy",
@@ -157,15 +164,9 @@ void VlcManager::OnCameraStartTimeout()
 
 void VlcManager::OnScreenshot()
 {
-    QString const path = "../Screenshots/";
-    if (!QDir(path).exists())
-    {
-        QDir().mkdir(path);
-    }
-
     QString const nameWithTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + "_screenshot.png";
     QImage const frame = ctxVideo.m_manager->GetFrameData();
-    frame.save(path + nameWithTime);
+    frame.save(SCREENSHOT_PATH + nameWithTime);
     // TODO: log
 }
 
