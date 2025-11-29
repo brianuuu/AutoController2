@@ -78,7 +78,8 @@ private:
     QPushButton* m_btnScreenshot = Q_NULLPTR;
 
     // Members
-    bool m_started = false;
+    bool    m_started = false;
+    QTimer  m_startVerifyTimer;
 };
 
 #endif // VLCMANAGER_H

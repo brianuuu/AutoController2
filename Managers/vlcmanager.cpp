@@ -66,6 +66,7 @@ VlcManager::VlcManager
     // connections
     connect(m_btnCameraStart, &QPushButton::clicked, this, &VlcManager::OnCameraClicked);
     connect(m_btnScreenshot, &QPushButton::clicked, this, &VlcManager::OnScreenshot);
+    connect(&m_startVerifyTimer, &QTimer::timeout, this, &VlcManager::OnCameraStartTimeout);
 
     // Setup layout
     this->setWindowTitle("Media View");
@@ -127,7 +128,7 @@ void VlcManager::OnCameraStartTimeout()
     case libvlc_Opening:
     {
         // still opening, wait
-        QTimer::singleShot(3000, this, &VlcManager::OnCameraStartTimeout);
+        m_startVerifyTimer.start(3000);
         break;
     }
     default:
@@ -223,6 +224,7 @@ void VlcManager::Start()
     else
     {
         m_started = true;
+        m_startVerifyTimer.start(3000);
 
         m_btnCameraStart->setText("Starting...");
         m_btnCameraStart->setEnabled(false);
@@ -231,7 +233,6 @@ void VlcManager::Start()
         ctxAudio.m_manager->Start();
 
         libvlc_video_set_adjust_int(m_mediaPlayer, libvlc_video_adjust_option_t::libvlc_adjust_Enable, true);
-        QTimer::singleShot(3000, this, &VlcManager::OnCameraStartTimeout);
 
         this->show();
     }
@@ -240,6 +241,8 @@ void VlcManager::Start()
 void VlcManager::Stop()
 {
     m_started = false;
+    m_startVerifyTimer.stop();
+
     libvlc_media_player_stop(m_mediaPlayer);
 
     m_btnCameraStart->setText("Start Camera");
