@@ -9,6 +9,7 @@
 #include <QMetaEnum>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QMutex>
 #include <QPainter>
 #include <QPushButton>
 #include <QVideoSink>
@@ -35,7 +36,7 @@ public:
     void Stop();
 
     void PushFrameData(unsigned char const* data);
-    QImage GetFrameData() const;
+    QImage GetFrameData();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -64,8 +65,8 @@ private:
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
 
     // Frame data
-    std::atomic<bool>   m_useBackBuffer = false;
-    QImage              m_frame[2];
+    QMutex              m_mutex;
+    QImage              m_frame;
     bool                m_hasData = false;
 };
 

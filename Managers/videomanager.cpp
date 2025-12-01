@@ -42,10 +42,8 @@ void VideoManager::Start()
     m_btnCameraRefresh->setEnabled(false);
 
     QSize const resolution = GetResolution();
-    m_frame[0] = QImage(resolution, QImage::Format_ARGB32);
-    m_frame[1] = QImage(resolution, QImage::Format_ARGB32);
-    m_frame[0].fill(Qt::black);
-    m_frame[1].fill(Qt::black);
+    m_frame = QImage(resolution, QImage::Format_ARGB32);
+    m_frame.fill(Qt::black);
     this->update();
 }
 
@@ -60,24 +58,23 @@ void VideoManager::PushFrameData(const unsigned char *data)
 {
     // this is called from LibVLC thread, not thread safe
     QSize const resolution = GetResolution();
-    QImage& freeFrame = m_useBackBuffer.load() ? m_frame[0] : m_frame[1];
-    freeFrame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
+
+    QMutexLocker locker(&m_mutex);
+    m_frame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
 
     emit notifyDraw();
 }
 
-QImage VideoManager::GetFrameData() const
+QImage VideoManager::GetFrameData()
 {
-    return m_useBackBuffer.load() ? m_frame[1] : m_frame[0];
+    QMutexLocker locker(&m_mutex);
+    return m_frame.copy();
 }
 
 void VideoManager::paintEvent(QPaintEvent *event)
 {
-    // swap buffer
-    m_useBackBuffer.store(!m_useBackBuffer.load());
-
     QPainter painter(this);
-    painter.drawImage(this->rect(), m_useBackBuffer.load() ? m_frame[1] : m_frame[0]);
+    painter.drawImage(this->rect(), GetFrameData());
 }
 
 int VideoManager::heightForWidth(int width) const
