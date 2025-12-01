@@ -11,7 +11,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    m_logManager = new LogManager();
+    m_logManager = new LogManager(
+        ui->PB_OutputWindow
+    );
 
     m_serialManager = new SerialManager(
         m_logManager,

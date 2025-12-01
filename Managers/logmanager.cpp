@@ -4,6 +4,7 @@
 
 LogManager::LogManager
 (
+    QPushButton* btnOpen,
     QWidget *parent
 )
     : QWidget(parent)
@@ -12,6 +13,12 @@ LogManager::LogManager
     {
         QDir().mkdir(LOG_PATH);
     }
+
+    connect(btnOpen, &QPushButton::clicked, this, [this]
+    {
+        this->show();
+        this->raise();
+    });
 
     // Setup layout
     this->setWindowTitle("Output Log");
@@ -24,10 +31,12 @@ LogManager::LogManager
 
     m_btnClear = new QPushButton("Clear Log");
     vBoxLayout->addWidget(m_btnClear);
-    connect(m_btnClear, &QPushButton::clicked, m_browser, [this]{ ClearLog(); });
+    connect(m_btnClear, &QPushButton::clicked, this, [this]
+    {
+        ClearLog();
+    });
 
     ClearLog();
-    this->show();
 }
 
 bool LogManager::OnCloseEvent()

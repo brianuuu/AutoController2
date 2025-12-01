@@ -14,13 +14,18 @@ class LogManager : public QWidget
 {
     Q_OBJECT
 public:
-    LogManager(QWidget* parent = nullptr);
+    LogManager
+    (
+        QPushButton* btnOpen,
+        QWidget* parent = nullptr
+    );
 
     bool OnCloseEvent();
 
     void SetCurrentLogFile(QString const& file);
     void SetClearLogEnabled(bool enable);
 
+public slots:
     void PrintLog(QString const& category, QString const& log, LogType type = LOG_Normal);
     void ClearLog();
 
