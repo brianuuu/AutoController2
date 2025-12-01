@@ -169,10 +169,12 @@ void VlcManager::OnCameraStartTimeout()
 void VlcManager::OnScreenshot()
 {
     QString const nameWithTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + "_screenshot.png";
-    QImage const frame = ctxVideo.m_manager->GetFrameData();
-    frame.save(SCREENSHOT_PATH + nameWithTime);
 
-    m_logManager->PrintLog("System", QDir(SCREENSHOT_PATH).absolutePath() + nameWithTime);
+    auto future = QtConcurrent::run([this, nameWithTime]{
+        ctxVideo.m_manager->GetFrameData().save(SCREENSHOT_PATH + nameWithTime);
+    });
+
+    m_logManager->PrintLog("System", "Screenshot saved: " + QDir(SCREENSHOT_PATH).absolutePath() + nameWithTime);
 }
 
 void VlcManager::Start()

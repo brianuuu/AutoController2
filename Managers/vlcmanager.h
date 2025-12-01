@@ -3,6 +3,7 @@
 
 #include <vlc/vlc.h>
 
+#include <QtConcurrent>
 #include <QComboBox>
 #include <QDateTime>
 #include <QDir>
