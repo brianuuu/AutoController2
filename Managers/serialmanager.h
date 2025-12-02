@@ -9,6 +9,7 @@
 #include <QSerialPortInfo>
 #include <QTimer>
 
+#include "../ui_mainwindow.h"
 #include "logmanager.h"
 
 class SerialManager : public QWidget
@@ -16,14 +17,9 @@ class SerialManager : public QWidget
     Q_OBJECT
 
 public:
-    SerialManager
-    (
-        LogManager* logManager,
-        QComboBox* list,
-        QPushButton* btnRefresh,
-        QPushButton* btnConnect,
-        QWidget* parent = nullptr
-    );
+    SerialManager(QWidget* parent = nullptr);
+    static QString GetTypeID() { return "Serial"; }
+    void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
 

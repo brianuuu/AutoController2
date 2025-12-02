@@ -8,17 +8,16 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "../ui_mainwindow.h"
 #include "Enums/system.h"
 
 class LogManager : public QWidget
 {
     Q_OBJECT
 public:
-    LogManager
-    (
-        QPushButton* btnOpen,
-        QWidget* parent = nullptr
-    );
+    LogManager(QWidget* parent = nullptr) {}
+    static QString GetTypeID() { return "Log"; }
+    void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
 

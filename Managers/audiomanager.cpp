@@ -1,19 +1,12 @@
 #include "audiomanager.h"
 
-AudioManager::AudioManager
-(
-    QComboBox* listInput,
-    QComboBox* listOutput,
-    QComboBox* listDisplay,
-    QSlider* volumeSlider,
-    QWidget* parent
-)
-    : QWidget(parent)
-    , m_listInput(listInput)
-    , m_listOutput(listOutput)
-    , m_listDisplay(listDisplay)
-    , m_volumeSlider(volumeSlider)
+void AudioManager::Initialize(Ui::MainWindow *ui)
 {
+    m_listInput = ui->CB_AudioInput;
+    m_listOutput = ui->CB_AudioOutput;
+    m_listDisplay = ui->CB_AudioDisplay;
+    m_volumeSlider = ui->HS_Volume;
+
     // Set up global audio format
     m_audioFormat.setSampleRate(48000);
     m_audioFormat.setChannelCount(2);

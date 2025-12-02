@@ -11,19 +11,16 @@
 #include <QSlider>
 #include <QWidget>
 
+#include "../ui_mainwindow.h"
+
 class AudioManager : public QWidget
 {
     Q_OBJECT
 
 public:
-    AudioManager
-    (
-        QComboBox* listInput,
-        QComboBox* listOutput,
-        QComboBox* listDisplay,
-        QSlider* volumeSlider,
-        QWidget* parent = nullptr
-    );
+    AudioManager(QWidget* parent = nullptr) : QWidget(parent) {}
+    static QString GetTypeID() { return "Audio"; }
+    void Initialize(Ui::MainWindow* ui);
 
     QAudioFormat const GetAudioFormat() const { return m_audioFormat; }
     QString GetDeviceName() const;

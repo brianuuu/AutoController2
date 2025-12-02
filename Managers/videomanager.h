@@ -14,19 +14,16 @@
 #include <QPushButton>
 #include <QVideoSink>
 
+#include "../ui_mainwindow.h"
+
 class VideoManager : public QWidget
 {
     Q_OBJECT
 
 public:
-    VideoManager
-    (
-        QComboBox* listCamera,
-        QComboBox* listResolution,
-        QPushButton* btnCameraRefresh,
-        QPushButton* btnCameraStart,
-        QWidget* parent = nullptr
-    );
+    VideoManager(QWidget* parent = nullptr) : QWidget(parent) {}
+    static QString GetTypeID() { return "Video"; }
+    void Initialize(Ui::MainWindow* ui);
 
     QString GetDeviceName() const;
     QSize GetResolution() const;

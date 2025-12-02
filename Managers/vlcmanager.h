@@ -14,6 +14,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "../ui_mainwindow.h"
 #include "logmanager.h"
 #include "audiomanager.h"
 #include "videomanager.h"
@@ -35,21 +36,10 @@ class VlcManager : public QWidget
 {
     Q_OBJECT
 public:
-    VlcManager
-    (
-        LogManager* logManager,
-        QComboBox* listCamera,
-        QComboBox* listResolution,
-        QComboBox* listAudioInput,
-        QComboBox* listAudioOutput,
-        QComboBox* listAudioDisplay,
-        QSlider* volumeSlider,
-        QPushButton* btnCameraRefresh,
-        QPushButton* btnCameraStart,
-        QPushButton* btnScreenshot,
-        QWidget *parent = nullptr
-    );
+    VlcManager(QWidget* parent = nullptr) {};
     ~VlcManager();
+    static QString GetTypeID() { return "VLC"; }
+    void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
 

@@ -1,5 +1,7 @@
 #include "vlcmanager.h"
 
+#include "managercollection.h"
+
 #define SCREENSHOT_PATH "../Screenshots/"
 
 static void* cbVideoLock(void *opaque, void **planes)
@@ -31,25 +33,12 @@ static void cbAudioPlay(void* p_audio_data, const void *samples, unsigned int co
     ctx->m_manager->PushAudioData(samples, count, pts);
 }
 
-VlcManager::VlcManager
-(
-    LogManager* logManager,
-    QComboBox *listCamera,
-    QComboBox *listResolution,
-    QComboBox *listAudioInput,
-    QComboBox *listAudioOutput,
-    QComboBox *listAudioDisplay,
-    QSlider *volumeSlider,
-    QPushButton *btnCameraRefresh,
-    QPushButton *btnCameraStart,
-    QPushButton* btnScreenshot,
-    QWidget *parent
-)
-    : QWidget(parent)
-    , m_logManager(logManager)
-    , m_btnCameraStart(btnCameraStart)
-    , m_btnScreenshot(btnScreenshot)
+void VlcManager::Initialize(Ui::MainWindow *ui)
 {
+    m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_btnCameraStart = ui->PB_CameraStart;
+    m_btnScreenshot = ui->PB_Screenshot;
+
     if (!QDir(SCREENSHOT_PATH).exists())
     {
         QDir().mkdir(SCREENSHOT_PATH);
@@ -65,12 +54,14 @@ VlcManager::VlcManager
     // Video
     int constexpr MAX_WIDTH = 3840;
     int constexpr MAX_HEIGHT = 2160;
-    ctxVideo.m_manager = new VideoManager(listCamera, listResolution, btnCameraRefresh, btnCameraStart, this);
+    ctxVideo.m_manager = ManagerCollection::AddManager<VideoManager>(this);
+    ctxVideo.m_manager->Initialize(ui);
     ctxVideo.m_pixels = new uchar[MAX_WIDTH * MAX_HEIGHT * 4];
     memset(ctxVideo.m_pixels, 0, MAX_WIDTH * MAX_HEIGHT * 4);
 
     // Audio
-    ctxAudio.m_manager = new AudioManager(listAudioInput, listAudioOutput, listAudioDisplay, volumeSlider, this);
+    ctxAudio.m_manager = ManagerCollection::AddManager<AudioManager>(this);
+    ctxAudio.m_manager->Initialize(ui);
 
     // connections
     connect(m_btnCameraStart, &QPushButton::clicked, this, &VlcManager::OnCameraClicked);

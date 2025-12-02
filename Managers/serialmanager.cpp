@@ -1,23 +1,20 @@
 #include "serialmanager.h"
 
+#include "managercollection.h"
 #include "defines.h"
 #include "Enums/system.h"
 
-SerialManager::SerialManager
-(
-    LogManager* logManager,
-    QComboBox *list,
-    QPushButton *btnRefresh,
-    QPushButton *btnConnect,
-    QWidget* parent
-)
-    : QWidget(parent)
-    , m_logManager(logManager)
-    , m_list(list)
-    , m_btnRefresh(btnRefresh)
-    , m_btnConnect(btnConnect)
+SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 {
     connect(this, &SerialManager::notifyClose, parent, &QWidget::close);
+}
+
+void SerialManager::Initialize(Ui::MainWindow *ui)
+{
+    m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_list = ui->CB_SerialPort;
+    m_btnRefresh = ui->PB_SerialRefresh;
+    m_btnConnect = ui->PB_SerialConnect;
 
     connect(m_btnRefresh, &QPushButton::clicked, this, &SerialManager::OnRefreshList);
     connect(m_btnConnect, &QPushButton::clicked, this, &SerialManager::OnConnectClicked);

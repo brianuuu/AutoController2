@@ -5,36 +5,21 @@
 #include <QCameraDevice>
 #include <QAudioDevice>
 
+#include "Managers/managercollection.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    m_logManager = new LogManager(
-        ui->PB_OutputWindow
-    );
+    m_logManager = ManagerCollection::AddManager<LogManager>();
+    m_serialManager = ManagerCollection::AddManager<SerialManager>(this);
+    m_vlcManager = ManagerCollection::AddManager<VlcManager>();
 
-    m_serialManager = new SerialManager(
-        m_logManager,
-        ui->CB_SerialPort,
-        ui->PB_SerialRefresh,
-        ui->PB_SerialConnect,
-        this
-    );
-
-    m_vlcManager = new VlcManager(
-        m_logManager,
-        ui->CB_CameraDevice,
-        ui->CB_Resolution,
-        ui->CB_AudioInput,
-        ui->CB_AudioOutput,
-        ui->CB_AudioDisplay,
-        ui->HS_Volume,
-        ui->PB_CameraRefresh,
-        ui->PB_CameraStart,
-        ui->PB_Screenshot
-    );
+    m_logManager->Initialize(ui);
+    m_serialManager->Initialize(ui);
+    m_vlcManager->Initialize(ui);
 
     m_logManager->PrintLog("System", "Initialization completed");
 }

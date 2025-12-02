@@ -2,20 +2,13 @@
 
 #include "Helpers/mediadiscoverer.h"
 
-VideoManager::VideoManager
-(
-    QComboBox* listCamera,
-    QComboBox* listResolution,
-    QPushButton* btnCameraRefresh,
-    QPushButton* btnCameraStart,
-    QWidget* parent
-)
-    : QWidget(parent)
-    , m_listCamera(listCamera)
-    , m_listResolution(listResolution)
-    , m_btnCameraRefresh(btnCameraRefresh)
-    , m_btnCameraStart(btnCameraStart)
+void VideoManager::Initialize(Ui::MainWindow *ui)
 {
+    m_listCamera = ui->CB_CameraDevice;
+    m_listResolution = ui->CB_Resolution;
+    m_btnCameraRefresh = ui->PB_CameraRefresh;
+    m_btnCameraStart = ui->PB_CameraStart;
+
     connect(m_btnCameraRefresh, &QPushButton::clicked, this, &VideoManager::OnRefreshList);
     connect(this, &VideoManager::notifyDraw, this, &VideoManager::OnDraw);
 

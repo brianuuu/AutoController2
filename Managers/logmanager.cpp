@@ -2,19 +2,14 @@
 
 #define LOG_PATH "../Logs/"
 
-LogManager::LogManager
-(
-    QPushButton* btnOpen,
-    QWidget *parent
-)
-    : QWidget(parent)
+void LogManager::Initialize(Ui::MainWindow *ui)
 {
     if (!QDir(LOG_PATH).exists())
     {
         QDir().mkdir(LOG_PATH);
     }
 
-    connect(btnOpen, &QPushButton::clicked, this, [this]
+    connect(ui->PB_OutputWindow, &QPushButton::clicked, this, [this]
     {
         this->show();
         this->raise();
