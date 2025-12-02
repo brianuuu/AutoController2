@@ -45,7 +45,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/vlcmanager.h Managers/vlcmanager.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
         Managers/logmanager.h Managers/logmanager.cpp
-
+        Managers/managercollection.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -66,12 +66,12 @@ else()
 endif()
 
 target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(AutoController2 PRIVATE Qt6::SerialPort)
 target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
 target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
-target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 #copy files and folders
 add_custom_command(
