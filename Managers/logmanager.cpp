@@ -1,4 +1,5 @@
 #include "logmanager.h"
+#include "Helpers/jsonhelper.h"
 
 #define LOG_PATH "../Logs/"
 
@@ -32,12 +33,52 @@ void LogManager::Initialize(Ui::MainWindow *ui)
     });
 
     ClearLog();
+    LoadSettings();
+}
+
+LogManager::~LogManager()
+{
+    SaveSettings();
 }
 
 bool LogManager::OnCloseEvent()
 {
     this->hide();
     return true;
+}
+
+void LogManager::LoadSettings()
+{
+    QJsonObject settings = JsonHelper::ReadSetting("LogWindow");
+    {
+        QJsonObject windowSize = JsonHelper::ReadObject(settings, "WindowSize");
+
+        QVariant x, y;
+        if (JsonHelper::ReadValue(windowSize, "X", x) && JsonHelper::ReadValue(windowSize, "Y", y))
+        {
+            this->move(x.toInt(), y.toInt());
+        }
+
+        QVariant width, height;
+        if (JsonHelper::ReadValue(windowSize, "Width", width) && JsonHelper::ReadValue(windowSize, "Height", height))
+        {
+            this->resize(width.toInt(), height.toInt());
+        }
+    }
+}
+
+void LogManager::SaveSettings() const
+{
+    QJsonObject windowSize;
+    windowSize.insert("Width", this->width());
+    windowSize.insert("Height", this->height());
+    windowSize.insert("X", this->pos().x());
+    windowSize.insert("Y", this->pos().y());
+
+    QJsonObject settings;
+    settings.insert("WindowSize", windowSize);
+
+    JsonHelper::WriteSetting("LogWindow", settings);
 }
 
 void LogManager::SetCurrentLogFile(const QString &file)

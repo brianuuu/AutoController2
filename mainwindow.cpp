@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    SaveSettings();
+
     delete m_vlcManager;
     delete m_logManager;
     delete ui;
@@ -54,7 +56,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 
-    SaveSettings();
     QMainWindow::closeEvent(event);
 }
 
