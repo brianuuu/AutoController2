@@ -23,6 +23,9 @@ public:
 
     void closeEvent(QCloseEvent *event) override;
 
+    void LoadSettings();
+    void SaveSettings() const;
+
 private:
     Ui::MainWindow *ui;
 

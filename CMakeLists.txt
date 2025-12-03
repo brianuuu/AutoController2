@@ -46,6 +46,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
         Managers/logmanager.h Managers/logmanager.cpp
         Managers/managercollection.h
+        Helpers/jsonhelper.h Helpers/jsonhelper.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
