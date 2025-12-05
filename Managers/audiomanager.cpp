@@ -14,7 +14,6 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
     m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int16);
 
-    connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
     connect(m_volumeSlider, &QSlider::valueChanged, this, &AudioManager::OnVolumeChanged);
     connect(&m_devices, &QMediaDevices::audioInputsChanged, this, &AudioManager::OnRefreshInputList);
@@ -122,8 +121,9 @@ void AudioManager::OnRefreshInputList()
     QString const previousInput = m_listInput->currentText();
 
     m_listInput->clear();
+    m_listInput->addItem("None");
 
-    bool foundPreviousInput = false;
+    bool foundPreviousInput = previousInput == "None";
     for (const QAudioDevice &device : QMediaDevices::audioInputs())
     {
         m_listInput->addItem(device.description());
@@ -161,18 +161,6 @@ void AudioManager::OnRefreshOutputList()
     if (foundPreviousOutput)
     {
         m_listInput->setCurrentText(previousOutput);
-    }
-}
-
-void AudioManager::OnInputChanged(QString const& str)
-{
-    for (const QAudioDevice &device : QMediaDevices::audioInputs())
-    {
-        if (device.description() == str)
-        {
-            m_audioInput.setDevice(device);
-            return;
-        }
     }
 }
 

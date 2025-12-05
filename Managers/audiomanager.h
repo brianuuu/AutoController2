@@ -47,7 +47,6 @@ private slots:
     // UI
     void OnRefreshInputList();
     void OnRefreshOutputList();
-    void OnInputChanged(QString const& str);
     void OnOutputChanged(QString const& str);
     void OnVolumeChanged(int value);
 
@@ -60,7 +59,6 @@ private:
 
     QMediaDevices   m_devices;
     QAudioFormat    m_audioFormat;
-    QAudioInput     m_audioInput;
     QAudioOutput    m_audioOutput;
 
     QMutex          m_mutex;
