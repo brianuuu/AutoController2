@@ -20,7 +20,7 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
-    void OnInitShow();
+    bool OnInitShow();
 
     void SetCurrentLogFile(QString const& file);
     void SetClearLogEnabled(bool enable);

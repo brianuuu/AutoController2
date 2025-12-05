@@ -48,12 +48,15 @@ bool LogManager::OnCloseEvent()
     return true;
 }
 
-void LogManager::OnInitShow()
+bool LogManager::OnInitShow()
 {
     if (m_defaultShow && this->isHidden())
     {
         OnShow();
+        return true;
     }
+
+    return false;
 }
 
 void LogManager::LoadSettings()
@@ -143,5 +146,9 @@ void LogManager::OnShow()
 {
     m_defaultShow = true;
     this->show();
-    this->raise();
+    if (this->isMinimized())
+    {
+        this->showNormal();
+    }
+    this->activateWindow();
 }

@@ -61,7 +61,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     // a bit of a hack to make log window appear after main window
-    m_logManager->OnInitShow();
+    if (m_logManager->OnInitShow())
+    {
+        // steal focus back
+        this->activateWindow();
+    }
 
     QMainWindow::paintEvent(event);
 }
