@@ -16,7 +16,6 @@ class LogManager : public QWidget
     Q_OBJECT
 public:
     LogManager(QWidget* parent = nullptr) {}
-    ~LogManager();
     static QString GetTypeID() { return "Log"; }
     void Initialize(Ui::MainWindow* ui);
 

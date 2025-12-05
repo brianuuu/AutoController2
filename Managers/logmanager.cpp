@@ -36,18 +36,15 @@ void LogManager::closeEvent(QCloseEvent *event)
 {
     // triggers when user closes this window
     m_defaultShow = false;
-    QWidget::closeEvent(event);
-}
-
-LogManager::~LogManager()
-{
     SaveSettings();
+    QWidget::closeEvent(event);
 }
 
 bool LogManager::OnCloseEvent()
 {
     // triggers when main window closes, don't change m_defaultShow
     this->hide();
+    SaveSettings();
     return true;
 }
 
