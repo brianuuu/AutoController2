@@ -20,7 +20,9 @@ public:
     static QString GetTypeID() { return "Log"; }
     void Initialize(Ui::MainWindow* ui);
 
+    void closeEvent(QCloseEvent *event) override;
     bool OnCloseEvent();
+    void OnInitShow();
 
     void LoadSettings();
     void SaveSettings() const;
@@ -32,12 +34,15 @@ public slots:
     void PrintLog(QString const& category, QString const& log, LogType type = LOG_Normal);
     void ClearLog();
 
+    void OnShow();
+
 private:
     // UI
     QTextBrowser*   m_browser = Q_NULLPTR;
     QPushButton*    m_btnClear = Q_NULLPTR;
 
     // Members
+    bool        m_defaultShow = false;
     int         m_logCount = 0;
     QString     m_logFile;
 };

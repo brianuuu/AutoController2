@@ -22,6 +22,7 @@ public:
     ~MainWindow();
 
     void closeEvent(QCloseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
     void LoadSettings();
     void SaveSettings() const;

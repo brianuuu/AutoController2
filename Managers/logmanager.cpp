@@ -10,11 +10,7 @@ void LogManager::Initialize(Ui::MainWindow *ui)
         QDir().mkdir(LOG_PATH);
     }
 
-    connect(ui->PB_OutputWindow, &QPushButton::clicked, this, [this]
-    {
-        this->show();
-        this->raise();
-    });
+    connect(ui->PB_OutputWindow, &QPushButton::clicked, this, &LogManager::OnShow);
 
     // Setup layout
     this->setWindowTitle("Output Log");
@@ -36,6 +32,13 @@ void LogManager::Initialize(Ui::MainWindow *ui)
     LoadSettings();
 }
 
+void LogManager::closeEvent(QCloseEvent *event)
+{
+    // triggers when user closes this window
+    m_defaultShow = false;
+    QWidget::closeEvent(event);
+}
+
 LogManager::~LogManager()
 {
     SaveSettings();
@@ -43,8 +46,17 @@ LogManager::~LogManager()
 
 bool LogManager::OnCloseEvent()
 {
+    // triggers when main window closes, don't change m_defaultShow
     this->hide();
     return true;
+}
+
+void LogManager::OnInitShow()
+{
+    if (m_defaultShow && this->isHidden())
+    {
+        OnShow();
+    }
 }
 
 void LogManager::LoadSettings()
@@ -65,6 +77,13 @@ void LogManager::LoadSettings()
             this->resize(width.toInt(), height.toInt());
         }
     }
+    {
+        QVariant defaultShow;
+        if (JsonHelper::ReadValue(settings, "DefaultShow", defaultShow))
+        {
+            m_defaultShow = defaultShow.toBool();
+        }
+    }
 }
 
 void LogManager::SaveSettings() const
@@ -77,6 +96,7 @@ void LogManager::SaveSettings() const
 
     QJsonObject settings;
     settings.insert("WindowSize", windowSize);
+    settings.insert("DefaultShow", m_defaultShow);
 
     JsonHelper::WriteSetting("LogWindow", settings);
 }
@@ -120,4 +140,11 @@ void LogManager::ClearLog()
 {
     m_logCount = 0;
     m_browser->clear();
+}
+
+void LogManager::OnShow()
+{
+    m_defaultShow = true;
+    this->show();
+    this->raise();
 }

@@ -59,6 +59,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    // a bit of a hack to make log window appear after main window
+    m_logManager->OnInitShow();
+
+    QMainWindow::paintEvent(event);
+}
+
 void MainWindow::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("MainWindow");
