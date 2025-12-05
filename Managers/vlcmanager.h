@@ -43,6 +43,9 @@ public:
 
     bool OnCloseEvent();
 
+    void LoadSettings();
+    void SaveSettings() const;
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 

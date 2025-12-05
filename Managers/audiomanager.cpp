@@ -1,4 +1,5 @@
 #include "audiomanager.h"
+#include "Helpers/jsonhelper.h"
 
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
@@ -73,6 +74,47 @@ void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_
         }
         m_mutex.unlock();
     }
+}
+
+void AudioManager::LoadSettings()
+{
+    QJsonObject settings = JsonHelper::ReadSetting("AudioSettings");
+    {
+        QVariant inputName;
+        if (JsonHelper::ReadValue(settings, "InputName", inputName) && !inputName.toString().isEmpty())
+        {
+            m_listInput->setCurrentText(inputName.toString());
+        }
+
+        QVariant outputName;
+        if (JsonHelper::ReadValue(settings, "OutputName", outputName) && !outputName.toString().isEmpty())
+        {
+            m_listOutput->setCurrentText(outputName.toString());
+        }
+
+        QVariant displayType;
+        if (JsonHelper::ReadValue(settings, "DisplayType", displayType) && !displayType.toString().isEmpty())
+        {
+            m_listDisplay->setCurrentText(displayType.toString());
+        }
+
+        QVariant volume;
+        if (JsonHelper::ReadValue(settings, "Volume", volume))
+        {
+            m_volumeSlider->setValue(volume.toInt());
+        }
+    }
+}
+
+void AudioManager::SaveSettings() const
+{
+    QJsonObject settings;
+    settings.insert("InputName", m_listInput->currentText());
+    settings.insert("OutputName", m_listOutput->currentText());
+    settings.insert("DisplayType", m_listDisplay->currentText());
+    settings.insert("Volume", m_volumeSlider->value());
+
+    JsonHelper::WriteSetting("AudioSettings", settings);
 }
 
 void AudioManager::OnRefreshInputList()

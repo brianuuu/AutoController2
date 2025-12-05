@@ -35,6 +35,9 @@ public:
     void PushFrameData(unsigned char const* data);
     QImage GetFrameData();
 
+    void LoadSettings();
+    void SaveSettings() const;
+
 protected:
     void paintEvent(QPaintEvent* event) override;
 
@@ -47,7 +50,7 @@ signals:
 private slots:
     // UI
     void OnRefreshList();
-    void OnDiscovereFinish(QStringList const& list);
+    void OnDiscoverFinish(QStringList const& list);
     void OnDraw();
 
 private:
@@ -60,6 +63,7 @@ private:
     QComboBox*      m_listResolution = Q_NULLPTR;
     QPushButton*    m_btnCameraRefresh = Q_NULLPTR;
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
+    QString         m_defaultCamera;
 
     // Frame data
     QMutex              m_mutex;

@@ -30,6 +30,9 @@ public:
 
     void PushAudioData(const void *samples, unsigned int count, int64_t pts);
 
+    void LoadSettings();
+    void SaveSettings() const;
+
 private: // types
     enum class AudioDisplayType
     {

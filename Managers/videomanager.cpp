@@ -1,5 +1,6 @@
 #include "videomanager.h"
 
+#include "Helpers/jsonhelper.h"
 #include "Helpers/mediadiscoverer.h"
 
 void VideoManager::Initialize(Ui::MainWindow *ui)
@@ -64,6 +65,34 @@ QImage VideoManager::GetFrameData()
     return m_frame.copy();
 }
 
+void VideoManager::LoadSettings()
+{
+    QJsonObject settings = JsonHelper::ReadSetting("VideoSettings");
+    {
+        QVariant cameraName;
+        if (JsonHelper::ReadValue(settings, "CameraName", cameraName))
+        {
+            // cannot set until MediaDiscoverer finished
+            m_defaultCamera = cameraName.toString();
+        }
+
+        QVariant resolution;
+        if (JsonHelper::ReadValue(settings, "Resolution", resolution) && !resolution.toString().isEmpty())
+        {
+            m_listResolution->setCurrentText(resolution.toString());
+        }
+    }
+}
+
+void VideoManager::SaveSettings() const
+{
+    QJsonObject settings;
+    settings.insert("CameraName", m_listCamera->currentText());
+    settings.insert("Resolution", m_listResolution->currentText());
+
+    JsonHelper::WriteSetting("VideoSettings", settings);
+}
+
 void VideoManager::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
@@ -78,15 +107,16 @@ int VideoManager::heightForWidth(int width) const
 void VideoManager::OnRefreshList()
 {
     MediaDiscoverer* discoverer = new MediaDiscoverer(false, this);
-    connect(discoverer, &MediaDiscoverer::finished, this, &VideoManager::OnDiscovereFinish);
+    connect(discoverer, &MediaDiscoverer::finished, this, &VideoManager::OnDiscoverFinish);
     connect(discoverer, &MediaDiscoverer::finished, discoverer, &MediaDiscoverer::deleteLater);
     discoverer->start();
 }
 
-void VideoManager::OnDiscovereFinish(const QStringList &list)
+void VideoManager::OnDiscoverFinish(const QStringList &list)
 {
     bool foundPreviousCamera = false;
-    QString const previousCamera = m_listCamera->currentText();
+    QString const previousCamera = m_defaultCamera.isEmpty() ? m_listCamera->currentText() : m_defaultCamera;
+    m_defaultCamera.clear();
 
     m_listCamera->clear();
     for (QString const& str : list)

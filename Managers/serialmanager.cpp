@@ -3,6 +3,7 @@
 #include "managercollection.h"
 #include "defines.h"
 #include "Enums/system.h"
+#include "Helpers/jsonhelper.h"
 
 SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 {
@@ -25,6 +26,7 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
     connect(&m_commandTimer, &QTimer::timeout, this, [this]{ OnSendCurrentCommand(); } );
 
     OnRefreshList();
+    LoadSettings();
 }
 
 bool SerialManager::OnCloseEvent()
@@ -37,7 +39,28 @@ bool SerialManager::OnCloseEvent()
         return false;
     }
 
+    SaveSettings();
     return true;
+}
+
+void SerialManager::LoadSettings()
+{
+    QJsonObject settings = JsonHelper::ReadSetting("SerialSettings");
+    {
+        QVariant portName;
+        if (JsonHelper::ReadValue(settings, "PortName", portName) && !portName.toString().isEmpty())
+        {
+            m_list->setCurrentText(portName.toString());
+        }
+    }
+}
+
+void SerialManager::SaveSettings() const
+{
+    QJsonObject settings;
+    settings.insert("PortName", m_list->currentText());
+
+    JsonHelper::WriteSetting("SerialSettings", settings);
 }
 
 bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)

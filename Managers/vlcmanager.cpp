@@ -76,6 +76,8 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     vBoxLayout->addWidget(ctxVideo.m_manager);
     vBoxLayout->addItem(new QSpacerItem(20, 440, QSizePolicy::Minimum, QSizePolicy::Expanding));
     vBoxLayout->setContentsMargins(0,0,0,0);
+
+    LoadSettings();
 }
 
 VlcManager::~VlcManager()
@@ -93,7 +95,20 @@ bool VlcManager::OnCloseEvent()
         Stop();
     }
 
+    SaveSettings();
     return true;
+}
+
+void VlcManager::LoadSettings()
+{
+    ctxVideo.m_manager->LoadSettings();
+    ctxAudio.m_manager->LoadSettings();
+}
+
+void VlcManager::SaveSettings() const
+{
+    ctxVideo.m_manager->SaveSettings();
+    ctxAudio.m_manager->SaveSettings();
 }
 
 void VlcManager::closeEvent(QCloseEvent *event)
