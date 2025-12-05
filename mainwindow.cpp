@@ -15,10 +15,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     m_logManager = ManagerCollection::AddManager<LogManager>();
+    m_keyboardManager = ManagerCollection::AddManager<KeyboardManager>();
     m_serialManager = ManagerCollection::AddManager<SerialManager>(this);
     m_vlcManager = ManagerCollection::AddManager<VlcManager>();
 
     m_logManager->Initialize(ui);
+    m_keyboardManager->Initialize(ui);
     m_serialManager->Initialize(ui);
     m_vlcManager->Initialize(ui);
 
@@ -30,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete m_vlcManager;
+    delete m_keyboardManager;
     delete m_logManager;
     delete ui;
 }
@@ -48,6 +51,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 
+    if (!m_keyboardManager->OnCloseEvent())
+    {
+        event->ignore();
+        return;
+    }
+
     if (!m_logManager->OnCloseEvent())
     {
         event->ignore();
@@ -60,8 +69,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    // a bit of a hack to make log window appear after main window
-    if (m_logManager->OnInitShow())
+    // a bit of a hack to make window appear after main window
+    if (m_logManager->OnInitShow() || m_keyboardManager->OnInitShow())
     {
         // steal focus back
         this->activateWindow();
