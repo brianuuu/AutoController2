@@ -57,6 +57,7 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     m_instance = libvlc_new(sizeof(vlc_args) / sizeof(vlc_args[0]), vlc_args);
     m_mediaPlayer = libvlc_media_player_new(m_instance);
 
+    // Event callbacks
     libvlc_event_manager_t* em = libvlc_media_player_event_manager(m_mediaPlayer);
     if (em)
     {

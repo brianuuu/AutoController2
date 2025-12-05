@@ -23,9 +23,6 @@ public:
 
     bool OnCloseEvent();
 
-    void LoadSettings();
-    void SaveSettings() const;
-
     // command
     bool VerifyCommand(QString const& command, QString& errorMsg);
     bool SendCommand(QString const& command);
@@ -60,6 +57,9 @@ private slots:
     void OnSendCurrentCommand(bool isLoopCount = false);
 
 private:
+    void LoadSettings();
+    void SaveSettings() const;
+
     // serial
     void Connect(QString const& port);
     void Disconnect();

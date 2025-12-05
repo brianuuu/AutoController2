@@ -43,9 +43,6 @@ public:
 
     bool OnCloseEvent();
 
-    void LoadSettings();
-    void SaveSettings() const;
-
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -59,6 +56,9 @@ private slots:
     void OnScreenshot();
 
 private:
+    void LoadSettings();
+    void SaveSettings() const;
+
     void Start();
     void Stop();
 
@@ -67,11 +67,10 @@ private:
     libvlc_instance_t*      m_instance = nullptr;
     libvlc_media_player_t*  m_mediaPlayer = nullptr;
     libvlc_media_t*         m_media = nullptr;
-    libvlc_state_t          m_state = libvlc_NothingSpecial;
 
     // Custon video/audio context
-    struct contextVideo ctxVideo;
-    struct contextAudio ctxAudio;
+    contextVideo ctxVideo;
+    contextAudio ctxAudio;
 
     // UI
     LogManager*     m_logManager = Q_NULLPTR;

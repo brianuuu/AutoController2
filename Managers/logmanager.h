@@ -19,21 +19,24 @@ public:
     static QString GetTypeID() { return "Log"; }
     void Initialize(Ui::MainWindow* ui);
 
-    void closeEvent(QCloseEvent *event) override;
     bool OnCloseEvent();
     void OnInitShow();
 
-    void LoadSettings();
-    void SaveSettings() const;
-
     void SetCurrentLogFile(QString const& file);
     void SetClearLogEnabled(bool enable);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 public slots:
     void PrintLog(QString const& category, QString const& log, LogType type = LOG_Normal);
     void ClearLog();
 
     void OnShow();
+
+private:
+    void LoadSettings();
+    void SaveSettings() const;
 
 private:
     // UI
