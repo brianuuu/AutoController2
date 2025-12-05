@@ -33,6 +33,12 @@ static void cbAudioPlay(void* p_audio_data, const void *samples, unsigned int co
     ctx->m_manager->PushAudioData(samples, count, pts);
 }
 
+static void eventCallbacks(const libvlc_event_t* event, void* ptr)
+{
+    VlcManager* parent = (VlcManager*)ptr;
+    emit parent->notifyStateChanged();
+}
+
 void VlcManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
@@ -51,6 +57,13 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     m_instance = libvlc_new(sizeof(vlc_args) / sizeof(vlc_args[0]), vlc_args);
     m_mediaPlayer = libvlc_media_player_new(m_instance);
 
+    libvlc_event_manager_t* em = libvlc_media_player_event_manager(m_mediaPlayer);
+    if (em)
+    {
+        libvlc_event_attach(em, libvlc_MediaPlayerPlaying, eventCallbacks, this);
+        libvlc_event_attach(em, libvlc_MediaPlayerEncounteredError, eventCallbacks, this);
+    }
+
     // Video
     int constexpr MAX_WIDTH = 3840;
     int constexpr MAX_HEIGHT = 2160;
@@ -67,6 +80,8 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnCameraStart, &QPushButton::clicked, this, &VlcManager::OnCameraClicked);
     connect(m_btnScreenshot, &QPushButton::clicked, this, &VlcManager::OnScreenshot);
     connect(&m_startVerifyTimer, &QTimer::timeout, this, &VlcManager::OnCameraStartTimeout);
+    connect(ctxVideo.m_manager, &VideoManager::notifyDraw, this, &VlcManager::OnCameraStartTimeout);
+    connect(this, &VlcManager::notifyStateChanged, this, &VlcManager::OnEventCallback);
 
     // Setup layout
     this->setWindowTitle("Media View");
@@ -135,29 +150,50 @@ void VlcManager::OnCameraClicked()
 
 void VlcManager::OnCameraStartTimeout()
 {
+    if (!m_started || m_startVerified) return;
+
+    if (m_startVerifyTimer.isActive())
+    {
+        // got camera data before timeout
+        m_startVerified = true;
+        m_startVerifyTimer.stop();
+
+        m_btnCameraStart->setText("Stop Camera");
+        m_btnCameraStart->setEnabled(true);
+        m_btnScreenshot->setEnabled(true);
+
+        m_logManager->PrintLog("System", "Camera ON", LOG_Success);
+    }
+    else
+    {
+        // no feedback detected
+        m_logManager->PrintLog("System", "No video feedback detected", LOG_Error);
+        QMessageBox::critical(this, "Error",
+            "No video feedback detected!\n"
+            "1. Chroma may not be supported for current resolution\n"
+            "2. Resolution not matching source (required for OBS Virtual Camera etc.)",
+            QMessageBox::Ok
+        );
+        Stop();
+    }
+}
+
+void VlcManager::OnEventCallback()
+{
     if (!m_started) return;
 
     libvlc_state_t state = libvlc_media_player_get_state(m_mediaPlayer);
     switch (state)
     {
-    case libvlc_Opening:
+    case libvlc_Playing:
     {
-        // still opening, wait
-        m_startVerifyTimer.start(3000);
+        // give some time to check if there are any video/audio feedback
+        m_startVerifyTimer.setSingleShot(true);
+        m_startVerifyTimer.start(2000);
         break;
     }
     default:
     {
-        if (state == libvlc_Playing && ctxVideo.m_manager->HasFrameData())
-        {
-            // success
-            m_btnCameraStart->setText("Stop Camera");
-            m_btnCameraStart->setEnabled(true);
-            m_btnScreenshot->setEnabled(true);
-            m_logManager->PrintLog("System", "Camera ON confirmed", LOG_Success);
-            break;
-        }
-
         // state not expected
         m_logManager->PrintLog("System", "Failed to start camera", LOG_Error);
         QMessageBox::critical(this, "Error",
@@ -239,8 +275,7 @@ void VlcManager::Start()
     else
     {
         m_started = true;
-        m_startVerifyTimer.setSingleShot(true);
-        m_startVerifyTimer.start(3000);
+        m_startVerified = false;
 
         m_btnCameraStart->setText("Starting...");
         m_btnCameraStart->setEnabled(false);

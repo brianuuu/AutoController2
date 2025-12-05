@@ -27,7 +27,6 @@ public:
 
     QString GetDeviceName() const;
     QSize GetResolution() const;
-    bool HasFrameData() const { return m_hasData; }
 
     void Start();
     void Stop();
@@ -68,7 +67,6 @@ private:
     // Frame data
     QMutex              m_mutex;
     QImage              m_frame;
-    bool                m_hasData = false;
 };
 
 #endif // VIDEOMANAGER_H

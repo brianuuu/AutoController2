@@ -49,9 +49,13 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
 
+signals:
+    void notifyStateChanged();
+
 private slots:
     void OnCameraClicked();
     void OnCameraStartTimeout();
+    void OnEventCallback();
     void OnScreenshot();
 
 private:
@@ -76,6 +80,7 @@ private:
 
     // Members
     bool    m_started = false;
+    bool    m_startVerified = false;
     QTimer  m_startVerifyTimer;
 };
 
