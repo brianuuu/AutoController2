@@ -59,6 +59,17 @@ bool LogManager::OnInitShow()
     return false;
 }
 
+void LogManager::OnShow()
+{
+    m_defaultShow = true;
+    this->show();
+    if (this->isMinimized())
+    {
+        this->showNormal();
+    }
+    this->activateWindow();
+}
+
 void LogManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("LogWindow");
@@ -140,15 +151,4 @@ void LogManager::ClearLog()
 {
     m_logCount = 0;
     m_browser->clear();
-}
-
-void LogManager::OnShow()
-{
-    m_defaultShow = true;
-    this->show();
-    if (this->isMinimized())
-    {
-        this->showNormal();
-    }
-    this->activateWindow();
 }
