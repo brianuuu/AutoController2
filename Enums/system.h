@@ -6,34 +6,34 @@
 
 enum ButtonType
 {
-    BTN_None    = 0,
-    BTN_A       = 1UL << 0,
-    BTN_B       = 1UL << 1,
-    BTN_X       = 1UL << 2,
-    BTN_Y       = 1UL << 3,
-    BTN_L       = 1UL << 4,
-    BTN_R       = 1UL << 5,
-    BTN_ZL      = 1UL << 6,
-    BTN_ZR      = 1UL << 7,
-    BTN_Plus    = 1UL << 8,
-    BTN_Minus   = 1UL << 9,
-    BTN_Home    = 1UL << 10,
-    BTN_Capture = 1UL << 11,
-    BTN_LClick  = 1UL << 12,
-    BTN_LUp     = 1UL << 13,
-    BTN_LDown   = 1UL << 14,
-    BTN_LLeft   = 1UL << 15,
-    BTN_LRight  = 1UL << 16,
-    BTN_RClick  = 1UL << 17,
-    BTN_RUp     = 1UL << 18,
-    BTN_RDown   = 1UL << 19,
-    BTN_RLeft   = 1UL << 20,
-    BTN_RRight  = 1UL << 21,
-    BTN_DUp     = 1UL << 22,
-    BTN_DDown   = 1UL << 23,
-    BTN_DLeft   = 1UL << 24,
-    BTN_DRight  = 1UL << 25,
-    BTN_Spam    = 1UL << 26, // does not apply to analog sticks
+    BTN_None,
+    BTN_A,
+    BTN_B,
+    BTN_X,
+    BTN_Y,
+    BTN_L,
+    BTN_R,
+    BTN_ZL,
+    BTN_ZR,
+    BTN_Plus,
+    BTN_Minus,
+    BTN_Home,
+    BTN_Capture,
+    BTN_LClick,
+    BTN_LUp,
+    BTN_LDown,
+    BTN_LLeft,
+    BTN_LRight,
+    BTN_RClick,
+    BTN_RUp,
+    BTN_RDown,
+    BTN_RLeft,
+    BTN_RRight,
+    BTN_DUp,
+    BTN_DDown,
+    BTN_DLeft,
+    BTN_DRight,
+    BTN_Spam, // does not apply to analog sticks
 
     BTN_COUNT = 28
 };
@@ -84,7 +84,7 @@ static ButtonType StringToButton(QString const& str)
 
     for (int i = 0; i < BTN_COUNT; i++)
     {
-        ButtonType type = (ButtonType)(1UL << i);
+        ButtonType type = (ButtonType)i;
         if (lower == ButtonToString(type))
         {
             return type;
