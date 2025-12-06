@@ -36,7 +36,7 @@ class VlcManager : public QWidget
 {
     Q_OBJECT
 public:
-    VlcManager(QWidget* parent = nullptr) {};
+    explicit VlcManager(QWidget* parent = nullptr) {};
     ~VlcManager();
     static QString GetTypeID() { return "VLC"; }
     void Initialize(Ui::MainWindow* ui);

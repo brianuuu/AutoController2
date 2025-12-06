@@ -21,7 +21,7 @@ class VideoManager : public QWidget
     Q_OBJECT
 
 public:
-    VideoManager(QWidget* parent = nullptr) : QWidget(parent) {}
+    explicit VideoManager(QWidget* parent = nullptr) : QWidget(parent) {}
     static QString GetTypeID() { return "Video"; }
     void Initialize(Ui::MainWindow* ui);
 

@@ -18,7 +18,7 @@ class AudioManager : public QWidget
     Q_OBJECT
 
 public:
-    AudioManager(QWidget* parent = nullptr) : QWidget(parent) {}
+    explicit AudioManager(QWidget* parent = nullptr) : QWidget(parent) {}
     static QString GetTypeID() { return "Audio"; }
     void Initialize(Ui::MainWindow* ui);
 

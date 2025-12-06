@@ -17,7 +17,7 @@ class SerialManager : public QWidget
     Q_OBJECT
 
 public:
-    SerialManager(QWidget* parent = nullptr);
+    explicit SerialManager(QWidget* parent = nullptr);
     static QString GetTypeID() { return "Serial"; }
     void Initialize(Ui::MainWindow* ui);
 

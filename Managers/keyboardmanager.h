@@ -16,7 +16,7 @@ class KeyboardManager : public QWidget
     Q_OBJECT
 
 public:
-    KeyboardManager(QWidget* parent = nullptr) {}
+    explicit KeyboardManager(QWidget* parent = nullptr) {}
     static QString GetTypeID() { return "Keyboard"; }
     void Initialize(Ui::MainWindow* ui);
 
