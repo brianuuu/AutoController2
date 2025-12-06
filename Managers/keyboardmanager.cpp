@@ -14,15 +14,32 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     image->setPixmap(QPixmap("../Resources/UI/Mapping.png"));
     image->resize(668,504);
 
+    QPushButton* btnReset = new QPushButton(this);
+    btnReset->move(278,286);
+    btnReset->setFixedSize(120,28);
+    btnReset->setText("Reset All to Default");
+    connect(btnReset, &QPushButton::clicked, this, &KeyboardManager::OnResetDefault);
+
+    m_labelReset = new QLabel(this);
+    m_labelReset->move(247,310);
+    m_labelReset->setFixedSize(182,52);
+    m_labelReset->setText("Press any key to map:\n");
+    m_labelReset->setStyleSheet("color: red; font-size: 18px");
+    m_labelReset->setAlignment(Qt::AlignCenter);
+    m_labelReset->hide();
+
     for (int i = 1; i < BTN_COUNT - 1; i++)
     {
         m_btnButton[i] = new QPushButton(this);
         m_btnButton[i]->setFixedSize(70,28);
         m_btnButton[i]->setText("A");
+        m_btnButton[i]->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
 
         QFont font = m_btnButton[i]->font();
         font.setPointSize(12);
         m_btnButton[i]->setFont(font);
+
+        connect(m_btnButton[i], &QPushButton::clicked, this, &KeyboardManager::OnButtonClicked);
     }
 
     for (int i = 1; i < BTN_COUNT - 1; i++)
@@ -161,6 +178,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RRight]->setText("R-Stick");
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
+    OnResetDefault();
     LoadSettings();
 }
 
@@ -202,9 +220,130 @@ void KeyboardManager::OnShow()
     this->activateWindow();
 }
 
+void KeyboardManager::OnResetDefault()
+{
+    m_typeToKeyMap.clear();
+
+    m_typeToKeyMap[BTN_A] = Qt::Key_Z;
+    m_typeToKeyMap[BTN_B] = Qt::Key_X;
+    m_typeToKeyMap[BTN_X] = Qt::Key_C;
+    m_typeToKeyMap[BTN_Y] = Qt::Key_V;
+
+    m_typeToKeyMap[BTN_L] = Qt::Key_U;
+    m_typeToKeyMap[BTN_R] = Qt::Key_O;
+    m_typeToKeyMap[BTN_ZL] = Qt::Key_Y;
+    m_typeToKeyMap[BTN_ZR] = Qt::Key_P;
+
+    m_typeToKeyMap[BTN_Plus] = Qt::Key_Equal;
+    m_typeToKeyMap[BTN_Minus] = Qt::Key_Minus;
+    m_typeToKeyMap[BTN_Home] = Qt::Key_Return;
+    m_typeToKeyMap[BTN_Capture] = Qt::Key_Backspace;
+
+    m_typeToKeyMap[BTN_LClick] = Qt::Key_Q;
+    m_typeToKeyMap[BTN_LUp] = Qt::Key_I;
+    m_typeToKeyMap[BTN_LDown] = Qt::Key_K;
+    m_typeToKeyMap[BTN_LLeft] = Qt::Key_J;
+    m_typeToKeyMap[BTN_LRight] = Qt::Key_L;
+
+    m_typeToKeyMap[BTN_RClick] = Qt::Key_E;
+    m_typeToKeyMap[BTN_RUp] = Qt::Key_W;
+    m_typeToKeyMap[BTN_RDown] = Qt::Key_S;
+    m_typeToKeyMap[BTN_RLeft] = Qt::Key_A;
+    m_typeToKeyMap[BTN_RRight] = Qt::Key_D;
+
+    m_typeToKeyMap[BTN_DUp] = Qt::Key_Up;
+    m_typeToKeyMap[BTN_DDown] = Qt::Key_Down;
+    m_typeToKeyMap[BTN_DLeft] = Qt::Key_Left;
+    m_typeToKeyMap[BTN_DRight] = Qt::Key_Right;
+
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        ButtonType const type = (ButtonType)i;
+        int const key = m_typeToKeyMap[type];
+        m_keyToTypeMap[key] = type;
+        SetButtonText(type);
+    }
+
+    OnButtonClicked();
+}
+
+void KeyboardManager::OnButtonClicked()
+{
+    QPushButton* button = qobject_cast<QPushButton*>(sender());
+
+    bool found = false;
+    ButtonType type = BTN_None;
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        if (m_btnButton[i] == button)
+        {
+            found = true;
+            type = (ButtonType)i;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        button = m_btnRemap;
+        if (!button) return;
+    }
+
+    if (m_btnRemap == button)
+    {
+        // Cancel/Finish
+        m_btnRemap->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+        m_btnRemap = Q_NULLPTR;
+    }
+    else
+    {
+        // Previous button
+        if (m_btnRemap != Q_NULLPTR)
+        {
+            m_btnRemap->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+        }
+
+        // Start mapping
+        m_btnRemap = button;
+        m_btnRemap->setStyleSheet("background-color: rgb(255,220,0); font-size: 18px;");
+    }
+
+    m_labelReset->setVisible(m_btnRemap != Q_NULLPTR);
+    m_labelReset->setText("Press any key to map:\n" + ButtonToFullString(type));
+}
+
+void KeyboardManager::SetButtonText(ButtonType type)
+{
+    QPushButton* button = m_btnButton[type];
+    int const key = m_typeToKeyMap[type];
+    QString keyString = QKeySequence(key).toString();
+    if (key == Qt::Key_Alt)
+    {
+        keyString = "Alt";
+    }
+    else if (key == Qt::Key_Shift)
+    {
+        keyString = "Shift";
+    }
+    else if (key == Qt::Key_Backspace)
+    {
+        keyString = "BSpace";
+    }
+    else if (key == 16777249) // Ctrl
+    {
+        keyString = "Ctrl";
+    }
+
+    button->setText(keyString);
+}
+
 void KeyboardManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("KeyboardSettings");
+    {
+        QJsonObject buttonMapping = JsonHelper::ReadObject(settings, "ButtonMapping");
+        // TODO:
+    }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(settings, "WindowSize");
 
@@ -225,11 +364,19 @@ void KeyboardManager::LoadSettings()
 
 void KeyboardManager::SaveSettings() const
 {
+    QJsonObject buttonMapping;
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        ButtonType const type = (ButtonType)i;
+        buttonMapping.insert(ButtonToString(type), m_typeToKeyMap[type]);
+    }
+
     QJsonObject windowSize;
     windowSize.insert("X", this->pos().x());
     windowSize.insert("Y", this->pos().y());
 
     QJsonObject settings;
+    settings.insert("ButtonMapping", buttonMapping);
     settings.insert("WindowSize", windowSize);
     settings.insert("DefaultShow", m_defaultShow);
 

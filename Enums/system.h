@@ -74,6 +74,42 @@ static QString ButtonToString(ButtonType button)
     }
 }
 
+static QString ButtonToFullString(ButtonType button)
+{
+    switch (button)
+    {
+    case BTN_None:      return "None";
+    case BTN_A:         return "A Button";
+    case BTN_B:         return "B Button";
+    case BTN_X:         return "X Button";
+    case BTN_Y:         return "Y Button";
+    case BTN_L:         return "L Button";
+    case BTN_R:         return "R Button";
+    case BTN_ZL:        return "ZL Button";
+    case BTN_ZR:        return "ZR Button";
+    case BTN_Plus:      return "Plus Button";
+    case BTN_Minus:     return "Minus Button";
+    case BTN_Home:      return "Home Button";
+    case BTN_Capture:   return "Capture Button";
+    case BTN_LClick:    return "L-Stick Click";
+    case BTN_LUp:       return "L-Stick Up";
+    case BTN_LDown:     return "L-Stick Down";
+    case BTN_LLeft:     return "L-Stick Left";
+    case BTN_LRight:    return "L-Stick Right";
+    case BTN_RClick:    return "R-Stick Click";
+    case BTN_RUp:       return "R-Stick Up";
+    case BTN_RDown:     return "R-Stick Down";
+    case BTN_RLeft:     return "R-Stick Left";
+    case BTN_RRight:    return "R-Stick Right";
+    case BTN_DUp:       return "D-Pad Up";
+    case BTN_DDown:     return "D-Pad Down";
+    case BTN_DLeft:     return "D-Pad Left";
+    case BTN_DRight:    return "D-Pad Right";
+    case BTN_Spam:      return "Spam";
+    default:            return "Invalid";
+    }
+}
+
 static ButtonType StringToButton(QString const& str)
 {
     QString const lower = str.toLower();

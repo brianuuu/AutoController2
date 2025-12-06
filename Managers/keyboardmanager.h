@@ -25,16 +25,25 @@ protected:
 
 public slots:
     void OnShow();
+    void OnResetDefault();
+    void OnButtonClicked();
 
 private:
+    void SetButtonText(ButtonType type);
+
     void LoadSettings();
     void SaveSettings() const;
 
 private:
     // Members
     bool            m_defaultShow = false;
+    QPushButton*    m_btnRemap = Q_NULLPTR;
     QPushButton*    m_btnButton[BTN_COUNT - 1]; // skip spam
     QLabel*         m_labelButton[BTN_COUNT - 1];
+    QLabel*         m_labelReset = Q_NULLPTR;
+
+    QMap<ButtonType, int> m_typeToKeyMap;
+    QMap<int, ButtonType> m_keyToTypeMap;
 };
 
 #endif // KEYBOARDMANAGER_H
