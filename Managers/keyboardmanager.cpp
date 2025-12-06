@@ -1,12 +1,17 @@
 #include "keyboardmanager.h"
 #include "Helpers/jsonhelper.h"
+#include "managercollection.h"
 
 void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {
+    m_serialManager = ManagerCollection::GetManager<SerialManager>();
+    m_vlcManager = ManagerCollection::GetManager<VlcManager>();
+
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
 
     // Setup layout
-    qApp->installEventFilter(this);
+    m_vlcManager->installEventFilter(this);
+    this->installEventFilter(this);
     this->setWindowTitle("Keyboard Controls");
     this->setFixedSize(668,504);
 
@@ -16,6 +21,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     image->resize(668,504);
 
     QPushButton* btnReset = new QPushButton(this);
+    btnReset->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     btnReset->move(278,286);
     btnReset->setFixedSize(120,28);
     btnReset->setText("Reset All to Default");
@@ -32,9 +38,10 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     for (int i = 1; i < BTN_COUNT - 1; i++)
     {
         m_btnButton[i] = new QPushButton(this);
+        m_btnButton[i]->setFocusPolicy(Qt::FocusPolicy::NoFocus);
         m_btnButton[i]->setFixedSize(70,28);
         m_btnButton[i]->setText("A");
-        m_btnButton[i]->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+        ButtonReleased(m_btnButton[i]);
 
         QFont font = m_btnButton[i]->font();
         font.setPointSize(12);
@@ -193,13 +200,27 @@ void KeyboardManager::closeEvent(QCloseEvent *event)
 
 bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::ActivationChange && m_btnRemap && !this->isActiveWindow())
+    QWidget* widget = qobject_cast<QWidget*>(watched);
+    if (event->type() == QEvent::ActivationChange)
     {
-        // cancel remap
-        OnButtonClicked();
+        if (widget->isActiveWindow())
+        {
+            // TODO: set active text
+        }
+        else
+        {
+            if (m_btnRemap)
+            {
+                // cancel remap
+                OnButtonClicked();
+            }
+
+            // if any buttons were pressed, clear
+            ClearButtonFlags();
+        }
     }
 
-    if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+    if ((event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) && widget->isActiveWindow())
     {
         QKeyEvent* e = static_cast<QKeyEvent*>(event);
         if (e->isAutoRepeat())
@@ -213,17 +234,19 @@ bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
             return false;
         }
 
-        if (event->type() == QEvent::KeyPress && m_btnRemap && this->isActiveWindow())
+        if (event->type() == QEvent::KeyPress && m_btnRemap)
         {
             // Remapping key
             UpdateButtonMap(m_btnRemap, key);
             OnButtonClicked();
         }
-
-        return true;
+        else
+        {
+            UpdateButtonFlags(key, event->type() == QEvent::KeyPress);
+        }
     }
 
-    return QWidget::eventFilter(watched, event);
+    return false;
 }
 
 bool KeyboardManager::OnCloseEvent()
@@ -301,6 +324,7 @@ void KeyboardManager::OnResetDefault()
     }
 
     // cancel remap
+    ClearButtonFlags();
     OnButtonClicked();
 }
 
@@ -330,7 +354,7 @@ void KeyboardManager::OnButtonClicked()
     if (m_btnRemap == button)
     {
         // Cancel/Finish
-        m_btnRemap->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+        ButtonReleased(m_btnRemap);
         m_btnRemap = Q_NULLPTR;
     }
     else
@@ -338,12 +362,12 @@ void KeyboardManager::OnButtonClicked()
         // Previous button
         if (m_btnRemap != Q_NULLPTR)
         {
-            m_btnRemap->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+            ButtonReleased(m_btnRemap);
         }
 
         // Start mapping
         m_btnRemap = button;
-        m_btnRemap->setStyleSheet("background-color: rgb(255,220,0); font-size: 18px;");
+        ButtonRemap(m_btnRemap);
     }
 
     m_labelReset->setVisible(m_btnRemap != Q_NULLPTR);
@@ -416,6 +440,77 @@ void KeyboardManager::UpdateButtonMap(QPushButton *button, int key)
     }
 
     SetButtonText(type);
+}
+
+void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
+{
+    if (!m_keyToTypeMap.contains(key))
+    {
+        return;
+    }
+
+    // Highlight button
+    ButtonType const type = m_keyToTypeMap[key];
+    QPushButton* button = m_btnButton[type];
+    if (pressed)
+    {
+        ButtonPressed(button);
+    }
+    else
+    {
+        ButtonReleased(button);
+    }
+
+    // Set flag
+    quint32 const buttonFlagPrev = m_buttonFlag;
+    if (pressed)
+    {
+        m_buttonFlag |= ButtonToFlag(type);
+    }
+    else
+    {
+        m_buttonFlag &= ~ButtonToFlag(type);
+    }
+
+    // No change
+    if (m_buttonFlag == buttonFlagPrev)
+    {
+        return;
+    }
+
+    if (true) // TODO: active bool
+    {
+        m_serialManager->SendButton(m_buttonFlag);
+    }
+}
+
+void KeyboardManager::ClearButtonFlags()
+{
+    m_buttonFlag = 0;
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        ButtonReleased(m_btnButton[i]);
+    }
+
+    if (true) // TODO: active bool
+    {
+        m_serialManager->SendButton(m_buttonFlag);
+    }
+}
+
+void KeyboardManager::ButtonRemap(QPushButton *button)
+{
+    button->setStyleSheet("background-color: rgb(255,220,0); font-size: 18px;");
+}
+
+void KeyboardManager::ButtonPressed(QPushButton *button)
+{
+    button->setStyleSheet("background-color: rgb(255,80,80); font-size: 18px;");
+}
+
+void KeyboardManager::ButtonReleased(QPushButton *button)
+{
+    button->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
 }
 
 void KeyboardManager::LoadSettings()

@@ -361,7 +361,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         }
         else
         {
-            buttonFlag |= 1UL << StringToButton(button);
+            buttonFlag |= StringToButtonFlag(button);
         }
     }
 

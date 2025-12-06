@@ -74,6 +74,12 @@ static QString ButtonToString(ButtonType button)
     }
 }
 
+static quint32 ButtonToFlag(ButtonType button)
+{
+    if (button == BTN_None) return 0;
+    return 1UL << (button - 1);
+}
+
 static QString ButtonToFullString(ButtonType button)
 {
     switch (button)
@@ -127,7 +133,12 @@ static ButtonType StringToButton(QString const& str)
         }
     }
 
-    return BTN_COUNT;
+    return BTN_None;
+}
+
+static quint32 StringToButtonFlag(QString const& str)
+{
+    return ButtonToFlag(StringToButton(str));
 }
 
 enum LogType
