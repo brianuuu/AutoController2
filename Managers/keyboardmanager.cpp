@@ -6,6 +6,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
 
     // Setup layout
+    qApp->installEventFilter(this);
     this->setWindowTitle("Keyboard Controls");
     this->setFixedSize(668,504);
 
@@ -190,6 +191,41 @@ void KeyboardManager::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
+bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::ActivationChange && m_btnRemap && !this->isActiveWindow())
+    {
+        // cancel remap
+        OnButtonClicked();
+    }
+
+    if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+    {
+        QKeyEvent* e = static_cast<QKeyEvent*>(event);
+        if (e->isAutoRepeat())
+        {
+            return false;
+        }
+
+        int const key = e->key();
+        if (key == Qt::Key_Meta) // Windows key
+        {
+            return false;
+        }
+
+        if (event->type() == QEvent::KeyPress && m_btnRemap && this->isActiveWindow())
+        {
+            // Remapping key
+            UpdateButtonMap(m_btnRemap, key);
+            OnButtonClicked();
+        }
+
+        return true;
+    }
+
+    return QWidget::eventFilter(watched, event);
+}
+
 bool KeyboardManager::OnCloseEvent()
 {
     // triggers when main window closes, don't change m_defaultShow
@@ -264,12 +300,14 @@ void KeyboardManager::OnResetDefault()
         SetButtonText(type);
     }
 
+    // cancel remap
     OnButtonClicked();
 }
 
 void KeyboardManager::OnButtonClicked()
 {
-    QPushButton* button = qobject_cast<QPushButton*>(sender());
+    QObject* object = sender();
+    QPushButton* button = object ? qobject_cast<QPushButton*>(sender()) : m_btnRemap;
 
     bool found = false;
     ButtonType type = BTN_None;
@@ -329,7 +367,7 @@ void KeyboardManager::SetButtonText(ButtonType type)
     {
         keyString = "BSpace";
     }
-    else if (key == 16777249) // Ctrl
+    else if (key == Qt::Key_Control)
     {
         keyString = "Ctrl";
     }
@@ -337,12 +375,64 @@ void KeyboardManager::SetButtonText(ButtonType type)
     button->setText(keyString);
 }
 
+void KeyboardManager::UpdateButtonMap(QPushButton *button, int key)
+{
+    bool found = false;
+    ButtonType type = BTN_None;
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        if (m_btnButton[i] == button)
+        {
+            found = true;
+            type = (ButtonType)i;
+            break;
+        }
+    }
+
+    if (!found) return;
+
+    // Remove previous key
+    if (m_typeToKeyMap.contains(type))
+    {
+        int const keyPrev = m_typeToKeyMap[type];
+        m_keyToTypeMap.remove(keyPrev);
+        m_typeToKeyMap.remove(type);
+    }
+
+    // Duplicated key
+    if (m_keyToTypeMap.contains(key))
+    {
+        ButtonType const t = m_keyToTypeMap[key];
+        m_btnButton[t]->setText("");
+        m_typeToKeyMap.remove(t);
+        m_keyToTypeMap.remove(key);
+    }
+
+    // Set current key mapping if key is valid
+    if (key != 0)
+    {
+        m_typeToKeyMap[type] = key;
+        m_keyToTypeMap[key] = type;
+    }
+
+    SetButtonText(type);
+}
+
 void KeyboardManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("KeyboardSettings");
     {
         QJsonObject buttonMapping = JsonHelper::ReadObject(settings, "ButtonMapping");
-        // TODO:
+
+        QVariant key;
+        for (int i = 1; i < BTN_COUNT - 1; i++)
+        {
+            ButtonType const type = (ButtonType)i;
+            if (JsonHelper::ReadValue(buttonMapping, ButtonToString(type), key))
+            {
+                UpdateButtonMap(m_btnButton[i], key.toInt());
+            }
+        }
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(settings, "WindowSize");

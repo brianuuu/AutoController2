@@ -1,6 +1,7 @@
 #ifndef KEYBOARDMANAGER_H
 #define KEYBOARDMANAGER_H
 
+#include <QKeyEvent>
 #include <QLabel>
 #include <QPushButton>
 #include <QWidget>
@@ -22,6 +23,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 public slots:
     void OnShow();
@@ -30,6 +32,7 @@ public slots:
 
 private:
     void SetButtonText(ButtonType type);
+    void UpdateButtonMap(QPushButton* button, int key);
 
     void LoadSettings();
     void SaveSettings() const;
