@@ -5,6 +5,7 @@
 
 #include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"
+#include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 
@@ -38,5 +39,6 @@ private:
     KeyboardManager*    m_keyboardManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;
+    ProgramManager*     m_programManager = Q_NULLPTR;
 };
 #endif // MAINWINDOW_H

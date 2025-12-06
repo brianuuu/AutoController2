@@ -48,6 +48,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/managercollection.h
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Managers/keyboardmanager.h Managers/keyboardmanager.cpp
+        Managers/programmanager.h Managers/programmanager.cpp
+        Programs/programbase.h Programs/programbase.cpp
+        Programs/System/customcommand.h Programs/System/customcommand.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

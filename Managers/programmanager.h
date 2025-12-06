@@ -1,0 +1,47 @@
+#ifndef PROGRAMMANAGER_H
+#define PROGRAMMANAGER_H
+
+#include <QComboBox>
+#include <QListWidget>
+#include <QObject>
+
+#include "../ui_mainwindow.h"
+#include "Programs/programbase.h"
+
+class ProgramManager : public QObject
+{
+    Q_OBJECT
+
+public:
+    ProgramManager(QObject* parent = nullptr) : QObject(parent) {}
+    static QString GetTypeID() { return "Program"; }
+    void Initialize(Ui::MainWindow* ui);
+
+    bool OnCloseEvent();
+
+private slots:
+    void OnCategoryChanged(QString const& category);
+    void OnProgramChanged(QString const& name);
+
+private:
+    void LoadSettings();
+    void SaveSettings() const;
+
+    template<class T>
+    void RegisterProgram();
+
+private:
+    // UI
+    QComboBox*      m_programCategory = Q_NULLPTR;
+    QListWidget*    m_programList = Q_NULLPTR;
+    QBoxLayout*     m_programSettings = Q_NULLPTR;
+    QMap<QString, QStringList>  m_categoryToPrograms;
+
+    using ProgramCtor = ProgramBase*(*)();
+    QMap<QString, ProgramCtor> m_programCtors;
+
+    // Members
+    ProgramBase*    m_program = Q_NULLPTR;
+};
+
+#endif // PROGRAMMANAGER_H

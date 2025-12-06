@@ -18,11 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_keyboardManager = ManagerCollection::AddManager<KeyboardManager>();
     m_serialManager = ManagerCollection::AddManager<SerialManager>(this);
     m_vlcManager = ManagerCollection::AddManager<VlcManager>();
+    m_programManager = ManagerCollection::AddManager<ProgramManager>(this);
 
     m_logManager->Initialize(ui);
     m_keyboardManager->Initialize(ui);
     m_serialManager->Initialize(ui);
     m_vlcManager->Initialize(ui);
+    m_programManager->Initialize(ui);
 
     LoadSettings();
 

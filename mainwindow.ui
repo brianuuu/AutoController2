@@ -446,7 +446,7 @@
          <widget class="QComboBox" name="CB_ProgramCategory"/>
         </item>
         <item>
-         <widget class="QListView" name="LW_ProgramList">
+         <widget class="QListWidget" name="LW_ProgramList">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -468,6 +468,12 @@
           <property name="frameShape">
            <enum>QFrame::Shape::Box</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="supportedDragActions">
+           <set>Qt::DropAction::IgnoreAction</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -479,27 +485,44 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <widget class="QLabel" name="L_ProgramCurrent">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Current Program</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_12">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Current Program:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="L_ProgramCurrent">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>---</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QLabel" name="L_ProgramDescription">
               <property name="text">
-               <string>---</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -527,7 +550,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Program Settings</string>
+               <string>Program Settings:</string>
               </property>
              </widget>
             </item>
@@ -579,7 +602,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QScrollArea" name="SA_ProgramSetting">
+         <widget class="QScrollArea" name="scrollArea">
           <property name="frameShape">
            <enum>QFrame::Shape::Panel</enum>
           </property>
@@ -589,7 +612,7 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
+          <widget class="QWidget" name="SA_ProgramSetting">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -636,6 +659,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="PB_RestoreDefault">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="font">
              <font>
               <pointsize>14</pointsize>
