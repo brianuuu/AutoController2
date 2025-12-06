@@ -6,6 +6,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
+    m_labelStatus = ui->L_KeyboardStatus;
 
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
 
@@ -203,11 +204,8 @@ bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
     QWidget* widget = qobject_cast<QWidget*>(watched);
     if (event->type() == QEvent::ActivationChange)
     {
-        if (widget->isActiveWindow())
-        {
-            // TODO: set active text
-        }
-        else
+        OnUpdateStatus();
+        if (!widget->isActiveWindow())
         {
             if (m_btnRemap)
             {
@@ -372,6 +370,21 @@ void KeyboardManager::OnButtonClicked()
 
     m_labelReset->setVisible(m_btnRemap != Q_NULLPTR);
     m_labelReset->setText("Press any key to map:\n" + ButtonToFullString(type));
+
+    OnUpdateStatus();
+}
+
+void KeyboardManager::OnUpdateStatus()
+{
+    m_inputActive = m_vlcManager->isActiveWindow() || this->isActiveWindow();
+    m_inputActive &= m_serialManager->IsConnected();
+    m_inputActive &= !m_btnRemap;
+    // TODO: running program
+
+    QPalette palette = m_labelStatus->palette();
+    palette.setColor(QPalette::WindowText, LogTypeToColor(m_inputActive ? LOG_Success : LOG_Error));
+    m_labelStatus->setPalette(palette);
+    m_labelStatus->setText(m_inputActive ? "Active" : "Inactive");
 }
 
 void KeyboardManager::SetButtonText(ButtonType type)
@@ -478,7 +491,7 @@ void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
         return;
     }
 
-    if (true) // TODO: active bool
+    if (m_inputActive)
     {
         m_serialManager->SendButton(m_buttonFlag);
     }
@@ -492,7 +505,7 @@ void KeyboardManager::ClearButtonFlags()
         ButtonReleased(m_btnButton[i]);
     }
 
-    if (true) // TODO: active bool
+    if (m_inputActive)
     {
         m_serialManager->SendButton(m_buttonFlag);
     }

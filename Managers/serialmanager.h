@@ -22,6 +22,7 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
+    bool IsConnected();
 
     // command
     void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
@@ -42,6 +43,7 @@ private: // types
 
 signals:
     void notifyClose();
+    void notifySerialStatus();
 
 private slots:
     // UI

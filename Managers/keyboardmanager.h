@@ -31,6 +31,7 @@ public slots:
     void OnShow();
     void OnResetDefault();
     void OnButtonClicked();
+    void OnUpdateStatus();
 
 private:
     void SetButtonText(ButtonType type);
@@ -53,9 +54,11 @@ private:
     QPushButton*    m_btnButton[BTN_COUNT - 1]; // skip spam
     QLabel*         m_labelButton[BTN_COUNT - 1];
     QLabel*         m_labelReset = Q_NULLPTR;
+    QLabel*         m_labelStatus = Q_NULLPTR;
 
     // Members
     bool                    m_defaultShow = false;
+    bool                    m_inputActive = false;
     quint32                 m_buttonFlag = 0;
     QMap<ButtonType, int>   m_typeToKeyMap;
     QMap<int, ButtonType>   m_keyToTypeMap;

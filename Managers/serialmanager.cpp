@@ -1,6 +1,7 @@
 #include "serialmanager.h"
 
 #include "managercollection.h"
+#include "keyboardmanager.h"
 #include "defines.h"
 #include "Enums/system.h"
 #include "Helpers/jsonhelper.h"
@@ -25,6 +26,9 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
 
     connect(&m_commandTimer, &QTimer::timeout, this, [this]{ OnSendCurrentCommand(); } );
 
+    KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
+    connect(this, &SerialManager::notifySerialStatus, keyboardManager, &KeyboardManager::OnUpdateStatus);
+
     OnRefreshList();
     LoadSettings();
 }
@@ -41,6 +45,11 @@ bool SerialManager::OnCloseEvent()
 
     SaveSettings();
     return true;
+}
+
+bool SerialManager::IsConnected()
+{
+    return m_serialPort.isOpen();
 }
 
 void SerialManager::LoadSettings()
@@ -248,6 +257,7 @@ void SerialManager::OnConnectTimeout()
     {
         m_serialState = SerialState::Connected;
         m_logManager->PrintLog("System", "Serial Connected", LOG_Success);
+        emit notifySerialStatus();
 
         m_list->setEnabled(false);
         m_btnRefresh->setEnabled(false);
@@ -281,6 +291,7 @@ void SerialManager::OnDisconnectTimeout()
     }
 
     m_serialState = SerialState::Disconnected;
+    emit notifySerialStatus();
 
     m_list->setEnabled(true);
     m_btnRefresh->setEnabled(true);
