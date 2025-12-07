@@ -76,7 +76,7 @@ static QString ButtonToString(ButtonType button)
 
 static quint32 ButtonToFlag(ButtonType button)
 {
-    if (button == BTN_None) return 0;
+    if (button == BTN_None || button == BTN_COUNT) return 0;
     return 1UL << (button - 1);
 }
 
@@ -133,7 +133,7 @@ static ButtonType StringToButton(QString const& str)
         }
     }
 
-    return BTN_None;
+    return BTN_COUNT;
 }
 
 static quint32 StringToButtonFlag(QString const& str)

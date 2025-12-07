@@ -69,6 +69,12 @@ void SerialManager::SaveSettings() const
 
 bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
 {
+    if (command.isEmpty())
+    {
+        errorMsg = "Command is empty";
+        return false;
+    }
+
     if (command.count('(') != command.count(')'))
     {
         errorMsg = "Number of '(' is not matching number of ')'";
@@ -156,6 +162,12 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         {
             i = endIndex + 1;
         }
+    }
+
+    if (command.endsWith(',') || command.endsWith('|') || command.endsWith('-') || command.endsWith('.'))
+    {
+        errorMsg = "Ending character not expected";
+        return false;
     }
 
     return true;
