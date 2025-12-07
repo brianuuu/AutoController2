@@ -1,6 +1,8 @@
 #ifndef CUSTOMCOMMAND_H
 #define CUSTOMCOMMAND_H
 
+#include <QRegularExpressionValidator>
+
 #include "../programbase.h"
 
 namespace System
@@ -23,6 +25,7 @@ public:
 
 private:
     QComboBox* m_list = Q_NULLPTR;
+    QLineEdit* m_command = Q_NULLPTR;
 };
 }
 

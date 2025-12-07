@@ -7,6 +7,8 @@
 #include <QObject>
 
 #include "Programs/Settings/settingcombobox.h"
+#include "Programs/Settings/settinglineedit.h"
+#include "Programs/Settings/settingtextedit.h"
 
 class ProgramBase : public QObject
 {
@@ -22,15 +24,18 @@ public:
     virtual QString GetDescription() const = 0;
 
     bool HasSettings() { return !m_settings.empty(); }
-    void ResetDefault();
+    virtual void ResetDefault();
 
 protected:
-    void AddSingleItem
+    void AddSingleItem(QBoxLayout* layout, QWidget* widget);
+    void AddSingleText(QBoxLayout* layout, QString const& str, bool isBold);
+    void AddSingleSetting
     (
         QBoxLayout *layout,
         QString const& name,
         QString const& description,
-        QWidget* setting
+        QWidget* setting,
+        bool isHorizontal
     );
 
     SettingComboBox* AddComboBox
@@ -40,6 +45,22 @@ protected:
         QString const& description,
         QString const& settingName,
         QStringList const& list
+    );
+
+    SettingLineEdit* AddLineEdit
+    (
+        QBoxLayout *layout,
+        QString const& name,
+        QString const& description,
+        QString const& settingName
+    );
+
+    SettingTextEdit* AddTextEdit
+    (
+        QBoxLayout *layout,
+        QString const& name,
+        QString const& description,
+        QString const& settingName
     );
 
 private:

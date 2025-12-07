@@ -33,12 +33,27 @@ void ProgramBase::ResetDefault()
     }
 }
 
-void ProgramBase::AddSingleItem
+void ProgramBase::AddSingleItem(QBoxLayout *layout, QWidget *widget)
+{
+    layout->insertWidget(layout->count() - 1, widget);
+}
+
+void ProgramBase::AddSingleText(QBoxLayout *layout, const QString &str, bool isBold)
+{
+    QLabel* label = new QLabel(str);
+    QFont font = label->font();
+    font.setBold(isBold);
+    label->setFont(font);
+    AddSingleItem(layout, label);
+}
+
+void ProgramBase::AddSingleSetting
 (
     QBoxLayout *layout,
     const QString &name,
     const QString &description,
-    QWidget *setting
+    QWidget *setting,
+    bool isHorizontal
 )
 {
     setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -48,25 +63,40 @@ void ProgramBase::AddSingleItem
 
     QVBoxLayout* vBoxLayout = new QVBoxLayout();
     {
-        QLabel* labelName = new QLabel(name);
-        QFont font = labelName->font();
-        font.setBold(true);
-        labelName->setFont(font);
-        labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        if (!name.isEmpty())
+        {
+            QLabel* labelName = new QLabel(name);
+            QFont font = labelName->font();
+            font.setBold(true);
+            labelName->setFont(font);
+            labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            vBoxLayout->addWidget(labelName);
+        }
 
-        QLabel* labelDescription = new QLabel(description);
-        labelDescription->setWordWrap(true);
+        if (!description.isEmpty())
+        {
+            QLabel* labelDescription = new QLabel(description);
+            labelDescription->setWordWrap(true);
+            vBoxLayout->addWidget(labelDescription);
+        }
 
-        vBoxLayout->addWidget(labelName);
-        vBoxLayout->addWidget(labelDescription);
         vBoxLayout->setContentsMargins(0,0,0,0);
         vBoxLayout->setSpacing(0);
+
+        if (!isHorizontal)
+        {
+            vBoxLayout->addWidget(setting);
+            widget->setLayout(vBoxLayout);
+        }
     }
 
-    QHBoxLayout* hBoxLayout = new QHBoxLayout(widget);
-    hBoxLayout->addLayout(vBoxLayout);
-    hBoxLayout->addWidget(setting);
-    hBoxLayout->setContentsMargins(0,0,0,0);
+    if (isHorizontal)
+    {
+        QHBoxLayout* hBoxLayout = new QHBoxLayout(widget);
+        hBoxLayout->addLayout(vBoxLayout);
+        hBoxLayout->addWidget(setting);
+        hBoxLayout->setContentsMargins(0,0,0,0);
+    }
 }
 
 SettingComboBox *ProgramBase::AddComboBox
@@ -80,6 +110,34 @@ SettingComboBox *ProgramBase::AddComboBox
 {
     SettingComboBox* comboBox = new SettingComboBox(settingName, list);
     m_settings.push_back(comboBox);
-    AddSingleItem(layout, name, description, comboBox);
+    AddSingleSetting(layout, name, description, comboBox, true);
     return comboBox;
+}
+
+SettingLineEdit *ProgramBase::AddLineEdit
+(
+    QBoxLayout *layout,
+    const QString &name,
+    const QString &description,
+    const QString &settingName
+)
+{
+    SettingLineEdit* lineEdit = new SettingLineEdit(settingName);
+    m_settings.push_back(lineEdit);
+    AddSingleSetting(layout, name, description, lineEdit, false);
+    return lineEdit;
+}
+
+SettingTextEdit *ProgramBase::AddTextEdit
+(
+    QBoxLayout *layout,
+    const QString &name,
+    const QString &description,
+    const QString &settingName
+)
+{
+    SettingTextEdit* textEdit = new SettingTextEdit(settingName);
+    m_settings.push_back(textEdit);
+    AddSingleSetting(layout, name, description, textEdit, false);
+    return textEdit;
 }

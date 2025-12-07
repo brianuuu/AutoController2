@@ -8,4 +8,11 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
         "CommandType",
         {} // TODO:
     );
+
+    m_command = AddLineEdit(layout,
+        "Modify Command:",
+        "",
+        "CommandEdit"
+    );
+    m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
 }
