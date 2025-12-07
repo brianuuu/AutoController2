@@ -28,6 +28,7 @@ public:
     void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
     static bool VerifyCommand(QString const& command, QString& errorMsg);
     bool SendCommand(QString const& command);
+    void StopCommand();
     void ClearCommand();
 
 private: // types
@@ -72,6 +73,7 @@ private:
     bool m_aboutToClose = false;
 
     // UI
+    KeyboardManager*m_keyboardManager = Q_NULLPTR;
     LogManager*     m_logManager = Q_NULLPTR;
     QComboBox*      m_list = Q_NULLPTR;
     QPushButton*    m_btnRefresh = Q_NULLPTR;

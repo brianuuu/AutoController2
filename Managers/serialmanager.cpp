@@ -13,6 +13,7 @@ SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 
 void SerialManager::Initialize(Ui::MainWindow *ui)
 {
+    m_keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
     m_logManager = ManagerCollection::GetManager<LogManager>();
 
     m_list = ui->CB_SerialPort;
@@ -27,8 +28,7 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
 
     connect(&m_commandTimer, &QTimer::timeout, this, [this]{ OnSendCurrentCommand(); } );
 
-    KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
-    connect(this, &SerialManager::notifySerialStatus, keyboardManager, &KeyboardManager::OnUpdateStatus);
+    connect(this, &SerialManager::notifySerialStatus, m_keyboardManager, &KeyboardManager::OnUpdateStatus);
 
     OnRefreshList();
     LoadSettings();
@@ -192,6 +192,15 @@ bool SerialManager::SendCommand(const QString &command)
     return true;
 }
 
+void SerialManager::StopCommand()
+{
+    if (m_command.isEmpty()) return;
+
+    m_keyboardManager->DisplayButton(0);
+    SendButton(0);
+    ClearCommand();
+}
+
 void SerialManager::ClearCommand()
 {
     m_command.clear();
@@ -322,8 +331,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
     {
         // finished
-        SendButton(0);
-        ClearCommand();
+        StopCommand();
         emit notifyCommandFinished();
         return;
     }
@@ -436,6 +444,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     else
     {
         //m_logManager->PrintLog("Globel", "Button: \"" + str + "\"");
+        m_keyboardManager->DisplayButton(buttonFlag, lx, ly, rx, ry);
         SendButton(buttonFlag, lx, ly, rx, ry);
         m_commandTimer.start(duration);
     }

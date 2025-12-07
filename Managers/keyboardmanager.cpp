@@ -270,6 +270,27 @@ bool KeyboardManager::OnInitShow()
     return false;
 }
 
+void KeyboardManager::DisplayButton(quint32 buttonFlag, quint8 lx, quint8 ly, quint8 rx, quint8 ry)
+{
+    // called by SerialManager, display what button is currently pressed
+    for (int i = 1; i < BTN_COUNT - 1; i++)
+    {
+        ButtonType const type = (ButtonType)i;
+        quint32 const flag = ButtonToFlag(type);
+        QPushButton* button = m_btnButton[type];
+        if (buttonFlag & flag)
+        {
+            ButtonPressed(button);
+        }
+        else
+        {
+            ButtonReleased(button);
+        }
+    }
+
+    // TODO: stick pos
+}
+
 void KeyboardManager::OnShow()
 {
     m_defaultShow = true;

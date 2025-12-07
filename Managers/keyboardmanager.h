@@ -22,6 +22,8 @@ public:
     bool OnCloseEvent();
     bool OnInitShow();
 
+    void DisplayButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
+
 protected:
     void closeEvent(QCloseEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
