@@ -33,6 +33,7 @@ public:
     void Stop() override;
 
 private slots:
+    void OnListChanged(QString const& str);
     void OnCommandEdit(QString const& command);
     void OnCommandFinished();
 

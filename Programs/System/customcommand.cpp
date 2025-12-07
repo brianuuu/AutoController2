@@ -1,7 +1,12 @@
 #include "customcommand.h"
 
 #include "Enums/system.h"
+#include "Helpers/jsonhelper.h"
 #include "Managers/serialmanager.h"
+
+#define FILE_COMMAND "../Resources/System/CustomCommands.json"
+#define USER_COMMAND "../Resources/System/UserCommands.json"
+#define USER_PREFIX QString("(User) ")
 
 System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
@@ -10,12 +15,24 @@ System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 
 void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
+    QJsonObject object = JsonHelper::ReadJson(FILE_COMMAND);
+    QStringList commandList = object.keys();
+
+    QJsonObject objectUser = JsonHelper::ReadJson(USER_COMMAND);
+    QStringList commandListUser = objectUser.keys();
+    for (QString& command : commandListUser)
+    {
+        command = USER_PREFIX + command;
+    }
+    commandList.append(commandListUser);
+
     m_list = AddComboBox(layout,
         "Command Select:",
         "Select a pre-made command to run",
         "CommandType",
-        {} // TODO:
+        commandList
     );
+    connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
 
     m_command = AddLineEdit(layout,
         "Current Command:",
@@ -29,8 +46,9 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_labelStatus = AddSingleText(layout, "", true);
     layout->itemAt(layout->count() - 3)->widget()->layout()->addWidget(m_labelStatus);
 
-    // set initial error text
-    OnCommandEdit(m_labelStatus->text());
+    // set initial text
+    OnListChanged(m_list->currentText());
+    OnCommandEdit(m_command->text());
 }
 
 bool System::CustomCommand::CanRun() const
@@ -49,6 +67,27 @@ void System::CustomCommand::Start()
 void System::CustomCommand::Stop()
 {
     ProgramBase::Stop();
+}
+
+void System::CustomCommand::OnListChanged(const QString &str)
+{
+    QJsonObject object;
+    QString name = str;
+    if (name.startsWith(USER_PREFIX))
+    {
+        name = name.mid(USER_PREFIX.size());
+        object = JsonHelper::ReadJson(USER_COMMAND);
+    }
+    else
+    {
+        object = JsonHelper::ReadJson(FILE_COMMAND);
+    }
+
+    QVariant command;
+    if (JsonHelper::ReadValue(object, name, command))
+    {
+        m_command->setText(command.toString());
+    }
 }
 
 void System::CustomCommand::OnCommandEdit(const QString &command)
