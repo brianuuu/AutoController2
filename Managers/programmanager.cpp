@@ -1,5 +1,6 @@
 #include "programmanager.h"
 
+#include "Helpers/jsonhelper.h"
 #include "Programs/System/customcommand.h"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
@@ -29,8 +30,8 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 
 bool ProgramManager::OnCloseEvent()
 {
-    RemoveProgram();
     SaveSettings();
+    RemoveProgram();
     return true;
 }
 
@@ -57,12 +58,37 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
 void ProgramManager::LoadSettings()
 {
-
+    QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
+    {
+        QVariant category;
+        if (JsonHelper::ReadValue(settings, "CurrentCategory", category))
+        {
+            m_programCategory->setCurrentText(category.toString());
+        }
+    }
+    {
+        QVariant program;
+        if (JsonHelper::ReadValue(settings, "CurrentProgram", program))
+        {
+            for (int i = 0; i < m_programList->count(); i++)
+            {
+                if (m_programList->item(i)->text() == program.toString())
+                {
+                    m_programList->setCurrentRow(i);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void ProgramManager::SaveSettings() const
 {
+    QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
+    settings.insert("CurrentCategory", m_programCategory->currentText());
+    settings.insert("CurrentProgram", m_programList->currentItem()->text());
 
+    JsonHelper::WriteSetting("ProgramSettings", settings);
 }
 
 template<class T>
