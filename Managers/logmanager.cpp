@@ -43,8 +43,8 @@ void LogManager::closeEvent(QCloseEvent *event)
 bool LogManager::OnCloseEvent()
 {
     // triggers when main window closes, don't change m_defaultShow
-    this->hide();
     SaveSettings();
+    this->hide();
     return true;
 }
 
