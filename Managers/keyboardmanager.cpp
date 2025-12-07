@@ -242,7 +242,7 @@ bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
             UpdateButtonMap(m_btnRemap, key);
             OnButtonClicked();
         }
-        else if (m_programManager->AllowKeyboardInput())
+        else if (m_programManager->AllowKeyboardInput() && !m_btnRemap)
         {
             UpdateButtonFlags(key, event->type() == QEvent::KeyPress);
         }
@@ -370,6 +370,7 @@ void KeyboardManager::OnButtonClicked()
         }
 
         // Start mapping
+        ClearButtonFlags();
         m_btnRemap = button;
         ButtonRemap(m_btnRemap);
     }
@@ -505,6 +506,12 @@ void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
 
 void KeyboardManager::ClearButtonFlags()
 {
+    // make sure all buttons are released
+    if (m_buttonFlag)
+    {
+        m_serialManager->SendButton(0);
+    }
+
     m_buttonFlag = 0;
     for (int i = 1; i < BTN_COUNT - 1; i++)
     {
