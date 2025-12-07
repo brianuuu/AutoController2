@@ -206,7 +206,7 @@ void KeyboardManager::closeEvent(QCloseEvent *event)
 bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
 {
     QWidget* widget = qobject_cast<QWidget*>(watched);
-    if (event->type() == QEvent::ActivationChange)
+    if (event->type() == QEvent::ActivationChange && m_programManager->AllowKeyboardInput())
     {
         OnUpdateStatus();
         if (!widget->isActiveWindow())
