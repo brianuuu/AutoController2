@@ -10,7 +10,7 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
     );
 
     m_command = AddLineEdit(layout,
-        "Modify Command:",
+        "Current Command:",
         "",
         "CommandEdit"
     );
