@@ -64,6 +64,7 @@ void ProgramBase::Start()
 
 void ProgramBase::Stop()
 {
+    m_serialManager->StopCommand();
     m_started = false;
 }
 
