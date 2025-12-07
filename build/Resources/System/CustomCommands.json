@@ -1,2 +1,4 @@
 {
+	"Misc: Turbo A": "(A|Spam|1000)0",
+	"PLZA: Bench Reset": "(LDown|A|Spam|10000)0"
 }
