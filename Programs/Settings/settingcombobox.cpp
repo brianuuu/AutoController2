@@ -24,3 +24,8 @@ void SettingComboBox::Save(QJsonObject &object) const
 {
     object.insert(m_name, this->currentText());
 }
+
+void SettingComboBox::ResetDefault()
+{
+    this->setCurrentIndex(0);
+}

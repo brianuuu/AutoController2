@@ -25,7 +25,21 @@ void ProgramBase::SaveSettings() const
     JsonHelper::WriteSetting("ProgramSettings", allSettings);
 }
 
-void ProgramBase::AddSingleItem(QBoxLayout *layout, const QString &name, const QString &description, QWidget *setting)
+void ProgramBase::ResetDefault()
+{
+    for (SettingBase* setting : m_settings)
+    {
+        setting->ResetDefault();
+    }
+}
+
+void ProgramBase::AddSingleItem
+(
+    QBoxLayout *layout,
+    const QString &name,
+    const QString &description,
+    QWidget *setting
+)
 {
     setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -54,7 +68,14 @@ void ProgramBase::AddSingleItem(QBoxLayout *layout, const QString &name, const Q
     hBoxLayout->setContentsMargins(0,0,0,0);
 }
 
-SettingComboBox *ProgramBase::AddComboBox(QBoxLayout *layout, const QString &name, const QString &description, const QString &settingName, const QStringList &list)
+SettingComboBox *ProgramBase::AddComboBox
+(
+    QBoxLayout *layout,
+    const QString &name,
+    const QString &description,
+    const QString &settingName,
+    const QStringList &list
+)
 {
     SettingComboBox* comboBox = new SettingComboBox(settingName, list);
     m_settings.push_back(comboBox);

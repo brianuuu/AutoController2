@@ -14,6 +14,7 @@ public:
     // from SettingBase
     void Load(QJsonObject &object);
     void Save(QJsonObject &object) const;
+    void ResetDefault();
 };
 
 #endif // SETTINGCOMBOBOX_H

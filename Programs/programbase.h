@@ -20,8 +20,26 @@ public:
     virtual void PopulateSettings(QBoxLayout* layout) = 0;
     virtual QString GetInternalName() const = 0;
 
-    void AddSingleItem(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting);
-    SettingComboBox* AddComboBox(QBoxLayout *layout, QString const& name, QString const& description, QString const& settingName, QStringList const& list);
+    bool HasSettings() { return !m_settings.empty(); }
+    void ResetDefault();
+
+protected:
+    void AddSingleItem
+    (
+        QBoxLayout *layout,
+        QString const& name,
+        QString const& description,
+        QWidget* setting
+    );
+
+    SettingComboBox* AddComboBox
+    (
+        QBoxLayout *layout,
+        QString const& name,
+        QString const& description,
+        QString const& settingName,
+        QStringList const& list
+    );
 
 private:
     QList<SettingBase*> m_settings;

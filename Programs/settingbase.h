@@ -11,6 +11,7 @@ public:
 
     virtual void Load(QJsonObject& object) = 0;
     virtual void Save(QJsonObject& object) const = 0;
+    virtual void ResetDefault() = 0;
 
 public:
     QString m_name; // for save & load reference

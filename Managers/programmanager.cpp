@@ -8,10 +8,12 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
     m_programSettings = qobject_cast<QBoxLayout*>(ui->SA_ProgramSetting->layout());
+    m_btnResetDefault = ui->PB_RestoreDefault;
 
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
     connect(m_programList, &QListWidget::currentTextChanged, this, &ProgramManager::OnProgramChanged);
+    connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
 
     // register all programs
     RegisterProgram<System::CustomCommand>();
@@ -54,6 +56,21 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_program = m_programCtors[category + name]();
     m_program->PopulateSettings(m_programSettings);
     m_program->LoadSettings();
+
+    m_btnResetDefault->setEnabled(m_program->HasSettings());
+}
+
+void ProgramManager::OnResetDefault()
+{
+    if (!m_program) return;
+
+    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+    resBtn = QMessageBox::warning(this, "Warning", "Are you sure you want to restore default settings?\nThis will wipe the current settings.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+    if (resBtn == QMessageBox::Yes)
+    {
+        m_program->ResetDefault();
+    }
 }
 
 void ProgramManager::LoadSettings()
@@ -117,4 +134,6 @@ void ProgramManager::RemoveProgram()
 
     delete m_program;
     m_program = Q_NULLPTR;
+
+    m_btnResetDefault->setEnabled(false);
 }
