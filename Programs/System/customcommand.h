@@ -15,9 +15,11 @@ public:
     static QString GetName() { return "Custom Command"; }
 
     // from ProgramBase
-    void PopulateSettings(QLayout* layout) override;
-    void LoadSettings() override;
-    void SaveSettings() const override;
+    void PopulateSettings(QBoxLayout* layout) override;
+    QString GetInternalName() const override { return "System-CustomCommand"; }
+
+private:
+    QComboBox* m_list = Q_NULLPTR;
 };
 }
 

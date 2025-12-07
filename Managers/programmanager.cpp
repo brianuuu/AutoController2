@@ -29,6 +29,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 
 bool ProgramManager::OnCloseEvent()
 {
+    RemoveProgram();
     SaveSettings();
     return true;
 }
@@ -46,23 +47,12 @@ void ProgramManager::OnCategoryChanged(const QString &category)
 
 void ProgramManager::OnProgramChanged(const QString &name)
 {
-    if (m_program)
-    {
-        m_program->SaveSettings();
-
-        // remove settings layout
-        while (m_programSettings->count() > 1)
-        {
-            delete m_programSettings->takeAt(0)->widget();
-        }
-
-        delete m_program;
-        m_program = Q_NULLPTR;
-    }
+    RemoveProgram();
 
     QString const category = m_programCategory->currentText();
     m_program = m_programCtors[category + name]();
     m_program->PopulateSettings(m_programSettings);
+    m_program->LoadSettings();
 }
 
 void ProgramManager::LoadSettings()
@@ -85,4 +75,20 @@ void ProgramManager::RegisterProgram()
     list.push_back(name);
 
     m_programCtors[category + name] = []()->ProgramBase* { return new T(); };
+}
+
+void ProgramManager::RemoveProgram()
+{
+    if (!m_program) return;
+
+    m_program->SaveSettings();
+
+    // remove settings layout
+    while (m_programSettings->count() > 1)
+    {
+        delete m_programSettings->takeAt(0)->widget();
+    }
+
+    delete m_program;
+    m_program = Q_NULLPTR;
 }

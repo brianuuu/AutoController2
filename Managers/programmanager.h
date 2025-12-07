@@ -29,6 +29,7 @@ private:
 
     template<class T>
     void RegisterProgram();
+    void RemoveProgram();
 
 private:
     // UI

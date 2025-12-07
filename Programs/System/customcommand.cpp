@@ -1,16 +1,11 @@
 #include "customcommand.h"
 
-void System::CustomCommand::PopulateSettings(QLayout *layout)
+void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
-
-}
-
-void System::CustomCommand::LoadSettings()
-{
-
-}
-
-void System::CustomCommand::SaveSettings() const
-{
-
+    m_list = AddComboBox(layout,
+        "Command Select:",
+        "Select pre-made commands to run",
+        "CommandType",
+        {} // TODO:
+    );
 }

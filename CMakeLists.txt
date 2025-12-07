@@ -51,6 +51,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/programmanager.h Managers/programmanager.cpp
         Programs/programbase.h Programs/programbase.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
+        Programs/settingbase.h
+        Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

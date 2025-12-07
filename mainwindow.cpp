@@ -41,13 +41,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (!m_serialManager->OnCloseEvent())
+    if (!m_programManager->OnCloseEvent())
     {
         event->ignore();
         return;
     }
 
     if (!m_vlcManager->OnCloseEvent())
+    {
+        event->ignore();
+        return;
+    }
+
+    if (!m_serialManager->OnCloseEvent())
     {
         event->ignore();
         return;
