@@ -88,6 +88,10 @@ void System::CustomCommand::OnListChanged(const QString &str)
     {
         m_command->setText(command.toString());
     }
+    else
+    {
+        m_command->clear();
+    }
 }
 
 void System::CustomCommand::OnCommandEdit(const QString &command)
