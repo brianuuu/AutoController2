@@ -148,6 +148,8 @@ void ProgramManager::StartProgram()
     m_program->Start();
     m_btnStart->setText("Stop Program");
     m_btnResetDefault->setEnabled(false);
+    m_programCategory->setEnabled(false);
+    m_programList->setEnabled(false);
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
 }
 
@@ -156,6 +158,8 @@ void ProgramManager::StopProgram()
     m_program->Stop();
     m_btnStart->setText("Start Program");
     m_btnResetDefault->setEnabled(m_program->HasSettings());
+    m_programCategory->setEnabled(true);
+    m_programList->setEnabled(true);
     m_settingsParent->setEnabled(true);
 }
 
