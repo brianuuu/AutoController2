@@ -20,15 +20,21 @@ public:
 
     bool OnCloseEvent();
 
+    bool IsRunning() const { return m_program && m_program->IsRunning(); }
+
 private slots:
     void OnCategoryChanged(QString const& category);
     void OnProgramChanged(QString const& name);
     void OnCanRunChanged(bool canRun);
+    void OnProgramStartStop();
     void OnResetDefault();
 
 private:
     void LoadSettings();
     void SaveSettings() const;
+
+    void StartProgram();
+    void StopProgram();
 
     template<class T>
     void RegisterProgram();
@@ -38,7 +44,8 @@ private:
     // UI
     QComboBox*      m_programCategory = Q_NULLPTR;
     QListWidget*    m_programList = Q_NULLPTR;
-    QBoxLayout*     m_programSettings = Q_NULLPTR;
+    QWidget*        m_settingsParent = Q_NULLPTR;
+    QBoxLayout*     m_settingsLayout = Q_NULLPTR;
     QPushButton*    m_btnStart = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
     QLabel*         m_labelDescription = Q_NULLPTR;

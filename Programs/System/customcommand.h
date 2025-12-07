@@ -27,6 +27,9 @@ public:
     bool RequireVideo() const override { return false; }
     bool RequireAudio() const override { return false; }
 
+    void Start() override;
+    void Stop() override;
+
 private:
     QComboBox* m_list = Q_NULLPTR;
     QLineEdit* m_command = Q_NULLPTR;

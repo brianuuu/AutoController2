@@ -592,7 +592,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QScrollArea" name="scrollArea">
+         <widget class="QScrollArea" name="SA_ProgramSetting">
           <property name="frameShape">
            <enum>QFrame::Shape::Panel</enum>
           </property>
@@ -602,7 +602,7 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="SA_ProgramSetting">
+          <widget class="QWidget" name="BL_ProgramSetting">
            <property name="geometry">
             <rect>
              <x>0</x>

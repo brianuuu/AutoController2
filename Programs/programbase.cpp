@@ -54,6 +54,16 @@ void ProgramBase::ResetDefault()
     }
 }
 
+void ProgramBase::Start()
+{
+    m_started = true;
+}
+
+void ProgramBase::Stop()
+{
+    m_started = false;
+}
+
 void ProgramBase::OnCanRunChanged()
 {
     emit notifyCanRun(CanRun());

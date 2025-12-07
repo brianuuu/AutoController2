@@ -7,7 +7,8 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
-    m_programSettings = qobject_cast<QBoxLayout*>(ui->SA_ProgramSetting->layout());
+    m_settingsParent = ui->SA_ProgramSetting;
+    m_settingsLayout = qobject_cast<QBoxLayout*>(ui->BL_ProgramSetting->layout());
     m_btnStart = ui->PB_StartProgram;
     m_btnResetDefault = ui->PB_RestoreDefault;
     m_labelDescription = ui->L_ProgramDescription;
@@ -15,6 +16,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
     connect(m_programList, &QListWidget::currentTextChanged, this, &ProgramManager::OnProgramChanged);
+    connect(m_btnStart, &QPushButton::clicked, this, &ProgramManager::OnProgramStartStop);
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
 
     // register all programs
@@ -56,7 +58,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
     QString const category = m_programCategory->currentText();
     m_program = m_programCtors[category + name]();
-    m_program->PopulateSettings(m_programSettings);
+    m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
 
     m_btnResetDefault->setEnabled(m_program->HasSettings());
@@ -68,8 +70,29 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
 void ProgramManager::OnCanRunChanged(bool canRun)
 {
+    if (!canRun && m_program->IsRunning())
+    {
+        StopProgram();
+    }
+
     m_btnStart->setEnabled(canRun);
-    // TODO: stop program if runninng and canRun = false
+}
+
+void ProgramManager::OnProgramStartStop()
+{
+    if (!m_program) return;
+
+    bool const canRun = m_program->CanRun();
+    if (m_program->IsRunning())
+    {
+        StopProgram();
+    }
+    else if (canRun)
+    {
+        StartProgram();
+    }
+
+    m_btnStart->setEnabled(canRun);
 }
 
 void ProgramManager::OnResetDefault()
@@ -120,6 +143,22 @@ void ProgramManager::SaveSettings() const
     JsonHelper::WriteSetting("ProgramSettings", settings);
 }
 
+void ProgramManager::StartProgram()
+{
+    m_program->Start();
+    m_btnStart->setText("Stop Program");
+    m_btnResetDefault->setEnabled(false);
+    m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
+}
+
+void ProgramManager::StopProgram()
+{
+    m_program->Stop();
+    m_btnStart->setText("Start Program");
+    m_btnResetDefault->setEnabled(m_program->HasSettings());
+    m_settingsParent->setEnabled(true);
+}
+
 template<class T>
 void ProgramManager::RegisterProgram()
 {
@@ -139,9 +178,9 @@ void ProgramManager::RemoveProgram()
     m_program->SaveSettings();
 
     // remove settings layout
-    while (m_programSettings->count() > 1)
+    while (m_settingsLayout->count() > 1)
     {
-        delete m_programSettings->takeAt(0)->widget();
+        delete m_settingsLayout->takeAt(0)->widget();
     }
 
     delete m_program;

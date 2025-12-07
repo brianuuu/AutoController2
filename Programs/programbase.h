@@ -29,10 +29,17 @@ public:
     virtual bool RequireSerial() const = 0;
     virtual bool RequireVideo() const = 0;
     virtual bool RequireAudio() const = 0;
+
+    virtual bool CanEditWhileRunning() { return false; }
     virtual bool CanRun() const;
 
-    bool HasSettings() { return !m_settings.empty(); }
     virtual void ResetDefault();
+
+    virtual void Start();
+    virtual void Stop();
+
+    bool IsRunning() { return m_started; }
+    bool HasSettings() { return !m_settings.empty(); }
 
 signals:
     void notifyCanRun(bool);
@@ -82,6 +89,8 @@ protected:
     SerialManager*      m_serialManager = Q_NULLPTR;
     AudioManager*       m_audioManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;
+
+    bool m_started = false;
 
 private:
     QList<SettingBase*> m_settings;

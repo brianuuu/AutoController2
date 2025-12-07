@@ -16,3 +16,13 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
     );
     m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
 }
+
+void System::CustomCommand::Start()
+{
+    ProgramBase::Start();
+}
+
+void System::CustomCommand::Stop()
+{
+    ProgramBase::Stop();
+}
