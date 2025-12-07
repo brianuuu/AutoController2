@@ -23,6 +23,7 @@ public:
 private slots:
     void OnCategoryChanged(QString const& category);
     void OnProgramChanged(QString const& name);
+    void OnCanRunChanged(bool canRun);
     void OnResetDefault();
 
 private:
@@ -38,6 +39,7 @@ private:
     QComboBox*      m_programCategory = Q_NULLPTR;
     QListWidget*    m_programList = Q_NULLPTR;
     QBoxLayout*     m_programSettings = Q_NULLPTR;
+    QPushButton*    m_btnStart = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
     QLabel*         m_labelDescription = Q_NULLPTR;
     QMap<QString, QStringList>  m_categoryToPrograms;

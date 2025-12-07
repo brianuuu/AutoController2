@@ -6,6 +6,9 @@
 #include <QLayout>
 #include <QObject>
 
+#include "Managers/logmanager.h"
+#include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingtextedit.h"
@@ -14,7 +17,7 @@ class ProgramBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit ProgramBase(QObject *parent = nullptr) : QObject{parent} {}
+    explicit ProgramBase(QObject *parent = nullptr);
 
     void LoadSettings();
     void SaveSettings() const;
@@ -23,8 +26,19 @@ public:
     virtual QString GetInternalName() const = 0;
     virtual QString GetDescription() const = 0;
 
+    virtual bool RequireSerial() const = 0;
+    virtual bool RequireVideo() const = 0;
+    virtual bool RequireAudio() const = 0;
+    virtual bool CanRun() const;
+
     bool HasSettings() { return !m_settings.empty(); }
     virtual void ResetDefault();
+
+signals:
+    void notifyCanRun(bool);
+
+private slots:
+    void OnCanRunChanged();
 
 protected:
     void AddSingleItem(QBoxLayout* layout, QWidget* widget);
@@ -62,6 +76,12 @@ protected:
         QString const& description,
         QString const& settingName
     );
+
+protected:
+    LogManager*         m_logManager = Q_NULLPTR;
+    SerialManager*      m_serialManager = Q_NULLPTR;
+    AudioManager*       m_audioManager = Q_NULLPTR;
+    VlcManager*         m_vlcManager = Q_NULLPTR;
 
 private:
     QList<SettingBase*> m_settings;

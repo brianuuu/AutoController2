@@ -23,6 +23,10 @@ public:
         return "Run a pre-made command, or make custom commands.";
     }
 
+    bool RequireSerial() const override { return true; }
+    bool RequireVideo() const override { return false; }
+    bool RequireAudio() const override { return false; }
+
 private:
     QComboBox* m_list = Q_NULLPTR;
     QLineEdit* m_command = Q_NULLPTR;

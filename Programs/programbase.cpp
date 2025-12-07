@@ -1,5 +1,19 @@
 #include "programbase.h"
+
 #include "Helpers/jsonhelper.h"
+#include "Managers/managercollection.h"
+
+ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
+{
+    m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_serialManager = ManagerCollection::GetManager<SerialManager>();
+    m_audioManager = ManagerCollection::GetManager<AudioManager>();
+    m_vlcManager = ManagerCollection::GetManager<VlcManager>();
+
+    connect(m_serialManager, &SerialManager::notifySerialStatus, this, &ProgramBase::OnCanRunChanged);
+    connect(m_audioManager->GetInputList(), &QComboBox::currentTextChanged, this, &ProgramBase::OnCanRunChanged);
+    connect(m_vlcManager, &VlcManager::notifyHasVideo, this, &ProgramBase::OnCanRunChanged);
+}
 
 void ProgramBase::LoadSettings()
 {
@@ -25,12 +39,24 @@ void ProgramBase::SaveSettings() const
     JsonHelper::WriteSetting("ProgramSettings", allSettings);
 }
 
+bool ProgramBase::CanRun() const
+{
+    return (!RequireSerial() || m_serialManager->IsConnected())
+        && (!RequireVideo() || m_vlcManager->HasVideo())
+        && (!RequireAudio() || m_audioManager->GetDeviceName() != "None");
+}
+
 void ProgramBase::ResetDefault()
 {
-    for (SettingBase* setting : m_settings)
+    for (SettingBase* setting : std::as_const(m_settings))
     {
         setting->ResetDefault();
     }
+}
+
+void ProgramBase::OnCanRunChanged()
+{
+    emit notifyCanRun(CanRun());
 }
 
 void ProgramBase::AddSingleItem(QBoxLayout *layout, QWidget *widget)

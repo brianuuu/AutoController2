@@ -8,6 +8,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
     m_programSettings = qobject_cast<QBoxLayout*>(ui->SA_ProgramSetting->layout());
+    m_btnStart = ui->PB_StartProgram;
     m_btnResetDefault = ui->PB_RestoreDefault;
     m_labelDescription = ui->L_ProgramDescription;
 
@@ -60,6 +61,15 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
     m_btnResetDefault->setEnabled(m_program->HasSettings());
     m_labelDescription->setText(m_program->GetDescription());
+
+    connect(m_program, &ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
+    OnCanRunChanged(m_program->CanRun());
+}
+
+void ProgramManager::OnCanRunChanged(bool canRun)
+{
+    m_btnStart->setEnabled(canRun);
+    // TODO: stop program if runninng and canRun = false
 }
 
 void ProgramManager::OnResetDefault()
