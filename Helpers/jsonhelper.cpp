@@ -43,12 +43,10 @@ void JsonHelper::WriteSetting(const QString &key, QJsonObject &object)
 
 QJsonObject JsonHelper::ReadObject(const QJsonObject &object, const QString &key)
 {
-    for (auto it = object.begin(); it != object.end(); ++it)
+    QJsonValue jsonValue = object.value(key);
+    if (!jsonValue.isUndefined())
     {
-        if (it.key() == key)
-        {
-            return it.value().toObject();
-        }
+        return jsonValue.toObject();
     }
 
     return QJsonObject();
@@ -56,13 +54,11 @@ QJsonObject JsonHelper::ReadObject(const QJsonObject &object, const QString &key
 
 bool JsonHelper::ReadValue(const QJsonObject &object, const QString &key, QVariant &value, QVariant defaultValue)
 {
-    for (auto it = object.begin(); it != object.end(); ++it)
+    QJsonValue jsonValue = object.value(key);
+    if (!jsonValue.isUndefined())
     {
-        if (it.key() == key)
-        {
-            value = it.value().toVariant();
-            return true;
-        }
+        value = jsonValue.toVariant();
+        return true;
     }
 
     value = defaultValue;
