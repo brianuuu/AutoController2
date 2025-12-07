@@ -44,12 +44,12 @@ public:
 signals:
     void notifyCanRun(bool);
 
-private slots:
+protected slots:
     void OnCanRunChanged();
 
 protected:
     void AddSingleItem(QBoxLayout* layout, QWidget* widget);
-    void AddSingleText(QBoxLayout* layout, QString const& str, bool isBold);
+    QLabel* AddSingleText(QBoxLayout* layout, QString const& str, bool isBold);
     void AddSingleSetting
     (
         QBoxLayout *layout,

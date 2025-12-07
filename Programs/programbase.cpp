@@ -74,13 +74,15 @@ void ProgramBase::AddSingleItem(QBoxLayout *layout, QWidget *widget)
     layout->insertWidget(layout->count() - 1, widget);
 }
 
-void ProgramBase::AddSingleText(QBoxLayout *layout, const QString &str, bool isBold)
+QLabel *ProgramBase::AddSingleText(QBoxLayout *layout, const QString &str, bool isBold)
 {
     QLabel* label = new QLabel(str);
     QFont font = label->font();
     font.setBold(isBold);
     label->setFont(font);
     AddSingleItem(layout, label);
+
+    return label;
 }
 
 void ProgramBase::AddSingleSetting

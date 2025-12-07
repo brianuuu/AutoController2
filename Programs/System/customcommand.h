@@ -27,12 +27,20 @@ public:
     bool RequireVideo() const override { return false; }
     bool RequireAudio() const override { return false; }
 
+    bool CanRun() const override;
+
     void Start() override;
     void Stop() override;
+
+private slots:
+    void OnCommandEdit(QString const& command);
 
 private:
     QComboBox* m_list = Q_NULLPTR;
     QLineEdit* m_command = Q_NULLPTR;
+    QLabel* m_labelStatus = Q_NULLPTR;
+
+    bool m_validCommand = false;
 };
 }
 
