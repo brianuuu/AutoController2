@@ -44,6 +44,7 @@ private: // types
 signals:
     void notifyClose();
     void notifySerialStatus();
+    void notifyCommandFinished();
 
 private slots:
     // UI

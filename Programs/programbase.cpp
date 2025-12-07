@@ -69,6 +69,11 @@ void ProgramBase::OnCanRunChanged()
     emit notifyCanRun(CanRun());
 }
 
+void ProgramBase::PrintLog(const QString &log)
+{
+     m_logManager->PrintLog(GetInternalName(), log);
+}
+
 void ProgramBase::AddSingleItem(QBoxLayout *layout, QWidget *widget)
 {
     layout->insertWidget(layout->count() - 1, widget);

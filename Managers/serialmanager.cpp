@@ -323,6 +323,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         // finished
         SendButton(0);
         ClearCommand();
+        emit notifyCommandFinished();
         return;
     }
 
@@ -433,6 +434,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     }
     else
     {
+        //m_logManager->PrintLog("Globel", "Button: \"" + str + "\"");
         SendButton(buttonFlag, lx, ly, rx, ry);
         m_commandTimer.start(duration);
     }

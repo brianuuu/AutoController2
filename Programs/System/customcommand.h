@@ -11,7 +11,7 @@ class CustomCommand : public ProgramBase
 {
     Q_OBJECT
 public:
-    explicit CustomCommand(QObject* parent = nullptr) : ProgramBase(parent) {}
+    explicit CustomCommand(QObject* parent = nullptr);
 
     static QString GetCategory() { return "System"; }
     static QString GetName() { return "Custom Command"; }
@@ -34,6 +34,7 @@ public:
 
 private slots:
     void OnCommandEdit(QString const& command);
+    void OnCommandFinished();
 
 private:
     QComboBox* m_list = Q_NULLPTR;

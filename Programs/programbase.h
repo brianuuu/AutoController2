@@ -49,6 +49,8 @@ protected slots:
     void OnCanRunChanged();
 
 protected:
+    void PrintLog(QString const& log);
+
     void AddSingleItem(QBoxLayout* layout, QWidget* widget);
     QLabel* AddSingleText(QBoxLayout* layout, QString const& str, bool isBold);
     void AddSingleSetting

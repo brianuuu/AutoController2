@@ -1,5 +1,10 @@
 #include "customcommand.h"
 
+System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
+{
+    connect(m_serialManager, &SerialManager::notifyCommandFinished, this, &CustomCommand::OnCommandFinished);
+}
+
 void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
     m_list = AddComboBox(layout,
@@ -33,6 +38,9 @@ bool System::CustomCommand::CanRun() const
 void System::CustomCommand::Start()
 {
     ProgramBase::Start();
+
+    PrintLog("Running command \"" + m_command->text() + "\"");
+    m_serialManager->SendCommand(m_command->text());
 }
 
 void System::CustomCommand::Stop()
@@ -59,4 +67,10 @@ void System::CustomCommand::OnCommandEdit(const QString &command)
     m_labelStatus->setPalette(palette);
 
     OnCanRunChanged();
+}
+
+void System::CustomCommand::OnCommandFinished()
+{
+    if (!m_started) return;
+    emit notifyFinished();
 }
