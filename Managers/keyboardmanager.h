@@ -43,6 +43,7 @@ private:
     static void ButtonRemap(QPushButton* button);
     static void ButtonPressed(QPushButton* button);
     static void ButtonReleased(QPushButton* button);
+    static void ButtonSpam(QPushButton* button);
 
     void LoadSettings();
     void SaveSettings() const;

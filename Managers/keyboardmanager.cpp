@@ -280,7 +280,16 @@ void KeyboardManager::DisplayButton(quint32 buttonFlag, quint8 lx, quint8 ly, qu
         QPushButton* button = m_btnButton[type];
         if (buttonFlag & flag)
         {
-            ButtonPressed(button);
+            if (buttonFlag & ButtonToFlag(BTN_Spam)
+                && type != BTN_LUp && type != BTN_LDown && type != BTN_LLeft && type != BTN_LRight
+                && type != BTN_RUp && type != BTN_RDown && type != BTN_RLeft && type != BTN_RRight)
+            {
+                ButtonSpam(button);
+            }
+            else
+            {
+                ButtonPressed(button);
+            }
         }
         else
         {
@@ -558,6 +567,11 @@ void KeyboardManager::ButtonPressed(QPushButton *button)
 void KeyboardManager::ButtonReleased(QPushButton *button)
 {
     button->setStyleSheet("background-color: rgb(255,255,255); font-size: 18px;");
+}
+
+void KeyboardManager::ButtonSpam(QPushButton *button)
+{
+    button->setStyleSheet("background-color: rgb(200,80,200); font-size: 18px;");
 }
 
 void KeyboardManager::LoadSettings()
