@@ -22,7 +22,7 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
-    bool IsConnected();
+    bool IsConnected() const { return m_serialState == SerialState::Connected; }
 
     // command
     void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);

@@ -47,11 +47,6 @@ bool SerialManager::OnCloseEvent()
     return true;
 }
 
-bool SerialManager::IsConnected()
-{
-    return m_serialPort.isOpen();
-}
-
 void SerialManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("SerialSettings");
@@ -487,6 +482,8 @@ void SerialManager::Disconnect()
         QTimer::singleShot(50, this, &SerialManager::OnDisconnectTimeout);
 
         m_serialState = SerialState::Disconnecting;
+        emit notifySerialStatus();
+
         m_btnConnect->setEnabled(false);
         m_btnConnect->setText("Disconnecting...");
 
