@@ -23,11 +23,6 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     OnRefreshOutputList();
 }
 
-QString AudioManager::GetDeviceName() const
-{
-    return m_listInput->currentText();
-}
-
 void AudioManager::Start()
 {
     Stop();
