@@ -1,5 +1,8 @@
 #include "customcommand.h"
 
+#include "Enums/system.h"
+#include "Managers/serialmanager.h"
+
 System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
     connect(m_serialManager, &SerialManager::notifyCommandFinished, this, &CustomCommand::OnCommandFinished);

@@ -1,8 +1,8 @@
 #include "programmanager.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"
-#include "Managers/managercollection.h"
 #include "Programs/System/customcommand.h"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)

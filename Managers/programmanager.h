@@ -7,6 +7,7 @@
 #include <QWidget>
 
 #include "../ui_mainwindow.h"
+#include "Managers/managercollection.h"
 #include "Programs/programbase.h"
 
 class ProgramManager : public QWidget

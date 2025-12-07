@@ -1,7 +1,10 @@
 #include "programbase.h"
 
 #include "Helpers/jsonhelper.h"
-#include "Managers/managercollection.h"
+#include "Managers/audiomanager.h"
+#include "Managers/logmanager.h"
+#include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 
 ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {

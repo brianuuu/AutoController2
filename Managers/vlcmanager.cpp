@@ -1,6 +1,8 @@
 #include "vlcmanager.h"
 
-#include "managercollection.h"
+#include "Managers/logmanager.h"
+#include "Managers/audiomanager.h"
+#include "Managers/videomanager.h"
 
 #define SCREENSHOT_PATH "../Screenshots/"
 

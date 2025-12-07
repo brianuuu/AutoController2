@@ -10,7 +10,7 @@
 #include <QTimer>
 
 #include "../ui_mainwindow.h"
-#include "logmanager.h"
+#include "Managers/managercollection.h"
 
 class SerialManager : public QWidget
 {

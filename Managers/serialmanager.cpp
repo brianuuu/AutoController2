@@ -1,10 +1,10 @@
 #include "serialmanager.h"
 
-#include "managercollection.h"
-#include "keyboardmanager.h"
 #include "defines.h"
 #include "Enums/system.h"
 #include "Helpers/jsonhelper.h"
+#include "Managers/keyboardmanager.h"
+#include "Managers/logmanager.h"
 
 SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 {
@@ -14,6 +14,7 @@ SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 void SerialManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
+
     m_list = ui->CB_SerialPort;
     m_btnRefresh = ui->PB_SerialRefresh;
     m_btnConnect = ui->PB_SerialConnect;

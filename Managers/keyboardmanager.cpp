@@ -1,6 +1,9 @@
 #include "keyboardmanager.h"
+
 #include "Helpers/jsonhelper.h"
-#include "managercollection.h"
+#include "Managers/programmanager.h"
+#include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 
 void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {

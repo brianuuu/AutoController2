@@ -8,9 +8,7 @@
 
 #include "../ui_mainwindow.h"
 #include "Enums/system.h"
-#include "Managers/programmanager.h"
-#include "Managers/serialmanager.h"
-#include "Managers/vlcmanager.h"
+#include "Managers/managercollection.h"
 
 class KeyboardManager : public QWidget
 {

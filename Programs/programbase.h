@@ -6,9 +6,7 @@
 #include <QLayout>
 #include <QObject>
 
-#include "Managers/logmanager.h"
-#include "Managers/serialmanager.h"
-#include "Managers/vlcmanager.h"
+#include "Managers/managercollection.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingtextedit.h"

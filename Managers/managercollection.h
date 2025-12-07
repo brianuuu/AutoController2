@@ -4,6 +4,14 @@
 #include <QMap>
 #include <QObject>
 
+class AudioManager;
+class KeyboardManager;
+class LogManager;
+class ProgramManager;
+class SerialManager;
+class VideoManager;
+class VlcManager;
+
 class ManagerCollection
 {
 private:

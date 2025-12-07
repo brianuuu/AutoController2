@@ -15,9 +15,7 @@
 #include <QWidget>
 
 #include "../ui_mainwindow.h"
-#include "logmanager.h"
-#include "audiomanager.h"
-#include "videomanager.h"
+#include "Managers/managercollection.h"
 
 struct contextVideo
 {
