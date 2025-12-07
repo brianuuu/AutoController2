@@ -164,12 +164,12 @@ void VlcManager::OnCameraStartTimeout()
         m_btnCameraStart->setEnabled(true);
         m_btnScreenshot->setEnabled(true);
 
-        m_logManager->PrintLog("System", "Camera ON", LOG_Success);
+        m_logManager->PrintLog("Global", "Camera ON", LOG_Success);
     }
     else
     {
         // no feedback detected
-        m_logManager->PrintLog("System", "No video feedback detected", LOG_Error);
+        m_logManager->PrintLog("Global", "No video feedback detected", LOG_Error);
         QMessageBox::critical(this, "Error",
             "No video feedback detected!\n"
             "1. Chroma may not be supported for current resolution\n"
@@ -197,7 +197,7 @@ void VlcManager::OnEventCallback()
     default:
     {
         // state not expected
-        m_logManager->PrintLog("System", "Failed to start camera", LOG_Error);
+        m_logManager->PrintLog("Global", "Failed to start camera", LOG_Error);
         QMessageBox::critical(this, "Error",
             "Failed to start camera!\n"
             "1. Chroma may not be supported for current resolution\n"
@@ -218,7 +218,7 @@ void VlcManager::OnScreenshot()
         ctxVideo.m_manager->GetFrameData().save(SCREENSHOT_PATH + nameWithTime);
     });
 
-    m_logManager->PrintLog("System", "Screenshot saved: " + QDir(SCREENSHOT_PATH).absolutePath() + nameWithTime);
+    m_logManager->PrintLog("Global", "Screenshot saved: " + QDir(SCREENSHOT_PATH).absolutePath() + nameWithTime);
 }
 
 void VlcManager::Start()
@@ -271,7 +271,7 @@ void VlcManager::Start()
     int result = libvlc_media_player_play(m_mediaPlayer);
     if (result == -1)
     {
-        m_logManager->PrintLog("System", "Failed to start camera", LOG_Error);
+        m_logManager->PrintLog("Global", "Failed to start camera", LOG_Error);
         QMessageBox::critical(this, "Error", "Unable to start VLC media player!", QMessageBox::Ok);
     }
     else
@@ -287,7 +287,7 @@ void VlcManager::Start()
         ctxAudio.m_manager->Start();
 
         libvlc_video_set_adjust_int(m_mediaPlayer, libvlc_video_adjust_option_t::libvlc_adjust_Enable, true);
-        m_logManager->PrintLog("System", "Starting camera...");
+        m_logManager->PrintLog("Global", "Starting camera...");
 
         this->show();
     }
@@ -301,7 +301,7 @@ void VlcManager::Stop()
     emit notifyHasVideo();
 
     libvlc_media_player_stop(m_mediaPlayer);
-    m_logManager->PrintLog("System", "Camera OFF");
+    m_logManager->PrintLog("Global", "Camera OFF", LOG_Warning);
 
     m_btnCameraStart->setText("Start Camera");
     m_btnCameraStart->setEnabled(true);

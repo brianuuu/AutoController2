@@ -182,7 +182,7 @@ bool SerialManager::SendCommand(const QString &command)
     QString errorMsg;
     if (!VerifyCommand(command, errorMsg))
     {
-        m_logManager->PrintLog("System", errorMsg, LOG_Error);
+        m_logManager->PrintLog("Global", errorMsg, LOG_Error);
         return false;
     }
 
@@ -263,7 +263,7 @@ void SerialManager::OnConnectTimeout()
     if (m_serialState == SerialState::FeedbackOK)
     {
         m_serialState = SerialState::Connected;
-        m_logManager->PrintLog("System", "Serial Connected", LOG_Success);
+        m_logManager->PrintLog("Global", "Serial Connected", LOG_Success);
         emit notifySerialStatus();
 
         m_list->setEnabled(false);
@@ -294,7 +294,7 @@ void SerialManager::OnDisconnectTimeout()
     if (m_serialPort.isOpen())
     {
         m_serialPort.close();
-        m_logManager->PrintLog("System", "Serial Disconnected", LOG_Success);
+        m_logManager->PrintLog("Global", "Serial Disconnected", LOG_Warning);
     }
 
     m_serialState = SerialState::Disconnected;

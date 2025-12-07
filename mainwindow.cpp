@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     LoadSettings();
 
-    m_logManager->PrintLog("System", "Initialization completed");
+    m_logManager->PrintLog("Global", "Initialization completed");
 }
 
 MainWindow::~MainWindow()
