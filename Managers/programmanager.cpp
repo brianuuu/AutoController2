@@ -1,6 +1,7 @@
 #include "programmanager.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/keyboardmanager.h"
 #include "Managers/managercollection.h"
 #include "Programs/System/customcommand.h"
 
@@ -69,6 +70,10 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
     connect(m_program, &ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
     connect(m_program, &ProgramBase::notifyFinished, this, &ProgramManager::OnProgramFinished);
+
+    KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
+    connect(m_program, &ProgramBase::notifyFinished, keyboardManager, &KeyboardManager::OnUpdateStatus);
+
     OnCanRunChanged(m_program->CanRun());
 }
 
