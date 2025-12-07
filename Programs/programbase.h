@@ -19,6 +19,7 @@ public:
 
     virtual void PopulateSettings(QBoxLayout* layout) = 0;
     virtual QString GetInternalName() const = 0;
+    virtual QString GetDescription() const = 0;
 
     bool HasSettings() { return !m_settings.empty(); }
     void ResetDefault();

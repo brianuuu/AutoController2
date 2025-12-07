@@ -17,6 +17,9 @@ public:
     // from ProgramBase
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "System-CustomCommand"; }
+    QString GetDescription() const override {
+        return "Run a pre-made command, or make custom commands.";
+    }
 
 private:
     QComboBox* m_list = Q_NULLPTR;

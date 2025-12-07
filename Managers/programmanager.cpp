@@ -9,6 +9,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_programList = ui->LW_ProgramList;
     m_programSettings = qobject_cast<QBoxLayout*>(ui->SA_ProgramSetting->layout());
     m_btnResetDefault = ui->PB_RestoreDefault;
+    m_labelDescription = ui->L_ProgramDescription;
 
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
@@ -58,6 +59,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_program->LoadSettings();
 
     m_btnResetDefault->setEnabled(m_program->HasSettings());
+    m_labelDescription->setText(m_program->GetDescription());
 }
 
 void ProgramManager::OnResetDefault()

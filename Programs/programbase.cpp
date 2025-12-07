@@ -60,6 +60,7 @@ void ProgramBase::AddSingleItem
         vBoxLayout->addWidget(labelName);
         vBoxLayout->addWidget(labelDescription);
         vBoxLayout->setContentsMargins(0,0,0,0);
+        vBoxLayout->setSpacing(0);
     }
 
     QHBoxLayout* hBoxLayout = new QHBoxLayout(widget);

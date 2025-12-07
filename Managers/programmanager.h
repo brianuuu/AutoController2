@@ -39,6 +39,7 @@ private:
     QListWidget*    m_programList = Q_NULLPTR;
     QBoxLayout*     m_programSettings = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
+    QLabel*         m_labelDescription = Q_NULLPTR;
     QMap<QString, QStringList>  m_categoryToPrograms;
 
     using ProgramCtor = ProgramBase*(*)();
