@@ -43,6 +43,7 @@ public:
 
 signals:
     void notifyCanRun(bool);
+    void notifyFinished();
 
 protected slots:
     void OnCanRunChanged();

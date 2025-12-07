@@ -28,6 +28,7 @@ private slots:
     void OnProgramChanged(QString const& name);
     void OnCanRunChanged(bool canRun);
     void OnProgramStartStop();
+    void OnProgramFinished();
     void OnResetDefault();
 
 private:
@@ -43,6 +44,7 @@ private:
 
 private:
     // UI
+    LogManager*     m_logManager = Q_NULLPTR;
     QComboBox*      m_programCategory = Q_NULLPTR;
     QListWidget*    m_programList = Q_NULLPTR;
     QWidget*        m_settingsParent = Q_NULLPTR;

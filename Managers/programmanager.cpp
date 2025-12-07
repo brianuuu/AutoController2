@@ -1,10 +1,13 @@
 #include "programmanager.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/managercollection.h"
 #include "Programs/System/customcommand.h"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
+    m_logManager = ManagerCollection::GetManager<LogManager>();
+
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
     m_settingsParent = ui->SA_ProgramSetting;
@@ -65,6 +68,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_labelDescription->setText(m_program->GetDescription());
 
     connect(m_program, &ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
+    connect(m_program, &ProgramBase::notifyFinished, this, &ProgramManager::OnProgramFinished);
     OnCanRunChanged(m_program->CanRun());
 }
 
@@ -73,6 +77,10 @@ void ProgramManager::OnCanRunChanged(bool canRun)
     if (!canRun && m_program->IsRunning())
     {
         StopProgram();
+
+        m_logManager->PrintLog(m_program->GetInternalName(), "Program forced stopped as Serial or Camera is turned off", LOG_Warning);
+        // TODO: log file name
+        m_logManager->SetCurrentLogFile("");
     }
 
     m_btnStart->setEnabled(canRun);
@@ -86,13 +94,33 @@ void ProgramManager::OnProgramStartStop()
     if (m_program->IsRunning())
     {
         StopProgram();
+
+        m_logManager->PrintLog(m_program->GetInternalName(), "Program stopped by user", LOG_Warning);
+        // TODO: log file name
+        m_logManager->SetCurrentLogFile("");
     }
     else if (canRun)
     {
+        m_logManager->ClearLog();
+        // TODO: set log file
+        m_logManager->PrintLog(m_program->GetInternalName(), "Program started");
+
         StartProgram();
     }
 
     m_btnStart->setEnabled(canRun);
+}
+
+void ProgramManager::OnProgramFinished()
+{
+    if (m_program && m_program->IsRunning())
+    {
+        StopProgram();
+
+        m_logManager->PrintLog(m_program->GetInternalName(), "Program finished!", LOG_Success);
+        // TODO: log file name
+        m_logManager->SetCurrentLogFile("");
+    }
 }
 
 void ProgramManager::OnResetDefault()
@@ -145,6 +173,8 @@ void ProgramManager::SaveSettings() const
 
 void ProgramManager::StartProgram()
 {
+    if (!m_program || m_program->IsRunning() || !m_program->CanRun()) return;
+
     m_program->Start();
     m_btnStart->setText("Stop Program");
     m_btnResetDefault->setEnabled(false);
@@ -155,6 +185,8 @@ void ProgramManager::StartProgram()
 
 void ProgramManager::StopProgram()
 {
+    if (!m_program || !m_program->IsRunning()) return;
+
     m_program->Stop();
     m_btnStart->setText("Start Program");
     m_btnResetDefault->setEnabled(m_program->HasSettings());
