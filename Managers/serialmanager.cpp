@@ -135,7 +135,7 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
                 qreal const stickPos = button.mid(2).toDouble(&ok);
                 if (!ok || qAbs(stickPos) > 1.0)
                 {
-                    errorMsg = "'" + button + "' does not have valid stick pos [0.0-1.0] at index " + QString::number(i);
+                    errorMsg = "'" + button + "' does not have valid stick position (between -1.0 to 1.0) at index " + QString::number(i);
                     return false;
                 }
             }
