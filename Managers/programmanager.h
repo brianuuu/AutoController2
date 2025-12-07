@@ -20,6 +20,7 @@ public:
 
     bool OnCloseEvent();
 
+    bool AllowKeyboardInput() const { return !IsRunning() || !m_program->RequireSerial(); }
     bool IsRunning() const { return m_program && m_program->IsRunning(); }
 
 private slots:

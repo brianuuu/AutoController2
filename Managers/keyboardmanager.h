@@ -8,8 +8,9 @@
 
 #include "../ui_mainwindow.h"
 #include "Enums/system.h"
-#include "serialmanager.h"
-#include "vlcmanager.h"
+#include "Managers/programmanager.h"
+#include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 
 class KeyboardManager : public QWidget
 {
@@ -48,6 +49,7 @@ private:
 
 private:
     // UI
+    ProgramManager* m_programManager = Q_NULLPTR;
     SerialManager*  m_serialManager = Q_NULLPTR;
     VlcManager*     m_vlcManager = Q_NULLPTR;
     QPushButton*    m_btnRemap = Q_NULLPTR;

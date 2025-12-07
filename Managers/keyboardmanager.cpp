@@ -4,6 +4,7 @@
 
 void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {
+    m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
     m_labelStatus = ui->L_KeyboardStatus;
@@ -238,7 +239,7 @@ bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
             UpdateButtonMap(m_btnRemap, key);
             OnButtonClicked();
         }
-        else
+        else if (m_programManager->AllowKeyboardInput())
         {
             UpdateButtonFlags(key, event->type() == QEvent::KeyPress);
         }
@@ -328,6 +329,8 @@ void KeyboardManager::OnResetDefault()
 
 void KeyboardManager::OnButtonClicked()
 {
+    if (!m_programManager->AllowKeyboardInput()) return;
+
     QObject* object = sender();
     QPushButton* button = object ? qobject_cast<QPushButton*>(sender()) : m_btnRemap;
 
@@ -377,9 +380,9 @@ void KeyboardManager::OnButtonClicked()
 void KeyboardManager::OnUpdateStatus()
 {
     m_inputActive = m_vlcManager->isActiveWindow() || this->isActiveWindow();
+    m_inputActive &= m_programManager->AllowKeyboardInput();
     m_inputActive &= m_serialManager->IsConnected();
     m_inputActive &= !m_btnRemap;
-    // TODO: running program
 
     QPalette palette = m_labelStatus->palette();
     palette.setColor(QPalette::WindowText, LogTypeToColor(m_inputActive ? LOG_Success : LOG_Error));

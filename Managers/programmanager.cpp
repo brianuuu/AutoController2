@@ -175,6 +175,11 @@ void ProgramManager::RemoveProgram()
 {
     if (!m_program) return;
 
+    if (m_program->IsRunning())
+    {
+        StopProgram();
+    }
+
     m_program->SaveSettings();
 
     // remove settings layout
