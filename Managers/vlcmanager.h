@@ -42,12 +42,14 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
+    bool HasVideo() const { return m_startVerified; }
 
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
     void notifyStateChanged();
+    void notifyHasVideo();
 
 private slots:
     void OnCameraClicked();

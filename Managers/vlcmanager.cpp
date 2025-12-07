@@ -158,6 +158,7 @@ void VlcManager::OnCameraStartTimeout()
         // got camera data before timeout
         m_startVerified = true;
         m_startVerifyTimer.stop();
+        emit notifyHasVideo();
 
         m_btnCameraStart->setText("Stop Camera");
         m_btnCameraStart->setEnabled(true);
@@ -277,6 +278,7 @@ void VlcManager::Start()
     {
         m_started = true;
         m_startVerified = false;
+        emit notifyHasVideo();
 
         m_btnCameraStart->setText("Starting...");
         m_btnCameraStart->setEnabled(false);
@@ -294,7 +296,9 @@ void VlcManager::Start()
 void VlcManager::Stop()
 {
     m_started = false;
+    m_startVerified = false;
     m_startVerifyTimer.stop();
+    emit notifyHasVideo();
 
     libvlc_media_player_stop(m_mediaPlayer);
     m_logManager->PrintLog("System", "Camera OFF");
