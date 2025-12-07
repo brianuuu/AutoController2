@@ -4,7 +4,7 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
     m_list = AddComboBox(layout,
         "Command Select:",
-        "Select pre-made commands to run",
+        "Select a pre-made command to run",
         "CommandType",
         {} // TODO:
     );
