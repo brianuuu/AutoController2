@@ -24,7 +24,10 @@ void ProgramBase::LoadSettings()
     QJsonObject settings = JsonHelper::ReadObject(allSettings, GetInternalName());
     for (SettingBase* setting : std::as_const(m_settings))
     {
-        setting->Load(settings);
+        if (setting->m_shouldSave)
+        {
+            setting->Load(settings);
+        }
     }
 }
 
@@ -33,7 +36,10 @@ void ProgramBase::SaveSettings() const
     QJsonObject settings;
     for (SettingBase* setting : m_settings)
     {
-        setting->Save(settings);
+        if (setting->m_shouldSave)
+        {
+            setting->Save(settings);
+        }
     }
 
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");

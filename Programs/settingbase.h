@@ -15,6 +15,7 @@ public:
 
 public:
     QString m_name; // for save & load reference
+    bool m_shouldSave = true;
 };
 
 #endif // SETTINGBASE_H

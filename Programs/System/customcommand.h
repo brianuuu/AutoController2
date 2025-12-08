@@ -38,8 +38,8 @@ private slots:
     void OnCommandFinished();
 
 private:
-    QComboBox* m_list = Q_NULLPTR;
-    QLineEdit* m_command = Q_NULLPTR;
+    SettingComboBox* m_list = Q_NULLPTR;
+    SettingLineEdit* m_command = Q_NULLPTR;
     QLabel* m_labelStatus = Q_NULLPTR;
 
     bool m_validCommand = false;

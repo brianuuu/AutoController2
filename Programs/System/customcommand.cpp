@@ -40,6 +40,7 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
         "CommandEdit"
     );
     m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
+    m_command->m_shouldSave = false;
     connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandEdit);
 
     // add error message label and move it to the layout above, horribly
