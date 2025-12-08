@@ -5,8 +5,8 @@
 #include "Managers/serialmanager.h"
 
 #define FILE_COMMAND "../Resources/System/CustomCommands.json"
-#define USER_COMMAND "../Resources/System/UserCommands.json"
-#define USER_PREFIX QString("(User) ")
+#define USER_COMMAND "../Resources/System/CustomCommandsExtra.json"
+#define USER_PREFIX QString("(Extra) ")
 
 System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
