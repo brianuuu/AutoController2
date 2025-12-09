@@ -84,23 +84,23 @@ void ProgramBase::PrintLog(const QString &log)
      m_logManager->PrintLog(GetInternalName(), log);
 }
 
-void ProgramBase::AddSingleItem(QBoxLayout *layout, QWidget *widget)
+void ProgramBase::AddItem(QBoxLayout *layout, QWidget *widget)
 {
     layout->insertWidget(layout->count() - 1, widget);
 }
 
-QLabel *ProgramBase::AddSingleText(QBoxLayout *layout, const QString &str, bool isBold)
+QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)
 {
     QLabel* label = new QLabel(str);
     QFont font = label->font();
     font.setBold(isBold);
     label->setFont(font);
-    AddSingleItem(layout, label);
+    AddItem(layout, label);
 
     return label;
 }
 
-void ProgramBase::AddSingleSetting
+void ProgramBase::AddSetting
 (
     QBoxLayout *layout,
     const QString &name,
@@ -109,7 +109,22 @@ void ProgramBase::AddSingleSetting
     bool isHorizontal
 )
 {
-    setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    AddSettings(layout, name, description, {setting}, isHorizontal);
+}
+
+void ProgramBase::AddSettings
+(
+    QBoxLayout *layout,
+    const QString &name,
+    const QString &description,
+    QList<QWidget*> settings,
+    bool isHorizontal
+)
+{
+    for (QWidget* setting : settings)
+    {
+        setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    }
 
     QWidget* widget = new QWidget();
     layout->insertWidget(layout->count() - 1, widget);
@@ -138,7 +153,10 @@ void ProgramBase::AddSingleSetting
 
         if (!isHorizontal)
         {
-            vBoxLayout->addWidget(setting);
+            for (QWidget* setting : settings)
+            {
+                vBoxLayout->addWidget(setting);
+            }
             widget->setLayout(vBoxLayout);
         }
     }
@@ -147,7 +165,10 @@ void ProgramBase::AddSingleSetting
     {
         QHBoxLayout* hBoxLayout = new QHBoxLayout(widget);
         hBoxLayout->addLayout(vBoxLayout);
-        hBoxLayout->addWidget(setting);
+        for (QWidget* setting : settings)
+        {
+            hBoxLayout->addWidget(setting);
+        }
         hBoxLayout->setContentsMargins(0,0,0,0);
     }
 }
@@ -163,7 +184,7 @@ SettingComboBox *ProgramBase::AddComboBox
 {
     SettingComboBox* comboBox = new SettingComboBox(settingName, list);
     m_settings.push_back(comboBox);
-    AddSingleSetting(layout, name, description, comboBox, true);
+    AddSetting(layout, name, description, comboBox, true);
     return comboBox;
 }
 
@@ -177,7 +198,7 @@ SettingLineEdit *ProgramBase::AddLineEdit
 {
     SettingLineEdit* lineEdit = new SettingLineEdit(settingName);
     m_settings.push_back(lineEdit);
-    AddSingleSetting(layout, name, description, lineEdit, false);
+    AddSetting(layout, name, description, lineEdit, false);
     return lineEdit;
 }
 
@@ -191,6 +212,6 @@ SettingTextEdit *ProgramBase::AddTextEdit
 {
     SettingTextEdit* textEdit = new SettingTextEdit(settingName);
     m_settings.push_back(textEdit);
-    AddSingleSetting(layout, name, description, textEdit, false);
+    AddSetting(layout, name, description, textEdit, false);
     return textEdit;
 }

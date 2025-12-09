@@ -1,0 +1,4 @@
+{
+	"Command": "(A|Spam|1000)0",
+	"Description": "Spams A forever"
+}
