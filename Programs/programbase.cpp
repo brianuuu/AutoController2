@@ -59,7 +59,10 @@ void ProgramBase::ResetDefault()
 {
     for (SettingBase* setting : std::as_const(m_settings))
     {
-        setting->ResetDefault();
+        if (setting->m_shouldSave)
+        {
+            setting->ResetDefault();
+        }
     }
 }
 
