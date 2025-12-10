@@ -83,10 +83,17 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
     }
 
     bool isLoopCount = false;
+    bool hasInfiniteLoop = false;
     for (int i = 0; i < command.size();)
     {
         qsizetype endIndex = command.indexOf(',', i + 1);
         QString str = command.mid(i, endIndex == -1 ? -1 : endIndex - i);
+
+        if (hasInfiniteLoop)
+        {
+            errorMsg = "No more command should be after infinite loop";
+            return false;
+        }
 
         // look for loop start
         qsizetype const loopStartIndex = str.indexOf('(');
@@ -154,6 +161,12 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
             errorMsg = QString(isLoopCount ? "Loop Count" : "Duration") + " '" + buttons.back() + "' is invalid at index " + QString::number(i);
             return false;
         }
+
+        if (isLoopCount && duration == 0)
+        {
+            hasInfiniteLoop = true;
+        }
+        isLoopCount = false;
 
         if (endIndex == -1)
         {
