@@ -394,7 +394,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         if (button.startsWith("lx") || button.startsWith("ly") || button.startsWith("rx") || button.startsWith("ry"))
         {
             qreal const stickPos = button.mid(2).toDouble();
-            quint8 const actualPos = (quint8)((stickPos + 1.0) * 0.5 * 255);
+            quint8 const actualPos = qCeil((stickPos + 1.0) * 0.5 * 255);
             if (button.startsWith("lx")) lx = actualPos;
             if (button.startsWith("ly")) ly = 255 - actualPos;
             if (button.startsWith("rx")) rx = actualPos;
