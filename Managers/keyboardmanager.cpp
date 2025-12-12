@@ -421,15 +421,11 @@ void KeyboardManager::OnButtonClicked()
 
 void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick)
 {
-    if (m_btnRemap) return;
+    if (m_btnRemap || !m_programManager->AllowKeyboardInput()) return;
 
-    DisplayButton(buttonFlag, lStick, rStick);
-    
     // allow input even if not on active window
-    if (m_programManager->AllowKeyboardInput())
-    {
-        m_serialManager->SendButton(buttonFlag, lStick, rStick);
-    }
+    DisplayButton(buttonFlag, lStick, rStick);
+    m_serialManager->SendButton(buttonFlag, lStick, rStick);
 }
 
 void KeyboardManager::OnUpdateStatus()
@@ -568,6 +564,9 @@ void KeyboardManager::ClearButtonFlags()
     {
         ButtonReleased(m_btnButton[i]);
     }
+
+    m_leftStick->SetStickPos({0,0});
+    m_rightStick->SetStickPos({0,0});
 }
 
 void KeyboardManager::ButtonRemap(QPushButton *button)

@@ -116,7 +116,13 @@ void JoystickManager::OnWatchTimeout()
         rStick = QPointF(rx, ry);
 
         // send message
-        if (m_buttonFlags != buttonFlags || m_lStick != lStick || m_rStick != rStick)
+        qreal constexpr threshold = 0.005;
+        if (m_buttonFlags != buttonFlags
+        || qAbs(m_lStick.x() - lStick.x()) >= threshold
+        || qAbs(m_lStick.y() - lStick.y()) >= threshold
+        || qAbs(m_rStick.x() - rStick.x()) >= threshold
+        || qAbs(m_rStick.y() - rStick.y()) >= threshold
+        )
         {
             emit notifyChanged(buttonFlags, lStick, rStick);
         }
