@@ -19,8 +19,10 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     void SetEnabled(bool enabled);
+    bool HasJoystick() const { return m_id != UINT_MAX; }
 
 signals:
+    void notifyHasJoystick();
     void notifyChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick);
 
 private slots:

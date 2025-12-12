@@ -67,12 +67,14 @@ private:
     QLabel*         m_labelButton[BTN_COUNT - 1];
     QLabel*         m_labelReset = Q_NULLPTR;
     QLabel*         m_labelStatus = Q_NULLPTR;
+    QLabel*         m_labelJoystick = Q_NULLPTR;
     StickPainter*   m_leftStick = Q_NULLPTR;
     StickPainter*   m_rightStick = Q_NULLPTR;
 
     // Members
     bool                    m_defaultShow = false;
     bool                    m_inputActive = false;
+    bool                    m_joystickActive = false;
     quint32                 m_buttonFlag = 0;
     QMap<ButtonType, int>   m_typeToKeyMap;
     QMap<int, ButtonType>   m_keyToTypeMap;

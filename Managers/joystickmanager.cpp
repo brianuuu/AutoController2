@@ -1,6 +1,7 @@
 #include "joystickmanager.h"
 
 #include "Managers/logmanager.h"
+#include "Managers/keyboardmanager.h"
 
 #define JOYSTICK_DETECT_INTERVAL 500
 #define JOYSTICK_WATCH_INTERVAL 10
@@ -13,6 +14,9 @@ void JoystickManager::Initialize(Ui::MainWindow *ui)
 
     // detect joystick
     connect(&m_watchTimer, &QTimer::timeout, this, &JoystickManager::OnWatchTimeout);
+
+    KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
+    connect(this, &JoystickManager::notifyHasJoystick, keyboardManager, &KeyboardManager::OnUpdateStatus);
 }
 
 void JoystickManager::SetEnabled(bool enabled)
@@ -31,6 +35,7 @@ void JoystickManager::SetEnabled(bool enabled)
     {
         m_id = UINT_MAX;
         ClearButtonFlags();
+        emit notifyHasJoystick();
 
         m_logManager->PrintLog("Global", "Gamepad disabled");
         m_watchTimer.stop();
@@ -54,6 +59,7 @@ void JoystickManager::OnWatchTimeout()
                 m_logManager->PrintLog("Global", "Gamepad detected: ID = " + QString::number(i));
                 m_watchTimer.setInterval(JOYSTICK_WATCH_INTERVAL);
 
+                emit notifyHasJoystick();
                 emit notifyChanged(m_buttonFlags, m_lStick, m_rStick);
                 break;
             }
@@ -155,6 +161,7 @@ void JoystickManager::OnWatchTimeout()
         // disconnected
         m_id = UINT_MAX;
         ClearButtonFlags();
+        emit notifyHasJoystick();
 
         m_logManager->PrintLog("Global", "Gamepad disconnected", LOG_Warning);
         m_watchTimer.setInterval(JOYSTICK_DETECT_INTERVAL);

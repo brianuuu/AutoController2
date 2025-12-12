@@ -13,6 +13,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
     m_labelStatus = ui->L_KeyboardStatus;
+    m_labelJoystick = ui->L_JoystickStatus;
 
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
     connect(m_serialManager, &SerialManager::notifySerialStatus, this, &KeyboardManager::OnUpdateStatus);
@@ -21,7 +22,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     // Setup layout
     m_vlcManager->installEventFilter(this);
     this->installEventFilter(this);
-    this->setWindowTitle("Keyboard Controls");
+    this->setWindowTitle("Virtual Controller");
     this->setFixedSize(668,504);
 
     QLabel* image = new QLabel(this);
@@ -426,7 +427,8 @@ void KeyboardManager::OnButtonClicked()
 
 void KeyboardManager::OnJoystickEnabled(Qt::CheckState state)
 {
-    m_joystickManager->SetEnabled(state == Qt::Checked);
+    bool const enabled = state == Qt::Checked;
+    m_joystickManager->SetEnabled(enabled);
 }
 
 void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick)
@@ -440,15 +442,19 @@ void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPoi
 
 void KeyboardManager::OnUpdateStatus()
 {
-    m_inputActive = m_vlcManager->isActiveWindow() || this->isActiveWindow();
+    m_inputActive = true;
     m_inputActive &= m_programManager->AllowKeyboardInput();
     m_inputActive &= m_serialManager->IsConnected();
     m_inputActive &= !m_btnRemap;
+    m_joystickActive = m_inputActive && m_joystickManager->HasJoystick();
+    m_inputActive &= m_vlcManager->isActiveWindow() || this->isActiveWindow();
 
     QPalette palette = m_labelStatus->palette();
     palette.setColor(QPalette::WindowText, LogTypeToColor(m_inputActive ? LOG_Success : LOG_Error));
     m_labelStatus->setPalette(palette);
-    m_labelStatus->setText(m_inputActive ? "Active" : "Inactive");
+
+    palette.setColor(QPalette::WindowText, LogTypeToColor(m_joystickActive ? LOG_Success : LOG_Error));
+    m_labelJoystick->setPalette(palette);
 }
 
 void KeyboardManager::SetButtonText(ButtonType type)
