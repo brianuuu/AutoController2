@@ -173,12 +173,12 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RClick]->setAlignment(Qt::AlignLeft);
 
     x = 197;
-    y = 376;
+    y = 367;
     m_btnButton[BTN_LUp]->move(x,y);
     m_btnButton[BTN_LDown]->move(x,y+72);
     m_btnButton[BTN_LLeft]->move(x-55,y+36);
     m_btnButton[BTN_LRight]->move(x+55,y+36);
-    m_labelButton[BTN_LRight]->move(x-10,y+100);
+    m_labelButton[BTN_LRight]->move(x-10,y+104);
     m_labelButton[BTN_LRight]->setText("L-Stick");
     m_labelButton[BTN_LRight]->setAlignment(Qt::AlignCenter);
 
@@ -187,12 +187,12 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_btnButton[BTN_RDown]->move(x,y+72);
     m_btnButton[BTN_RLeft]->move(x-55,y+36);
     m_btnButton[BTN_RRight]->move(x+55,y+36);
-    m_labelButton[BTN_RRight]->move(x-10,y+100);
+    m_labelButton[BTN_RRight]->move(x-10,y+104);
     m_labelButton[BTN_RRight]->setText("R-Stick");
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
-    m_leftStick = new StickPainter(QPoint(233,426), this);
-    m_rightStick = new StickPainter(QPoint(442,426), this);
+    m_leftStick = new StickPainter(QPoint(233,y+50), this);
+    m_rightStick = new StickPainter(QPoint(442,y+50), this);
 
     OnResetDefault();
     LoadSettings();
