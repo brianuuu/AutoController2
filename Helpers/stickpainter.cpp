@@ -9,6 +9,7 @@ StickPainter::StickPainter(QPoint center, QWidget *parent)
 {
     this->move(center - STICK_CENTER);
     this->resize(STICK_MAX_RADIUS * 2, STICK_MAX_RADIUS * 2);
+    this->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
 void StickPainter::SetStickPos(QPointF pos)
