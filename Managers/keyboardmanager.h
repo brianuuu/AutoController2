@@ -1,6 +1,7 @@
 #ifndef KEYBOARDMANAGER_H
 #define KEYBOARDMANAGER_H
 
+#include <QCheckBox>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QPainter>
@@ -37,6 +38,7 @@ private slots:
     void OnShow();
     void OnResetDefault();
     void OnButtonClicked();
+    void OnJoystickEnabled(Qt::CheckState state);
     void OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick);
 
 private:
@@ -59,6 +61,7 @@ private:
     ProgramManager* m_programManager = Q_NULLPTR;
     SerialManager*  m_serialManager = Q_NULLPTR;
     VlcManager*     m_vlcManager = Q_NULLPTR;
+    QCheckBox*      m_cbJoystick = Q_NULLPTR;
     QPushButton*    m_btnRemap = Q_NULLPTR;
     QPushButton*    m_btnButton[BTN_COUNT - 1]; // skip spam
     QLabel*         m_labelButton[BTN_COUNT - 1];

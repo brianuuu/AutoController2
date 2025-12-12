@@ -13,9 +13,28 @@ void JoystickManager::Initialize(Ui::MainWindow *ui)
 
     // detect joystick
     connect(&m_watchTimer, &QTimer::timeout, this, &JoystickManager::OnWatchTimeout);
-    m_watchTimer.setInterval(JOYSTICK_DETECT_INTERVAL);
-    OnWatchTimeout();
-    m_watchTimer.start();
+}
+
+void JoystickManager::SetEnabled(bool enabled)
+{
+    if (m_enabled == enabled) return;
+    m_enabled = enabled;
+
+    if (m_enabled)
+    {
+        m_logManager->PrintLog("Global", "Gamepad enabled");
+        m_watchTimer.setInterval(JOYSTICK_DETECT_INTERVAL);
+        OnWatchTimeout();
+        m_watchTimer.start();
+    }
+    else
+    {
+        m_id = UINT_MAX;
+        ClearButtonFlags();
+
+        m_logManager->PrintLog("Global", "Gamepad disabled");
+        m_watchTimer.stop();
+    }
 }
 
 void JoystickManager::OnWatchTimeout()
@@ -32,7 +51,7 @@ void JoystickManager::OnWatchTimeout()
             {
                 m_id = i;
 
-                m_logManager->PrintLog("Global", "Joystick detected: ID = " + QString::number(i));
+                m_logManager->PrintLog("Global", "Gamepad detected: ID = " + QString::number(i));
                 m_watchTimer.setInterval(JOYSTICK_WATCH_INTERVAL);
 
                 emit notifyChanged(m_buttonFlags, m_lStick, m_rStick);
@@ -135,22 +154,26 @@ void JoystickManager::OnWatchTimeout()
     {
         // disconnected
         m_id = UINT_MAX;
+        ClearButtonFlags();
 
-        if (m_buttonFlags != 0 || m_lStick != QPointF() || m_rStick != QPointF())
-        {
-            m_buttonFlags = 0;
-            m_lStick = QPointF();
-            m_rStick = QPointF();
-
-            emit notifyChanged(m_buttonFlags, m_lStick, m_rStick);
-        }
-
-        m_logManager->PrintLog("Global", "Joystick disconnected", LOG_Warning);
-        m_watchTimer.setInterval(1000);
+        m_logManager->PrintLog("Global", "Gamepad disconnected", LOG_Warning);
+        m_watchTimer.setInterval(JOYSTICK_DETECT_INTERVAL);
     }
 }
 
 qreal JoystickManager::NormalizeStickPos(DWORD value)
 {
     return (qreal)value * 2.0 / 65535.0 - 1.0;
+}
+
+void JoystickManager::ClearButtonFlags()
+{
+    if (m_buttonFlags != 0 || m_lStick != QPointF() || m_rStick != QPointF())
+    {
+        m_buttonFlags = 0;
+        m_lStick = QPointF();
+        m_rStick = QPointF();
+
+        emit notifyChanged(m_buttonFlags, m_lStick, m_rStick);
+    }
 }

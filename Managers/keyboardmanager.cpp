@@ -195,6 +195,11 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RRight]->setText("R-Stick");
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
+    m_cbJoystick = new QCheckBox("Detect Gamepad", this);
+    m_cbJoystick->setStyleSheet("color: white; font-size: 16px");
+    m_cbJoystick->move(10,474);
+    connect(m_cbJoystick, &QCheckBox::checkStateChanged, this, &KeyboardManager::OnJoystickEnabled);
+
     m_leftStick = new StickPainter(QPoint(233,y+50), this);
     m_rightStick = new StickPainter(QPoint(442,y+50), this);
 
@@ -419,6 +424,11 @@ void KeyboardManager::OnButtonClicked()
     OnUpdateStatus();
 }
 
+void KeyboardManager::OnJoystickEnabled(Qt::CheckState state)
+{
+    m_joystickManager->SetEnabled(state == Qt::Checked);
+}
+
 void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick)
 {
     if (m_btnRemap || !m_programManager->AllowKeyboardInput()) return;
@@ -621,6 +631,13 @@ void KeyboardManager::LoadSettings()
             m_defaultShow = defaultShow.toBool();
         }
     }
+    {
+        QVariant joystickEnabled;
+        if (JsonHelper::ReadValue(settings, "JoystickEnabled", joystickEnabled))
+        {
+            m_cbJoystick->setChecked(joystickEnabled.toBool());
+        }
+    }
 }
 
 void KeyboardManager::SaveSettings() const
@@ -640,6 +657,7 @@ void KeyboardManager::SaveSettings() const
     settings.insert("ButtonMapping", buttonMapping);
     settings.insert("WindowSize", windowSize);
     settings.insert("DefaultShow", m_defaultShow);
+    settings.insert("JoystickEnabled", m_cbJoystick->isChecked());
 
     JsonHelper::WriteSetting("KeyboardSettings", settings);
 }

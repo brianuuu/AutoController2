@@ -18,6 +18,8 @@ public:
     static QString GetTypeID() { return "Joystick"; }
     void Initialize(Ui::MainWindow* ui);
 
+    void SetEnabled(bool enabled);
+
 signals:
     void notifyChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick);
 
@@ -26,10 +28,12 @@ private slots:
 
 private:
     static qreal NormalizeStickPos(DWORD value);
+    void ClearButtonFlags();
 
 private:
     LogManager* m_logManager = Q_NULLPTR;
 
+    bool    m_enabled = false;
     quint32 m_id = UINT_MAX;
     QTimer  m_watchTimer;
 
