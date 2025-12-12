@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS SerialPort)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
@@ -55,6 +56,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
         Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
         Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp
+        Helpers/stickpainter.h Helpers/stickpainter.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -81,6 +83,7 @@ target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
 target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
+target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 #copy files and folders
 add_custom_command(
