@@ -5,7 +5,7 @@
 #define JOYSTICK_DETECT_INTERVAL 500
 #define JOYSTICK_WATCH_INTERVAL 10
 #define JOYSTICK_TRIGGER_THRESHOLD 0.5
-#define JOYSTICK_DEADZONE 0.2
+#define JOYSTICK_DEADZONE 0.125
 
 void JoystickManager::Initialize(Ui::MainWindow *ui)
 {
