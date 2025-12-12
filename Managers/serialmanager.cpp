@@ -28,8 +28,6 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
 
     connect(&m_commandTimer, &QTimer::timeout, this, [this]{ OnSendCurrentCommand(); } );
 
-    connect(this, &SerialManager::notifySerialStatus, m_keyboardManager, &KeyboardManager::OnUpdateStatus);
-
     OnRefreshList();
     LoadSettings();
 }
@@ -382,10 +380,6 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     }
 
     quint32 buttonFlag = 0;
-    quint8 lx = 128;
-    quint8 ly = 128;
-    quint8 rx = 128;
-    quint8 ry = 128;
     QPointF lStick(0,0);
     QPointF rStick(0,0);
 
@@ -396,25 +390,20 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         if (button.startsWith("lx") || button.startsWith("ly") || button.startsWith("rx") || button.startsWith("ry"))
         {
             qreal const stickPos = button.mid(2).toDouble();
-            quint8 const actualPos = qCeil((stickPos + 1.0) * 0.5 * 255);
             if (button.startsWith("lx"))
             {
-                lx = actualPos;
                 lStick.setX(stickPos);
             }
             else if (button.startsWith("ly"))
             {
-                ly = 255 - actualPos;
                 lStick.setY(stickPos);
             }
             else if (button.startsWith("rx"))
             {
-                rx = actualPos;
                 rStick.setX(stickPos);
             }
             else if (button.startsWith("ry"))
             {
-                ry = 255 - actualPos;
                 rStick.setY(stickPos);
             }
         }
@@ -476,7 +465,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     {
         //m_logManager->PrintLog("Globel", "Button: \"" + str + "\"");
         m_keyboardManager->DisplayButton(buttonFlag, lStick, rStick);
-        SendButton(buttonFlag, lx, ly, rx, ry);
+        SendButton(buttonFlag, lStick, rStick);
         m_commandTimer.start(duration);
     }
 
@@ -548,6 +537,18 @@ void SerialManager::Disconnect()
     {
         OnDisconnectTimeout();
     }
+}
+
+void SerialManager::SendButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
+{
+    if (!m_serialPort.isOpen()) return;
+
+    quint8 lx = qCeil((lStick.x() + 1.0) * 0.5 * 255);
+    quint8 ly = qCeil((-lStick.y() + 1.0) * 0.5 * 255);
+    quint8 rx = qCeil((rStick.x() + 1.0) * 0.5 * 255);
+    quint8 ry = qCeil((-rStick.y() + 1.0) * 0.5 * 255);
+
+    SendButton(buttonFlag, lx, ly, rx, ry);
 }
 
 void SerialManager::SendButton(quint32 buttonFlag, quint8 lx, quint8 ly, quint8 rx, quint8 ry)
