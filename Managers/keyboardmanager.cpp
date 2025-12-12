@@ -551,11 +551,6 @@ void KeyboardManager::ClearButtonFlags()
     {
         ButtonReleased(m_btnButton[i]);
     }
-
-    if (m_inputActive)
-    {
-        m_serialManager->SendButton(m_buttonFlag);
-    }
 }
 
 void KeyboardManager::ButtonRemap(QPushButton *button)
