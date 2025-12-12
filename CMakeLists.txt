@@ -84,7 +84,7 @@ target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
 target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
-target_link_libraries(AutoController2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(AutoController2 PRIVATE winmm)
 
 #copy files and folders
 add_custom_command(
