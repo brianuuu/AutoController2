@@ -5,6 +5,7 @@
 #include <QObject>
 
 class AudioManager;
+class JoystickManager;
 class KeyboardManager;
 class LogManager;
 class ProgramManager;

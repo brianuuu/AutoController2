@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "Managers/logmanager.h"
+#include "Managers/joystickmanager.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
@@ -36,6 +37,7 @@ private:
 
     // managers
     LogManager*         m_logManager = Q_NULLPTR;
+    JoystickManager*    m_joystickManager = Q_NULLPTR;
     KeyboardManager*    m_keyboardManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;

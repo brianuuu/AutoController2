@@ -1,18 +1,22 @@
 #include "keyboardmanager.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/joystickmanager.h"
 #include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 
 void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {
+    m_joystickManager = ManagerCollection::GetManager<JoystickManager>();
     m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
     m_labelStatus = ui->L_KeyboardStatus;
 
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
+    connect(m_serialManager, &SerialManager::notifySerialStatus, this, &KeyboardManager::OnUpdateStatus);
+    connect(m_joystickManager, &JoystickManager::notifyChanged, this, &KeyboardManager::OnJoystickChanged);
 
     // Setup layout
     m_vlcManager->installEventFilter(this);
@@ -413,6 +417,19 @@ void KeyboardManager::OnButtonClicked()
     m_labelReset->setText("Press any key to map:\n" + ButtonToFullString(type));
 
     OnUpdateStatus();
+}
+
+void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick)
+{
+    if (m_btnRemap) return;
+
+    DisplayButton(buttonFlag, lStick, rStick);
+    
+    // allow input even if not on active window
+    if (m_programManager->AllowKeyboardInput())
+    {
+        m_serialManager->SendButton(buttonFlag, lStick, rStick);
+    }
 }
 
 void KeyboardManager::OnUpdateStatus()

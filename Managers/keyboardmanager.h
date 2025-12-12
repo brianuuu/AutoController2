@@ -31,10 +31,13 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 public slots:
+    void OnUpdateStatus();
+
+private slots:
     void OnShow();
     void OnResetDefault();
     void OnButtonClicked();
-    void OnUpdateStatus();
+    void OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPointF rStick);
 
 private:
     void SetButtonText(ButtonType type);
@@ -52,6 +55,7 @@ private:
 
 private:
     // UI
+    JoystickManager*m_joystickManager = Q_NULLPTR;
     ProgramManager* m_programManager = Q_NULLPTR;
     SerialManager*  m_serialManager = Q_NULLPTR;
     VlcManager*     m_vlcManager = Q_NULLPTR;
