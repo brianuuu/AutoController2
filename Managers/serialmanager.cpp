@@ -397,10 +397,26 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         {
             qreal const stickPos = button.mid(2).toDouble();
             quint8 const actualPos = qCeil((stickPos + 1.0) * 0.5 * 255);
-            if (button.startsWith("lx")) lx = actualPos; lStick.setX(stickPos);
-            if (button.startsWith("ly")) ly = 255 - actualPos; lStick.setY(stickPos);
-            if (button.startsWith("rx")) rx = actualPos; rStick.setX(stickPos);
-            if (button.startsWith("ry")) ry = 255 - actualPos; rStick.setY(stickPos);
+            if (button.startsWith("lx"))
+            {
+                lx = actualPos;
+                lStick.setX(stickPos);
+            }
+            else if (button.startsWith("ly"))
+            {
+                ly = 255 - actualPos;
+                lStick.setY(stickPos);
+            }
+            else if (button.startsWith("rx"))
+            {
+                rx = actualPos;
+                rStick.setX(stickPos);
+            }
+            else if (button.startsWith("ry"))
+            {
+                ry = 255 - actualPos;
+                rStick.setY(stickPos);
+            }
         }
         else
         {

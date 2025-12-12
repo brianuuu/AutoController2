@@ -14,7 +14,7 @@ StickPainter::StickPainter(QPoint center, QWidget *parent)
 void StickPainter::SetStickPos(QPointF pos)
 {
     QVector2D point(pos.x(),-pos.y());
-    m_pos = point.normalized().toPointF();
+    m_pos = point.length() > 1 ? point.normalized().toPointF() : point.toPointF();
     this->update();
 }
 
