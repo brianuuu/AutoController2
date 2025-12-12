@@ -191,6 +191,9 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RRight]->setText("R-Stick");
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
+    m_leftStick = new StickPainter(QPoint(233,426), this);
+    m_rightStick = new StickPainter(QPoint(442,426), this);
+
     OnResetDefault();
     LoadSettings();
 }
@@ -270,7 +273,7 @@ bool KeyboardManager::OnInitShow()
     return false;
 }
 
-void KeyboardManager::DisplayButton(quint32 buttonFlag, quint8 lx, quint8 ly, quint8 rx, quint8 ry)
+void KeyboardManager::DisplayButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
 {
     // called by SerialManager, display what button is currently pressed
     for (int i = 1; i < BTN_COUNT - 1; i++)
@@ -297,7 +300,8 @@ void KeyboardManager::DisplayButton(quint32 buttonFlag, quint8 lx, quint8 ly, qu
         }
     }
 
-    // TODO: stick pos
+    m_leftStick->SetStickPos(lStick);
+    m_rightStick->SetStickPos(rStick);
 }
 
 void KeyboardManager::OnShow()

@@ -386,6 +386,8 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     quint8 ly = 128;
     quint8 rx = 128;
     quint8 ry = 128;
+    QPointF lStick(0,0);
+    QPointF rStick(0,0);
 
     QStringList const buttons = str.split('|');
     for (int b = 0; b < buttons.size() - 1; b++)
@@ -395,10 +397,10 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
         {
             qreal const stickPos = button.mid(2).toDouble();
             quint8 const actualPos = qCeil((stickPos + 1.0) * 0.5 * 255);
-            if (button.startsWith("lx")) lx = actualPos;
-            if (button.startsWith("ly")) ly = 255 - actualPos;
-            if (button.startsWith("rx")) rx = actualPos;
-            if (button.startsWith("ry")) ry = 255 - actualPos;
+            if (button.startsWith("lx")) lx = actualPos; lStick.setX(stickPos);
+            if (button.startsWith("ly")) ly = 255 - actualPos; lStick.setY(stickPos);
+            if (button.startsWith("rx")) rx = actualPos; rStick.setX(stickPos);
+            if (button.startsWith("ry")) ry = 255 - actualPos; rStick.setY(stickPos);
         }
         else
         {
@@ -457,7 +459,7 @@ void SerialManager::OnSendCurrentCommand(bool isLoopCount)
     else
     {
         //m_logManager->PrintLog("Globel", "Button: \"" + str + "\"");
-        m_keyboardManager->DisplayButton(buttonFlag, lx, ly, rx, ry);
+        m_keyboardManager->DisplayButton(buttonFlag, lStick, rStick);
         SendButton(buttonFlag, lx, ly, rx, ry);
         m_commandTimer.start(duration);
     }

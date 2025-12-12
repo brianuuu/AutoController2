@@ -3,11 +3,13 @@
 
 #include <QKeyEvent>
 #include <QLabel>
+#include <QPainter>
 #include <QPushButton>
 #include <QWidget>
 
 #include "../ui_mainwindow.h"
 #include "Enums/system.h"
+#include "Helpers/stickpainter.h"
 #include "Managers/managercollection.h"
 
 class KeyboardManager : public QWidget
@@ -22,7 +24,7 @@ public:
     bool OnCloseEvent();
     bool OnInitShow();
 
-    void DisplayButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
+    void DisplayButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -58,6 +60,8 @@ private:
     QLabel*         m_labelButton[BTN_COUNT - 1];
     QLabel*         m_labelReset = Q_NULLPTR;
     QLabel*         m_labelStatus = Q_NULLPTR;
+    StickPainter*   m_leftStick = Q_NULLPTR;
+    StickPainter*   m_rightStick = Q_NULLPTR;
 
     // Members
     bool                    m_defaultShow = false;
