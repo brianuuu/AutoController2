@@ -56,11 +56,13 @@ private:
     void SaveSettings() const;
 
 private:
-    // UI
+    // Managers
     JoystickManager*m_joystickManager = Q_NULLPTR;
     ProgramManager* m_programManager = Q_NULLPTR;
     SerialManager*  m_serialManager = Q_NULLPTR;
     VlcManager*     m_vlcManager = Q_NULLPTR;
+
+    // UI
     QCheckBox*      m_cbJoystick = Q_NULLPTR;
     QPushButton*    m_btnRemap = Q_NULLPTR;
     QPushButton*    m_btnButton[BTN_COUNT - 1]; // skip spam

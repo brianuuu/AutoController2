@@ -73,9 +73,11 @@ private:
 private:
     bool m_aboutToClose = false;
 
-    // UI
+    // Managers
     KeyboardManager*m_keyboardManager = Q_NULLPTR;
     LogManager*     m_logManager = Q_NULLPTR;
+
+    // UI
     QComboBox*      m_list = Q_NULLPTR;
     QPushButton*    m_btnRefresh = Q_NULLPTR;
     QPushButton*    m_btnConnect = Q_NULLPTR;

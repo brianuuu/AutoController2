@@ -72,8 +72,10 @@ private:
     contextVideo ctxVideo;
     contextAudio ctxAudio;
 
-    // UI
+    // Managers
     LogManager*     m_logManager = Q_NULLPTR;
+
+    // UI
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
     QPushButton*    m_btnScreenshot = Q_NULLPTR;
 

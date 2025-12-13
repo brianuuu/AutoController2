@@ -44,8 +44,10 @@ private:
     void RemoveProgram();
 
 private:
-    // UI
+    // Managers
     LogManager*     m_logManager = Q_NULLPTR;
+
+    // UI
     QComboBox*      m_programCategory = Q_NULLPTR;
     QListWidget*    m_programList = Q_NULLPTR;
     QWidget*        m_settingsParent = Q_NULLPTR;
