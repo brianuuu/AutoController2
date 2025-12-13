@@ -182,7 +182,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="L_CameraDevice">
         <property name="minimumSize">
          <size>
           <width>90</width>
@@ -253,7 +253,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="L_AudioInput">
         <property name="minimumSize">
          <size>
           <width>90</width>
@@ -271,7 +271,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="L_SerialPort">
         <property name="minimumSize">
          <size>
           <width>90</width>

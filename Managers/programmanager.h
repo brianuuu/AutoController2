@@ -55,6 +55,9 @@ private:
     QPushButton*    m_btnStart = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
     QLabel*         m_labelDescription = Q_NULLPTR;
+    QLabel*         m_labelSerial = Q_NULLPTR;
+    QLabel*         m_labelCamera = Q_NULLPTR;
+    QLabel*         m_labelAudio = Q_NULLPTR;
     QMap<QString, QStringList>  m_categoryToPrograms;
 
     using ProgramCtor = ProgramBase*(*)();

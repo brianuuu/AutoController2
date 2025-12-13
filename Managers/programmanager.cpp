@@ -16,6 +16,9 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_btnStart = ui->PB_StartProgram;
     m_btnResetDefault = ui->PB_RestoreDefault;
     m_labelDescription = ui->L_ProgramDescription;
+    m_labelSerial = ui->L_SerialPort;
+    m_labelCamera = ui->L_CameraDevice;
+    m_labelAudio = ui->L_AudioInput;
 
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
@@ -79,6 +82,8 @@ void ProgramManager::OnProgramChanged(const QString &name)
 
 void ProgramManager::OnCanRunChanged(bool canRun)
 {
+    if (!m_program) return;
+
     if (!canRun && m_program->IsRunning())
     {
         StopProgram();
@@ -87,6 +92,18 @@ void ProgramManager::OnCanRunChanged(bool canRun)
         // TODO: log file name
         m_logManager->SetCurrentLogFile("");
     }
+
+    auto fnSetPalette = [](QLabel* label, bool valid)
+    {
+        QPalette palette = label->palette();
+        palette.setColor(QPalette::WindowText, LogTypeToColor(valid ? LOG_Normal : LOG_Error));
+        label->setPalette(palette);
+    };
+
+    // highlight required elements
+    fnSetPalette(m_labelSerial, m_program->ValidSerial());
+    fnSetPalette(m_labelCamera, m_program->ValidVideo());
+    fnSetPalette(m_labelAudio, m_program->ValidAudio());
 
     m_btnStart->setEnabled(canRun);
 }

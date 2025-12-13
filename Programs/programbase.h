@@ -39,6 +39,10 @@ public:
     bool IsRunning() { return m_started; }
     bool HasSettings() { return !m_settings.empty(); }
 
+    bool ValidSerial() const;
+    bool ValidVideo() const;
+    bool ValidAudio() const;
+
 signals:
     void notifyCanRun(bool);
     void notifyFinished();

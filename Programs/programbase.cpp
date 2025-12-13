@@ -50,9 +50,7 @@ void ProgramBase::SaveSettings() const
 
 bool ProgramBase::CanRun() const
 {
-    return (!RequireSerial() || m_serialManager->IsConnected())
-        && (!RequireVideo() || m_vlcManager->HasVideo())
-        && (!RequireAudio() || m_audioManager->GetDeviceName() != "None");
+    return ValidSerial() && ValidVideo() && ValidAudio();
 }
 
 void ProgramBase::ResetDefault()
@@ -75,6 +73,21 @@ void ProgramBase::Stop()
 {
     m_serialManager->StopCommand();
     m_started = false;
+}
+
+bool ProgramBase::ValidSerial() const
+{
+    return !RequireSerial() || m_serialManager->IsConnected();
+}
+
+bool ProgramBase::ValidVideo() const
+{
+    return !RequireVideo() || m_vlcManager->HasVideo();
+}
+
+bool ProgramBase::ValidAudio() const
+{
+    return !RequireAudio() || m_audioManager->GetDeviceName() != "None";
 }
 
 void ProgramBase::OnCanRunChanged()
