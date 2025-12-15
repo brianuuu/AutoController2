@@ -68,7 +68,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
 
-    m_btnResetDefault->setEnabled(m_program->HasSettings());
+    m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_labelDescription->setText(m_program->GetDescription());
 
     connect(m_program, &ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
@@ -211,7 +211,7 @@ void ProgramManager::StopProgram()
 
     m_program->Stop();
     m_btnStart->setText("Start Program");
-    m_btnResetDefault->setEnabled(m_program->HasSettings());
+    m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_programCategory->setEnabled(true);
     m_programList->setEnabled(true);
     m_settingsParent->setEnabled(true);

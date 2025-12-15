@@ -23,21 +23,23 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
         names << file.mid(0, file.size() - CUSTOM_COMMAND_FORMAT.size());
     }
 
-    m_list = AddComboBox(layout,"Command Select:", "Select a pre-made command to run", "CommandType", names);
+    m_list = new SettingComboBox("CommandType", names);
+    m_savedSettings.push_back(m_list);
+    AddSetting(layout, "Command Select:", "Select a pre-made command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
 
-    m_command = AddLineEdit(layout, "Current Command:", "", "CommandEdit");
+    m_command = new SettingLineEdit("CommandEdit");
     m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
-    m_command->m_shouldSave = false;
+    AddSetting(layout, "Current Command:", "", m_command, false);
     connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandEdit);
 
     // add error message label and move it to the layout above, horribly
     m_labelStatus = AddText(layout, "", true);
     layout->itemAt(layout->count() - 3)->widget()->layout()->addWidget(m_labelStatus);
 
-    m_description = AddTextEdit(layout, "Description:", "", "Description");
-    m_description->m_shouldSave = false;
+    m_description = new SettingTextEdit("Description");
     m_description->setMaximumHeight(100);
+    AddSetting(layout, "Description:", "", m_description, false);
 
     m_btnSave = new QPushButton("Save As...");
     m_btnDelete = new QPushButton("Delete");

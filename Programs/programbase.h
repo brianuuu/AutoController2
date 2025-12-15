@@ -37,7 +37,7 @@ public:
     virtual void Stop();
 
     bool IsRunning() { return m_started; }
-    bool HasSettings() { return !m_settings.empty(); }
+    bool HaveSavedSettings() { return !m_savedSettings.empty(); }
 
     bool ValidSerial() const;
     bool ValidVideo() const;
@@ -55,49 +55,8 @@ protected:
 
     void AddItem(QBoxLayout* layout, QWidget* widget);
     QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
-
-    void AddSetting
-    (
-        QBoxLayout *layout,
-        QString const& name,
-        QString const& description,
-        QWidget* setting,
-        bool isHorizontal
-    );
-
-    void AddSettings
-    (
-        QBoxLayout *layout,
-        QString const& name,
-        QString const& description,
-        QList<QWidget*> settings,
-        bool isHorizontal
-    );
-
-    SettingComboBox* AddComboBox
-    (
-        QBoxLayout *layout,
-        QString const& name,
-        QString const& description,
-        QString const& settingName,
-        QStringList const& list
-    );
-
-    SettingLineEdit* AddLineEdit
-    (
-        QBoxLayout *layout,
-        QString const& name,
-        QString const& description,
-        QString const& settingName
-    );
-
-    SettingTextEdit* AddTextEdit
-    (
-        QBoxLayout *layout,
-        QString const& name,
-        QString const& description,
-        QString const& settingName
-    );
+    void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
+    void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
 
 protected:
     LogManager*         m_logManager = Q_NULLPTR;
@@ -106,9 +65,7 @@ protected:
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
-
-private:
-    QList<SettingBase*> m_settings;
+    QList<SettingBase*> m_savedSettings;
 };
 
 #endif // PROGRAMBASE_H

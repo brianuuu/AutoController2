@@ -22,24 +22,18 @@ void ProgramBase::LoadSettings()
 {
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
     QJsonObject settings = JsonHelper::ReadObject(allSettings, GetInternalName());
-    for (SettingBase* setting : std::as_const(m_settings))
+    for (SettingBase* setting : std::as_const(m_savedSettings))
     {
-        if (setting->m_shouldSave)
-        {
-            setting->Load(settings);
-        }
+        setting->Load(settings);
     }
 }
 
 void ProgramBase::SaveSettings() const
 {
     QJsonObject settings;
-    for (SettingBase* setting : m_settings)
+    for (SettingBase* setting : m_savedSettings)
     {
-        if (setting->m_shouldSave)
-        {
-            setting->Save(settings);
-        }
+        setting->Save(settings);
     }
 
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
@@ -55,12 +49,9 @@ bool ProgramBase::CanRun() const
 
 void ProgramBase::ResetDefault()
 {
-    for (SettingBase* setting : std::as_const(m_settings))
+    for (SettingBase* setting : std::as_const(m_savedSettings))
     {
-        if (setting->m_shouldSave)
-        {
-            setting->ResetDefault();
-        }
+        setting->ResetDefault();
     }
 }
 
@@ -187,47 +178,4 @@ void ProgramBase::AddSettings
         }
         hBoxLayout->setContentsMargins(0,0,0,0);
     }
-}
-
-SettingComboBox *ProgramBase::AddComboBox
-(
-    QBoxLayout *layout,
-    const QString &name,
-    const QString &description,
-    const QString &settingName,
-    const QStringList &list
-)
-{
-    SettingComboBox* comboBox = new SettingComboBox(settingName, list);
-    m_settings.push_back(comboBox);
-    AddSetting(layout, name, description, comboBox, true);
-    return comboBox;
-}
-
-SettingLineEdit *ProgramBase::AddLineEdit
-(
-    QBoxLayout *layout,
-    const QString &name,
-    const QString &description,
-    const QString &settingName
-)
-{
-    SettingLineEdit* lineEdit = new SettingLineEdit(settingName);
-    m_settings.push_back(lineEdit);
-    AddSetting(layout, name, description, lineEdit, false);
-    return lineEdit;
-}
-
-SettingTextEdit *ProgramBase::AddTextEdit
-(
-    QBoxLayout *layout,
-    const QString &name,
-    const QString &description,
-    const QString &settingName
-)
-{
-    SettingTextEdit* textEdit = new SettingTextEdit(settingName);
-    m_settings.push_back(textEdit);
-    AddSetting(layout, name, description, textEdit, false);
-    return textEdit;
 }
