@@ -5,6 +5,10 @@
 #include "Managers/videomanager.h"
 
 #define SCREENSHOT_PATH "../Screenshots/"
+#define ERROR_TEXT \
+"1. Camera may be occupied by another application\n" \
+"2. Chroma may not be supported for current resolution\n" \
+"3. Resolution not matching source (required for OBS Virtual Camera etc.)"
 
 static void* cbVideoLock(void *opaque, void **planes)
 {
@@ -90,9 +94,10 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     this->setWindowTitle("Media View");
     this->resize(1280,720);
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
+    vBoxLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     //vBoxLayout->addWidget(ctxAudio.m_manager);
     vBoxLayout->addWidget(ctxVideo.m_manager);
-    vBoxLayout->addItem(new QSpacerItem(20, 440, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    vBoxLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     vBoxLayout->setContentsMargins(0,0,0,0);
 
     LoadSettings();
@@ -172,12 +177,7 @@ void VlcManager::OnCameraStartTimeout()
     {
         // no feedback detected
         m_logManager->PrintLog("Global", "No video feedback detected", LOG_Error);
-        QMessageBox::critical(this, "Error",
-            "No video feedback detected!\n"
-            "1. Chroma may not be supported for current resolution\n"
-            "2. Resolution not matching source (required for OBS Virtual Camera etc.)",
-            QMessageBox::Ok
-        );
+        QMessageBox::critical(this, "Error", QString("No video feedback detected!\n") + ERROR_TEXT, QMessageBox::Ok);
         Stop();
     }
 }
@@ -200,12 +200,7 @@ void VlcManager::OnEventCallback()
     {
         // state not expected
         m_logManager->PrintLog("Global", "Failed to start camera", LOG_Error);
-        QMessageBox::critical(this, "Error",
-            "Failed to start camera!\n"
-            "1. Chroma may not be supported for current resolution\n"
-            "2. Resolution not matching source (required for OBS Virtual Camera etc.)",
-            QMessageBox::Ok
-        );
+        QMessageBox::critical(this, "Error", QString("Failed to start camera!\n") + ERROR_TEXT, QMessageBox::Ok);
         Stop();
         break;
     }
