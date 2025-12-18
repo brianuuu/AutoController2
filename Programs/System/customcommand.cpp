@@ -7,12 +7,15 @@
 #define CUSTOM_COMMAND_DIRECTORY "../Resources/System/CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
 
-System::CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
+namespace System
+{
+
+CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
     connect(m_serialManager, &SerialManager::notifyCommandFinished, this, &CustomCommand::OnCommandFinished);
 }
 
-void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
+void CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
     QDir const directory(CUSTOM_COMMAND_DIRECTORY);
     QStringList const files = directory.entryList({"*" + CUSTOM_COMMAND_FORMAT}, QDir::Files);
@@ -52,12 +55,12 @@ void System::CustomCommand::PopulateSettings(QBoxLayout *layout)
     OnCommandEdit(m_command->text());
 }
 
-bool System::CustomCommand::CanRun() const
+bool CustomCommand::CanRun() const
 {
     return ProgramBase::CanRun() && m_validCommand;
 }
 
-void System::CustomCommand::Start()
+void CustomCommand::Start()
 {
     ProgramBase::Start();
 
@@ -65,12 +68,12 @@ void System::CustomCommand::Start()
     m_serialManager->SendCommand(m_command->text());
 }
 
-void System::CustomCommand::Stop()
+void CustomCommand::Stop()
 {
     ProgramBase::Stop();
 }
 
-void System::CustomCommand::OnListChanged(const QString &str)
+void CustomCommand::OnListChanged(const QString &str)
 {
     QString const name = CUSTOM_COMMAND_DIRECTORY + str + CUSTOM_COMMAND_FORMAT;
     QJsonObject const object = JsonHelper::ReadJson(name);
@@ -96,7 +99,7 @@ void System::CustomCommand::OnListChanged(const QString &str)
     }
 }
 
-void System::CustomCommand::OnCommandEdit(const QString &command)
+void CustomCommand::OnCommandEdit(const QString &command)
 {
     QString errorMsg;
     if (SerialManager::VerifyCommand(command, errorMsg))
@@ -118,13 +121,13 @@ void System::CustomCommand::OnCommandEdit(const QString &command)
     OnCanRunChanged();
 }
 
-void System::CustomCommand::OnCommandFinished()
+void CustomCommand::OnCommandFinished()
 {
     if (!m_started) return;
     emit notifyFinished();
 }
 
-void System::CustomCommand::OnCommandSave()
+void CustomCommand::OnCommandSave()
 {
     QString const file = QFileDialog::getSaveFileName(m_btnSave, tr("Save Command As"), CUSTOM_COMMAND_DIRECTORY, "Custom Command (*" + CUSTOM_COMMAND_FORMAT + ")");
     if (file == Q_NULLPTR) return;
@@ -146,7 +149,7 @@ void System::CustomCommand::OnCommandSave()
     }
 }
 
-void System::CustomCommand::OnCommandDelete()
+void CustomCommand::OnCommandDelete()
 {
     QMessageBox::StandardButton resBtn = QMessageBox::Yes;
     resBtn = QMessageBox::warning(m_btnDelete, "Warning", "Are you sure you want to delete current command?\nThis cannot be undone.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
@@ -155,4 +158,6 @@ void System::CustomCommand::OnCommandDelete()
         QFile::remove(CUSTOM_COMMAND_DIRECTORY + m_list->currentText() + CUSTOM_COMMAND_FORMAT);
         m_list->removeItem(m_list->currentIndex());
     }
+}
+
 }
