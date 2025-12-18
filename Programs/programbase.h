@@ -7,9 +7,7 @@
 #include <QObject>
 
 #include "Managers/managercollection.h"
-#include "Programs/Settings/settingcombobox.h"
-#include "Programs/Settings/settinglineedit.h"
-#include "Programs/Settings/settingtextedit.h"
+#include "Programs/Settings/settingbase.h"
 
 class ProgramBase : public QObject
 {

@@ -2,7 +2,7 @@
 #define SETTINGCOMBOBOX_H
 
 #include <QComboBox>
-#include "Programs/settingbase.h"
+#include "settingbase.h"
 
 class SettingComboBox : public QComboBox, public SettingBase
 {

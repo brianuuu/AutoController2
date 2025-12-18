@@ -52,7 +52,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/programmanager.h Managers/programmanager.cpp
         Programs/programbase.h Programs/programbase.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
-        Programs/settingbase.h
+        Programs/Settings/settingbase.h
         Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
         Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
         Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp

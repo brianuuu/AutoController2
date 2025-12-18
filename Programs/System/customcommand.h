@@ -7,6 +7,9 @@
 #include <QPushButton>
 
 #include "../programbase.h"
+#include "Programs/Settings/settingcombobox.h"
+#include "Programs/Settings/settinglineedit.h"
+#include "Programs/Settings/settingtextedit.h"
 
 namespace System
 {

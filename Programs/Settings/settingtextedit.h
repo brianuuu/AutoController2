@@ -2,7 +2,7 @@
 #define SETTINGTEXTEDIT_H
 
 #include <QTextEdit>
-#include "Programs/settingbase.h"
+#include "settingbase.h"
 
 class SettingTextEdit : public QTextEdit, public SettingBase
 {

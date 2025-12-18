@@ -2,7 +2,7 @@
 #define SETTINGLINEEDIT_H
 
 #include <QLineEdit>
-#include "Programs/settingbase.h"
+#include "settingbase.h"
 
 class SettingLineEdit : public QLineEdit, public SettingBase
 {
