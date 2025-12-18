@@ -203,6 +203,8 @@ void ProgramManager::StartProgram()
     m_programCategory->setEnabled(false);
     m_programList->setEnabled(false);
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
+
+    emit notifyStartStop();
 }
 
 void ProgramManager::StopProgram()
@@ -215,6 +217,8 @@ void ProgramManager::StopProgram()
     m_programCategory->setEnabled(true);
     m_programList->setEnabled(true);
     m_settingsParent->setEnabled(true);
+
+    emit notifyStartStop();
 }
 
 template<class T>

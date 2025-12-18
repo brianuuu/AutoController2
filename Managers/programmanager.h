@@ -24,6 +24,9 @@ public:
     bool AllowKeyboardInput() const { return !IsRunning() || !m_program->RequireSerial(); }
     bool IsRunning() const { return m_program && m_program->IsRunning(); }
 
+signals:
+    void notifyStartStop();
+
 private slots:
     void OnCategoryChanged(QString const& category);
     void OnProgramChanged(QString const& name);

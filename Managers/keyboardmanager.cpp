@@ -17,6 +17,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
 
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
     connect(m_serialManager, &SerialManager::notifySerialStatus, this, &KeyboardManager::OnUpdateStatus);
+    connect(m_programManager, &ProgramManager::notifyStartStop, this, &KeyboardManager::OnUpdateStatus);
     connect(m_joystickManager, &JoystickManager::notifyChanged, this, &KeyboardManager::OnJoystickChanged);
 
     // Setup layout
