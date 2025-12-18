@@ -1,4 +1,4 @@
 {
-    "Command": "(Plus|50,A|Spam|1500,None|2000)0",
-    "Description": "Start inside a hyperspace dimension"
+    "Command": "(Plus|50,None|400,A|600,None|50,A|50,B|Spam|2800)0",
+    "Description": "Start inside a hyperspace dimension\nIf it isn't able to consistently open the map, adjust B|Spam duration"
 }
