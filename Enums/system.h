@@ -42,35 +42,35 @@ static QString ButtonToString(ButtonType button)
 {
     switch (button)
     {
-    case BTN_None:      return "none";
-    case BTN_A:         return "a";
-    case BTN_B:         return "b";
-    case BTN_X:         return "x";
-    case BTN_Y:         return "y";
-    case BTN_L:         return "l";
-    case BTN_R:         return "r";
-    case BTN_ZL:        return "zl";
-    case BTN_ZR:        return "zr";
-    case BTN_Plus:      return "plus";
-    case BTN_Minus:     return "minus";
-    case BTN_Home:      return "home";
-    case BTN_Capture:   return "capture";
-    case BTN_LClick:    return "lclick";
-    case BTN_LUp:       return "lup";
-    case BTN_LDown:     return "ldown";
-    case BTN_LLeft:     return "lleft";
-    case BTN_LRight:    return "lright";
-    case BTN_RClick:    return "rclick";
-    case BTN_RUp:       return "rup";
-    case BTN_RDown:     return "rdown";
-    case BTN_RLeft:     return "rleft";
-    case BTN_RRight:    return "rright";
-    case BTN_DUp:       return "dup";
-    case BTN_DDown:     return "ddown";
-    case BTN_DLeft:     return "dleft";
-    case BTN_DRight:    return "dright";
-    case BTN_Spam:      return "spam";
-    default:            return "invalid";
+    case BTN_None:      return "None";
+    case BTN_A:         return "A";
+    case BTN_B:         return "B";
+    case BTN_X:         return "X";
+    case BTN_Y:         return "Y";
+    case BTN_L:         return "L";
+    case BTN_R:         return "R";
+    case BTN_ZL:        return "ZL";
+    case BTN_ZR:        return "ZR";
+    case BTN_Plus:      return "Plus";
+    case BTN_Minus:     return "Minus";
+    case BTN_Home:      return "Home";
+    case BTN_Capture:   return "Capture";
+    case BTN_LClick:    return "LClick";
+    case BTN_LUp:       return "LUp";
+    case BTN_LDown:     return "LDown";
+    case BTN_LLeft:     return "LLeft";
+    case BTN_LRight:    return "LRight";
+    case BTN_RClick:    return "RClick";
+    case BTN_RUp:       return "RUp";
+    case BTN_RDown:     return "RDown";
+    case BTN_RLeft:     return "RLeft";
+    case BTN_RRight:    return "RRight";
+    case BTN_DUp:       return "DUp";
+    case BTN_DDown:     return "DDown";
+    case BTN_DLeft:     return "DLeft";
+    case BTN_DRight:    return "DRight";
+    case BTN_Spam:      return "Spam";
+    default:            return "Invalid";
     }
 }
 
@@ -127,7 +127,7 @@ static ButtonType StringToButton(QString const& str)
     for (int i = 0; i < BTN_COUNT; i++)
     {
         ButtonType type = (ButtonType)i;
-        if (lower == ButtonToString(type))
+        if (lower == ButtonToString(type).toLower())
         {
             return type;
         }
