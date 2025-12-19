@@ -35,7 +35,6 @@ private:
 
 private:
     Ui::MainWindow *ui;
-    bool m_wasActivated = true;
 
     // managers
     LogManager*         m_logManager = Q_NULLPTR;

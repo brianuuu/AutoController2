@@ -77,6 +77,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     delete m_keyboardManager;
     delete m_logManager;
 
+    m_vlcManager = Q_NULLPTR;
+    m_keyboardManager = Q_NULLPTR;
+    m_logManager = Q_NULLPTR;
+
     QMainWindow::closeEvent(event);
 }
 
@@ -98,14 +102,13 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::ActivationChange || event->type() == QEvent::WindowStateChange)
     {
         // when main window activates, raise other windows too
-        if (widget->isActiveWindow() && !m_wasActivated)
+        if (widget->isActiveWindow())
         {
-            m_logManager->raise();
-            m_keyboardManager->raise();
-            m_vlcManager->raise();
+            if (m_logManager) m_logManager->raise();
+            if (m_keyboardManager) m_keyboardManager->raise();
+            if (m_vlcManager) m_vlcManager->raise();
+            this->raise();
         }
-
-        m_wasActivated = widget->isActiveWindow() && !widget->isMinimized();
     }
 
     return false;
