@@ -12,9 +12,9 @@ public:
     explicit SettingLineEdit(QString const& name) : SettingBase(name) {}
 
     // from SettingBase
-    void Load(QJsonObject &object);
-    void Save(QJsonObject &object) const;
-    void ResetDefault();
+    void Load(QJsonObject &object) override;
+    void Save(QJsonObject &object) const override;
+    void ResetDefault() override;
 };
 
 #endif // SETTINGLINEEDIT_H

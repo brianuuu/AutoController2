@@ -12,9 +12,9 @@ public:
     explicit SettingComboBox(QString const& name, QStringList const& list);
 
     // from SettingBase
-    void Load(QJsonObject &object);
-    void Save(QJsonObject &object) const;
-    void ResetDefault();
+    void Load(QJsonObject &object) override;
+    void Save(QJsonObject &object) const override;
+    void ResetDefault() override;
 };
 
 #endif // SETTINGCOMBOBOX_H
