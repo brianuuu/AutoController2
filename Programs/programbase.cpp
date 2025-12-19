@@ -125,7 +125,7 @@ void ProgramBase::AddSettings
 {
     for (QWidget* setting : settings)
     {
-        setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
     QWidget* widget = new QWidget();
@@ -139,7 +139,7 @@ void ProgramBase::AddSettings
             QFont font = labelName->font();
             font.setBold(true);
             labelName->setFont(font);
-            labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+            labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             vBoxLayout->addWidget(labelName);
         }
 
@@ -147,7 +147,6 @@ void ProgramBase::AddSettings
         {
             QLabel* labelDescription = new QLabel(description);
             labelDescription->setWordWrap(true);
-            labelDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
             vBoxLayout->addWidget(labelDescription);
         }
 
