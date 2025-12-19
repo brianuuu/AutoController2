@@ -26,6 +26,7 @@ public:
     virtual bool RequireVideo() const = 0;
     virtual bool RequireAudio() const = 0;
 
+    virtual bool CanControlWhileRunning() { return false; }
     virtual bool CanEditWhileRunning() { return false; }
     virtual bool CanRun() const;
 
