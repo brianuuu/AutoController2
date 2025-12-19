@@ -40,10 +40,14 @@ public:
 
 private slots:
     void OnListChanged(QString const& str);
-    void OnCommandEdit(QString const& command);
+    void OnCommandChanged();
+    void OnCommandEdited();
     void OnCommandFinished();
     void OnCommandSave();
     void OnCommandDelete();
+
+private:
+    void VerifyCommand();
 
 private:
     SettingComboBox* m_list = Q_NULLPTR;

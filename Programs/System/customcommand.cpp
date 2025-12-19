@@ -6,6 +6,7 @@
 
 #define CUSTOM_COMMAND_DIRECTORY "../Resources/System/CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
+#define CUSTOM_COMMAND_CUSTOM "(Custom)"
 
 namespace System
 {
@@ -20,7 +21,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     QDir const directory(CUSTOM_COMMAND_DIRECTORY);
     QStringList const files = directory.entryList({"*" + CUSTOM_COMMAND_FORMAT}, QDir::Files);
 
-    QStringList names;
+    QStringList names = { CUSTOM_COMMAND_CUSTOM };
     for (QString const& file : files)
     {
         names << file.mid(0, file.size() - CUSTOM_COMMAND_FORMAT.size());
@@ -34,7 +35,8 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_command = new SettingLineEdit("CommandEdit");
     m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
     AddSetting(layout, "Current Command:", "", m_command, false);
-    connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandEdit);
+    connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandChanged);
+    connect(m_command, &QLineEdit::textEdited, this, &CustomCommand::OnCommandEdited);
 
     // add error message label and move it to the layout above, horribly
     m_labelStatus = AddText(layout, "", true);
@@ -43,6 +45,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_description = new SettingTextEdit("Description");
     m_description->setMaximumHeight(100);
     AddSetting(layout, "Description:", "", m_description, false);
+    connect(m_description, &QTextEdit::textChanged, this, &CustomCommand::OnCommandEdited);
 
     m_btnSave = new QPushButton("Save As...");
     m_btnDelete = new QPushButton("Delete");
@@ -54,7 +57,6 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
 
     // set initial text
     OnListChanged(m_list->currentText());
-    OnCommandEdit(m_command->text());
 }
 
 bool CustomCommand::CanRun() const
@@ -77,6 +79,20 @@ void CustomCommand::Stop()
 
 void CustomCommand::OnListChanged(const QString &str)
 {
+    if (str == CUSTOM_COMMAND_CUSTOM)
+    {
+        // should save custom command
+        m_savedSettings.insert(m_command);
+        m_savedSettings.insert(m_description);
+        return;
+    }
+    else
+    {
+        // don't save
+        m_savedSettings.remove(m_command);
+        m_savedSettings.remove(m_description);
+    }
+
     QString const name = CUSTOM_COMMAND_DIRECTORY + str + CUSTOM_COMMAND_FORMAT;
     QJsonObject const object = JsonHelper::ReadJson(name);
 
@@ -93,7 +109,9 @@ void CustomCommand::OnListChanged(const QString &str)
     QVariant description;
     if (JsonHelper::ReadValue(object, "Description", description))
     {
+        m_description->blockSignals(true);
         m_description->setText(description.toString());
+        m_description->blockSignals(false);
     }
     else
     {
@@ -101,26 +119,16 @@ void CustomCommand::OnListChanged(const QString &str)
     }
 }
 
-void CustomCommand::OnCommandEdit(const QString &command)
+void CustomCommand::OnCommandChanged()
 {
-    QString errorMsg;
-    if (SerialManager::VerifyCommand(command, errorMsg))
-    {
-        m_labelStatus->setText("Valid!");
-        m_validCommand = true;
-    }
-    else
-    {
-        m_labelStatus->setText(errorMsg);
-        m_validCommand = false;
-    }
+    // user input or programmatic change
+    VerifyCommand();
+}
 
-    QPalette palette = m_labelStatus->palette();
-    palette.setColor(QPalette::WindowText, LogTypeToColor(m_validCommand ? LOG_Success : LOG_Error));
-    m_labelStatus->setPalette(palette);
-
-    m_btnSave->setEnabled(m_validCommand);
-    OnCanRunChanged();
+void CustomCommand::OnCommandEdited()
+{
+    // user input only
+    m_list->setCurrentText(CUSTOM_COMMAND_CUSTOM);
 }
 
 void CustomCommand::OnCommandFinished()
@@ -160,6 +168,28 @@ void CustomCommand::OnCommandDelete()
         QFile::remove(CUSTOM_COMMAND_DIRECTORY + m_list->currentText() + CUSTOM_COMMAND_FORMAT);
         m_list->removeItem(m_list->currentIndex());
     }
+}
+
+void CustomCommand::VerifyCommand()
+{
+    QString errorMsg;
+    if (SerialManager::VerifyCommand(m_command->text(), errorMsg))
+    {
+        m_labelStatus->setText("Valid!");
+        m_validCommand = true;
+    }
+    else
+    {
+        m_labelStatus->setText(errorMsg);
+        m_validCommand = false;
+    }
+
+    QPalette palette = m_labelStatus->palette();
+    palette.setColor(QPalette::WindowText, LogTypeToColor(m_validCommand ? LOG_Success : LOG_Error));
+    m_labelStatus->setPalette(palette);
+
+    m_btnSave->setEnabled(m_validCommand);
+    OnCanRunChanged();
 }
 
 }
