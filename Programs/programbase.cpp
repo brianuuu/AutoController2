@@ -58,6 +58,7 @@ void ProgramBase::ResetDefault()
 void ProgramBase::Start()
 {
     m_started = true;
+    emit notifyStarted();
 }
 
 void ProgramBase::Stop()

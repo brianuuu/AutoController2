@@ -44,6 +44,7 @@ public:
 
 signals:
     void notifyCanRun(bool);
+    void notifyStarted();
     void notifyFinished();
 
 protected slots:
