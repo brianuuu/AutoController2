@@ -440,6 +440,7 @@ void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPoi
     // allow input even if not on active window
     DisplayButton(buttonFlag, lStick, rStick);
     m_serialManager->SendButton(buttonFlag, lStick, rStick);
+    emit notifyUserInput(buttonFlag, lStick, rStick);
 }
 
 void KeyboardManager::OnUpdateStatus()
@@ -566,6 +567,7 @@ void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
     if (m_inputActive)
     {
         m_serialManager->SendButton(m_buttonFlag);
+        emit notifyUserInput(m_buttonFlag);
     }
 }
 

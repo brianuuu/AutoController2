@@ -31,11 +31,14 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+signals:
+    void notifyUserInput(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
+
 public slots:
     void OnUpdateStatus();
+    void OnShow();
 
 private slots:
-    void OnShow();
     void OnResetDefault();
     void OnButtonClicked();
     void OnJoystickEnabled(Qt::CheckState state);

@@ -3,6 +3,8 @@
 #include "Helpers/jsonhelper.h"
 #include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"
+
+#include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
@@ -27,6 +29,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
 
     // register all programs
+    RegisterProgram<System::CommandRecorder>();
     RegisterProgram<System::CustomCommand>();
 
     // populate categories
