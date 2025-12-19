@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     LoadSettings();
 
+    this->installEventFilter(this);
     m_logManager->PrintLog("Global", "Initialization completed");
 }
 
@@ -89,6 +90,25 @@ void MainWindow::paintEvent(QPaintEvent *event)
     }
 
     QMainWindow::paintEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    QWidget* widget = qobject_cast<QWidget*>(watched);
+    if (event->type() == QEvent::ActivationChange || event->type() == QEvent::WindowStateChange)
+    {
+        // when main window activates, raise other windows too
+        if (widget->isActiveWindow() && !m_wasActivated)
+        {
+            m_logManager->raise();
+            m_keyboardManager->raise();
+            m_vlcManager->raise();
+        }
+
+        m_wasActivated = widget->isActiveWindow() && !widget->isMinimized();
+    }
+
+    return false;
 }
 
 void MainWindow::LoadSettings()

@@ -27,6 +27,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void LoadSettings();
@@ -34,6 +35,7 @@ private:
 
 private:
     Ui::MainWindow *ui;
+    bool m_wasActivated = true;
 
     // managers
     LogManager*         m_logManager = Q_NULLPTR;
