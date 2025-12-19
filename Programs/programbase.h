@@ -51,10 +51,10 @@ protected slots:
 protected:
     void PrintLog(QString const& log);
 
-    void AddItem(QBoxLayout* layout, QWidget* widget);
     QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
     void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
     void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
+    void AddSpacer(QBoxLayout *layout);
 
 protected:
     LogManager*         m_logManager = Q_NULLPTR;

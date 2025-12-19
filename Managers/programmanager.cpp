@@ -245,7 +245,7 @@ void ProgramManager::RemoveProgram()
     m_program->SaveSettings();
 
     // remove settings layout
-    while (m_settingsLayout->count() > 1)
+    while (m_settingsLayout->count())
     {
         delete m_settingsLayout->takeAt(0)->widget();
     }

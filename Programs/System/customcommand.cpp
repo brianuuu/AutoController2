@@ -38,7 +38,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
 
     // add error message label and move it to the layout above, horribly
     m_labelStatus = AddText(layout, "", true);
-    layout->itemAt(layout->count() - 3)->widget()->layout()->addWidget(m_labelStatus);
+    layout->itemAt(layout->count() - 2)->widget()->layout()->addWidget(m_labelStatus);
 
     m_description = new SettingTextEdit("Description");
     m_description->setMaximumHeight(100);
@@ -49,6 +49,8 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     AddSettings(layout, "", "", {m_btnSave, m_btnDelete}, true);
     connect(m_btnSave, &QPushButton::clicked, this, &CustomCommand::OnCommandSave);
     connect(m_btnDelete, &QPushButton::clicked, this, &CustomCommand::OnCommandDelete);
+
+    AddSpacer(layout);
 
     // set initial text
     OnListChanged(m_list->currentText());

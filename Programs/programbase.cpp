@@ -91,18 +91,13 @@ void ProgramBase::PrintLog(const QString &log)
      m_logManager->PrintLog(GetInternalName(), log);
 }
 
-void ProgramBase::AddItem(QBoxLayout *layout, QWidget *widget)
-{
-    layout->insertWidget(layout->count() - 1, widget);
-}
-
 QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)
 {
     QLabel* label = new QLabel(str);
     QFont font = label->font();
     font.setBold(isBold);
     label->setFont(font);
-    AddItem(layout, label);
+    layout->addWidget(label);
 
     return label;
 }
@@ -130,11 +125,11 @@ void ProgramBase::AddSettings
 {
     for (QWidget* setting : settings)
     {
-        setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        setting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     }
 
     QWidget* widget = new QWidget();
-    layout->insertWidget(layout->count() - 1, widget);
+    layout->addWidget(widget);
 
     QVBoxLayout* vBoxLayout = new QVBoxLayout();
     {
@@ -144,7 +139,7 @@ void ProgramBase::AddSettings
             QFont font = labelName->font();
             font.setBold(true);
             labelName->setFont(font);
-            labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            labelName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
             vBoxLayout->addWidget(labelName);
         }
 
@@ -152,6 +147,7 @@ void ProgramBase::AddSettings
         {
             QLabel* labelDescription = new QLabel(description);
             labelDescription->setWordWrap(true);
+            labelDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
             vBoxLayout->addWidget(labelDescription);
         }
 
@@ -178,4 +174,11 @@ void ProgramBase::AddSettings
         }
         hBoxLayout->setContentsMargins(0,0,0,0);
     }
+}
+
+void ProgramBase::AddSpacer(QBoxLayout *layout)
+{
+    QWidget* widget = new QWidget();
+    widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    layout->addWidget(widget);
 }
