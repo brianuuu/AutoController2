@@ -198,6 +198,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
     m_cbJoystick = new QCheckBox("Detect Gamepad", this);
+    m_cbJoystick->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     m_cbJoystick->setStyleSheet("color: white; font-size: 16px");
     m_cbJoystick->move(10,474);
     connect(m_cbJoystick, &QCheckBox::checkStateChanged, this, &KeyboardManager::OnJoystickEnabled);
