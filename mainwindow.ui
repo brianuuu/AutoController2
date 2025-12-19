@@ -522,6 +522,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QLabel" name="label_12">
               <property name="sizePolicy">
@@ -542,12 +545,6 @@
             </item>
             <item>
              <widget class="QLabel" name="L_ProgramDescription">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text">
                <string>No program selected.</string>
               </property>
