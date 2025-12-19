@@ -6,7 +6,7 @@
 
 #define CUSTOM_COMMAND_DIRECTORY "../Resources/System/CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
-#define CUSTOM_COMMAND_CUSTOM "(Custom)"
+#define CUSTOM_COMMAND_CUSTOM QString("(Custom)")
 
 namespace System
 {
@@ -142,14 +142,20 @@ void CustomCommand::OnCommandSave()
     QString const file = QFileDialog::getSaveFileName(m_btnSave, tr("Save Command As"), CUSTOM_COMMAND_DIRECTORY, "Custom Command (*" + CUSTOM_COMMAND_FORMAT + ")");
     if (file == Q_NULLPTR) return;
 
+    QFileInfo const info(file);
+    QString name = info.fileName();
+    name = name.mid(0, name.size() - CUSTOM_COMMAND_FORMAT.size());
+
+    if (name == CUSTOM_COMMAND_CUSTOM)
+    {
+        QMessageBox::critical(m_list, "Error", "This name is not allowed", QMessageBox::Ok);
+        return;
+    }
+
     QJsonObject object;
     object.insert("Command", m_command->text());
     object.insert("Description", m_description->toPlainText());
     JsonHelper::WriteJson(file, object);
-
-    QFileInfo const info(file);
-    QString name = info.fileName();
-    name = name.mid(0, name.size() - CUSTOM_COMMAND_FORMAT.size());
 
     if (m_list->findText(name) == -1)
     {
