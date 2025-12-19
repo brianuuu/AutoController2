@@ -27,7 +27,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     }
 
     m_list = new SettingComboBox("CommandType", names);
-    m_savedSettings.push_back(m_list);
+    m_savedSettings.insert(m_list);
     AddSetting(layout, "Command Select:", "Select a pre-made command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
 

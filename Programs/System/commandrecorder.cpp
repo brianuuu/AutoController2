@@ -15,11 +15,11 @@ CommandRecorder::CommandRecorder(QObject *parent)
 void CommandRecorder::PopulateSettings(QBoxLayout *layout)
 {
     m_nothing = new SettingComboBox("NothingType", {"Disabled", "Add Nothing at the Start", "Add Nothing at the End", "Add Nothing at both Start/End"});
-    m_savedSettings.push_back(m_nothing);
+    m_savedSettings.insert(m_nothing);
     AddSetting(layout, "\"Nothing\" Setting:", "Prefix/Suffix \"Nothing\" command, useful for commands that require long waits at the beginning/end", m_nothing, true);
 
     m_browser = new SettingTextBrowser("ResultCommand");
-    m_savedSettings.push_back(m_browser);
+    m_savedSettings.insert(m_browser);
     AddSetting(layout, "Result Command:", "Note: Starting program will clear previous command", m_browser, false);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }

@@ -65,7 +65,7 @@ protected:
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
-    QList<SettingBase*> m_savedSettings;
+    QSet<SettingBase*> m_savedSettings;
 };
 
 #endif // PROGRAMBASE_H
