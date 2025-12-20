@@ -80,6 +80,12 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         return false;
     }
 
+    if (command.contains("))"))
+    {
+        errorMsg = "Double loop ending '))' is not allowed";
+        return false;
+    }
+
     bool isLoopCount = false;
     bool hasInfiniteLoop = false;
     for (int i = 0; i < command.size();)
@@ -176,7 +182,7 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         }
     }
 
-    if (command.endsWith(',') || command.endsWith('|') || command.endsWith('-') || command.endsWith('.'))
+    if (command.endsWith(',') || command.endsWith('|') || command.endsWith('-') || command.endsWith('.') || command.endsWith(')'))
     {
         errorMsg = "Ending character not expected";
         return false;
