@@ -378,7 +378,7 @@ void KeyboardManager::OnResetDefault()
 
 void KeyboardManager::OnButtonClicked()
 {
-    if (!m_programManager->AllowKeyboardInput()) return;
+    if (!m_programManager->AllowKeyboardInput() && !m_programManager->IsRunning()) return;
 
     QObject* object = sender();
     QPushButton* button = object ? qobject_cast<QPushButton*>(sender()) : m_btnRemap;
