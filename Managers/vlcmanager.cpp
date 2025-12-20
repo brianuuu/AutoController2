@@ -1,5 +1,6 @@
 #include "vlcmanager.h"
 
+#include "Helpers/jsonhelper.h"
 #include "Managers/logmanager.h"
 #include "Managers/audiomanager.h"
 #include "Managers/videomanager.h"
@@ -169,6 +170,47 @@ void VlcManager::closeEvent(QCloseEvent *event)
     }
 
     QWidget::closeEvent(event);
+}
+
+void VlcManager::wheelEvent(QWheelEvent *event)
+{
+    QVector<QSize> const list = {
+        {640, 360},
+        {960, 540},
+        {1280, 720},
+        {1920, 1080},
+        {2560, 1440},
+        {3840, 2160},
+    };
+
+    int const width = this->size().width();
+    int const amount = event->angleDelta().y();
+    if (amount > 0)
+    {
+        for (int i = 0; i < list.size(); i++)
+        {
+            QSize const& size = list.at(i);
+            if (width < size.width())
+            {
+                this->resize(size);
+                break;
+            }
+        }
+    }
+    else if (amount < 0)
+    {
+        for (int i = list.size() - 1; i >= 0; i--)
+        {
+            QSize const& size = list.at(i);
+            if (width > size.width())
+            {
+                this->resize(size);
+                break;
+            }
+        }
+    }
+
+    QWidget::wheelEvent(event);
 }
 
 void VlcManager::OnCameraClicked()

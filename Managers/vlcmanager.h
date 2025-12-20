@@ -12,6 +12,7 @@
 #include <QSpacerItem>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QWheelEvent>
 #include <QWidget>
 
 #include "../ui_mainwindow.h"
@@ -44,6 +45,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 signals:
     void notifyStateChanged();
