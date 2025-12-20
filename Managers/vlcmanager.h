@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QDateTime>
 #include <QDir>
+#include <QMouseEvent>
 #include <QMutex>
 #include <QPushButton>
 #include <QSpacerItem>
@@ -46,6 +47,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 signals:
     void notifyStateChanged();

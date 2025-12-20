@@ -8,7 +8,6 @@
 #include <QMediaDevices>
 #include <QMetaEnum>
 #include <QMessageBox>
-#include <QMouseEvent>
 #include <QMutex>
 #include <QPainter>
 #include <QPushButton>

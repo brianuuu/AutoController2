@@ -213,6 +213,19 @@ void VlcManager::wheelEvent(QWheelEvent *event)
     QWidget::wheelEvent(event);
 }
 
+void VlcManager::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (this->isFullScreen())
+    {
+        this->showNormal();
+    }
+    else
+    {
+        this->showFullScreen();
+    }
+    QWidget::mouseDoubleClickEvent(event);
+}
+
 void VlcManager::OnCameraClicked()
 {
     if (m_started)
