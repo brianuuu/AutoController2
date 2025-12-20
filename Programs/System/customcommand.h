@@ -26,7 +26,7 @@ public:
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "System-CustomCommand"; }
     QString GetDescription() const override {
-        return "Run a pre-made command, or make custom commands.";
+        return "Runs a pre-made command, or make custom commands.";
     }
 
     bool RequireSerial() const override { return true; }
