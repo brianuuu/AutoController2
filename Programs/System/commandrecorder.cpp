@@ -1,5 +1,6 @@
 #include "commandrecorder.h"
 #include "Managers/keyboardmanager.h"
+#include "Managers/vlcmanager.h"
 
 namespace System
 {
@@ -42,6 +43,13 @@ void CommandRecorder::Start()
     }
 
     m_browser->clear();
+
+    // focus in media view
+    if (m_vlcManager->isMinimized())
+    {
+        m_vlcManager->showNormal();
+    }
+    m_vlcManager->activateWindow();
 }
 
 void CommandRecorder::Stop()
