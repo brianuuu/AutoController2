@@ -12,6 +12,8 @@
 #include <QMutex>
 #include <QPainter>
 #include <QPushButton>
+#include <QResizeEvent>
+#include <QTimer>
 #include <QVideoSink>
 
 #include "../ui_mainwindow.h"
@@ -39,6 +41,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
     int heightForWidth(int width) const override;
     bool hasHeightForWidth() const override { return true; }
@@ -51,6 +54,7 @@ private slots:
     void OnRefreshList();
     void OnDiscoverFinish(QStringList const& list);
     void OnDraw();
+    void OnResize();
 
 private:
     // UI
@@ -67,6 +71,9 @@ private:
     // Frame data
     QMutex              m_mutex;
     QImage              m_frame;
+
+    // Overlays
+    QTimer  m_resolutionTimer;
 };
 
 #endif // VIDEOMANAGER_H

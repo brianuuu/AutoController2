@@ -13,6 +13,8 @@ void VideoManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnCameraRefresh, &QPushButton::clicked, this, &VideoManager::OnRefreshList);
     connect(this, &VideoManager::notifyDraw, this, &VideoManager::OnDraw);
 
+    m_resolutionTimer.setSingleShot(true);
+
     OnRefreshList();
     PopulateResolution();
 }
@@ -32,6 +34,8 @@ void VideoManager::Start()
     m_listCamera->setEnabled(false);
     m_listResolution->setEnabled(false);
     m_btnCameraRefresh->setEnabled(false);
+
+    OnResize();
 
     QSize const resolution = GetResolution();
     m_frame = QImage(resolution, QImage::Format_ARGB32);
@@ -93,8 +97,27 @@ void VideoManager::SaveSettings() const
 
 void VideoManager::paintEvent(QPaintEvent *event)
 {
+    QRect const rect = this->rect();
     QPainter painter(this);
-    painter.drawImage(this->rect(), GetFrameData());
+    painter.drawImage(rect, GetFrameData());
+
+    if (m_resolutionTimer.isActive())
+    {
+        QFont font = painter.font();
+        font.setPointSize(20);
+        painter.setFont(font);
+        QString const display = "Display Size: " + QString::number(rect.width()) + "x" + QString::number(rect.height());
+        painter.setPen(Qt::black);
+        painter.drawText(QPoint(6,31),
+        display);painter.setPen(Qt::white);
+        painter.drawText(QPoint(5,30), display);
+    }
+}
+
+void VideoManager::resizeEvent(QResizeEvent *event)
+{
+    OnResize();
+    QWidget::resizeEvent(event);
 }
 
 int VideoManager::heightForWidth(int width) const
@@ -139,6 +162,11 @@ void VideoManager::OnDiscoverFinish(const QStringList &list)
 void VideoManager::OnDraw()
 {
     this->update();
+}
+
+void VideoManager::OnResize()
+{
+    m_resolutionTimer.start(2000);
 }
 
 void VideoManager::PopulateResolution()
