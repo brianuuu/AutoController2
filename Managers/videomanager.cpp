@@ -14,6 +14,8 @@ void VideoManager::Initialize(Ui::MainWindow *ui)
     connect(this, &VideoManager::notifyDraw, this, &VideoManager::OnDraw);
 
     m_resolutionTimer.setSingleShot(true);
+    QShortcut *shortcut = new QShortcut(QKeySequence("F1"), this);
+    connect(shortcut, &QShortcut::activated, this, [this]{ m_showFps = !m_showFps; });
 
     OnRefreshList();
     PopulateResolution();
@@ -36,6 +38,7 @@ void VideoManager::Start()
     m_btnCameraRefresh->setEnabled(false);
 
     OnResize();
+    m_fpsTimer.start();
 
     QSize const resolution = GetResolution();
     m_frame = QImage(resolution, QImage::Format_ARGB32);
@@ -83,6 +86,12 @@ void VideoManager::LoadSettings()
         {
             m_listResolution->setCurrentText(resolution.toString());
         }
+
+        QVariant showFPS;
+        if (JsonHelper::ReadValue(settings, "ShowFPS", showFPS))
+        {
+            m_showFps = showFPS.toBool();
+        }
     }
 }
 
@@ -91,6 +100,7 @@ void VideoManager::SaveSettings() const
     QJsonObject settings;
     settings.insert("CameraName", m_listCamera->currentText());
     settings.insert("Resolution", m_listResolution->currentText());
+    settings.insert("ShowFPS", m_showFps);
 
     JsonHelper::WriteSetting("VideoSettings", settings);
 }
@@ -101,15 +111,29 @@ void VideoManager::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawImage(rect, GetFrameData());
 
+    // draw fps
+    if (m_showFps)
+    {
+        QFont font = painter.font();
+        font.setPointSize(12);
+        painter.setFont(font);
+
+        painter.fillRect(QRect(20,20,80,15), Qt::black);
+        painter.setPen(Qt::white);
+        painter.drawText(QPoint(24,33), "FPS: " + QString::number(m_fps, 'f', 2));
+    }
+
+    // draw display size
     if (m_resolutionTimer.isActive())
     {
         QFont font = painter.font();
         font.setPointSize(20);
         painter.setFont(font);
+
         QString const display = "Display Size: " + QString::number(rect.width()) + "x" + QString::number(rect.height());
         painter.setPen(Qt::black);
-        painter.drawText(QPoint(6,31),
-        display);painter.setPen(Qt::white);
+        painter.drawText(QPoint(6,31), display);
+        painter.setPen(Qt::white);
         painter.drawText(QPoint(5,30), display);
     }
 }
@@ -161,6 +185,13 @@ void VideoManager::OnDiscoverFinish(const QStringList &list)
 
 void VideoManager::OnDraw()
 {
+    m_frameCount++;
+    if (m_fpsTimer.elapsed() >= 500)
+    {
+        m_fps = m_frameCount * 1000.0 / (qreal)m_fpsTimer.restart();
+        m_frameCount = 0;
+    }
+
     this->update();
 }
 

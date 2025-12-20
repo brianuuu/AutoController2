@@ -4,6 +4,7 @@
 #include <QCamera>
 #include <QCameraDevice>
 #include <QComboBox>
+#include <QElapsedTimer>
 #include <QMediaCaptureSession>
 #include <QMediaDevices>
 #include <QMetaEnum>
@@ -12,6 +13,7 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QShortcut>
 #include <QTimer>
 #include <QVideoSink>
 
@@ -68,11 +70,15 @@ private:
     QString         m_defaultCamera;
 
     // Frame data
-    QMutex              m_mutex;
-    QImage              m_frame;
+    QMutex  m_mutex;
+    QImage  m_frame;
 
     // Overlays
-    QTimer  m_resolutionTimer;
+    QTimer          m_resolutionTimer;
+    bool            m_showFps = false;
+    int             m_frameCount = 0;
+    qreal           m_fps = 0.0;
+    QElapsedTimer   m_fpsTimer;
 };
 
 #endif // VIDEOMANAGER_H
