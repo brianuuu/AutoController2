@@ -200,7 +200,7 @@ void VlcManager::wheelEvent(QWheelEvent *event)
                 {
                     if (m_audioDisplay->currentIndex() > 0)
                     {
-                        size.rheight() += 100;
+                        size.rheight() += ctxAudio.m_manager->maximumHeight();
                     }
 
                     this->resize(size);
@@ -217,7 +217,7 @@ void VlcManager::wheelEvent(QWheelEvent *event)
                 {
                     if (m_audioDisplay->currentIndex() > 0)
                     {
-                        size.rheight() += 100;
+                        size.rheight() += ctxAudio.m_manager->maximumHeight();
                     }
 
                     this->resize(size);
@@ -291,7 +291,7 @@ void VlcManager::OnAudioDisplayChanged(int index)
     else
     {
         QSize size = ctxVideo.m_manager->size();
-        size.rheight() += 100;
+        size.rheight() += ctxAudio.m_manager->maximumHeight();
         this->resize(size);
         ctxAudio.m_manager->show();
     }

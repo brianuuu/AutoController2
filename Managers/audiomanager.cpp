@@ -2,6 +2,7 @@
 #include "Helpers/audioconversionutils.h"
 #include "Helpers/jsonhelper.h"
 
+#define AUDIO_HEIGHT 100
 #define AUDIO_RAW_WAVE_SAMPLES 4096
 
 void AudioManager::Initialize(Ui::MainWindow *ui)
@@ -30,7 +31,7 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     OnRefreshInputList();
     OnRefreshOutputList();
 
-    this->setFixedHeight(100);
+    this->setFixedHeight(AUDIO_HEIGHT);
     this->hide();
 }
 
