@@ -6,7 +6,9 @@
 #include <QAudioOutput>
 #include <QAudioSink>
 #include <QComboBox>
+#include <QPainter>
 #include <QPaintEvent>
+#include <QResizeEvent>
 #include <QMediaDevices>
 #include <QMutex>
 #include <QSlider>
@@ -37,6 +39,10 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent *event) override;
+
+signals:
+    void notifyDraw();
 
 private: // types
     enum class AudioDisplayType
@@ -55,6 +61,11 @@ private slots:
     void OnOutputChanged(QString const& str);
     void OnDisplayChanged(int index);
     void OnVolumeChanged(int value);
+    void OnDraw();
+
+private:
+    void WriteRawWaveData(QVector<float> const& newData);
+    void ClearRawWaveData();
 
 private:
     // UI
@@ -67,7 +78,14 @@ private:
     QMediaDevices       m_devices;
     QAudioFormat        m_audioFormat;
     QAudioOutput        m_audioOutput;
+
+    // Display
+    QMutex              m_displayMutex;
+    QImage              m_displayImage;
     AudioDisplayType    m_displayType = AudioDisplayType::None;
+
+    // Raw Wave data
+    QVector<float>      m_rawWaveData;
 
     // Output
     QMutex          m_sinkMutex;
