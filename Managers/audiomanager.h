@@ -63,12 +63,14 @@ private:
     QComboBox*  m_listDisplay = Q_NULLPTR;
     QSlider*    m_volumeSlider = Q_NULLPTR;
 
+    // Devices
     QMediaDevices       m_devices;
     QAudioFormat        m_audioFormat;
     QAudioOutput        m_audioOutput;
     AudioDisplayType    m_displayType = AudioDisplayType::None;
 
-    QMutex          m_mutex;
+    // Output
+    QMutex          m_sinkMutex;
     QAudioSink*     m_audioSink = Q_NULLPTR;
     QIODevice*      m_audioDevice = Q_NULLPTR;
 };

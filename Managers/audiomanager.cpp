@@ -1,6 +1,8 @@
 #include "audiomanager.h"
 #include "Helpers/jsonhelper.h"
 
+#define AUDIO_RAW_WAVE_SAMPLES 1024
+
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
     m_listInput = ui->CB_AudioInput;
@@ -32,31 +34,25 @@ void AudioManager::Start()
     Stop();
     m_listInput->setEnabled(false);
 
-    m_mutex.lock();
-    {
-        m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
-        m_audioSink->setVolume((qreal)m_volumeSlider->value() * 0.01);
-        m_audioDevice = m_audioSink->start();
-    }
-    m_mutex.unlock();
+    QMutexLocker locker(&m_sinkMutex);
+    m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
+    m_audioSink->setVolume((qreal)m_volumeSlider->value() * 0.01);
+    m_audioDevice = m_audioSink->start();
 }
 
 void AudioManager::Stop()
 {
-    m_mutex.lock();
-    {
-        if (m_audioSink)
-        {
-            m_audioSink->stop();
-            delete m_audioSink;
-
-            m_audioSink = Q_NULLPTR;
-            m_audioDevice = Q_NULLPTR;
-        }
-    }
-    m_mutex.unlock();
-
     m_listInput->setEnabled(true);
+
+    QMutexLocker locker(&m_sinkMutex);
+    if (m_audioSink)
+    {
+        m_audioSink->stop();
+        delete m_audioSink;
+
+        m_audioSink = Q_NULLPTR;
+        m_audioDevice = Q_NULLPTR;
+    }
 }
 
 void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_t pts)
@@ -64,13 +60,10 @@ void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_
     size_t const sampleSize = count * m_audioFormat.bytesPerFrame();
 
     // this is called from LibVLC thread, not thread safe
-    if (m_mutex.tryLock())
+    QMutexLocker locker(&m_sinkMutex);
+    if (m_audioDevice)
     {
-        if (m_audioDevice)
-        {
-            m_audioDevice->write((const char*)samples, sampleSize);
-        }
-        m_mutex.unlock();
+        m_audioDevice->write((const char*)samples, sampleSize);
     }
 }
 
