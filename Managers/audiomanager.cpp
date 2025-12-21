@@ -3,7 +3,7 @@
 #include "Helpers/jsonhelper.h"
 
 #define AUDIO_HEIGHT 100
-#define AUDIO_RAW_WAVE_SCALE 0.25
+#define AUDIO_RAW_WAVE_SCALE 0.04
 
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
@@ -196,7 +196,15 @@ void AudioManager::paintEvent(QPaintEvent *event)
         break;
     }
     case AudioDisplayType::FreqBars:
+    {
+        // TODO:
+        break;
+    }
     case AudioDisplayType::Spectrogram:
+    {
+        // TODO:
+        break;
+    }
     default: break;
     }
 }
