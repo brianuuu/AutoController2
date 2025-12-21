@@ -19,10 +19,12 @@ find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
 
 set(LibVLC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/LibVLC")
+set(fftw_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/fftw")
 
 #dependencies directory headers
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${LibVLC_DIR}/include)
+INCLUDE_DIRECTORIES(${fftw_DIR}/include)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -86,6 +88,7 @@ target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
 target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
+target_link_libraries(AutoController2 PRIVATE ${fftw_DIR}/libfftw3f-3.lib)
 target_link_libraries(AutoController2 PRIVATE winmm)
 
 #copy files and folders
@@ -96,6 +99,10 @@ add_custom_command(
 add_custom_command(
     TARGET AutoController2 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${LibVLC_DIR}/libvlccore.dll" "${CMAKE_BINARY_DIR}/libvlccore.dll"
+)
+add_custom_command(
+    TARGET AutoController2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${fftw_DIR}/libfftw3f-3.dll" "${CMAKE_BINARY_DIR}/libfftw3f-3.dll"
 )
 add_custom_target(
     LibVLC_COPY_PLUGINS
