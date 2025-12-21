@@ -228,22 +228,8 @@ void AudioManager::paintEvent(QPaintEvent *event)
 
 void AudioManager::resizeEvent(QResizeEvent *event)
 {
-    switch (m_displayType)
-    {
-    case AudioDisplayType::RawWave:
-    case AudioDisplayType::FreqBars:
-    {
-        m_displayImage = QImage(this->size(), QImage::Format_RGB32);
-        m_displayImage.fill(Qt::black);
-        break;
-    }
-    case AudioDisplayType::Spectrogram:
-    {
-        // TODO: shift data accordingly
-        break;
-    }
-    default: break;
-    }
+    // shift image to right side
+    m_displayImage = m_displayImage.copy(m_displayImage.width() - this->width(), 0, this->width(), this->height());
 }
 
 void AudioManager::OnRefreshInputList()
