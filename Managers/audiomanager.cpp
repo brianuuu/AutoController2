@@ -3,7 +3,7 @@
 #include "Helpers/jsonhelper.h"
 
 #define AUDIO_HEIGHT 100
-#define AUDIO_RAW_WAVE_SAMPLES 4096
+#define AUDIO_RAW_WAVE_SCALE 0.25
 
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
@@ -158,66 +158,41 @@ void AudioManager::paintEvent(QPaintEvent *event)
             QPainter imagePainter(&m_displayImage);
             imagePainter.fillRect(this->rect(), Qt::black);
             imagePainter.setPen(QColor(Qt::cyan));
-            imagePainter.drawLine(0, int(heightHalf), this->width(), int(heightHalf));
+            imagePainter.drawLine(0, int(heightHalf + 0.5f), this->width(), int(heightHalf + 0.5f));
             painter.drawImage(this->rect(), m_displayImage);
             break;
         }
 
-        QPoint lastPointPos(0, int(heightHalf));
-        if (AUDIO_RAW_WAVE_SAMPLES <= width)
+        QPoint lastPointPos(0, int(heightHalf + 0.5f));
+
+        // Shift previously drawn wave data
+        int const drawWidth = int(float(m_rawWaveData.size()) * AUDIO_RAW_WAVE_SCALE);
+        m_displayImage = m_displayImage.copy(drawWidth, 0, width, height);
+        QPainter imagePainter(&m_displayImage);
+        imagePainter.setPen(QColor(Qt::cyan));
+
+        // Draw the new data at the right side end of the image
+        int const xPosStart = width - drawWidth;
+        for (int i = 0; i < drawWidth; i++)
         {
-            // fewer samples than width, we need to scale it up
-            float const pointWidth = float(width) / float(AUDIO_RAW_WAVE_SAMPLES);
-            for (int i = 0; i < m_rawWaveData.size(); i++)
+            int sampleIndex = int(float(i) / AUDIO_RAW_WAVE_SCALE);
+            if (sampleIndex >= m_rawWaveData.size()) break;
+
+            float const p = m_rawWaveData[sampleIndex] * heightHalf + heightHalf;
+            if (i == 0)
             {
-                float const p = m_rawWaveData[i] * heightHalf + heightHalf;
-                if (i == 0)
-                {
-                    lastPointPos = QPoint(0, int(p));
-                }
-                else
-                {
-                    int const xPos = int(pointWidth) * i;
-                    QPoint newPointPos = QPoint(xPos, int(p));
-                    painter.drawLine(lastPointPos, newPointPos);
-                    lastPointPos = newPointPos;
-                }
+                lastPointPos = QPoint(xPosStart, int(p + 0.5f));
+            }
+            else
+            {
+                QPoint newPointPos = QPoint(xPosStart + i, int(p + 0.5f));
+                imagePainter.drawLine(lastPointPos, newPointPos);
+                lastPointPos = newPointPos;
             }
         }
-        else
-        {
-            // More samples then width, will need to ignore some
-            float const sampleRatio = float(AUDIO_RAW_WAVE_SAMPLES) / float(width);
-            int const drawWidth = int(float(m_rawWaveData.size()) / sampleRatio);
 
-            // Shift previously drawn wave data
-            m_displayImage = m_displayImage.copy(drawWidth, 0, width, height);
-            QPainter imagePainter(&m_displayImage);
-            imagePainter.setPen(QColor(Qt::cyan));
-
-            // Draw the new data at the right side end of the image
-            int const xPosStart = width - drawWidth;
-            for (int i = 0; i < drawWidth; i++)
-            {
-                int sampleIndex = int(sampleRatio * float(i));
-                if (sampleIndex >= m_rawWaveData.size()) break;
-
-                float const p = m_rawWaveData[sampleIndex] * heightHalf + heightHalf;
-                if (i == 0)
-                {
-                    lastPointPos = QPoint(xPosStart, int(p));
-                }
-                else
-                {
-                    QPoint newPointPos = QPoint(xPosStart + i, int(p));
-                    imagePainter.drawLine(lastPointPos, newPointPos);
-                    lastPointPos = newPointPos;
-                }
-            }
-
-            // Finally draw the image on widget
-            painter.drawImage(this->rect(), m_displayImage);
-        }
+        // Finally draw the image on widget
+        painter.drawImage(this->rect(), m_displayImage);
         break;
     }
     case AudioDisplayType::FreqBars:
