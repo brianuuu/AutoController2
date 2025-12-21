@@ -27,6 +27,7 @@ public:
     static void debugAudioFormat(QAudioFormat const& audioFormat);
     static QVector<float> const& getHanningFunction();
     static QVector<float> const& getSpikeConvFunction();
+    static QColor getMagnitudeColor(float v);
 
     // Main conversion function
     static bool convertSamplesToFloat(const QAudioFormat& format, const char* data, size_t dataSize, QVector<float>& out);

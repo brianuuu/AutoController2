@@ -14,6 +14,7 @@
 #include <QSlider>
 #include <QWidget>
 
+#include <fftw3.h>
 #include "../ui_mainwindow.h"
 
 class AudioManager : public QWidget
@@ -22,6 +23,7 @@ class AudioManager : public QWidget
 
 public:
     explicit AudioManager(QWidget* parent = nullptr) : QWidget(parent) {}
+    ~AudioManager();
     static QString GetTypeID() { return "Audio"; }
     void Initialize(Ui::MainWindow* ui);
 
@@ -67,6 +69,10 @@ private:
     void WriteRawWaveData(QVector<float> const& newData);
     void ClearRawWaveData();
 
+    // Spectrogram
+    void WriteFFTBufferData(QVector<float> const& newData);
+    void ClearFFTBufferData();
+
 private:
     // UI
     QComboBox*  m_listInput = Q_NULLPTR;
@@ -86,6 +92,16 @@ private:
 
     // Raw Wave data
     QVector<float>      m_rawWaveData;
+
+    // Spectrogram data
+    QVector<float>      m_fftBufferData;
+    int                 m_fftNewDataStart = 0;
+    int                 m_fftAnalysisStart = 0;
+    int                 m_freqLow = 0;
+    int                 m_freqHigh = 20000;
+    fftwf_complex*      m_fftDataIn;
+    fftwf_complex*      m_fftDataOut;
+    QVector<QVector<float>> m_spectrogramData;
 
     // Output
     QMutex          m_sinkMutex;

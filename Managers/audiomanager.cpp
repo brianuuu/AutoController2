@@ -5,6 +5,12 @@
 #define AUDIO_HEIGHT 100
 #define AUDIO_RAW_WAVE_SCALE 0.04
 
+AudioManager::~AudioManager()
+{
+    fftwf_free(m_fftDataIn);
+    fftwf_free(m_fftDataOut);
+}
+
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
     m_listInput = ui->CB_AudioInput;
@@ -14,6 +20,11 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
 
     m_displayImage = QImage(this->size(), QImage::Format_RGB32);
     m_displayImage.fill(Qt::black);
+
+    // Spectrogram data
+    m_fftBufferData.resize(FFT_SAMPLE_COUNT * 8);
+    m_fftDataIn = fftwf_alloc_complex(FFT_SAMPLE_COUNT);
+    m_fftDataOut = fftwf_alloc_complex(FFT_SAMPLE_COUNT);
 
     // Set up global audio format
     m_audioFormat.setSampleRate(48000);
@@ -49,6 +60,8 @@ void AudioManager::Start()
 void AudioManager::Stop()
 {
     m_listInput->setEnabled(true);
+    ClearRawWaveData();
+    ClearFFTBufferData();
 
     QMutexLocker locker(&m_sinkMutex);
     if (m_audioSink)
@@ -87,7 +100,7 @@ void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_
     case AudioDisplayType::FreqBars:
     case AudioDisplayType::Spectrogram:
     {
-        //writeFFTBufferData(newData);
+        WriteFFTBufferData(newData);
         break;
     }
     default: break;
@@ -141,14 +154,14 @@ void AudioManager::paintEvent(QPaintEvent *event)
     int const height = this->height();
     float const heightHalf = height * 0.5f;
 
-    QMutexLocker locker(&m_displayMutex);
+    QPainter painter(this);
+    painter.fillRect(this->rect(), Qt::black);
 
+    QMutexLocker locker(&m_displayMutex);
     switch (m_displayType)
     {
     case AudioDisplayType::RawWave:
     {
-        QPainter painter(this);
-        painter.fillRect(this->rect(), Qt::black);
         painter.setPen(QColor(Qt::cyan));
 
         // If no samples, draw a null sound line
@@ -197,12 +210,85 @@ void AudioManager::paintEvent(QPaintEvent *event)
     }
     case AudioDisplayType::FreqBars:
     {
-        // TODO:
+        if (m_spectrogramData.empty())
+        {
+            break;
+        }
+
+        // only draw the latest data
+        QVector<float> const& spectrogramData = m_spectrogramData.back();
+
+        float const freqRes = float(m_audioFormat.sampleRate()) / FFT_SAMPLE_COUNT;
+        int const indexStart = int(float(m_freqLow) / freqRes);
+        int const indexEnd = int(float(m_freqHigh) / freqRes) + 1;
+        int const drawWidth = indexEnd - indexStart;
+
+        if (drawWidth >= width)
+        {
+            // More samples then width, will need to ignore some
+            float const sampleRatio = float(drawWidth) / float(width);
+            for (int i = 0; i < width; i++)
+            {
+                int sampleIndex = indexStart + int(sampleRatio * i);
+                if (sampleIndex >= spectrogramData.size()) break;
+
+                float const logMag = spectrogramData[sampleIndex];
+                if (logMag > 0.0f)
+                {
+                    painter.setPen(AudioConversionUtils::getMagnitudeColor(logMag));
+                    painter.drawLine(i, height, i, int((1.0f - logMag) * height));
+                }
+            }
+        }
+        else
+        {
+            // fewer samples than width, we need to scale it up
+            float nextXPos = 0.0f;
+            float const barWidth = float(width) / float(drawWidth);
+            for (int i = 0; i < drawWidth; i++)
+            {
+                int sampleIndex = indexStart + i;
+                if (sampleIndex >= spectrogramData.size()) break;
+
+                float const logMag = spectrogramData[sampleIndex];
+                if (logMag > 0.0f)
+                {
+                    painter.setPen(AudioConversionUtils::getMagnitudeColor(logMag));
+                    painter.drawRect(int(nextXPos), int((1.0f - logMag) * height), int(barWidth), height);
+                }
+                nextXPos += barWidth;
+            }
+        }
         break;
     }
     case AudioDisplayType::Spectrogram:
     {
-        // TODO:
+        for (QVector<float> const& spectrogramData : std::as_const(m_spectrogramData))
+        {
+            // Don't draw spectrogram if audio is not started
+            if (!m_audioSink) return;
+
+            // Shift previously drawn spectrogram data
+            m_displayImage = m_displayImage.copy(1, 0, width, height);
+            QPainter imagePainter(&m_displayImage);
+
+            float const freqRes = float(m_audioFormat.sampleRate()) / FFT_SAMPLE_COUNT;
+            int const indexStart = int(float(m_freqLow) / freqRes);
+            int const indexEnd = int(float(m_freqHigh) / freqRes);
+
+            float const sampleRatio = float(indexEnd - indexStart + 1) / float(height);
+            for (int i = 0; i < height; i++)
+            {
+                int sampleIndex = indexStart + int(sampleRatio * i);
+                if (sampleIndex >= spectrogramData.size()) break;
+
+                imagePainter.setPen(AudioConversionUtils::getMagnitudeColor(spectrogramData[sampleIndex]));
+                imagePainter.drawPoint(width - 1, i);
+            }
+
+            // Finally draw the image on widget
+            painter.drawImage(this->rect(), m_displayImage);
+        }
         break;
     }
     default: break;
@@ -285,6 +371,7 @@ void AudioManager::OnDisplayChanged(int index)
 {
     m_displayType = (AudioDisplayType)index;
     ClearRawWaveData();
+    ClearFFTBufferData();
 
     this->update();
 }
@@ -328,4 +415,98 @@ void AudioManager::ClearRawWaveData()
     {
         f = 0.0f;
     }
+}
+
+void AudioManager::WriteFFTBufferData(const QVector<float> &newData)
+{
+    QMutexLocker locker(&m_displayMutex);
+
+    // Push new data to buffer
+    int const frameCount = newData.size() / 2;
+    for (int i = 0; i < frameCount && i < m_fftBufferData.size() - 1; i++)
+    {
+        m_fftBufferData[m_fftNewDataStart] = (newData[2*i] + newData[2*i+1]) * 0.5f;
+
+        // Warp back to beginning of the buffer
+        m_fftNewDataStart++;
+        if (m_fftNewDataStart >= m_fftBufferData.size())
+        {
+            m_fftNewDataStart = 0;
+        }
+    }
+
+    // Check if we have enough data
+    int unprocessedDataSize = m_fftNewDataStart - m_fftAnalysisStart;
+    if (m_fftNewDataStart < m_fftAnalysisStart)
+    {
+        unprocessedDataSize += m_fftBufferData.size();
+    }
+
+    if (unprocessedDataSize >= FFT_SAMPLE_COUNT)
+    {
+        // if we have more data ready, do multiple FFT a frame
+        int const fftCount = unprocessedDataSize / FFT_SAMPLE_COUNT;
+        if (m_spectrogramData.size() != fftCount)
+        {
+            m_spectrogramData.resize(fftCount);
+        }
+
+        for (QVector<float>& spectrogramData : m_spectrogramData)
+        {
+            // Grab input FFT data, apply Hanning window to reduce leakage
+            QVector<float> const& hanningFunction = AudioConversionUtils::getHanningFunction();
+            int pos = m_fftAnalysisStart;
+            for (int i = 0; i < FFT_SAMPLE_COUNT; i++)
+            {
+                m_fftDataIn[i][REAL] = m_fftBufferData[pos] * hanningFunction[i];
+                m_fftDataIn[i][IMAG] = 0.0f;
+
+                pos++;
+                if (pos >= m_fftBufferData.size())
+                {
+                    pos = 0;
+                }
+            }
+
+            // Shift to the next window
+            m_fftAnalysisStart = (m_fftAnalysisStart + FFT_WINDOW_STEP) % m_fftBufferData.size();
+
+            AudioConversionUtils::fft(FFT_SAMPLE_COUNT, m_fftDataIn, m_fftDataOut);
+            AudioConversionUtils::fftOutToSpectrogram(FFT_SAMPLE_COUNT, m_fftDataOut, spectrogramData);
+        }
+    }
+    else
+    {
+        qDebug() << "Waiting for more FFT input data";
+    }
+
+    emit notifyDraw();
+}
+
+void AudioManager::ClearFFTBufferData()
+{
+    QMutexLocker locker(&m_displayMutex);
+
+    m_fftNewDataStart = 0;
+    m_fftAnalysisStart = 0;
+    for (float& f : m_fftBufferData)
+    {
+        f = 0.0f;
+    }
+    for (QVector<float>& spectrogramData : m_spectrogramData)
+    {
+        for (float& f : spectrogramData)
+        {
+            f = 0.0f;
+        }
+    }
+    for (int i = 0; i < FFT_SAMPLE_COUNT; i++)
+    {
+        m_fftDataIn[i][REAL] = 0.0f;
+        m_fftDataIn[i][IMAG] = 0.0f;
+        m_fftDataOut[i][REAL] = 0.0f;
+        m_fftDataOut[i][IMAG] = 0.0f;
+    }
+
+    m_displayImage.fill(Qt::black);
 }

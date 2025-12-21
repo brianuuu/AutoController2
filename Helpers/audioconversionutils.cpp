@@ -52,6 +52,39 @@ const QVector<float> &AudioConversionUtils::getSpikeConvFunction()
     return instance().m_spikeConvFunction;
 }
 
+QColor AudioConversionUtils::getMagnitudeColor(float v)
+{
+    if (v <= 0.0f)
+    {
+        return QColor(0, 0, 127);
+    }
+    else if (v < 0.125f)
+    {
+        return QColor(0, 0, int((0.5f + 4.0f * v) * 255.f));
+    }
+    else if (v < 0.375f)
+    {
+        return QColor(0, int((v - 0.125f) * 1020.0f), 255);
+    }
+    else if (v < 0.625f)
+    {
+        int c = int((v - 0.375f) * 1020.0f);
+        return QColor(c, 255, 255 - c);
+    }
+    else if (v < 0.875f)
+    {
+        return QColor(255, 255 - int((v - 0.625f) * 1020.0f), 0);
+    }
+    else if (v <= 1.0f)
+    {
+        return QColor(255 - int((v - 0.875f) * 1020.0f), 0, 0);
+    }
+    else
+    {
+        return QColor(127, 0, 0);
+    }
+}
+
 //-----------------------------------------
 // Normalize (type to float)
 //-----------------------------------------
