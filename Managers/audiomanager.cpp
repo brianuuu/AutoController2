@@ -15,12 +15,16 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int16);
 
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
+    connect(m_listDisplay, &QComboBox::currentIndexChanged, this, &AudioManager::OnDisplayChanged);
     connect(m_volumeSlider, &QSlider::valueChanged, this, &AudioManager::OnVolumeChanged);
     connect(&m_devices, &QMediaDevices::audioInputsChanged, this, &AudioManager::OnRefreshInputList);
     connect(&m_devices, &QMediaDevices::audioOutputsChanged, this, &AudioManager::OnRefreshOutputList);
 
     OnRefreshInputList();
     OnRefreshOutputList();
+
+    this->setFixedHeight(100);
+    this->hide();
 }
 
 void AudioManager::Start()
@@ -111,6 +115,11 @@ void AudioManager::SaveSettings() const
     JsonHelper::WriteSetting("AudioSettings", settings);
 }
 
+void AudioManager::paintEvent(QPaintEvent *event)
+{
+
+}
+
 void AudioManager::OnRefreshInputList()
 {
     QString const previousInput = m_listInput->currentText();
@@ -175,6 +184,12 @@ void AudioManager::OnOutputChanged(QString const& str)
             return;
         }
     }
+}
+
+void AudioManager::OnDisplayChanged(int index)
+{
+    m_displayType = (AudioDisplayType)index;
+
 }
 
 void AudioManager::OnVolumeChanged(int value)

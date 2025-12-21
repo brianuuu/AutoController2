@@ -51,6 +51,7 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     m_logManager = ManagerCollection::GetManager<LogManager>();
     m_btnCameraStart = ui->PB_CameraStart;
     m_btnScreenshot = ui->PB_Screenshot;
+    m_audioDisplay = ui->CB_AudioDisplay;
 
     if (!QDir(SCREENSHOT_PATH).exists())
     {
@@ -88,6 +89,7 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnCameraStart, &QPushButton::clicked, this, &VlcManager::OnCameraClicked);
     connect(m_btnScreenshot, &QPushButton::clicked, this, &VlcManager::OnScreenshot);
     connect(&m_startVerifyTimer, &QTimer::timeout, this, &VlcManager::OnCameraStartTimeout);
+    connect(m_audioDisplay, &QComboBox::currentIndexChanged, this, &VlcManager::OnAudioDisplayChanged);
     connect(ctxVideo.m_manager, &VideoManager::notifyDraw, this, &VlcManager::OnCameraStartTimeout);
     connect(this, &VlcManager::notifyStateChanged, this, &VlcManager::OnEventCallback);
 
@@ -96,10 +98,11 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
     this->resize(1280,720);
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     vBoxLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    //vBoxLayout->addWidget(ctxAudio.m_manager);
+    vBoxLayout->addWidget(ctxAudio.m_manager);
     vBoxLayout->addWidget(ctxVideo.m_manager);
     vBoxLayout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
     vBoxLayout->setContentsMargins(0,0,0,0);
+    vBoxLayout->setSpacing(0);
 
     LoadSettings();
 }
@@ -142,6 +145,7 @@ void VlcManager::LoadSettings()
         if (JsonHelper::ReadValue(windowSize, "Width", width) && JsonHelper::ReadValue(windowSize, "Height", height))
         {
             this->resize(width.toInt(), height.toInt());
+            ctxVideo.m_manager->resize(width.toInt(), width.toInt() * 9 / 16);
         }
     }
 }
@@ -183,29 +187,42 @@ void VlcManager::wheelEvent(QWheelEvent *event)
         {3840, 2160},
     };
 
-    int const width = this->size().width();
-    int const amount = event->angleDelta().y();
-    if (amount > 0)
+    if (!this->isFullScreen())
     {
-        for (int i = 0; i < list.size(); i++)
+        int const width = this->size().width();
+        int const amount = event->angleDelta().y();
+        if (amount > 0)
         {
-            QSize const& size = list.at(i);
-            if (width < size.width())
+            for (int i = 0; i < list.size(); i++)
             {
-                this->resize(size);
-                break;
+                QSize size = list.at(i);
+                if (width < size.width())
+                {
+                    if (m_audioDisplay->currentIndex() > 0)
+                    {
+                        size.rheight() += 100;
+                    }
+
+                    this->resize(size);
+                    break;
+                }
             }
         }
-    }
-    else if (amount < 0)
-    {
-        for (int i = list.size() - 1; i >= 0; i--)
+        else if (amount < 0)
         {
-            QSize const& size = list.at(i);
-            if (width > size.width())
+            for (int i = list.size() - 1; i >= 0; i--)
             {
-                this->resize(size);
-                break;
+                QSize size = list.at(i);
+                if (width > size.width())
+                {
+                    if (m_audioDisplay->currentIndex() > 0)
+                    {
+                        size.rheight() += 100;
+                    }
+
+                    this->resize(size);
+                    break;
+                }
             }
         }
     }
@@ -261,6 +278,22 @@ void VlcManager::OnCameraStartTimeout()
         m_logManager->PrintLog("Global", "No video feedback detected", LOG_Error);
         QMessageBox::critical(this, "Error", QString("No video feedback detected!\n") + ERROR_TEXT, QMessageBox::Ok);
         Stop();
+    }
+}
+
+void VlcManager::OnAudioDisplayChanged(int index)
+{
+    if (index == 0)
+    {
+        ctxAudio.m_manager->hide();
+        this->resize(ctxVideo.m_manager->size());
+    }
+    else
+    {
+        QSize size = ctxVideo.m_manager->size();
+        size.rheight() += 100;
+        this->resize(size);
+        ctxAudio.m_manager->show();
     }
 }
 

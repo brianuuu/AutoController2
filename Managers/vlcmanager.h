@@ -56,6 +56,7 @@ signals:
 private slots:
     void OnCameraClicked();
     void OnCameraStartTimeout();
+    void OnAudioDisplayChanged(int index);
     void OnEventCallback();
     void OnScreenshot();
 
@@ -82,6 +83,7 @@ private:
     // UI
     QPushButton*    m_btnCameraStart = Q_NULLPTR;
     QPushButton*    m_btnScreenshot = Q_NULLPTR;
+    QComboBox*      m_audioDisplay = Q_NULLPTR;
 
     // Members
     bool    m_started = false;

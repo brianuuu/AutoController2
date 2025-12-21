@@ -19,6 +19,8 @@ void VideoManager::Initialize(Ui::MainWindow *ui)
 
     OnRefreshList();
     PopulateResolution();
+
+    this->resize(1280, 720);
 }
 
 QString VideoManager::GetDeviceName() const
