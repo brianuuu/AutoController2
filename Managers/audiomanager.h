@@ -98,7 +98,7 @@ private:
     int                 m_fftNewDataStart = 0;
     int                 m_fftAnalysisStart = 0;
     int                 m_freqLow = 0;
-    int                 m_freqHigh = 20000;
+    int                 m_freqHigh = 10000;
     fftwf_complex*      m_fftDataIn;
     fftwf_complex*      m_fftDataOut;
     QVector<QVector<float>> m_spectrogramData;
