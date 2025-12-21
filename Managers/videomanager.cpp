@@ -109,6 +109,13 @@ void VideoManager::SaveSettings() const
 
 void VideoManager::paintEvent(QPaintEvent *event)
 {
+    m_frameCount++;
+    if (m_fpsTimer.elapsed() >= 500)
+    {
+        m_fps = m_frameCount * 1000.0 / (qreal)m_fpsTimer.restart();
+        m_frameCount = 0;
+    }
+
     QRect const rect = this->rect();
     QPainter painter(this);
     painter.drawImage(rect, GetFrameData());
@@ -187,13 +194,6 @@ void VideoManager::OnDiscoverFinish(const QStringList &list)
 
 void VideoManager::OnDraw()
 {
-    m_frameCount++;
-    if (m_fpsTimer.elapsed() >= 500)
-    {
-        m_fps = m_frameCount * 1000.0 / (qreal)m_fpsTimer.restart();
-        m_frameCount = 0;
-    }
-
     this->update();
 }
 
