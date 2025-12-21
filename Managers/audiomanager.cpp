@@ -48,30 +48,20 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
 
 void AudioManager::Start()
 {
-    Stop();
     m_listInput->setEnabled(false);
 
-    QMutexLocker locker(&m_sinkMutex);
-    m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
-    m_audioSink->setVolume((qreal)m_volumeSlider->value() * 0.01);
-    m_audioDevice = m_audioSink->start();
+    StartAudioSink();
+    ClearRawWaveData();
+    ClearFFTBufferData();
 }
 
 void AudioManager::Stop()
 {
     m_listInput->setEnabled(true);
+
+    ClearAudioSink();
     ClearRawWaveData();
     ClearFFTBufferData();
-
-    QMutexLocker locker(&m_sinkMutex);
-    if (m_audioSink)
-    {
-        m_audioSink->stop();
-        delete m_audioSink;
-
-        m_audioSink = Q_NULLPTR;
-        m_audioDevice = Q_NULLPTR;
-    }
 }
 
 void AudioManager::PushAudioData(const void *samples, unsigned int count, int64_t pts)
@@ -253,8 +243,7 @@ void AudioManager::paintEvent(QPaintEvent *event)
                 float const logMag = spectrogramData[sampleIndex];
                 if (logMag > 0.0f)
                 {
-                    painter.setPen(AudioConversionUtils::getMagnitudeColor(logMag));
-                    painter.drawRect(int(nextXPos), int((1.0f - logMag) * height), int(barWidth), height);
+                    painter.fillRect(int(nextXPos), int((1.0f - logMag) * height), int(barWidth), height, AudioConversionUtils::getMagnitudeColor(logMag));
                 }
                 nextXPos += barWidth;
             }
@@ -360,7 +349,8 @@ void AudioManager::OnOutputChanged(QString const& str)
             // device changed, may have to start audio again
             if (m_audioSink)
             {
-                Start();
+                ClearAudioSink();
+                StartAudioSink();
             }
             return;
         }
@@ -388,6 +378,27 @@ void AudioManager::OnVolumeChanged(int value)
 void AudioManager::OnDraw()
 {
     this->update();
+}
+
+void AudioManager::StartAudioSink()
+{
+    QMutexLocker locker(&m_sinkMutex);
+    m_audioSink = new QAudioSink(m_audioOutput.device(), m_audioFormat, this);
+    m_audioSink->setVolume((qreal)m_volumeSlider->value() * 0.01);
+    m_audioDevice = m_audioSink->start();
+}
+
+void AudioManager::ClearAudioSink()
+{
+    QMutexLocker locker(&m_sinkMutex);
+    if (m_audioSink)
+    {
+        m_audioSink->stop();
+        delete m_audioSink;
+
+        m_audioSink = Q_NULLPTR;
+        m_audioDevice = Q_NULLPTR;
+    }
 }
 
 void AudioManager::WriteRawWaveData(const QVector<float> &newData)
@@ -489,17 +500,13 @@ void AudioManager::ClearFFTBufferData()
 
     m_fftNewDataStart = 0;
     m_fftAnalysisStart = 0;
+    m_spectrogramData.clear();
+
     for (float& f : m_fftBufferData)
     {
         f = 0.0f;
     }
-    for (QVector<float>& spectrogramData : m_spectrogramData)
-    {
-        for (float& f : spectrogramData)
-        {
-            f = 0.0f;
-        }
-    }
+
     for (int i = 0; i < FFT_SAMPLE_COUNT; i++)
     {
         m_fftDataIn[i][REAL] = 0.0f;

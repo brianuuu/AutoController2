@@ -66,6 +66,10 @@ private slots:
     void OnDraw();
 
 private:
+    void StartAudioSink();
+    void ClearAudioSink();
+
+    // Raw Wave
     void WriteRawWaveData(QVector<float> const& newData);
     void ClearRawWaveData();
 
