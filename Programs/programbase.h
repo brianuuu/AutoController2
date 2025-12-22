@@ -8,6 +8,7 @@
 
 #include "Enums/system.h"
 #include "Managers/managercollection.h"
+#include "Programs/Modules/modulebase.h"
 #include "Programs/Settings/settingbase.h"
 
 namespace Program
@@ -17,6 +18,7 @@ class ProgramBase : public QObject
     Q_OBJECT
 public:
     explicit ProgramBase(QObject *parent = nullptr);
+    ~ProgramBase();
 
     void LoadSettings();
     void SaveSettings() const;
@@ -57,10 +59,23 @@ protected slots:
 protected:
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
+    template<typename T, typename Func, typename... Args>
+    T* AddModule(Func func, Args... args)
+    {
+        T* module = new T(args...);
+        connect(module, &QThread::finished, this, func);
+        m_modules.insert(module);
+        module->start();
+        return module;
+    }
+    void ClearModule(Module::ModuleBase*& module);
+    void ClearModules();
+
     QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
     void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
     void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
     void AddSpacer(QBoxLayout *layout);
+
 
 protected:
     SerialManager*      m_serialManager = Q_NULLPTR;
@@ -69,6 +84,7 @@ protected:
 
     bool m_started = false;
     QSet<Setting::SettingBase*> m_savedSettings;
+    QSet<Module::ModuleBase*> m_modules;
 };
 }
 

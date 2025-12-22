@@ -7,6 +7,7 @@
 #include <QPushButton>
 
 #include "../programbase.h"
+#include "Programs/Modules/Common/runcommand.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingtextedit.h"

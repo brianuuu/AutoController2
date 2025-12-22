@@ -22,6 +22,11 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
     connect(this, &ProgramBase::notifyLog, logManager, &LogManager::PrintLog);
 }
 
+ProgramBase::~ProgramBase()
+{
+    ClearModules();
+}
+
 void ProgramBase::LoadSettings()
 {
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
@@ -67,7 +72,7 @@ void ProgramBase::Start()
 
 void ProgramBase::Stop()
 {
-    m_serialManager->StopCommand();
+    ClearModules();
     m_started = false;
 }
 
@@ -94,6 +99,30 @@ void ProgramBase::OnCanRunChanged()
 void ProgramBase::PrintLog(const QString &log, LogType type) const
 {
     emit notifyLog(GetInternalName(), log, type);
+}
+
+void ProgramBase::ClearModule(Module::ModuleBase *&module)
+{
+    if (!module) return;
+
+    module->stop();
+    module->wait();
+    delete module;
+
+    m_modules.remove(module);
+    module = Q_NULLPTR;
+}
+
+void ProgramBase::ClearModules()
+{
+    for (Module::ModuleBase* module : std::as_const(m_modules))
+    {
+        module->stop();
+        module->wait();
+        delete module;
+    }
+
+    m_modules.clear();
 }
 
 QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)
@@ -186,4 +215,5 @@ void ProgramBase::AddSpacer(QBoxLayout *layout)
     widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget(widget);
 }
+
 }

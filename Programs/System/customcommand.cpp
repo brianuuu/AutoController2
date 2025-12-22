@@ -69,7 +69,7 @@ void CustomCommand::Start()
     ProgramBase::Start();
 
     PrintLog("Running command \"" + m_command->text() + "\"");
-    m_serialManager->SendCommand(m_command->text());
+    AddModule<Module::Common::RunCommand>(&CustomCommand::OnCommandFinished, m_command->text(), false);
 }
 
 void CustomCommand::Stop()
