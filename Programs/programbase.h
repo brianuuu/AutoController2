@@ -6,6 +6,7 @@
 #include <QLayout>
 #include <QObject>
 
+#include "Enums/system.h"
 #include "Managers/managercollection.h"
 #include "Programs/Settings/settingbase.h"
 
@@ -48,12 +49,13 @@ signals:
     void notifyCanRun(bool);
     void notifyStarted();
     void notifyFinished();
+    void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
 
 protected slots:
     void OnCanRunChanged();
 
 protected:
-    void PrintLog(QString const& log);
+    void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
     QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
     void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
@@ -61,7 +63,6 @@ protected:
     void AddSpacer(QBoxLayout *layout);
 
 protected:
-    LogManager*         m_logManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     AudioManager*       m_audioManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;

@@ -10,7 +10,6 @@ namespace Program
 {
 ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
-    m_logManager = ManagerCollection::GetManager<LogManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_audioManager = ManagerCollection::GetManager<AudioManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
@@ -18,6 +17,9 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
     connect(m_serialManager, &SerialManager::notifySerialStatus, this, &ProgramBase::OnCanRunChanged);
     connect(m_audioManager->GetInputList(), &QComboBox::currentTextChanged, this, &ProgramBase::OnCanRunChanged);
     connect(m_vlcManager, &VlcManager::notifyHasVideo, this, &ProgramBase::OnCanRunChanged);
+
+    LogManager* logManager = ManagerCollection::GetManager<LogManager>();
+    connect(this, &ProgramBase::notifyLog, logManager, &LogManager::PrintLog);
 }
 
 void ProgramBase::LoadSettings()
@@ -89,9 +91,9 @@ void ProgramBase::OnCanRunChanged()
     emit notifyCanRun(CanRun());
 }
 
-void ProgramBase::PrintLog(const QString &log)
+void ProgramBase::PrintLog(const QString &log, LogType type) const
 {
-     m_logManager->PrintLog(GetInternalName(), log);
+    emit notifyLog(GetInternalName(), log, type);
 }
 
 QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)
