@@ -16,8 +16,12 @@ public:
 
     virtual QString GetName() const = 0;
 
+    // try stopping module, not thread safe
+    virtual void stop() { m_terminate = true; }
+
     // should only be accessed when module is finished
     int GetResult() const { return m_result; }
+    QString GetError() const { return m_error; }
 
 signals:
     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
@@ -30,7 +34,9 @@ protected:
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
 protected:
-    int m_result = -1;
+    std::atomic_bool m_terminate = false;
+    int m_result = 0;
+    QString m_error;
 };
 }
 
