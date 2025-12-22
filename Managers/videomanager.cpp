@@ -110,7 +110,7 @@ void VideoManager::SaveSettings() const
 void VideoManager::paintEvent(QPaintEvent *event)
 {
     m_frameCount++;
-    if (m_fpsTimer.elapsed() >= 500)
+    if (m_fpsTimer.elapsed() >= 1000)
     {
         m_fps = m_frameCount * 1000.0 / (qreal)m_fpsTimer.restart();
         m_frameCount = 0;
