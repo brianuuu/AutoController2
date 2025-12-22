@@ -40,30 +40,30 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${app_icon_resource_windows}
-        Managers/serialmanager.h Managers/serialmanager.cpp
-        defines.h
         Enums/system.h
-        Managers/videomanager.h Managers/videomanager.cpp
-        Managers/audiomanager.h Managers/audiomanager.cpp
-        Managers/vlcmanager.h Managers/vlcmanager.cpp
+        Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
+        Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
+        Helpers/stickpainter.h Helpers/stickpainter.cpp
+        Managers/audiomanager.h Managers/audiomanager.cpp
+        Managers/joystickmanager.h Managers/joystickmanager.cpp
+        Managers/keyboardmanager.h Managers/keyboardmanager.cpp
         Managers/logmanager.h Managers/logmanager.cpp
         Managers/managercollection.h
-        Helpers/jsonhelper.h Helpers/jsonhelper.cpp
-        Managers/keyboardmanager.h Managers/keyboardmanager.cpp
         Managers/programmanager.h Managers/programmanager.cpp
-        Programs/programbase.h Programs/programbase.cpp
-        Programs/System/customcommand.h Programs/System/customcommand.cpp
+        Managers/serialmanager.h Managers/serialmanager.cpp
+        Managers/videomanager.h Managers/videomanager.cpp
+        Managers/vlcmanager.h Managers/vlcmanager.cpp
+        Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/Settings/settingbase.h
         Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
-        Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
         Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp
-        Helpers/stickpainter.h Helpers/stickpainter.cpp
-        Managers/joystickmanager.h Managers/joystickmanager.cpp
-        Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/Settings/settingtextbrowser.h Programs/Settings/settingtextbrowser.cpp
-        Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
-        Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
+        Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
+        Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
+        Programs/System/customcommand.h Programs/System/customcommand.cpp
+        Programs/programbase.h Programs/programbase.cpp
+        defines.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AutoController2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
