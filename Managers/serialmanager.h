@@ -24,13 +24,7 @@ public:
     bool OnCloseEvent();
     bool IsConnected() const { return m_serialState == SerialState::Connected; }
 
-    // command
-    void SendButton(quint32 buttonFlag, QPointF lStick, QPointF rStick);
-    void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
     static bool VerifyCommand(QString const& command, QString& errorMsg);
-    bool SendCommand(QString const& command);
-    void StopCommand();
-    void ClearCommand();
 
 private: // types
     enum class SerialState
@@ -48,6 +42,9 @@ signals:
     void notifySerialStatus();
     void notifyCommandFinished();
 
+public slots:
+    void OnSendButton(quint32 buttonFlag, QPointF lStick = QPoint(), QPointF rStick = QPoint());
+
 private slots:
     // UI
     void OnRefreshList();
@@ -59,9 +56,6 @@ private slots:
     void OnConnectTimeout();
     void OnDisconnectTimeout();
 
-    // command
-    void OnSendCurrentCommand(bool isLoopCount = false);
-
 private:
     void LoadSettings();
     void SaveSettings() const;
@@ -69,6 +63,8 @@ private:
     // serial
     void Connect(QString const& port);
     void Disconnect();
+
+    void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
 
 private:
     bool m_aboutToClose = false;
@@ -86,12 +82,6 @@ private:
     QSerialPort     m_serialPort;
     SerialState     m_serialState = SerialState::Disconnected;
     quint8          m_serialVersion = 0;
-
-    // command
-    QString         m_command;
-    int             m_commandIndex = 0;
-    QVector<int>    m_commandLoopCounts;
-    QTimer          m_commandTimer;
 };
 
 #endif // SERIALMANAGER_H

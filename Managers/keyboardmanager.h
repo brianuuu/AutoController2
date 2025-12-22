@@ -25,8 +25,6 @@ public:
     bool OnCloseEvent();
     bool OnInitShow();
 
-    void DisplayButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
-
 protected:
     void closeEvent(QCloseEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -35,6 +33,7 @@ signals:
     void notifyUserInput(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
 
 public slots:
+    void OnDisplayButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
     void OnUpdateStatus();
     void OnShow();
 

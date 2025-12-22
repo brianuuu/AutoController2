@@ -285,9 +285,9 @@ bool KeyboardManager::OnInitShow()
     return false;
 }
 
-void KeyboardManager::DisplayButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
+void KeyboardManager::OnDisplayButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
 {
-    // called by SerialManager, display what button is currently pressed
+    // called by RunCommand module, display what button is currently pressed
     for (int i = 1; i < BTN_COUNT - 1; i++)
     {
         ButtonType const type = (ButtonType)i;
@@ -438,8 +438,8 @@ void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPoi
     if (m_btnRemap || !m_programManager->AllowKeyboardInput()) return;
 
     // allow input even if not on active window
-    DisplayButton(buttonFlag, lStick, rStick);
-    m_serialManager->SendButton(buttonFlag, lStick, rStick);
+    OnDisplayButton(buttonFlag, lStick, rStick);
+    m_serialManager->OnSendButton(buttonFlag, lStick, rStick);
     emit notifyUserInput(buttonFlag, lStick, rStick);
 }
 
@@ -566,7 +566,7 @@ void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
 
     if (m_inputActive)
     {
-        m_serialManager->SendButton(m_buttonFlag);
+        m_serialManager->OnSendButton(m_buttonFlag);
         emit notifyUserInput(m_buttonFlag);
     }
 }
@@ -576,7 +576,7 @@ void KeyboardManager::ClearButtonFlags()
     // make sure all buttons are released
     if (m_buttonFlag)
     {
-        m_serialManager->SendButton(0);
+        m_serialManager->OnSendButton(0);
     }
 
     m_buttonFlag = 0;
