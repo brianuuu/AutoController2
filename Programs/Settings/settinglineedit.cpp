@@ -1,6 +1,8 @@
 #include "settinglineedit.h"
 #include "Helpers/jsonhelper.h"
 
+namespace Setting
+{
 void SettingLineEdit::Load(QJsonObject &object)
 {
     QVariant text;
@@ -18,4 +20,5 @@ void SettingLineEdit::Save(QJsonObject &object) const
 void SettingLineEdit::ResetDefault()
 {
     this->clear();
+}
 }

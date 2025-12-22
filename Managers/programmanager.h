@@ -63,11 +63,11 @@ private:
     QLabel*         m_labelAudio = Q_NULLPTR;
     QMap<QString, QStringList>  m_categoryToPrograms;
 
-    using ProgramCtor = ProgramBase*(*)();
+    using ProgramCtor = Program::ProgramBase*(*)();
     QMap<QString, ProgramCtor> m_programCtors;
 
     // Members
-    ProgramBase*    m_program = Q_NULLPTR;
+    Program::ProgramBase*   m_program = Q_NULLPTR;
 };
 
 #endif // PROGRAMMANAGER_H

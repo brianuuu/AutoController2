@@ -8,7 +8,7 @@
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
 #define CUSTOM_COMMAND_CUSTOM QString("(Custom)")
 
-namespace System
+namespace Program::System
 {
 
 CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
@@ -27,12 +27,12 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
         names << file.mid(0, file.size() - CUSTOM_COMMAND_FORMAT.size());
     }
 
-    m_list = new SettingComboBox("CommandType", names);
+    m_list = new Setting::SettingComboBox("CommandType", names);
     m_savedSettings.insert(m_list);
     AddSetting(layout, "Command Select:", "Select a pre-made command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
 
-    m_command = new SettingLineEdit("CommandEdit");
+    m_command = new Setting::SettingLineEdit("CommandEdit");
     m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
     AddSetting(layout, "Current Command:", "", m_command, false);
     connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandChanged);
@@ -42,7 +42,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_labelStatus = AddText(layout, "", true);
     layout->itemAt(layout->count() - 2)->widget()->layout()->addWidget(m_labelStatus);
 
-    m_description = new SettingTextEdit("Description");
+    m_description = new Setting::SettingTextEdit("Description");
     m_description->setMaximumHeight(100);
     AddSetting(layout, "Description:", "", m_description, false);
     connect(m_description, &QTextEdit::textChanged, this, &CustomCommand::OnCommandEdited);

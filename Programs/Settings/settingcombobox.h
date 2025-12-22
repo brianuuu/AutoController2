@@ -4,6 +4,8 @@
 #include <QComboBox>
 #include "settingbase.h"
 
+namespace Setting
+{
 class SettingComboBox : public QComboBox, public SettingBase
 {
     Q_OBJECT
@@ -16,5 +18,6 @@ public:
     void Save(QJsonObject &object) const override;
     void ResetDefault() override;
 };
+}
 
 #endif // SETTINGCOMBOBOX_H

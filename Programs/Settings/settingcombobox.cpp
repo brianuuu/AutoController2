@@ -1,6 +1,8 @@
 #include "settingcombobox.h"
 #include "Helpers/jsonhelper.h"
 
+namespace Setting
+{
 SettingComboBox::SettingComboBox
 (
     const QString &name,
@@ -28,4 +30,5 @@ void SettingComboBox::Save(QJsonObject &object) const
 void SettingComboBox::ResetDefault()
 {
     this->setCurrentIndex(0);
+}
 }

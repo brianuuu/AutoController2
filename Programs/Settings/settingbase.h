@@ -4,6 +4,8 @@
 #include <QJsonObject>
 #include <QObject>
 
+namespace Setting
+{
 class SettingBase
 {
 public:
@@ -16,5 +18,6 @@ public:
 public:
     QString m_name; // for save & load reference
 };
+}
 
 #endif // SETTINGBASE_H

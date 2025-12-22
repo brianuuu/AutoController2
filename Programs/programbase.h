@@ -9,6 +9,8 @@
 #include "Managers/managercollection.h"
 #include "Programs/Settings/settingbase.h"
 
+namespace Program
+{
 class ProgramBase : public QObject
 {
     Q_OBJECT
@@ -65,7 +67,8 @@ protected:
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
-    QSet<SettingBase*> m_savedSettings;
+    QSet<Setting::SettingBase*> m_savedSettings;
 };
+}
 
 #endif // PROGRAMBASE_H

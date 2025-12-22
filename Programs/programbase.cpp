@@ -6,6 +6,8 @@
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 
+namespace Program
+{
 ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
@@ -22,7 +24,7 @@ void ProgramBase::LoadSettings()
 {
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
     QJsonObject settings = JsonHelper::ReadObject(allSettings, GetInternalName());
-    for (SettingBase* setting : std::as_const(m_savedSettings))
+    for (Setting::SettingBase* setting : std::as_const(m_savedSettings))
     {
         setting->Load(settings);
     }
@@ -31,7 +33,7 @@ void ProgramBase::LoadSettings()
 void ProgramBase::SaveSettings() const
 {
     QJsonObject settings;
-    for (SettingBase* setting : m_savedSettings)
+    for (Setting::SettingBase* setting : m_savedSettings)
     {
         setting->Save(settings);
     }
@@ -49,7 +51,7 @@ bool ProgramBase::CanRun() const
 
 void ProgramBase::ResetDefault()
 {
-    for (SettingBase* setting : std::as_const(m_savedSettings))
+    for (Setting::SettingBase* setting : std::as_const(m_savedSettings))
     {
         setting->ResetDefault();
     }
@@ -181,4 +183,5 @@ void ProgramBase::AddSpacer(QBoxLayout *layout)
     QWidget* widget = new QWidget();
     widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget(widget);
+}
 }

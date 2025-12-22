@@ -4,6 +4,8 @@
 #include <QTextEdit>
 #include "settingbase.h"
 
+namespace Setting
+{
 class SettingTextEdit : public QTextEdit, public SettingBase
 {
     Q_OBJECT
@@ -16,5 +18,6 @@ public:
     void Save(QJsonObject &object) const override;
     void ResetDefault() override;
 };
+}
 
 #endif // SETTINGTEXTEDIT_H

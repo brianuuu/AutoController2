@@ -1,6 +1,8 @@
 #include "settingtextbrowser.h"
 #include "Helpers/jsonhelper.h"
 
+namespace Setting
+{
 SettingTextBrowser::SettingTextBrowser
 (
     const QString &name,
@@ -29,4 +31,5 @@ void SettingTextBrowser::Save(QJsonObject &object) const
 void SettingTextBrowser::ResetDefault()
 {
     this->setPlainText(m_defaultText);
+}
 }

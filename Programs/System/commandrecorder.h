@@ -7,7 +7,7 @@
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settingtextbrowser.h"
 
-namespace System
+namespace Program::System
 {
 class CommandRecorder : public ProgramBase
 {
@@ -42,8 +42,8 @@ private:
     void AppendCommand(QString const& command);
 
 private:
-    SettingComboBox* m_nothing = Q_NULLPTR;
-    SettingTextBrowser* m_browser = Q_NULLPTR;
+    Setting::SettingComboBox* m_nothing = Q_NULLPTR;
+    Setting::SettingTextBrowser* m_browser = Q_NULLPTR;
 
     QElapsedTimer m_timer;
     quint32 m_buttonFlags = 0;

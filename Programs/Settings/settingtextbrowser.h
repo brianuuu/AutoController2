@@ -4,6 +4,8 @@
 #include <QTextBrowser>
 #include "settingbase.h"
 
+namespace Setting
+{
 class SettingTextBrowser : public QTextBrowser, public SettingBase
 {
     Q_OBJECT
@@ -19,5 +21,6 @@ public:
 private:
     QString m_defaultText;
 };
+}
 
 #endif // SETTINGTEXTBROWSER_H

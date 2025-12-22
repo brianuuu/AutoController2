@@ -29,8 +29,8 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
 
     // register all programs
-    RegisterProgram<System::CommandRecorder>();
-    RegisterProgram<System::CustomCommand>();
+    RegisterProgram<Program::System::CommandRecorder>();
+    RegisterProgram<Program::System::CustomCommand>();
 
     // populate categories
     QStringList categories;
@@ -74,11 +74,11 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_labelDescription->setText(m_program->GetDescription());
 
-    connect(m_program, &ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
-    connect(m_program, &ProgramBase::notifyFinished, this, &ProgramManager::OnProgramFinished);
+    connect(m_program, &Program::ProgramBase::notifyCanRun, this, &ProgramManager::OnCanRunChanged);
+    connect(m_program, &Program::ProgramBase::notifyFinished, this, &ProgramManager::OnProgramFinished);
 
     KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
-    connect(m_program, &ProgramBase::notifyFinished, keyboardManager, &KeyboardManager::OnUpdateStatus);
+    connect(m_program, &Program::ProgramBase::notifyFinished, keyboardManager, &KeyboardManager::OnUpdateStatus);
 
     OnCanRunChanged(m_program->CanRun());
 }
@@ -233,7 +233,7 @@ void ProgramManager::RegisterProgram()
     QStringList& list = m_categoryToPrograms[category];
     list.push_back(name);
 
-    m_programCtors[category + name] = []()->ProgramBase* { return new T(); };
+    m_programCtors[category + name] = []()->Program::ProgramBase* { return new T(); };
 }
 
 void ProgramManager::RemoveProgram()

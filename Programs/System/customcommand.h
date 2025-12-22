@@ -11,7 +11,7 @@
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingtextedit.h"
 
-namespace System
+namespace Program::System
 {
 class CustomCommand : public ProgramBase
 {
@@ -50,9 +50,9 @@ private:
     void VerifyCommand();
 
 private:
-    SettingComboBox* m_list = Q_NULLPTR;
-    SettingLineEdit* m_command = Q_NULLPTR;
-    SettingTextEdit* m_description = Q_NULLPTR;
+    Setting::SettingComboBox* m_list = Q_NULLPTR;
+    Setting::SettingLineEdit* m_command = Q_NULLPTR;
+    Setting::SettingTextEdit* m_description = Q_NULLPTR;
     QLabel* m_labelStatus = Q_NULLPTR;
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
