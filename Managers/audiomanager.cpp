@@ -294,8 +294,10 @@ void AudioManager::OnRefreshInputList()
 {
     QString const previousInput = m_listInput->currentText();
 
+    m_listInput->blockSignals(true);
     m_listInput->clear();
     m_listInput->addItem("None");
+    m_listInput->blockSignals(false);
 
     bool foundPreviousInput = previousInput == "None";
     for (const QAudioDevice &device : QMediaDevices::audioInputs())
@@ -318,8 +320,10 @@ void AudioManager::OnRefreshOutputList()
 {
     QString const previousOutput = m_listOutput->currentText();
 
+    m_listOutput->blockSignals(true);
     m_listOutput->clear();
     m_listOutput->addItem("Default");
+    m_listOutput->blockSignals(false);
 
     bool foundPreviousOutput = previousOutput == "Default";
     for (const QAudioDevice &device : QMediaDevices::audioOutputs())
@@ -334,7 +338,7 @@ void AudioManager::OnRefreshOutputList()
     // keep the previous output
     if (foundPreviousOutput)
     {
-        m_listInput->setCurrentText(previousOutput);
+        m_listOutput->setCurrentText(previousOutput);
     }
 }
 
