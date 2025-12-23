@@ -9,16 +9,6 @@
 
 #include "Enums/system.h"
 
-enum class SerialState
-{
-    Disconnected,
-    FeedbackTest,
-    FeedbackOK,
-    FeedbackFailed,
-    Disconnecting,
-    Connected,
-};
-
 class SerialHolder : public QThread
 {
     Q_OBJECT
@@ -56,6 +46,17 @@ private:
     void Disconnect();
 
     void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
+
+private: // types
+    enum class SerialState
+    {
+        Disconnected,
+        FeedbackTest,
+        FeedbackOK,
+        FeedbackFailed,
+        Disconnecting,
+        Connected,
+    };
 
 private:
     QRecursiveMutex m_mutex;
