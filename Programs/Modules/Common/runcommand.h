@@ -30,11 +30,14 @@ private slots:
 
 private:
     SerialManager*  m_serialManager = Q_NULLPTR;
+
+    QString         m_name;
     QString         m_command;
     int             m_commandIndex = 0;
     QVector<int>    m_commandLoopCounts;
     int             m_commandDelay = 0;
     QElapsedTimer   m_commandTimer;
+
     bool            m_finished = false;
 };
 } // namespace Module

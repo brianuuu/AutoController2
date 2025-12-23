@@ -17,6 +17,7 @@ RunCommand::RunCommand
     if (isName)
     {
         // TODO: read .ini
+        m_name = nameOrCommand;
     }
     else
     {
@@ -40,6 +41,15 @@ void RunCommand::run()
     if (m_result < 0)
     {
         return;
+    }
+
+    if (m_name.isEmpty())
+    {
+        PrintLog("Running command \"" + m_command + "\"");
+    }
+    else
+    {
+
     }
 
     m_commandTimer.start();
