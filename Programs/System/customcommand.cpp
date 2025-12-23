@@ -181,7 +181,7 @@ void CustomCommand::VerifyCommand()
     QString errorMsg;
     if (SerialManager::VerifyCommand(m_command->text(), errorMsg))
     {
-        m_labelStatus->setText("Valid!");
+        m_labelStatus->setText(errorMsg.isEmpty() ? "Valid!" : errorMsg);
         m_validCommand = true;
     }
     else
@@ -191,7 +191,7 @@ void CustomCommand::VerifyCommand()
     }
 
     QPalette palette = m_labelStatus->palette();
-    palette.setColor(QPalette::WindowText, LogTypeToColor(m_validCommand ? LOG_Success : LOG_Error));
+    palette.setColor(QPalette::WindowText, LogTypeToColor(m_validCommand ? (errorMsg.isEmpty() ? LOG_Success : LOG_Warning) : LOG_Error));
     m_labelStatus->setPalette(palette);
 
     m_btnSave->setEnabled(m_validCommand);

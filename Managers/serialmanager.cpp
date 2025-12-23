@@ -98,6 +98,7 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         return false;
     }
 
+    int minDuration = INT_MAX;
     bool isLoopCount = false;
     bool hasInfiniteLoop = false;
     for (int i = 0; i < command.size();)
@@ -178,7 +179,11 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
             return false;
         }
 
-        if (isLoopCount && duration == 0)
+        if (!isLoopCount && duration < minDuration)
+        {
+            minDuration = duration;
+        }
+        else if (isLoopCount && duration == 0)
         {
             hasInfiniteLoop = true;
         }
@@ -200,6 +205,10 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         return false;
     }
 
+    if (minDuration < 50)
+    {
+        errorMsg = "Command with duration " + QString::number(minDuration) + " is less than 50, this may get skipped";
+    }
     return true;
 }
 
