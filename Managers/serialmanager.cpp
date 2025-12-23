@@ -11,8 +11,6 @@ SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
     connect(this, &SerialManager::notifyClose, parent, &QWidget::close);
 
     m_serialHolder = new SerialHolder();
-    m_serialHolder->moveToThread(m_serialHolder);
-    m_serialHolder->start();
 }
 
 SerialManager::~SerialManager()

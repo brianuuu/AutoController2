@@ -13,6 +13,9 @@ SerialHolder::SerialHolder(QObject *parent)
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &SerialHolder::notifyLog, logManager, &LogManager::PrintLog);
+
+    this->moveToThread(this);
+    this->start();
 }
 
 SerialHolder::~SerialHolder()
