@@ -9,6 +9,15 @@
 SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 {
     connect(this, &SerialManager::notifyClose, parent, &QWidget::close);
+
+    m_serialHolder = new SerialHolder();
+    m_serialHolder->moveToThread(m_serialHolder);
+    m_serialHolder->start();
+}
+
+SerialManager::~SerialManager()
+{
+    delete m_serialHolder;
 }
 
 void SerialManager::Initialize(Ui::MainWindow *ui)
@@ -23,8 +32,13 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnRefresh, &QPushButton::clicked, this, &SerialManager::OnRefreshList);
     connect(m_btnConnect, &QPushButton::clicked, this, &SerialManager::OnConnectClicked);
 
-    connect(&m_serialPort, &QSerialPort::readyRead, this, &SerialManager::OnReadyRead);
-    connect(&m_serialPort, &QSerialPort::errorOccurred, this, &SerialManager::OnErrorOccured);
+    connect(this, &SerialManager::notifySerialConnect, m_serialHolder, &SerialHolder::OnConnectClicked);
+    connect(this, &SerialManager::notifySerialDisconnect, m_serialHolder, &SerialHolder::OnDisconnectClicked);
+    connect(m_serialHolder, &SerialHolder::notifyErrorOccured, this, &SerialManager::OnErrorOccured);
+    connect(m_serialHolder, &SerialHolder::notifyConnecting, this, &SerialManager::OnConnecting);
+    connect(m_serialHolder, &SerialHolder::notifyConnectTimeout, this, &SerialManager::OnConnectTimeout);
+    connect(m_serialHolder, &SerialHolder::notifyDisconnecting, this, &SerialManager::OnDisconnecting);
+    connect(m_serialHolder, &SerialHolder::notifyDisconnectTimeout, this, &SerialManager::OnDisconnectTimeout);
 
     OnRefreshList();
     LoadSettings();
@@ -33,10 +47,10 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
 bool SerialManager::OnCloseEvent()
 {
     // main window is closing
-    if (m_serialPort.isOpen())
+    if (m_serialHolder->IsOpen())
     {
         m_aboutToClose = true;
-        Disconnect();
+        emit notifySerialDisconnect();
         return false;
     }
 
@@ -204,92 +218,67 @@ void SerialManager::OnRefreshList()
     m_btnConnect->setEnabled(m_list->count() > 0);
 }
 
-void SerialManager::OnReadyRead()
+void SerialManager::OnErrorOccured()
 {
-    QByteArray ba = m_serialPort.readAll();
-    if (m_serialState != SerialState::Connected)
-    {
-        if (!ba.isEmpty())
-        {
-            // Version checking
-            m_serialVersion = ba.front();
-            if (m_serialVersion == SERIAL_VERSION)
-            {
-                m_serialState = SerialState::FeedbackOK;
-            }
-            else
-            {
-                m_serialState = SerialState::FeedbackFailed;
-            }
-        }
-        return;
-    }
-}
-
-void SerialManager::OnErrorOccured(QSerialPort::SerialPortError error)
-{
-    if (error == QSerialPort::ResourceError)
-    {
-        OnDisconnectTimeout();
-        OnRefreshList();
-        QMessageBox::critical(this, "Error", "Serial port disconnected unexpectedly!", QMessageBox::Ok);
-    }
+    OnDisconnectTimeout();
+    OnRefreshList();
+    QMessageBox::critical(this, "Error", "Serial port disconnected unexpectedly!", QMessageBox::Ok);
 }
 
 void SerialManager::OnConnectClicked()
 {
-    if (m_serialPort.isOpen())
+    emit notifySerialConnect(m_list->currentData().toString());
+}
+
+void SerialManager::OnConnecting(bool failed)
+{
+    if (failed)
     {
-        Disconnect();
+        QMessageBox::critical(this, "Error", "Failed to connect serial port!", QMessageBox::Ok);
     }
-    else if (m_list->currentIndex() != -1)
+    else
     {
-        Connect(m_list->currentData().toString());
+        m_list->setEnabled(false);
+        m_btnRefresh->setEnabled(false);
+        m_btnConnect->setEnabled(false);
+        m_btnConnect->setText("Connecting...");
     }
 }
 
-void SerialManager::OnConnectTimeout()
+void SerialManager::OnConnectTimeout(bool failed, quint8 version)
 {
-    if (m_serialState == SerialState::FeedbackOK)
+    if (failed)
     {
-        m_serialState = SerialState::Connected;
-        m_logManager->PrintLog("Global", "Serial Connected", LOG_Success);
-        emit notifySerialStatus();
-
+        QString msg;
+        if (version > 0)
+        {
+            msg = "AutoController2.hex version is not matching, please install the newest version.";
+            msg += "\nVersion Detected: " + QString::number(version);
+            msg += "\nCurrent Version: " + QString::number(SERIAL_VERSION);
+        }
+        else
+        {
+            msg = "Failed to receive feedback from Arduino/Teensy.";
+        }
+        QMessageBox::critical(this, "Error", msg, QMessageBox::Ok);
+    }
+    else
+    {
         m_list->setEnabled(false);
         m_btnRefresh->setEnabled(false);
         m_btnConnect->setEnabled(true);
         m_btnConnect->setText("Disconnect");
-        return;
     }
+}
 
-    OnDisconnectTimeout();
-
-    QString msg;
-    if (m_serialState == SerialState::FeedbackFailed && m_serialVersion > 0)
-    {
-        msg = "AutoController2.hex version is not matching, please install the newest version.";
-        msg += "\nVersion Detected: " + QString::number(m_serialVersion);
-        msg += "\nCurrent Version: " + QString::number(SERIAL_VERSION);
-    }
-    else
-    {
-        msg = "Failed to receive feedback from Arduino/Teensy.";
-    }
-    QMessageBox::critical(this, "Error", msg, QMessageBox::Ok);
+void SerialManager::OnDisconnecting()
+{
+    m_btnConnect->setEnabled(false);
+    m_btnConnect->setText("Disconnecting...");
 }
 
 void SerialManager::OnDisconnectTimeout()
 {
-    if (m_serialPort.isOpen())
-    {
-        m_serialPort.close();
-        m_logManager->PrintLog("Global", "Serial Disconnected", LOG_Warning);
-    }
-
-    m_serialState = SerialState::Disconnected;
-    emit notifySerialStatus();
-
     m_list->setEnabled(true);
     m_btnRefresh->setEnabled(true);
     m_btnConnect->setEnabled(true);
@@ -300,94 +289,4 @@ void SerialManager::OnDisconnectTimeout()
         m_aboutToClose = false;
         emit notifyClose();
     }
-}
-
-//-----------------------------------------------------------
-// Private methods
-//-----------------------------------------------------------
-void SerialManager::Connect(const QString &port)
-{
-    m_serialPort.setPortName(port);
-    m_serialPort.setBaudRate(QSerialPort::Baud9600);
-    m_serialPort.setDataBits(QSerialPort::Data8);
-    m_serialPort.setParity(QSerialPort::NoParity);
-    m_serialPort.setStopBits(QSerialPort::OneStop);
-    m_serialPort.setFlowControl(QSerialPort::NoFlowControl);
-
-    if (m_serialPort.open(QIODevice::ReadWrite))
-    {
-        m_serialState = SerialState::FeedbackTest;
-
-        m_list->setEnabled(false);
-        m_btnRefresh->setEnabled(false);
-        m_btnConnect->setEnabled(false);
-        m_btnConnect->setText("Connecting...");
-
-        QTimer::singleShot(500, this, &SerialManager::OnConnectTimeout);
-
-        // Send a nothing command and check if it returns a feedback
-        SendButton(0);
-    }
-    else
-    {
-        m_serialState = SerialState::Disconnected;
-        QMessageBox::critical(this, "Error", "Failed to connect serial port!", QMessageBox::Ok);
-    }
-}
-
-void SerialManager::Disconnect()
-{
-    if (m_serialState == SerialState::Disconnecting) return;
-
-    if (m_serialPort.isOpen())
-    {
-        // clear button, we don't want feedback
-        QByteArray ba;
-        ba.append((char)0);
-        m_serialPort.write(ba);
-
-        QTimer::singleShot(50, this, &SerialManager::OnDisconnectTimeout);
-
-        m_serialState = SerialState::Disconnecting;
-        emit notifySerialStatus();
-
-        m_btnConnect->setEnabled(false);
-        m_btnConnect->setText("Disconnecting...");
-    }
-    else
-    {
-        OnDisconnectTimeout();
-    }
-}
-
-void SerialManager::OnSendButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
-{
-    if (!m_serialPort.isOpen()) return;
-
-    quint8 lx = qCeil((lStick.x() + 1.0) * 0.5 * 255);
-    quint8 ly = qCeil((-lStick.y() + 1.0) * 0.5 * 255);
-    quint8 rx = qCeil((rStick.x() + 1.0) * 0.5 * 255);
-    quint8 ry = qCeil((-rStick.y() + 1.0) * 0.5 * 255);
-
-    SendButton(buttonFlag, lx, ly, rx, ry);
-}
-
-void SerialManager::SendButton(quint32 buttonFlag, quint8 lx, quint8 ly, quint8 rx, quint8 ry)
-{
-    if (!m_serialPort.isOpen()) return;
-
-    QByteArray ba;
-    ba.append((char)0xFF); // mode = FF
-
-    ba.append((char)(buttonFlag & 0x000000FF));
-    ba.append((char)((buttonFlag & 0x0000FF00) >> 8));
-    ba.append((char)((buttonFlag & 0x00FF0000) >> 16));
-    ba.append((char)((buttonFlag & 0xFF000000) >> 24));
-
-    ba.append((char)lx);
-    ba.append((char)ly);
-    ba.append((char)rx);
-    ba.append((char)ry);
-
-    m_serialPort.write(ba);
 }

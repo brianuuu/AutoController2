@@ -28,7 +28,7 @@ RunCommand::RunCommand
     connect(this, &RunCommand::notifyButton, keyboardManager, &KeyboardManager::OnDisplayButton);
 
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
-    connect(this, &RunCommand::notifyButton, m_serialManager, &SerialManager::OnSendButton);
+    connect(this, &RunCommand::notifyButton, m_serialManager->GetHolder(), &SerialHolder::OnSendButton);
 
     if (!SerialManager::VerifyCommand(m_command, m_error))
     {

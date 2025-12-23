@@ -16,7 +16,8 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelJoystick = ui->L_JoystickStatus;
 
     connect(ui->PB_KeyboardSettings, &QPushButton::clicked, this, &KeyboardManager::OnShow);
-    connect(m_serialManager, &SerialManager::notifySerialStatus, this, &KeyboardManager::OnUpdateStatus);
+    connect(m_serialManager->GetHolder(), &SerialHolder::notifySerialStatus, this, &KeyboardManager::OnUpdateStatus);
+    connect(this, &KeyboardManager::notifyUserInput, m_serialManager->GetHolder(), &SerialHolder::OnSendButton);
     connect(m_programManager, &ProgramManager::notifyStartStop, this, &KeyboardManager::OnUpdateStatus);
     connect(m_joystickManager, &JoystickManager::notifyChanged, this, &KeyboardManager::OnJoystickChanged);
 
@@ -439,7 +440,6 @@ void KeyboardManager::OnJoystickChanged(quint32 buttonFlag, QPointF lStick, QPoi
 
     // allow input even if not on active window
     OnDisplayButton(buttonFlag, lStick, rStick);
-    m_serialManager->OnSendButton(buttonFlag, lStick, rStick);
     emit notifyUserInput(buttonFlag, lStick, rStick);
 }
 
@@ -566,7 +566,6 @@ void KeyboardManager::UpdateButtonFlags(int key, bool pressed)
 
     if (m_inputActive)
     {
-        m_serialManager->OnSendButton(m_buttonFlag);
         emit notifyUserInput(m_buttonFlag);
     }
 }
@@ -576,7 +575,7 @@ void KeyboardManager::ClearButtonFlags()
     // make sure all buttons are released
     if (m_buttonFlag)
     {
-        m_serialManager->OnSendButton(0);
+        emit notifyUserInput(0);
     }
 
     m_buttonFlag = 0;

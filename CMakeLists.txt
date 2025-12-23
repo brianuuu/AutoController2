@@ -44,6 +44,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
+        Helpers/serialholder.h Helpers/serialholder.cpp
         Helpers/stickpainter.h Helpers/stickpainter.cpp
         Managers/audiomanager.h Managers/audiomanager.cpp
         Managers/joystickmanager.h Managers/joystickmanager.cpp

@@ -10,6 +10,7 @@
 #include <QTimer>
 
 #include "../ui_mainwindow.h"
+#include "Helpers/serialholder.h"
 #include "Managers/managercollection.h"
 
 class SerialManager : public QWidget
@@ -18,53 +19,37 @@ class SerialManager : public QWidget
 
 public:
     explicit SerialManager(QWidget* parent = nullptr);
+    ~SerialManager();
+
     static QString GetTypeID() { return "Serial"; }
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
-    bool IsConnected() const { return m_serialState == SerialState::Connected; }
+    bool IsConnected() { return m_serialHolder && m_serialHolder->IsConnected(); }
+    SerialHolder* GetHolder() { return m_serialHolder; }
 
     static bool VerifyCommand(QString const& command, QString& errorMsg);
 
-private: // types
-    enum class SerialState
-    {
-        Disconnected,
-        FeedbackTest,
-        FeedbackOK,
-        FeedbackFailed,
-        Disconnecting,
-        Connected,
-    };
-
 signals:
     void notifyClose();
-    void notifySerialStatus();
-    void notifyCommandFinished();
-
-public slots:
-    void OnSendButton(quint32 buttonFlag, QPointF lStick = QPoint(), QPointF rStick = QPoint());
+    void notifySerialConnect(QString const& name);
+    void notifySerialDisconnect();
 
 private slots:
     // UI
     void OnRefreshList();
 
     // serial
-    void OnReadyRead();
-    void OnErrorOccured(QSerialPort::SerialPortError error);
+    void OnErrorOccured();
     void OnConnectClicked();
-    void OnConnectTimeout();
+    void OnConnecting(bool failed);
+    void OnConnectTimeout(bool failed, quint8 version = 0);
+    void OnDisconnecting();
     void OnDisconnectTimeout();
 
 private:
     void LoadSettings();
     void SaveSettings() const;
-
-    // serial
-    void Connect(QString const& port);
-    void Disconnect();
-
-    void SendButton(quint32 buttonFlag, quint8 lx = 128, quint8 ly = 128, quint8 rx = 128, quint8 ry = 128);
 
 private:
     bool m_aboutToClose = false;
@@ -78,10 +63,8 @@ private:
     QPushButton*    m_btnRefresh = Q_NULLPTR;
     QPushButton*    m_btnConnect = Q_NULLPTR;
 
-    // serial
-    QSerialPort     m_serialPort;
-    SerialState     m_serialState = SerialState::Disconnected;
-    quint8          m_serialVersion = 0;
+    // Serial
+    SerialHolder*   m_serialHolder = Q_NULLPTR;
 };
 
 #endif // SERIALMANAGER_H
