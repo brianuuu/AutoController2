@@ -13,7 +13,6 @@ namespace Program::System
 
 CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
-    connect(m_serialManager, &SerialManager::notifyCommandFinished, this, &CustomCommand::OnCommandFinished);
 }
 
 void CustomCommand::PopulateSettings(QBoxLayout *layout)
