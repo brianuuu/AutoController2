@@ -257,7 +257,7 @@ void SerialManager::OnConnectTimeout(bool failed, quint8 version)
     if (failed)
     {
         QString msg;
-        if (version > 0)
+        if (version > 0 && SERIAL_VERSION != version)
         {
             msg = "AutoController2.hex version is not matching, please install the newest version.";
             msg += "\nVersion Detected: " + QString::number(version);
