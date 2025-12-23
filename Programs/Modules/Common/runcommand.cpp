@@ -72,15 +72,15 @@ void RunCommand::OnSendCurrentCommand(bool isLoopCount)
         return;
     }
 
-    if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
-    {
-        m_finished = true;
-        return;
-    }
-
     // wait for current command delay
     if (m_commandTimer.elapsed() < m_commandDelay)
     {
+        return;
+    }
+
+    if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
+    {
+        m_finished = true;
         return;
     }
 
