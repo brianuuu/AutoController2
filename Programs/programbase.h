@@ -50,7 +50,7 @@ public:
 signals:
     void notifyCanRun(bool);
     void notifyStarted();
-    void notifyFinished();
+    void notifyFinished(int);
     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
 
 protected slots:

@@ -66,12 +66,12 @@ bool CustomCommand::CanRun() const
 void CustomCommand::Start()
 {
     ProgramBase::Start();
-
-    AddModule<Module::Common::RunCommand>(&CustomCommand::OnCommandFinished, m_command->text(), false);
+    m_module = AddModule<Module::Common::RunCommand>(&CustomCommand::OnCommandFinished, m_command->text(), false);
 }
 
 void CustomCommand::Stop()
 {
+    ClearModule(m_module);
     ProgramBase::Stop();
 }
 
@@ -132,7 +132,9 @@ void CustomCommand::OnCommandEdited()
 void CustomCommand::OnCommandFinished()
 {
     if (!m_started) return;
-    emit notifyFinished();
+
+    int const result = m_module->GetResult();
+    emit notifyFinished(result);
 }
 
 void CustomCommand::OnCommandSave()

@@ -58,6 +58,7 @@ private:
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
 
+    Module::ModuleBase* m_module = Q_NULLPTR;
     bool m_validCommand = false;
 };
 }

@@ -32,7 +32,7 @@ private slots:
     void OnProgramChanged(QString const& name);
     void OnCanRunChanged(bool canRun);
     void OnProgramStartStop();
-    void OnProgramFinished();
+    void OnProgramFinished(int result);
     void OnResetDefault();
 
 private:

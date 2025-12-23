@@ -31,7 +31,7 @@ void ModuleBase::OnFinished() const
     PrintLog("Module finished with result = " + QString::number(m_result), m_result < 0 ? LOG_Error : LOG_Normal);
     if (m_result < 0)
     {
-        PrintLog(m_error, LOG_Error);
+        PrintLog("Error: " + m_error, LOG_Error);
     }
 }
 

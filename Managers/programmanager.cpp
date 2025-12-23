@@ -136,13 +136,20 @@ void ProgramManager::OnProgramStartStop()
     m_btnStart->setEnabled(canRun);
 }
 
-void ProgramManager::OnProgramFinished()
+void ProgramManager::OnProgramFinished(int result)
 {
     if (m_program && m_program->IsRunning())
     {
         StopProgram();
 
-        m_logManager->PrintLog(m_program->GetInternalName(), "Program finished!", LOG_Success);
+        if (result < 0)
+        {
+            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error", LOG_Error);
+        }
+        else
+        {
+            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!", LOG_Success);
+        }
         // TODO: log file name
         m_logManager->SetCurrentLogFile("");
     }
