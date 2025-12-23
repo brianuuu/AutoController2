@@ -17,7 +17,7 @@ public:
     virtual QString GetName() const = 0;
 
     // try stopping module, not thread safe
-    virtual void stop() { m_terminate = true; }
+    virtual void stop() { m_terminate = true; quit(); }
 
     // should only be accessed when module is finished
     int GetResult() const { return m_result; }
