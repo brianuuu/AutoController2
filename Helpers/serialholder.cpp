@@ -58,6 +58,7 @@ void SerialHolder::OnReadyRead()
 
 void SerialHolder::OnErrorOccured(QSerialPort::SerialPortError error)
 {
+    QMutexLocker locker(&m_mutex);
     if (error == QSerialPort::ResourceError)
     {
         OnDisconnectTimeout();
@@ -80,6 +81,7 @@ void SerialHolder::OnConnectClicked(QString const& name)
 
 void SerialHolder::OnConnectTimeout()
 {
+    QMutexLocker locker(&m_mutex);
     if (m_serialState == SerialState::FeedbackOK)
     {
         m_serialState = SerialState::Connected;
