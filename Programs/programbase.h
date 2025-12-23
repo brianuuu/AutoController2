@@ -65,6 +65,7 @@ protected:
         T* module = new T(args...);
         connect(module, &QThread::finished, this, func);
         m_modules.insert(module);
+        module->moveToThread(module);
         module->start();
         return module;
     }
