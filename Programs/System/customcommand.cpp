@@ -82,6 +82,7 @@ void CustomCommand::OnListChanged(const QString &str)
         // should save custom command
         m_savedSettings.insert(m_command);
         m_savedSettings.insert(m_description);
+        m_btnDelete->setEnabled(false);
         return;
     }
     else
@@ -89,6 +90,7 @@ void CustomCommand::OnListChanged(const QString &str)
         // don't save
         m_savedSettings.remove(m_command);
         m_savedSettings.remove(m_description);
+        m_btnDelete->setEnabled(true);
     }
 
     QString const name = CUSTOM_COMMAND_DIRECTORY + str + CUSTOM_COMMAND_FORMAT;
