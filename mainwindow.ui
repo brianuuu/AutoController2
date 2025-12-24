@@ -515,6 +515,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="PB_ProgramManual">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Open Program Manual</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QFrame" name="frame">
           <property name="minimumSize">
            <size>

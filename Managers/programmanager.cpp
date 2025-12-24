@@ -7,6 +7,8 @@
 #include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
+#define PROGRAM_MANUAL_PATH "../Manuals/"
+
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
@@ -17,6 +19,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_settingsLayout = qobject_cast<QBoxLayout*>(ui->BL_ProgramSetting->layout());
     m_btnStart = ui->PB_StartProgram;
     m_btnResetDefault = ui->PB_RestoreDefault;
+    m_btnManual = ui->PB_ProgramManual;
     m_labelDescription = ui->L_ProgramDescription;
     m_labelSerial = ui->L_SerialPort;
     m_labelCamera = ui->L_CameraDevice;
@@ -27,6 +30,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_programList, &QListWidget::currentTextChanged, this, &ProgramManager::OnProgramChanged);
     connect(m_btnStart, &QPushButton::clicked, this, &ProgramManager::OnProgramStartStop);
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
+    connect(m_btnManual, &QPushButton::clicked, this, &ProgramManager::OnManualOpen);
 
     // register all programs
     RegisterProgram<Program::System::CommandRecorder>();
@@ -71,6 +75,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
 
+    m_btnManual->setEnabled(QFile::exists(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_labelDescription->setText(m_program->GetDescription());
 
@@ -166,6 +171,12 @@ void ProgramManager::OnResetDefault()
     {
         m_program->ResetDefault();
     }
+}
+
+void ProgramManager::OnManualOpen()
+{
+    if (!m_program) return;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
 }
 
 void ProgramManager::LoadSettings()

@@ -2,6 +2,7 @@
 #define PROGRAMMANAGER_H
 
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QMessageBox>
 #include <QListWidget>
 #include <QWidget>
@@ -34,6 +35,7 @@ private slots:
     void OnProgramStartStop();
     void OnProgramFinished(int result);
     void OnResetDefault();
+    void OnManualOpen();
 
 private:
     void LoadSettings();
@@ -57,6 +59,7 @@ private:
     QBoxLayout*     m_settingsLayout = Q_NULLPTR;
     QPushButton*    m_btnStart = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
+    QPushButton*    m_btnManual = Q_NULLPTR;
     QLabel*         m_labelDescription = Q_NULLPTR;
     QLabel*         m_labelSerial = Q_NULLPTR;
     QLabel*         m_labelCamera = Q_NULLPTR;
