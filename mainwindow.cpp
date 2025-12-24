@@ -109,6 +109,11 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             if (m_vlcManager) m_vlcManager->raise();
             this->raise();
         }
+
+        if (m_keyboardManager)
+        {
+            m_keyboardManager->OnUpdateStatus();
+        }
     }
 
     return false;
