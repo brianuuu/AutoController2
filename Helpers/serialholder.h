@@ -23,9 +23,9 @@ public:
 signals:
     void notifyErrorOccured();
     void notifySerialStatus();
-     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
+    void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
 
-    // signal to update UI
+    // signals to update UI
     void notifyConnecting(bool failed);
     void notifyConnectTimeout(bool failed, quint8 version = 0);
     void notifyDisconnecting();
