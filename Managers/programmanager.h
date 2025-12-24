@@ -7,9 +7,10 @@
 #include <QListWidget>
 #include <QWidget>
 
-#include "../ui_mainwindow.h"
 #include "Managers/managercollection.h"
 #include "Programs/programbase.h"
+
+namespace Ui { class MainWindow; }
 
 class ProgramManager : public QWidget
 {

@@ -8,10 +8,11 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "../ui_mainwindow.h"
 #include "Enums/system.h"
 #include "Helpers/stickpainter.h"
 #include "Managers/managercollection.h"
+
+namespace Ui { class MainWindow; }
 
 class KeyboardManager : public QWidget
 {

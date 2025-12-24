@@ -1,12 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include <qmediadevices.h>
-#include <QCameraDevice>
-#include <QAudioDevice>
-
-#include "Managers/managercollection.h"
 #include "Helpers/jsonhelper.h"
+#include "Managers/joystickmanager.h"
+#include "Managers/keyboardmanager.h"
+#include "Managers/logmanager.h"
+#include "Managers/programmanager.h"
+#include "Managers/serialmanager.h"
+#include "Managers/vlcmanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

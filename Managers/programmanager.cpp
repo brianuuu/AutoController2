@@ -1,5 +1,6 @@
 #include "programmanager.h"
 
+#include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"

@@ -15,7 +15,8 @@
 #include <QWidget>
 
 #include <fftw3.h>
-#include "../ui_mainwindow.h"
+
+namespace Ui { class MainWindow; }
 
 class AudioManager : public QWidget
 {

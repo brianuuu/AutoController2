@@ -16,7 +16,6 @@
 #include <QWheelEvent>
 #include <QWidget>
 
-#include "../ui_mainwindow.h"
 #include "Managers/managercollection.h"
 
 struct contextVideo
@@ -31,6 +30,8 @@ struct contextAudio
 {
     AudioManager* m_manager;
 };
+
+namespace Ui { class MainWindow; }
 
 class VlcManager : public QWidget
 {

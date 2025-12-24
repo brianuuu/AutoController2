@@ -8,8 +8,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "../ui_mainwindow.h"
 #include "Enums/system.h"
+
+namespace Ui { class MainWindow; }
 
 class LogManager : public QWidget
 {

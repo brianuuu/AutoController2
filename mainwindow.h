@@ -3,12 +3,7 @@
 
 #include <QMainWindow>
 
-#include "Managers/logmanager.h"
-#include "Managers/joystickmanager.h"
-#include "Managers/keyboardmanager.h"
-#include "Managers/programmanager.h"
-#include "Managers/serialmanager.h"
-#include "Managers/vlcmanager.h"
+#include "Managers/managercollection.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -1,4 +1,6 @@
 #include "audiomanager.h"
+
+#include "../ui_mainwindow.h"
 #include "Helpers/audioconversionutils.h"
 #include "Helpers/jsonhelper.h"
 

@@ -1,5 +1,6 @@
 #include "keyboardmanager.h"
 
+#include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/joystickmanager.h"
 #include "Managers/programmanager.h"

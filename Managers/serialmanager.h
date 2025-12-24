@@ -9,9 +9,10 @@
 #include <QSerialPortInfo>
 #include <QTimer>
 
-#include "../ui_mainwindow.h"
 #include "Helpers/serialholder.h"
 #include "Managers/managercollection.h"
+
+namespace Ui { class MainWindow; }
 
 class SerialManager : public QWidget
 {

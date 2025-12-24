@@ -1,5 +1,6 @@
 #include "videomanager.h"
 
+#include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 #include "Helpers/mediadiscoverer.h"
 

@@ -1,4 +1,6 @@
 #include "logmanager.h"
+
+#include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 
 #define LOG_PATH "../Logs/"

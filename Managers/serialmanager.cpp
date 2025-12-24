@@ -1,5 +1,6 @@
 #include "serialmanager.h"
 
+#include "../ui_mainwindow.h"
 #include "defines.h"
 #include "Enums/system.h"
 #include "Helpers/jsonhelper.h"

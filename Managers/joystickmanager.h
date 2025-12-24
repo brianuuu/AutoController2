@@ -7,8 +7,9 @@
 #include <windows.h>
 #include <joystickapi.h>
 
-#include "../ui_mainwindow.h"
 #include "Managers/managercollection.h"
+
+namespace Ui { class MainWindow; }
 
 class JoystickManager : public QWidget
 {

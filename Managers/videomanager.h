@@ -17,7 +17,7 @@
 #include <QTimer>
 #include <QVideoSink>
 
-#include "../ui_mainwindow.h"
+namespace Ui { class MainWindow; }
 
 class VideoManager : public QWidget
 {
