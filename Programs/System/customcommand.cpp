@@ -3,6 +3,7 @@
 #include "Enums/system.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/serialmanager.h"
+#include "Programs/Modules/Common/runcommand.h"
 
 #define CUSTOM_COMMAND_DIRECTORY "../Resources/System/CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
@@ -48,9 +49,11 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
 
     m_btnSave = new QPushButton("Save As...");
     m_btnDelete = new QPushButton("Delete");
-    AddSettings(layout, "", "", {m_btnSave, m_btnDelete}, true);
+    m_btnDirectory = new QPushButton("Open Directory");
+    AddSettings(layout, "", "", {m_btnSave, m_btnDelete, m_btnDirectory}, true);
     connect(m_btnSave, &QPushButton::clicked, this, &CustomCommand::OnCommandSave);
     connect(m_btnDelete, &QPushButton::clicked, this, &CustomCommand::OnCommandDelete);
+    connect(m_btnDirectory, &QPushButton::clicked, this, &CustomCommand::OnOpenDirectory);
 
     AddSpacer(layout);
 
@@ -176,6 +179,11 @@ void CustomCommand::OnCommandDelete()
         QFile::remove(CUSTOM_COMMAND_DIRECTORY + m_list->currentText() + CUSTOM_COMMAND_FORMAT);
         m_list->removeItem(m_list->currentIndex());
     }
+}
+
+void CustomCommand::OnOpenDirectory()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(CUSTOM_COMMAND_DIRECTORY));
 }
 
 void CustomCommand::VerifyCommand()

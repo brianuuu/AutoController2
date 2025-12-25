@@ -1,13 +1,13 @@
 #ifndef CUSTOMCOMMAND_H
 #define CUSTOMCOMMAND_H
 
+#include <QDesktopServices>
 #include <QDir>
 #include <QFileDialog>
-#include <QRegularExpressionValidator>
 #include <QPushButton>
+#include <QRegularExpressionValidator>
 
 #include "../programbase.h"
-#include "Programs/Modules/Common/runcommand.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingtextedit.h"
@@ -46,6 +46,7 @@ private slots:
     void OnCommandFinished();
     void OnCommandSave();
     void OnCommandDelete();
+    void OnOpenDirectory();
 
 private:
     void VerifyCommand();
@@ -57,6 +58,7 @@ private:
     QLabel* m_labelStatus = Q_NULLPTR;
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
+    QPushButton* m_btnDirectory = Q_NULLPTR;
 
     Module::ModuleBase* m_module = Q_NULLPTR;
     bool m_validCommand = false;
