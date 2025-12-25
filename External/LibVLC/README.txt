@@ -1,4 +1,5 @@
 #LibVLC installation
+
 Download VLCPlayer: https://www.videolan.org/vlc/
 Download Source Code: https://images.videolan.org/vlc/download-sources.html
 Make sure both version matches.
@@ -23,4 +24,4 @@ LibVLC/
 ├── libvlc.lib
 ├── libvlccore.dll
 ├── libvlccore.lib
-├── README.md
+├── README.txt

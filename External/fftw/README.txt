@@ -1,4 +1,5 @@
 #FFTW installation
+
 Download FFTW: https://www.fftw.org/install/windows.html
 Make sure both version matches.
 
@@ -14,4 +15,4 @@ fftw/
 │   ├── fftw3.h
 ├── libfftw3f-3.dll
 ├── libfftw3f-3.lib
-├── README.md
+├── README.txt
