@@ -26,8 +26,8 @@ public:
     void Initialize(Ui::MainWindow* ui);
 
     bool OnCloseEvent();
-    bool IsConnected() { return m_serialHolder && m_serialHolder->IsConnected(); }
-    SerialHolder* GetHolder() { return m_serialHolder; }
+    bool IsConnected() const { return m_serialHolder && m_serialHolder->IsConnected(); }
+    SerialHolder* GetHolder() const { return m_serialHolder; }
 
     static bool VerifyCommand(QString const& command, QString& errorMsg);
 

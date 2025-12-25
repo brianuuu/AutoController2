@@ -67,7 +67,7 @@ void VideoManager::PushFrameData(const unsigned char *data)
     emit notifyDraw();
 }
 
-QImage VideoManager::GetFrameData()
+QImage VideoManager::GetFrameData() const
 {
     QMutexLocker locker(&m_mutex);
     return m_frame.copy();

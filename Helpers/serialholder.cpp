@@ -24,13 +24,13 @@ SerialHolder::~SerialHolder()
     this->wait();
 }
 
-bool SerialHolder::IsOpen()
+bool SerialHolder::IsOpen() const
 {
     QMutexLocker locker(&m_mutex);
     return m_serialPort.isOpen();
 }
 
-bool SerialHolder::IsConnected()
+bool SerialHolder::IsConnected() const
 {
     QMutexLocker locker(&m_mutex);
     return m_serialState == SerialState::Connected;

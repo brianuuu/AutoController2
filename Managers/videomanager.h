@@ -70,8 +70,8 @@ private:
     QString         m_defaultCamera;
 
     // Frame data
-    QMutex  m_mutex;
-    QImage  m_frame;
+    mutable QMutex  m_mutex;
+    QImage          m_frame;
 
     // Overlays
     QTimer          m_resolutionTimer;

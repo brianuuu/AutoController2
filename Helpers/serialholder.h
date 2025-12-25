@@ -17,8 +17,8 @@ public:
     explicit SerialHolder(QObject *parent = nullptr);
     ~SerialHolder();
 
-    bool IsOpen();
-    bool IsConnected();
+    bool IsOpen() const;
+    bool IsConnected() const;
 
 signals:
     void notifyErrorOccured();
@@ -59,7 +59,7 @@ private: // types
     };
 
 private:
-    QRecursiveMutex m_mutex;
+    mutable QRecursiveMutex m_mutex;
     QSerialPort     m_serialPort;
     SerialState     m_serialState = SerialState::Disconnected;
     quint8          m_serialVersion = 0;
