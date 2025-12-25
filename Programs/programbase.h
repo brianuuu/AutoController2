@@ -6,7 +6,7 @@
 #include <QLayout>
 #include <QObject>
 
-#include "Enums/system.h"
+#include "Types/system.h"
 #include "Managers/managercollection.h"
 #include "Programs/Modules/modulebase.h"
 #include "Programs/Settings/settingbase.h"

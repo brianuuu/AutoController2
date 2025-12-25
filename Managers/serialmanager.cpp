@@ -2,7 +2,7 @@
 
 #include "../ui_mainwindow.h"
 #include "defines.h"
-#include "Enums/system.h"
+#include "Types/system.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"

@@ -7,7 +7,7 @@
 #include <QThread>
 #include <QTimer>
 
-#include "Enums/system.h"
+#include "Types/system.h"
 
 class SerialHolder : public QThread
 {

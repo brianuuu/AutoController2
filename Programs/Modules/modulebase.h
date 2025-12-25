@@ -3,7 +3,7 @@
 
 #include <QThread>
 
-#include "Enums/system.h"
+#include "Types/system.h"
 
 namespace Module
 {

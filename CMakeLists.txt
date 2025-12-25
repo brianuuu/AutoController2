@@ -40,7 +40,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${app_icon_resource_windows}
-        Enums/system.h
         Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
@@ -65,6 +64,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
         Programs/programbase.h Programs/programbase.cpp
+        Types/system.h
         defines.h
     )
 # Define target properties for Android with Qt 6 as:

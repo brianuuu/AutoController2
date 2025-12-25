@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "Enums/system.h"
+#include "Types/system.h"
 
 namespace Ui { class MainWindow; }
 

@@ -1,6 +1,6 @@
 #include "customcommand.h"
 
-#include "Enums/system.h"
+#include "Types/system.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/serialmanager.h"
 #include "Programs/Modules/Common/runcommand.h"
