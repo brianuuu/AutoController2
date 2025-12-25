@@ -8,12 +8,14 @@
 #include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
+#include "defines.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Auto Controller 2 v" + VERSION);
 
     m_logManager = ManagerCollection::AddManager<LogManager>();
     m_joystickManager = ManagerCollection::AddManager<JoystickManager>(this);
