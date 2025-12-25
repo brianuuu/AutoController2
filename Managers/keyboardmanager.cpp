@@ -60,6 +60,10 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
         font.setPointSize(12);
         m_btnButton[i]->setFont(font);
 
+        QPalette palette = m_btnButton[i]->palette();
+        palette.setColor(QPalette::ButtonText, QColor(0,0,0));
+        m_btnButton[i]->setPalette(palette);
+
         connect(m_btnButton[i], &QPushButton::clicked, this, &KeyboardManager::OnButtonClicked);
     }
 

@@ -105,7 +105,7 @@ void ProgramManager::OnCanRunChanged(bool canRun)
     auto fnSetPalette = [](QLabel* label, bool valid)
     {
         QPalette palette = label->palette();
-        palette.setColor(QPalette::WindowText, LogTypeToColor(valid ? LOG_Normal : LOG_Error));
+        palette.setColor(QPalette::WindowText, valid ? QGuiApplication::palette().windowText().color() : LogTypeToColor(LOG_Error));
         label->setPalette(palette);
     };
 
