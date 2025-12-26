@@ -59,6 +59,7 @@ public:
     // set fixed data
     void SetArea(QRect rect);
     void SetPoint(QPoint point);
+    void SetTargetColor(QColor target);
     void SetHsvRange(HsvRange range);
 
     // get data for analysis
@@ -69,11 +70,14 @@ public:
     // get fixed data
     QRect GetRect() const;
     QPoint GetPoint() const;
+    QColor GetTargetColor() const;
     HsvRange GetHsvRange() const;
 
     // analysis
     static QSize GetCaptureResolution() { return QSize(1280,720); }
+    static bool GetColorMatch(QColor testColor, QColor target);
     static bool GetColorMatchHSV(QColor testColor, HsvRange range);
+    static bool GetAverageColorMatch(QImage const& image, QColor target);
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
     // results
@@ -92,9 +96,9 @@ protected:
 
     mutable QMutex  m_mutex;
     // fixed data
+    QRect       m_rect;
     QPoint      m_point;
     QColor      m_targetColor;
-    QRect       m_rect;
     HsvRange    m_range;
 
     // frame data

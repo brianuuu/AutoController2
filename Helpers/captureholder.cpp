@@ -60,6 +60,12 @@ void CaptureHolder::SetPoint(QPoint point)
     m_point = point;
 }
 
+void CaptureHolder::SetTargetColor(QColor target)
+{
+    QMutexLocker locker(&m_mutex);
+    m_targetColor = target;
+}
+
 void CaptureHolder::SetHsvRange(HsvRange range)
 {
     QMutexLocker locker(&m_mutex);
@@ -112,6 +118,12 @@ QPoint CaptureHolder::GetPoint() const
     return m_point;
 }
 
+QColor CaptureHolder::GetTargetColor() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_targetColor;
+}
+
 HsvRange CaptureHolder::GetHsvRange() const
 {
     QMutexLocker locker(&m_mutex);
@@ -136,6 +148,14 @@ QImage CaptureHolder::GetResultMasked() const
     return m_resultMasked.copy();
 }
 
+bool CaptureHolder::GetColorMatch(QColor testColor, QColor target)
+{
+    int const r = target.red() - testColor.red();
+    int const g = target.green() - testColor.green();
+    int const b = target.blue() - testColor.blue();
+    return r*r + g*g + b*b <= COLOR_MATCH_THRESHOLD * COLOR_MATCH_THRESHOLD;
+}
+
 bool CaptureHolder::GetColorMatchHSV(QColor testColor, HsvRange range)
 {
     testColor = testColor.toHsv();
@@ -147,9 +167,9 @@ bool CaptureHolder::GetColorMatchHSV(QColor testColor, HsvRange range)
     // For achromatic colors it should be filltered in saturation and value
     if (matched && testColor.hsvHue() != -1)
     {
-        int h = testColor.hsvHue();
-        int h0 = range.min().hsvHue();
-        int h1 = range.max().hsvHue();
+        int const h = testColor.hsvHue();
+        int const h0 = range.min().hsvHue();
+        int const h1 = range.max().hsvHue();
 
         if (h0 > h1)
         {
@@ -170,6 +190,34 @@ bool CaptureHolder::GetColorMatchHSV(QColor testColor, HsvRange range)
     return matched;
 }
 
+bool CaptureHolder::GetAverageColorMatch(const QImage &image, QColor target)
+{
+    qreal r = 0;
+    qreal g = 0;
+    qreal b = 0;
+    for (int y = 0; y < image.height(); y++)
+    {
+        QRgb const* rowData = (QRgb*)image.scanLine(y);
+        for (int x = 0; x < image.width(); x++)
+        {
+            QColor const color = QColor::fromRgb(rowData[x]);
+            r += color.redF();
+            g += color.greenF();
+            b += color.blueF();
+        }
+    }
+
+    qreal const pixelCount = image.height() * image.width();
+    r /= pixelCount;
+    g /= pixelCount;
+    b /= pixelCount;
+
+    QColor testColor;
+    testColor.setRgbF(r,g,b);
+
+    return GetColorMatch(testColor, target);
+}
+
 qreal CaptureHolder::GetBrightnessMean(const QImage &image, HsvRange range, QImage *masked)
 {
     if (masked)
@@ -182,7 +230,7 @@ qreal CaptureHolder::GetBrightnessMean(const QImage &image, HsvRange range, QIma
 
     for (int y = 0; y < image.height(); y++)
     {
-        QRgb *rowData = (QRgb*)image.scanLine(y);
+        QRgb const* rowData = (QRgb*)image.scanLine(y);
         uint8_t *rowMaskedData = masked ? (uint8_t*)masked->scanLine(y) : Q_NULLPTR;
         for (int x = 0; x < image.width(); x++)
         {
