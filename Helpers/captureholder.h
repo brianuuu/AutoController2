@@ -55,6 +55,7 @@ public:
     QColor GetDisplayColor() const { return m_displayColor; }
 
     // analysis
+    static QSize GetCaptureResolution() { return QSize(1280,720); }
     static bool GetColorMatchHSV(QColor testColor, HsvRange range);
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 

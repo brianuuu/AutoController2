@@ -72,8 +72,8 @@ void VideoManager::PushFrameData(const unsigned char *data)
     }
     else
     {
-        QSize const captrueRes(1920,1080);
-        QImage const frame1080p = (resolution == captrueRes) ? m_frame.copy() : m_frame.scaled(captrueRes);
+        QSize const captrueRes = CaptureHolder::GetCaptureResolution();
+        QImage const fram720p = (resolution == captrueRes) ? m_frame.copy() : m_frame.scaled(captrueRes);
 
         // we don't need m_frame anymore
         locker.unlock();
@@ -81,7 +81,7 @@ void VideoManager::PushFrameData(const unsigned char *data)
         // distribute frame data to captures
         for (CaptureHolder* holder : std::as_const(m_captureHolders))
         {
-            holder->PushFrameData(frame1080p);
+            holder->PushFrameData(fram720p);
         }
     }
 
@@ -156,7 +156,7 @@ void VideoManager::paintEvent(QPaintEvent *event)
 
     // draw captures
     {
-        qreal const scale = (qreal)width() / 1920.0;
+        qreal const scale = (qreal)width() / (qreal)CaptureHolder::GetCaptureResolution().width();
 
         QPen pen;
         pen.setWidth(2);

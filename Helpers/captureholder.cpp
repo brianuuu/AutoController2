@@ -48,7 +48,7 @@ void CaptureHolder::SetHsvRange(HsvRange range)
 
 void CaptureHolder::PushFrameData(const QImage &frame)
 {
-    // frame should already be in 1920x1080
+    // frame should already be in 1280x720
     // this is called by VLC thread
     QMutexLocker locker(&m_mutex);
     if (m_isArea)
