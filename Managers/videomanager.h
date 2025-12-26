@@ -17,6 +17,8 @@
 #include <QTimer>
 #include <QVideoSink>
 
+#include "Helpers/captureholder.h"
+
 namespace Ui { class MainWindow; }
 
 class VideoManager : public QWidget
@@ -35,7 +37,10 @@ public:
     void Stop();
 
     void PushFrameData(unsigned char const* data);
-    QImage GetFrameData();
+    QImage GetFrameData() const;
+
+    void RegisterCapture(CaptureHolder* holder);
+    void UnregisterCapture(CaptureHolder* holder);
 
     void LoadSettings();
     void SaveSettings() const;
@@ -79,6 +84,10 @@ private:
     int             m_frameCount = 0;
     qreal           m_fps = 0.0;
     QElapsedTimer   m_fpsTimer;
+
+    // Captrues
+    QMutex                  m_captureMutex;
+    QSet<CaptureHolder*>    m_captureHolders;
 };
 
 #endif // VIDEOMANAGER_H

@@ -64,6 +64,27 @@ void VideoManager::PushFrameData(const unsigned char *data)
     QMutexLocker locker(&m_mutex);
     m_frame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
 
+    QMutexLocker captureLocker(&m_captureMutex);
+    if (m_captureHolders.empty())
+    {
+        // we don't need m_frame anymore
+        locker.unlock();
+    }
+    else
+    {
+        QSize const captrueRes(1920,1080);
+        QImage const frame1080p = (resolution == captrueRes) ? m_frame.copy() : m_frame.scaled(captrueRes);
+
+        // we don't need m_frame anymore
+        locker.unlock();
+
+        // distribute frame data to captures
+        for (CaptureHolder* holder : std::as_const(m_captureHolders))
+        {
+            holder->PushFrameData(frame1080p);
+        }
+    }
+
     emit notifyDraw();
 }
 
@@ -71,6 +92,18 @@ QImage VideoManager::GetFrameData() const
 {
     QMutexLocker locker(&m_mutex);
     return m_frame.copy();
+}
+
+void VideoManager::RegisterCapture(CaptureHolder *holder)
+{
+    QMutexLocker locker(&m_captureMutex);
+    m_captureHolders.insert(holder);
+}
+
+void VideoManager::UnregisterCapture(CaptureHolder *holder)
+{
+    QMutexLocker locker(&m_captureMutex);
+    m_captureHolders.remove(holder);
 }
 
 void VideoManager::LoadSettings()
@@ -120,6 +153,34 @@ void VideoManager::paintEvent(QPaintEvent *event)
     QRect const rect = this->rect();
     QPainter painter(this);
     painter.drawImage(rect, GetFrameData());
+
+    // draw captures
+    {
+        qreal const scale = (qreal)width() / 1920.0;
+
+        QPen pen;
+        pen.setWidth(2);
+
+        QMutexLocker captureLocker(&m_captureMutex);
+        for (CaptureHolder* holder : std::as_const(m_captureHolders))
+        {
+            pen.setColor(holder->GetDisplayColor());
+            painter.setPen(pen);
+
+            bool const isArea = holder->GetIsArea();
+            if (isArea)
+            {
+                QRect const rect = holder->GetRect();
+                painter.drawRect(QRect(rect.topLeft() * scale, rect.size() * scale));
+            }
+            else
+            {
+                QPoint const point = holder->GetPoint();
+                painter.drawLine(point * scale + QPoint(7,7), point * scale + QPoint(-7,-7));
+                painter.drawLine(point * scale + QPoint(-7,7), point * scale + QPoint(7,-7));
+            }
+        }
+    }
 
     // draw fps
     if (m_showFps)
