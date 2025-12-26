@@ -5,6 +5,7 @@
 #include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"
 
+#include "Programs/Development/devframecapture.h"
 #include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
@@ -34,6 +35,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnManual, &QPushButton::clicked, this, &ProgramManager::OnManualOpen);
 
     // register all programs
+    RegisterProgram<Program::Development::DevFrameCapture>();
     RegisterProgram<Program::System::CommandRecorder>();
     RegisterProgram<Program::System::CustomCommand>();
 
