@@ -15,8 +15,7 @@ void VideoManager::Initialize(Ui::MainWindow *ui)
     connect(this, &VideoManager::notifyDraw, this, &VideoManager::OnDraw);
 
     m_resolutionTimer.setSingleShot(true);
-    QShortcut *shortcut = new QShortcut(QKeySequence("F1"), this);
-    connect(shortcut, &QShortcut::activated, this, [this]{ m_showFps = !m_showFps; });
+    new QShortcut(QKeySequence("F1"), this, [this]{ m_showFps = !m_showFps; }, Qt::ApplicationShortcut);
 
     OnRefreshList();
     PopulateResolution();
