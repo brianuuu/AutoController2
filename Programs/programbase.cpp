@@ -101,6 +101,13 @@ void ProgramBase::PrintLog(const QString &log, LogType type) const
     emit notifyLog(GetInternalName(), log, type);
 }
 
+void ProgramBase::AddModule(Module::ModuleBase *module)
+{
+    m_modules.insert(module);
+    module->moveToThread(module);
+    module->start();
+}
+
 void ProgramBase::ClearModule(Module::ModuleBase *&module)
 {
     if (!module) return;

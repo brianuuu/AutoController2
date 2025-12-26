@@ -64,11 +64,10 @@ protected:
     {
         T* module = new T(args...);
         connect(module, &QThread::finished, this, func);
-        m_modules.insert(module);
-        module->moveToThread(module);
-        module->start();
+        AddModule(module);
         return module;
     }
+    void AddModule(Module::ModuleBase* module);
     void ClearModule(Module::ModuleBase*& module);
     void ClearModules();
 
