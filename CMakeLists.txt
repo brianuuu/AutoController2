@@ -55,6 +55,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/serialmanager.h Managers/serialmanager.cpp
         Managers/videomanager.h Managers/videomanager.cpp
         Managers/vlcmanager.h Managers/vlcmanager.cpp
+        Programs/Modules/Common/brightnessmean.h Programs/Modules/Common/brightnessmean.cpp
         Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
         Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/Settings/settingbase.h
