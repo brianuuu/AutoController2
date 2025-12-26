@@ -41,6 +41,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         ${app_icon_resource_windows}
         Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
+        Helpers/captureholder.h Helpers/captureholder.cpp
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
         Helpers/serialholder.h Helpers/serialholder.cpp
