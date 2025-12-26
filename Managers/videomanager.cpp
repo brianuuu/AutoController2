@@ -154,6 +154,10 @@ void VideoManager::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawImage(rect, GetFrameData());
 
+    QFont font = painter.font();
+    font.setPointSize(12);
+    painter.setFont(font);
+
     // draw captures
     {
         qreal const scale = (qreal)width() / (qreal)CaptureHolder::GetCaptureResolution().width();
@@ -170,8 +174,14 @@ void VideoManager::paintEvent(QPaintEvent *event)
             bool const isArea = holder->GetIsArea();
             if (isArea)
             {
-                QRect const rect = holder->GetRect();
-                painter.drawRect(QRect(rect.topLeft() * scale, rect.size() * scale));
+                QRect rect = holder->GetRect();
+                rect = QRect(rect.topLeft() * scale, rect.size() * scale);
+                // TODO: setting to show masked
+                QPoint const topLeft = rect.top() < 17 ? rect.bottomLeft() + QPoint(0,1) : rect.topLeft() - QPoint(0,17);
+                painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
+                painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                painter.drawImage(rect, holder->GetResultMasked());
+                painter.drawRect(rect);
             }
             else
             {
@@ -185,13 +195,9 @@ void VideoManager::paintEvent(QPaintEvent *event)
     // draw fps
     if (m_showFps)
     {
-        QFont font = painter.font();
-        font.setPointSize(12);
-        painter.setFont(font);
-
-        painter.fillRect(QRect(20,20,80,15), Qt::black);
+        painter.fillRect(QRect(20,20,80,16), Qt::black);
         painter.setPen(Qt::white);
-        painter.drawText(QPoint(24,33), "FPS: " + QString::number(m_fps, 'f', 2));
+        painter.drawText(QPoint(24,34), "FPS: " + QString::number(m_fps, 'f', 2));
     }
 
     // draw display size

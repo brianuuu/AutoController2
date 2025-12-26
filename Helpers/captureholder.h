@@ -63,11 +63,15 @@ public:
     static bool GetColorMatchHSV(QColor testColor, HsvRange range);
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
+    // results
+    qreal GetResultMean() const;
+    QImage GetResultMasked() const;
+
 private:
     void Register();
     void Unregister();
 
-private:
+protected:
     mutable QMutex  m_mutex;
     bool            m_isArea = true;
     QRect           m_rect;
@@ -77,6 +81,10 @@ private:
 
     QImage  m_testImage;
     QColor  m_testColor;
+
+    mutable QMutex  m_resultMutex;
+    qreal   m_resultMean = 0.0;
+    QImage  m_resultMasked;
 };
 
 #endif // CAPTUREHOLDER_H

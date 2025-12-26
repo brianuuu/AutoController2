@@ -31,17 +31,10 @@ public:
     // from QThread
     void run() override;
 
-public:
-    qreal GetResultMean() const;
-
 private:
     QWaitCondition  m_condition;
     mutable QMutex  m_workMutex;
     bool    m_pendingWork = false;
-
-    mutable QMutex  m_resultMutex;
-    qreal   m_resultMean = 0.0;
-    QImage  m_resultMasked;
 };
 
 }

@@ -62,10 +62,4 @@ void BrightnessMean::run()
     }
 }
 
-qreal BrightnessMean::GetResultMean() const
-{
-    QMutexLocker locker(&m_resultMutex);
-    return m_resultMean;
-}
-
 }

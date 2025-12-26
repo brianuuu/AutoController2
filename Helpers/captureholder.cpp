@@ -91,6 +91,18 @@ HsvRange CaptureHolder::GetHsvRange() const
     return m_range;
 }
 
+qreal CaptureHolder::GetResultMean() const
+{
+    QMutexLocker locker(&m_resultMutex);
+    return m_resultMean;
+}
+
+QImage CaptureHolder::GetResultMasked() const
+{
+    QMutexLocker locker(&m_resultMutex);
+    return m_resultMasked.copy();
+}
+
 bool CaptureHolder::GetColorMatchHSV(QColor testColor, HsvRange range)
 {
     testColor = testColor.toHsv();
