@@ -1,6 +1,8 @@
 #ifndef BRIGHTNESSMEAN_H
 #define BRIGHTNESSMEAN_H
 
+#include <QWaitCondition>
+
 #include "../modulebase.h"
 #include "Helpers/captureholder.h"
 
@@ -21,6 +23,7 @@ public:
 
     // from ModuleBase
     QString GetName() const override { return "Common-BrightnessMean"; }
+    void stop() override;
 
     // from CaptureHolder
     void PushFrameData(QImage const& frame) override;
@@ -32,6 +35,7 @@ public:
     qreal GetResultMean() const;
 
 private:
+    QWaitCondition  m_condition;
     mutable QMutex  m_workMutex;
     bool    m_pendingWork = false;
 

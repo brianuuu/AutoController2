@@ -15,13 +15,22 @@ BrightnessMean::BrightnessMean
     , CaptureHolder(rect, range, color)
 {}
 
+void BrightnessMean::stop()
+{
+    QMutexLocker workLocker(&m_workMutex);
+    ModuleBase::stop();
+    m_condition.wakeOne();
+}
+
 void BrightnessMean::PushFrameData(const QImage &frame)
 {
     QMutexLocker locker(&m_workMutex);
     if (m_pendingWork) return;
 
     CaptureHolder::PushFrameData(frame);
+
     m_pendingWork = true;
+    m_condition.wakeOne();
 }
 
 void BrightnessMean::run()
@@ -32,11 +41,12 @@ void BrightnessMean::run()
         {
             // wait for work
             QMutexLocker workLocker(&m_workMutex);
-            if (!m_pendingWork)
+            while (!m_pendingWork && !m_terminate)
             {
-                // TODO: use condition variable
-                continue;
+                m_condition.wait(&m_workMutex);
             }
+
+            if (m_terminate) return;
             frame = GetFrameData();
         }
         {
