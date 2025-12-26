@@ -65,14 +65,22 @@ void ProgramManager::OnCategoryChanged(const QString &category)
     {
         m_programList->addItem(name);
     }
+
+    // default select 1st item
+    if (m_programList->count())
+    {
+        m_programList->setCurrentRow(0);
+    }
 }
 
 void ProgramManager::OnProgramChanged(const QString &name)
 {
     RemoveProgram();
+    if (name.isEmpty()) return;
 
     QString const category = m_programCategory->currentText();
     m_program = m_programCtors[category + name]();
+    m_program = m_programCtors.value(category + name)();
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
 
@@ -210,7 +218,7 @@ void ProgramManager::SaveSettings() const
 {
     QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
     settings.insert("CurrentCategory", m_programCategory->currentText());
-    settings.insert("CurrentProgram", m_programList->currentItem()->text());
+    settings.insert("CurrentProgram", m_programList->currentItem() ? m_programList->currentItem()->text() : "");
 
     JsonHelper::WriteSetting("ProgramSettings", settings);
 }
