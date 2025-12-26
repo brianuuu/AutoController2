@@ -79,7 +79,6 @@ void ProgramManager::OnProgramChanged(const QString &name)
     if (name.isEmpty()) return;
 
     QString const category = m_programCategory->currentText();
-    m_program = m_programCtors[category + name]();
     m_program = m_programCtors.value(category + name)();
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
