@@ -31,8 +31,8 @@ public:
     virtual bool RequireVideo() const = 0;
     virtual bool RequireAudio() const = 0;
 
-    virtual bool CanControlWhileRunning() { return false; }
-    virtual bool CanEditWhileRunning() { return false; }
+    virtual bool CanControlWhileRunning() const { return false; }
+    virtual bool CanEditWhileRunning() const { return false; }
     virtual bool CanRun() const;
 
     virtual void ResetDefault();
@@ -40,8 +40,8 @@ public:
     virtual void Start();
     virtual void Stop();
 
-    bool IsRunning() { return m_started; }
-    bool HaveSavedSettings() { return !m_savedSettings.empty(); }
+    bool IsRunning() const { return m_started; }
+    bool HaveSavedSettings() const { return !m_savedSettings.empty(); }
 
     bool ValidSerial() const;
     bool ValidVideo() const;
