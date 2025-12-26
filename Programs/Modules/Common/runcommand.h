@@ -25,8 +25,8 @@ public:
 signals:
     void notifyButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
 
-private slots:
-    void OnSendCurrentCommand(bool isLoopCount = false);
+private:
+    void SendCurrentCommand(bool isLoopCount = false);
 
 private:
     SerialManager*  m_serialManager = Q_NULLPTR;
@@ -35,10 +35,6 @@ private:
     QString         m_command;
     int             m_commandIndex = 0;
     QVector<int>    m_commandLoopCounts;
-    int             m_commandDelay = 0;
-    QElapsedTimer   m_commandTimer;
-
-    bool            m_finished = false;
 };
 } // namespace Module
 

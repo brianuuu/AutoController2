@@ -34,6 +34,12 @@ RunCommand::RunCommand
     {
         m_result = -1;
     }
+
+    if (!m_serialManager->IsConnected())
+    {
+        m_result = -1;
+        m_error = "Serial not connected";
+    }
 }
 
 void RunCommand::run()
@@ -52,38 +58,26 @@ void RunCommand::run()
 
     }
 
-    m_commandTimer.start();
-    while(!m_terminate && !m_finished)
+    while(!m_terminate)
     {
-        OnSendCurrentCommand();
+        // check completion
+        if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
+        {
+            break;
+        }
+
+        SendCurrentCommand();
+
+        // wait for QTimer event
+        exec();
     }
 
     // final stop command
     emit notifyButton(0);
 }
 
-void RunCommand::OnSendCurrentCommand(bool isLoopCount)
+void RunCommand::SendCurrentCommand(bool isLoopCount)
 {
-    if (!m_serialManager->IsConnected())
-    {
-        m_finished = true;
-        m_result = -1;
-        m_error = "Serial not connected";
-        return;
-    }
-
-    // wait for current command delay
-    if (m_commandTimer.elapsed() < m_commandDelay)
-    {
-        return;
-    }
-
-    if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
-    {
-        m_finished = true;
-        return;
-    }
-
     qsizetype endIndex = m_command.indexOf(',', m_commandIndex + 1);
     QString str = m_command.mid(m_commandIndex, endIndex == -1 ? -1 : endIndex - m_commandIndex);
 
@@ -93,7 +87,7 @@ void RunCommand::OnSendCurrentCommand(bool isLoopCount)
     {
         m_commandIndex++;
         m_commandLoopCounts.push_back(-1);
-        OnSendCurrentCommand();
+        SendCurrentCommand();
         return;
     }
 
@@ -105,7 +99,7 @@ void RunCommand::OnSendCurrentCommand(bool isLoopCount)
         {
             // first index is ')' expecting loop count next
             m_commandIndex++;
-            OnSendCurrentCommand(true);
+            SendCurrentCommand(true);
             return;
         }
         else
@@ -187,7 +181,7 @@ void RunCommand::OnSendCurrentCommand(bool isLoopCount)
                     if (loopEndCount == 0)
                     {
                         m_commandIndex++;
-                        OnSendCurrentCommand();
+                        SendCurrentCommand();
                         return;
                     }
                     else
@@ -202,9 +196,7 @@ void RunCommand::OnSendCurrentCommand(bool isLoopCount)
     {
         //PrintLog("Button: \"" + str + "\"");
         emit notifyButton(buttonFlag, lStick, rStick);
-
-        m_commandDelay = duration;
-        m_commandTimer.restart();
+        QTimer::singleShot(duration, this, [this]{ quit(); } );
     }
 
     if (endIndex == -1)
