@@ -81,6 +81,7 @@ private:
     // Overlays
     QTimer          m_resolutionTimer;
     bool            m_showFps = false;
+    bool            m_showCaptureResult = false;
     int             m_frameCount = 0;
     qreal           m_fps = 0.0;
     QElapsedTimer   m_fpsTimer;

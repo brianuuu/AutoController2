@@ -16,6 +16,7 @@ void VideoManager::Initialize(Ui::MainWindow *ui)
 
     m_resolutionTimer.setSingleShot(true);
     new QShortcut(QKeySequence("F1"), this, [this]{ m_showFps = !m_showFps; }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence("F2"), this, [this]{ m_showCaptureResult = !m_showCaptureResult; }, Qt::ApplicationShortcut);
 
     OnRefreshList();
     PopulateResolution();
@@ -127,6 +128,12 @@ void VideoManager::LoadSettings()
         {
             m_showFps = showFPS.toBool();
         }
+
+        QVariant showCaptureResult;
+        if (JsonHelper::ReadValue(settings, "ShowCaptureResult", showCaptureResult))
+        {
+            m_showCaptureResult = showCaptureResult.toBool();
+        }
     }
 }
 
@@ -136,6 +143,7 @@ void VideoManager::SaveSettings() const
     settings.insert("CameraName", m_listCamera->currentText());
     settings.insert("Resolution", m_listResolution->currentText());
     settings.insert("ShowFPS", m_showFps);
+    settings.insert("ShowCaptureResult", m_showCaptureResult);
 
     JsonHelper::WriteSetting("VideoSettings", settings);
 }
@@ -176,17 +184,19 @@ void VideoManager::paintEvent(QPaintEvent *event)
                 QRect rect = holder->GetRect();
                 rect = QRect(rect.topLeft() * scale, rect.size() * scale);
 
-                // TODO: setting to show masked
-                QPoint const topLeft = rect.top() < 17 ? rect.bottomLeft() + QPoint(0,1) : rect.topLeft() - QPoint(0,17);
-                painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
-                if (mode == CaptureHolder::Mode::AreaRangeMatch)
+                if (m_showCaptureResult)
                 {
-                    painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
-                    painter.drawImage(rect, holder->GetResultMasked());
-                }
-                else
-                {
-                    painter.drawText(topLeft + QPoint(4,14), holder->GetResultMatched() ? "True" : "False");
+                    QPoint const topLeft = rect.top() < 17 ? rect.bottomLeft() + QPoint(0,1) : rect.topLeft() - QPoint(0,17);
+                    painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
+                    if (mode == CaptureHolder::Mode::AreaRangeMatch)
+                    {
+                        painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                        painter.drawImage(rect, holder->GetResultMasked());
+                    }
+                    else
+                    {
+                        painter.drawText(topLeft + QPoint(4,14), holder->GetResultMatched() ? "True" : "False");
+                    }
                 }
 
                 painter.drawRect(rect);
