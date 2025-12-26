@@ -9,7 +9,11 @@
 
 struct HsvRange
 {
-    HsvRange() {}
+    HsvRange()
+    {
+        m_minHSV.setHsv(0,0,0);
+        m_maxHSV.setHsv(359,255,255);
+    }
     HsvRange(int minH, int minS, int minV, int maxH, int maxS, int maxV)
     {
         m_minHSV.setHsv(minH,minS,minV);
