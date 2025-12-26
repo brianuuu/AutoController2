@@ -1,5 +1,4 @@
 #include "brightnessmean.h"
-#include <QDebug>
 
 namespace Module::Common
 {

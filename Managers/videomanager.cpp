@@ -171,20 +171,30 @@ void VideoManager::paintEvent(QPaintEvent *event)
             pen.setColor(holder->GetDisplayColor());
             painter.setPen(pen);
 
-            bool const isArea = holder->GetIsArea();
-            if (isArea)
+            CaptureHolder::Mode const mode = holder->GetMode();
+            if (mode == CaptureHolder::Mode::AreaColorMatch || mode == CaptureHolder::Mode::AreaRangeMatch)
             {
                 QRect rect = holder->GetRect();
                 rect = QRect(rect.topLeft() * scale, rect.size() * scale);
+
                 // TODO: setting to show masked
                 QPoint const topLeft = rect.top() < 17 ? rect.bottomLeft() + QPoint(0,1) : rect.topLeft() - QPoint(0,17);
                 painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
-                painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
-                painter.drawImage(rect, holder->GetResultMasked());
+                if (mode == CaptureHolder::Mode::AreaRangeMatch)
+                {
+                    painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                    painter.drawImage(rect, holder->GetResultMasked());
+                }
+                else
+                {
+                    painter.drawText(topLeft + QPoint(4,14), holder->GetResultMatched() ? "True" : "False");
+                }
+
                 painter.drawRect(rect);
             }
             else
             {
+                // TODO: point test result
                 QPoint const point = holder->GetPoint();
                 painter.drawLine(point * scale + QPoint(7,7), point * scale + QPoint(-7,-7));
                 painter.drawLine(point * scale + QPoint(-7,7), point * scale + QPoint(7,-7));

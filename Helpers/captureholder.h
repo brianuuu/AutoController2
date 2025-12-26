@@ -38,10 +38,25 @@ private:
 class CaptureHolder
 {
 public:
+    enum class Mode {
+        PointColorMatch,
+        PointRangeMatch,
+        AreaColorMatch,
+        AreaRangeMatch,
+    };
+
+public:
+    CaptureHolder(QPoint point, QColor targetColor, QColor displayColor = QColor(0,255,0));
+    CaptureHolder(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0));
+    CaptureHolder(QRect rect, QColor targetColor, QColor color = QColor(0,255,0));
     CaptureHolder(QRect rect, HsvRange range, QColor color = QColor(0,255,0));
-    CaptureHolder(QPoint point, QColor color = QColor(0,255,0));
     ~CaptureHolder();
 
+    // get innt data
+    Mode GetMode() const { return m_mode; }
+    QColor GetDisplayColor() const { return m_displayColor; }
+
+    // set fixed data
     void SetArea(QRect rect);
     void SetPoint(QPoint point);
     void SetHsvRange(HsvRange range);
@@ -55,8 +70,6 @@ public:
     QRect GetRect() const;
     QPoint GetPoint() const;
     HsvRange GetHsvRange() const;
-    bool GetIsArea() const { return m_isArea; }
-    QColor GetDisplayColor() const { return m_displayColor; }
 
     // analysis
     static QSize GetCaptureResolution() { return QSize(1280,720); }
@@ -64,6 +77,7 @@ public:
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
     // results
+    bool GetResultMatched() const;
     qreal GetResultMean() const;
     QImage GetResultMasked() const;
 
@@ -72,17 +86,24 @@ private:
     void Unregister();
 
 protected:
-    mutable QMutex  m_mutex;
-    bool            m_isArea = true;
-    QRect           m_rect;
-    QPoint          m_point;
-    HsvRange        m_range;
-    QColor          m_displayColor;
+    // init data
+    QColor  m_displayColor;
+    Mode    m_mode;
 
+    mutable QMutex  m_mutex;
+    // fixed data
+    QPoint      m_point;
+    QColor      m_targetColor;
+    QRect       m_rect;
+    HsvRange    m_range;
+
+    // frame data
     QImage  m_testImage;
     QColor  m_testColor;
 
+    // results
     mutable QMutex  m_resultMutex;
+    bool    m_resultMatched = false;
     qreal   m_resultMean = 0.0;
     QImage  m_resultMasked;
 };

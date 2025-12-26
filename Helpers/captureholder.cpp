@@ -5,20 +5,40 @@
 
 #define SET_BIT(var,pos) (var |= (1U << pos))
 #define CLEAR_BIT(var,pos) (var &= ~(1U << pos))
+#define COLOR_MATCH_THRESHOLD 10
 
-CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor color)
-    : m_rect(rect)
-    , m_range(range)
-    , m_displayColor(color)
-    , m_isArea(true)
+CaptureHolder::CaptureHolder(QPoint point, QColor targetColor, QColor displayColor)
+    : m_point(point)
+    , m_targetColor(targetColor)
+    , m_displayColor(displayColor)
+    , m_mode(Mode::PointColorMatch)
 {
     Register();
 }
 
-CaptureHolder::CaptureHolder(QPoint point, QColor color)
+CaptureHolder::CaptureHolder(QPoint point, HsvRange range, QColor displayColor)
     : m_point(point)
-    , m_displayColor(color)
-    , m_isArea(true)
+    , m_range(range)
+    , m_displayColor(displayColor)
+    , m_mode(Mode::PointRangeMatch)
+{
+    Register();
+}
+
+CaptureHolder::CaptureHolder(QRect rect, QColor targetColor, QColor displayColor)
+    : m_rect(rect)
+    , m_targetColor(targetColor)
+    , m_displayColor(displayColor)
+    , m_mode(Mode::AreaColorMatch)
+{
+    Register();
+}
+
+CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor displayColor)
+    : m_rect(rect)
+    , m_range(range)
+    , m_displayColor(displayColor)
+    , m_mode(Mode::AreaRangeMatch)
 {
     Register();
 }
@@ -51,13 +71,20 @@ void CaptureHolder::PushFrameData(const QImage &frame)
     // frame should already be in 1280x720
     // this is called by VLC thread
     QMutexLocker locker(&m_mutex);
-    if (m_isArea)
+    switch (m_mode)
     {
-        m_testImage = frame.copy(m_rect);
-    }
-    else
+    case Mode::PointColorMatch:
+    case Mode::PointRangeMatch:
     {
         m_testColor = frame.pixelColor(m_point);
+        break;
+    }
+    case Mode::AreaColorMatch:
+    case Mode::AreaRangeMatch:
+    {
+        m_testImage = frame.copy(m_rect);
+        break;
+    }
     }
 }
 
@@ -89,6 +116,12 @@ HsvRange CaptureHolder::GetHsvRange() const
 {
     QMutexLocker locker(&m_mutex);
     return m_range;
+}
+
+bool CaptureHolder::GetResultMatched() const
+{
+    QMutexLocker locker(&m_resultMutex);
+    return m_resultMatched;
 }
 
 qreal CaptureHolder::GetResultMean() const
