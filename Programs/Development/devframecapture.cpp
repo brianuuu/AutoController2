@@ -74,6 +74,10 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     connect(m_color, &Setting::SettingColor::notifyColorChanged, this, &DevFrameCapture::OnColorChanged);
     AddSetting(layout, "Target Color:", "", m_color, true);
 
+    m_mean = new Setting::SettingDoubleSpinBox("Mean", 0.0, 1.0);
+    connect(m_mean, &Setting::SettingDoubleSpinBox::valueChanged, this, &DevFrameCapture::OnMeanChanged);
+    AddSetting(layout, "Target Mean:", "", m_mean, true);
+
     m_btnSave = new QPushButton("Save As...");
     m_btnDelete = new QPushButton("Delete");
     m_btnDirectory = new QPushButton("Open Directory");
@@ -138,6 +142,7 @@ void DevFrameCapture::OnListChanged(const QString &str)
         m_savedSettings.insert(m_maxS);
         m_savedSettings.insert(m_maxV);
         m_savedSettings.insert(m_color);
+        m_savedSettings.insert(m_mean);
         m_btnDelete->setEnabled(false);
         return;
     }
@@ -156,6 +161,7 @@ void DevFrameCapture::OnListChanged(const QString &str)
         m_savedSettings.remove(m_maxS);
         m_savedSettings.remove(m_maxV);
         m_savedSettings.remove(m_color);
+        m_savedSettings.remove(m_mean);
         m_btnDelete->setEnabled(true);
     }
 
@@ -254,11 +260,21 @@ void DevFrameCapture::OnListChanged(const QString &str)
             m_color->blockSignals(false);
         }
     }
+
+    if (mode == 3)
+    {
+        if (JsonHelper::ReadValue(object, "Mean", value))
+        {
+            m_mean->blockSignals(true);
+            m_mean->setValue(value.toDouble());
+            m_mean->blockSignals(false);
+        }
+    }
 }
 
 void DevFrameCapture::OnModeChanged(int mode)
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateSettingEnabled();
 }
 
@@ -267,7 +283,7 @@ void DevFrameCapture::OnLeftChanged(int value)
     QSize const captureRes = CaptureHolder::GetCaptureResolution();
     m_width->setMaximum(captureRes.width() - value);
 
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateRect();
 }
 
@@ -276,35 +292,40 @@ void DevFrameCapture::OnTopChanged(int value)
     QSize const captureRes = CaptureHolder::GetCaptureResolution();
     m_height->setMaximum(captureRes.height() - value);
 
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateRect();
 }
 
 void DevFrameCapture::OnWidthChanged(int value)
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateRect();
 }
 
 void DevFrameCapture::OnHeightChanged(int value)
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateRect();
 }
 
 void DevFrameCapture::OnRangeChanged()
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     UpdateRange();
 }
 
 void DevFrameCapture::OnColorChanged(QColor color)
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    SwitchToCustom();
     if (m_moduleCapture)
     {
         m_moduleCapture->SetTargetColor(color);
     }
+}
+
+void DevFrameCapture::OnMeanChanged(double value)
+{
+    SwitchToCustom();
 }
 
 void DevFrameCapture::OnMousePressed(QPoint pos)
@@ -375,6 +396,10 @@ void DevFrameCapture::OnSave()
     {
         object.insert("Color", (int)m_color->GetColor().rgb());
     }
+    if (mode == 3)
+    {
+        object.insert("Mean", m_mean->value());
+    }
     JsonHelper::WriteJson(file, object);
 
     if (m_list->findText(name) == -1)
@@ -416,6 +441,11 @@ HsvRange DevFrameCapture::GetRange() const
     return HsvRange(m_minH->value(), m_minS->value(), m_minV->value(), m_maxH->value(), m_maxS->value(), m_maxV->value());
 }
 
+void DevFrameCapture::SwitchToCustom()
+{
+    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+}
+
 void DevFrameCapture::UpdateSettingEnabled()
 {
     int const mode = m_mode->currentIndex();
@@ -433,6 +463,7 @@ void DevFrameCapture::UpdateSettingEnabled()
 
     bool const isColor = (mode == 0 || mode == 2);
     m_color->SetEnabled(isColor);
+    m_mean->setEnabled(mode == 3);
 }
 
 void DevFrameCapture::UpdateRect()

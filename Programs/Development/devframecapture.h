@@ -9,6 +9,7 @@
 #include "Programs/Modules/Common/framecapture.h"
 #include "Programs/Settings/settingcolor.h"
 #include "Programs/Settings/settingcombobox.h"
+#include "Programs/Settings/settingdoublespinbox.h"
 #include "Programs/Settings/settingspinbox.h"
 
 namespace Program::Development
@@ -49,6 +50,7 @@ private slots:
     void OnHeightChanged(int value);
     void OnRangeChanged();
     void OnColorChanged(QColor color);
+    void OnMeanChanged(double value);
 
     void OnMousePressed(QPoint pos);
     void OnMouseMoved(QPoint pos);
@@ -62,6 +64,7 @@ private:
     QRect GetRect() const;
     HsvRange GetRange() const;
 
+    void SwitchToCustom();
     void UpdateSettingEnabled();
     void UpdateRect();
     void UpdateRange();
@@ -83,6 +86,7 @@ private:
     Setting::SettingSpinBox* m_maxV = Q_NULLPTR;
 
     Setting::SettingColor* m_color = Q_NULLPTR;
+    Setting::SettingDoubleSpinBox* m_mean = Q_NULLPTR;
 
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
