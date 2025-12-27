@@ -74,7 +74,7 @@ void CustomCommand::Start()
 
 void CustomCommand::Stop()
 {
-    ClearModule(m_module);
+    ClearModule(&m_module);
     ProgramBase::Stop();
 }
 

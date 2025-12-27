@@ -103,21 +103,23 @@ void ProgramBase::PrintLog(const QString &log, LogType type) const
 
 void ProgramBase::AddModule(Module::ModuleBase *module)
 {
+    if (!module) return;
+
     m_modules.insert(module);
     module->moveToThread(module);
     module->start();
 }
 
-void ProgramBase::ClearModule(Module::ModuleBase *&module)
+void ProgramBase::ClearModule(Module::ModuleBase** pModule)
 {
-    if (!module) return;
+    if (!*pModule) return;
 
-    module->stop();
-    module->wait();
-    delete module;
+    (*pModule)->stop();
+    (*pModule)->wait();
+    delete *pModule;
 
-    m_modules.remove(module);
-    module = Q_NULLPTR;
+    m_modules.remove(*pModule);
+    *pModule = Q_NULLPTR;
 }
 
 void ProgramBase::ClearModules()

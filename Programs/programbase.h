@@ -68,7 +68,7 @@ protected:
         return module;
     }
     void AddModule(Module::ModuleBase* module);
-    void ClearModule(Module::ModuleBase*& module);
+    void ClearModule(Module::ModuleBase** pModule);
     void ClearModules();
 
     QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
