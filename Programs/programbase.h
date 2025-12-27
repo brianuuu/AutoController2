@@ -71,11 +71,11 @@ protected:
     void ClearModule(Module::ModuleBase** pModule);
     void ClearModules();
 
-    QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
-    void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
-    void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
-    void AddSpacer(QBoxLayout *layout);
-
+public:
+    static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
+    static void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
+    static void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
+    static void AddSpacer(QBoxLayout *layout);
 
 protected:
     SerialManager*      m_serialManager = Q_NULLPTR;
