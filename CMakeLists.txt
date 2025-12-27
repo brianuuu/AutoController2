@@ -58,6 +58,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/vlcmanager.h Managers/vlcmanager.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
         Programs/Modules/Common/framecapture.h Programs/Modules/Common/framecapture.cpp
+        Programs/Modules/Common/ocr.h Programs/Modules/Common/ocr.cpp
         Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
         Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/Settings/settingbase.h
