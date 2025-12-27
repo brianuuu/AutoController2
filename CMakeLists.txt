@@ -60,6 +60,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
         Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/Settings/settingbase.h
+        Programs/Settings/settingcolor.h Programs/Settings/settingcolor.cpp
         Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
         Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp
         Programs/Settings/settingspinbox.h Programs/Settings/settingspinbox.cpp
