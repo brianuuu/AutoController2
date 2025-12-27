@@ -175,38 +175,48 @@ void VideoManager::paintEvent(QPaintEvent *event)
         QMutexLocker captureLocker(&m_captureMutex);
         for (CaptureHolder* holder : std::as_const(m_captureHolders))
         {
-            pen.setColor(holder->GetDisplayColor());
-            painter.setPen(pen);
-
             CaptureHolder::Mode const mode = holder->GetMode();
+
+            QRect captureRect = holder->GetRect();
             if (mode == CaptureHolder::Mode::AreaColorMatch || mode == CaptureHolder::Mode::AreaRangeMatch)
             {
-                QRect rect = holder->GetRect();
-                rect = QRect(rect.topLeft() * scale, rect.size() * scale);
-
-                if (m_showCaptureResult)
-                {
-                    QPoint const topLeft = rect.top() < 17 ? rect.bottomLeft() + QPoint(0,1) : rect.topLeft() - QPoint(0,17);
-                    painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
-                    if (mode == CaptureHolder::Mode::AreaRangeMatch)
-                    {
-                        painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
-                        painter.drawImage(rect, holder->GetResultMasked());
-                    }
-                    else
-                    {
-                        painter.drawText(topLeft + QPoint(4,14), holder->GetResultMatched() ? "True" : "False");
-                    }
-                }
-
-                painter.drawRect(rect);
+                captureRect = QRect(captureRect.topLeft() * scale, captureRect.size() * scale);
             }
             else
             {
-                // TODO: point test result
+                captureRect = QRect(holder->GetPoint() * scale - QPoint(7,7), QSize(14,14));
+            }
+
+            if (m_showCaptureResult)
+            {
+                QPoint const topLeft = captureRect.top() < 17 ? captureRect.bottomLeft() + QPoint(0,1) : captureRect.topLeft() - QPoint(0,17);
+                if (mode == CaptureHolder::Mode::AreaRangeMatch)
+                {
+                    painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
+                    painter.setPen(Qt::white);
+                    painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                    painter.drawImage(captureRect, holder->GetResultMasked());
+                }
+                else
+                {
+                    painter.fillRect(QRect(topLeft,QSize(70,16)), Qt::black);
+                    painter.setPen(holder->GetResultMatched() ? Qt::green : Qt::white);
+                    painter.drawText(topLeft + QPoint(4,14), holder->GetResultColor().name().toUpper());
+                }
+            }
+
+            pen.setColor(holder->GetDisplayColor());
+            painter.setPen(pen);
+
+            if (mode == CaptureHolder::Mode::AreaColorMatch || mode == CaptureHolder::Mode::AreaRangeMatch)
+            {
+                painter.drawRect(captureRect);
+            }
+            else
+            {
                 QPoint const point = holder->GetPoint();
-                painter.drawLine(point * scale + QPoint(7,7), point * scale + QPoint(-7,-7));
-                painter.drawLine(point * scale + QPoint(-7,7), point * scale + QPoint(7,-7));
+                painter.drawLine(captureRect.topLeft(), captureRect.bottomRight());
+                painter.drawLine(captureRect.topRight(), captureRect.bottomLeft());
             }
         }
     }
