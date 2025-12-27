@@ -62,6 +62,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Settings/settingbase.h
         Programs/Settings/settingcolor.h Programs/Settings/settingcolor.cpp
         Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
+        Programs/Settings/settingdoublespinbox.h Programs/Settings/settingdoublespinbox.cpp
         Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp
         Programs/Settings/settingspinbox.h Programs/Settings/settingspinbox.cpp
         Programs/Settings/settingtextbrowser.h Programs/Settings/settingtextbrowser.cpp
