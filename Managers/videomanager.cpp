@@ -249,6 +249,20 @@ void VideoManager::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 }
 
+void VideoManager::mousePressEvent(QMouseEvent *event)
+{
+    qreal const scale = (qreal)CaptureHolder::GetCaptureResolution().width() / (qreal)width();
+    emit notifyMousePressed(event->pos() * scale);
+    QWidget::mousePressEvent(event);
+}
+
+void VideoManager::mouseMoveEvent(QMouseEvent *event)
+{
+    qreal const scale = (qreal)CaptureHolder::GetCaptureResolution().width() / (qreal)width();
+    emit notifyMouseMoved(event->pos() * scale);
+    QWidget::mouseMoveEvent(event);
+}
+
 int VideoManager::heightForWidth(int width) const
 {
     return width * 9 / 16;

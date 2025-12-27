@@ -1,11 +1,15 @@
 #include "devframecapture.h"
 #include "Helpers/captureholder.h"
+#include "Managers/videomanager.h"
 
 namespace Program::Development
 {
 
 DevFrameCapture::DevFrameCapture(QObject *parent) : ProgramBase(parent)
 {
+    VideoManager* videoManager = ManagerCollection::GetManager<VideoManager>();
+    connect(videoManager, &VideoManager::notifyMousePressed, this, &DevFrameCapture::OnMousePressed);
+    connect(videoManager, &VideoManager::notifyMouseMoved, this, &DevFrameCapture::OnMouseMoved);
 }
 
 void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
@@ -153,6 +157,32 @@ void DevFrameCapture::OnColorChanged(QColor color)
     if (m_moduleCapture)
     {
         m_moduleCapture->SetTargetColor(color);
+    }
+}
+
+void DevFrameCapture::OnMousePressed(QPoint pos)
+{
+    if (!m_started) return;
+
+    m_left->setValue(pos.x());
+    m_top->setValue(pos.y());
+}
+
+void DevFrameCapture::OnMouseMoved(QPoint pos)
+{
+    if (!m_started) return;
+
+    int const mode = m_mode->currentIndex();
+    bool const isArea = (mode == 2 || mode == 3);
+
+    if (isArea)
+    {
+        m_width->setValue(pos.x() - m_left->value());
+        m_height->setValue(pos.y() - m_top->value());
+    }
+    else
+    {
+        OnMousePressed(pos);
     }
 }
 

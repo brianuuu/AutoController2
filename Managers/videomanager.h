@@ -48,12 +48,16 @@ public:
 protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
     int heightForWidth(int width) const override;
     bool hasHeightForWidth() const override { return true; }
 
 signals:
     void notifyDraw();
+    void notifyMousePressed(QPoint);
+    void notifyMouseMoved(QPoint);
 
 private slots:
     // UI

@@ -45,6 +45,9 @@ private slots:
     void OnRangeChanged();
     void OnColorChanged(QColor color);
 
+    void OnMousePressed(QPoint pos);
+    void OnMouseMoved(QPoint pos);
+
 private:
     QPoint GetPoint() const;
     QRect GetRect() const;
