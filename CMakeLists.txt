@@ -70,7 +70,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
         Programs/programbase.h Programs/programbase.cpp
-        Types/system.h
+        Types/buttontype.h
+        Types/logtype.h
         defines.h
     )
 # Define target properties for Android with Qt 6 as:

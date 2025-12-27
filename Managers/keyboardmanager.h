@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "Types/system.h"
+#include "Types/buttontype.h"
 #include "Helpers/stickpainter.h"
 #include "Managers/managercollection.h"
 

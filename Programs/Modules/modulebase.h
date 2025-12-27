@@ -3,7 +3,7 @@
 
 #include <QThread>
 
-#include "Types/system.h"
+#include "Types/logtype.h"
 
 namespace Module
 {

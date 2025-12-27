@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "Types/system.h"
+#include "Types/logtype.h"
 
 namespace Ui { class MainWindow; }
 

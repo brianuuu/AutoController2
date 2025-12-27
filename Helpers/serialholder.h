@@ -7,7 +7,7 @@
 #include <QThread>
 #include <QTimer>
 
-#include "Types/system.h"
+#include "Types/logtype.h"
 
 class SerialHolder : public QThread
 {
