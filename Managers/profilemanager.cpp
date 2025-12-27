@@ -44,9 +44,9 @@ LanguageType ProfileManager::GetLanguageType() const
     return (LanguageType)m_language->currentIndex();
 }
 
-bool ProfileManager::OcrTrainedDataExist() const
+bool ProfileManager::OcrTrainedDataExist(LanguageType type)
 {
-    QString const prefix = LanguageToPrefix(GetLanguageType());
+    QString const prefix = LanguageToPrefix(type);
     return QFile::exists("../Resources/Tesseract/" + prefix + ".traineddata");
 }
 
@@ -69,7 +69,7 @@ void ProfileManager::OnShow()
 void ProfileManager::OnLanguageChanged(int index)
 {
     LanguageType type = (LanguageType)index;
-    if (!OcrTrainedDataExist())
+    if (!OcrTrainedDataExist(GetLanguageType()))
     {
         QString const languageName = LanguageToString(type);
         QMessageBox::warning(this, "Warning", "Language trained data for '" + languageName + "' for Tesseract is missing, please goto 'Resources/Tesseract' folder and follow the instructions in README.md.", QMessageBox::Ok);
