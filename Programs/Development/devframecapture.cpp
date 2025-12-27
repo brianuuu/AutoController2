@@ -95,6 +95,7 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
 void DevFrameCapture::Start()
 {
     ProgramBase::Start();
+    m_list->setEnabled(false);
     m_mode->setEnabled(false);
 
     CaptureHolder::Mode const mode = CaptureHolder::Mode(m_mode->currentIndex());
@@ -121,6 +122,7 @@ void DevFrameCapture::Stop()
 {
     ClearModule((Module::ModuleBase**)&m_moduleCapture);
 
+    m_list->setEnabled(true);
     m_mode->setEnabled(true);
     ProgramBase::Stop();
 }
