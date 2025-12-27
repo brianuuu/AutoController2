@@ -10,8 +10,7 @@ namespace Module::Common
 {
 class FrameCapture : public ModuleBase, public CaptureHolder
 {
-     Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit FrameCapture(QPoint point, QColor testColor, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);
     explicit FrameCapture(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);

@@ -12,7 +12,6 @@ namespace Module::Common
 class RunCommand : public ModuleBase
 {
     Q_OBJECT
-
 public:
     explicit RunCommand(QString const& nameOrCommand, bool isName, QObject *parent = nullptr);
 

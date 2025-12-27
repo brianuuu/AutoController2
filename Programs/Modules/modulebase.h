@@ -10,7 +10,6 @@ namespace Module
 class ModuleBase : public QThread
 {
     Q_OBJECT
-
 public:
     explicit ModuleBase(QObject *parent = nullptr);
 
