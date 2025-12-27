@@ -214,7 +214,6 @@ void VideoManager::paintEvent(QPaintEvent *event)
             }
             else
             {
-                QPoint const point = holder->GetPoint();
                 painter.drawLine(captureRect.topLeft(), captureRect.bottomRight());
                 painter.drawLine(captureRect.topRight(), captureRect.bottomLeft());
             }
