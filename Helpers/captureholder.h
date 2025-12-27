@@ -77,12 +77,14 @@ public:
     static QSize GetCaptureResolution() { return QSize(1280,720); }
     static bool GetColorMatch(QColor testColor, QColor target);
     static bool GetColorMatchHSV(QColor testColor, HsvRange range);
+    static QColor GetAverageColor(QImage const& image);
     static bool GetAverageColorMatch(QImage const& image, QColor target);
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
     // results
     bool GetResultMatched() const;
     qreal GetResultMean() const;
+    QColor GetResultColor() const;
     QImage GetResultMasked() const;
 
 private:
@@ -109,6 +111,7 @@ protected:
     mutable QMutex  m_resultMutex;
     bool    m_resultMatched = false;
     qreal   m_resultMean = 0.0;
+    QColor  m_resultColor = QColor(0,0,0);
     QImage  m_resultMasked;
 };
 

@@ -142,6 +142,12 @@ qreal CaptureHolder::GetResultMean() const
     return m_resultMean;
 }
 
+QColor CaptureHolder::GetResultColor() const
+{
+    QMutexLocker locker(&m_resultMutex);
+    return m_resultColor;
+}
+
 QImage CaptureHolder::GetResultMasked() const
 {
     QMutexLocker locker(&m_resultMutex);
@@ -190,7 +196,7 @@ bool CaptureHolder::GetColorMatchHSV(QColor testColor, HsvRange range)
     return matched;
 }
 
-bool CaptureHolder::GetAverageColorMatch(const QImage &image, QColor target)
+QColor CaptureHolder::GetAverageColor(const QImage &image)
 {
     qreal r = 0;
     qreal g = 0;
@@ -214,7 +220,12 @@ bool CaptureHolder::GetAverageColorMatch(const QImage &image, QColor target)
 
     QColor testColor;
     testColor.setRgbF(r,g,b);
+    return testColor;
+}
 
+bool CaptureHolder::GetAverageColorMatch(const QImage &image, QColor target)
+{
+    QColor const testColor = GetAverageColor(image);
     return GetColorMatch(testColor, target);
 }
 
