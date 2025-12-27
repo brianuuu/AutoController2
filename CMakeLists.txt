@@ -51,6 +51,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/keyboardmanager.h Managers/keyboardmanager.cpp
         Managers/logmanager.h Managers/logmanager.cpp
         Managers/managercollection.h
+        Managers/profilemanager.h Managers/profilemanager.cpp
         Managers/programmanager.h Managers/programmanager.cpp
         Managers/serialmanager.h Managers/serialmanager.cpp
         Managers/videomanager.h Managers/videomanager.cpp

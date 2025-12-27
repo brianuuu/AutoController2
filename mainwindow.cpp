@@ -5,6 +5,7 @@
 #include "Managers/joystickmanager.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
 #include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Auto Controller 2 v" + VERSION);
 
     m_logManager = ManagerCollection::AddManager<LogManager>();
+    m_profileManager = ManagerCollection::AddManager<ProfileManager>();
     m_joystickManager = ManagerCollection::AddManager<JoystickManager>(this);
     m_keyboardManager = ManagerCollection::AddManager<KeyboardManager>();
     m_serialManager = ManagerCollection::AddManager<SerialManager>(this);
@@ -25,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_programManager = ManagerCollection::AddManager<ProgramManager>(this);
 
     m_logManager->Initialize(ui);
+    m_profileManager->Initialize(ui);
     m_joystickManager->Initialize(ui);
     m_keyboardManager->Initialize(ui);
     m_serialManager->Initialize(ui);
@@ -68,6 +71,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
         return;
     }
 
+    if (!m_profileManager->OnCloseEvent())
+    {
+        event->ignore();
+        return;
+    }
+
     if (!m_logManager->OnCloseEvent())
     {
         event->ignore();
@@ -78,10 +87,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     delete m_vlcManager;
     delete m_keyboardManager;
+    delete m_profileManager;
     delete m_logManager;
 
     m_vlcManager = Q_NULLPTR;
     m_keyboardManager = Q_NULLPTR;
+    m_profileManager = Q_NULLPTR;
     m_logManager = Q_NULLPTR;
 
     QMainWindow::closeEvent(event);

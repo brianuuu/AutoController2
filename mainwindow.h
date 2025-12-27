@@ -33,6 +33,7 @@ private:
 
     // managers
     LogManager*         m_logManager = Q_NULLPTR;
+    ProfileManager*     m_profileManager = Q_NULLPTR;
     JoystickManager*    m_joystickManager = Q_NULLPTR;
     KeyboardManager*    m_keyboardManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
