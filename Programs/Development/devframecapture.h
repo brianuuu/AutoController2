@@ -3,6 +3,7 @@
 
 #include "../programbase.h"
 #include "Programs/Modules/Common/framecapture.h"
+#include "Programs/Settings/settingcolor.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settingspinbox.h"
 
@@ -42,6 +43,7 @@ private slots:
     void OnWidthChanged(int value);
     void OnHeightChanged(int value);
     void OnRangeChanged();
+    void OnColorChanged(QColor color);
 
 private:
     QPoint GetPoint() const;
@@ -66,6 +68,8 @@ private:
     Setting::SettingSpinBox* m_maxH = Q_NULLPTR;
     Setting::SettingSpinBox* m_maxS = Q_NULLPTR;
     Setting::SettingSpinBox* m_maxV = Q_NULLPTR;
+
+    Setting::SettingColor* m_color = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
 };

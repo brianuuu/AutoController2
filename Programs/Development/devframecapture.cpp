@@ -60,6 +60,11 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     connect(m_maxV, &QSpinBox::valueChanged, this, &DevFrameCapture::OnRangeChanged);
     AddSettings(layout, "Max HSV:", "", {m_maxH, m_maxS, m_maxV}, true);
 
+    m_color = new Setting::SettingColor("Color");
+    m_savedSettings.insert(m_color);
+    connect(m_color, &Setting::SettingColor::notifyColorChanged, this, &DevFrameCapture::OnColorChanged);
+    AddSetting(layout, "Target Color:", "", m_color, true);
+
     AddSpacer(layout);
 }
 
@@ -72,13 +77,13 @@ void DevFrameCapture::Start()
     switch (mode)
     {
     case CaptureHolder::Mode::PointColorMatch:
-        // TODO:
+        m_moduleCapture = new Module::Common::FrameCapture(GetPoint(), m_color->GetColor());
         break;
     case CaptureHolder::Mode::PointRangeMatch:
         m_moduleCapture = new Module::Common::FrameCapture(GetPoint(), GetRange());
         break;
     case CaptureHolder::Mode::AreaColorMatch:
-        // TODO:
+        m_moduleCapture = new Module::Common::FrameCapture(GetRect(), m_color->GetColor());
         break;
     case CaptureHolder::Mode::AreaRangeMatch:
         m_moduleCapture = new Module::Common::FrameCapture(GetRect(), GetRange());
@@ -111,6 +116,7 @@ void DevFrameCapture::OnModeChanged(int mode)
     m_maxV->setEnabled(isRange);
 
     bool const isColor = (mode == 0 || mode == 2);
+    m_color->SetEnabled(isColor);
 }
 
 void DevFrameCapture::OnLeftChanged(int value)
@@ -140,6 +146,14 @@ void DevFrameCapture::OnHeightChanged(int value)
 void DevFrameCapture::OnRangeChanged()
 {
     UpdateRange();
+}
+
+void DevFrameCapture::OnColorChanged(QColor color)
+{
+    if (m_moduleCapture)
+    {
+        m_moduleCapture->SetTargetColor(color);
+    }
 }
 
 QPoint DevFrameCapture::GetPoint() const
