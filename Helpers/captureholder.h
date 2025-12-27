@@ -81,6 +81,10 @@ public:
     static bool GetAverageColorMatch(QImage const& image, QColor target);
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
+    // json utils
+    static QString GetDirectory() { return "../Resources/FrameCapture/"; }
+    static QString GetFormat() { return ".framecapture"; }
+
     // results
     bool GetResultMatched() const;
     qreal GetResultMean() const;

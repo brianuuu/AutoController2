@@ -1,6 +1,10 @@
 #ifndef DEVFRAMECAPTURE_H
 #define DEVFRAMECAPTURE_H
 
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileDialog>
+
 #include "../programbase.h"
 #include "Programs/Modules/Common/framecapture.h"
 #include "Programs/Settings/settingcolor.h"
@@ -36,6 +40,7 @@ public:
     void Stop() override;
 
 private slots:
+    void OnListChanged(QString const& str);
     void OnModeChanged(int mode);
 
     void OnLeftChanged(int value);
@@ -48,11 +53,16 @@ private slots:
     void OnMousePressed(QPoint pos);
     void OnMouseMoved(QPoint pos);
 
+    void OnSave();
+    void OnDelete();
+    void OnOpenDirectory();
+
 private:
     QPoint GetPoint() const;
     QRect GetRect() const;
     HsvRange GetRange() const;
 
+    void UpdateSettingEnabled();
     void UpdateRect();
     void UpdateRange();
 
@@ -73,6 +83,10 @@ private:
     Setting::SettingSpinBox* m_maxV = Q_NULLPTR;
 
     Setting::SettingColor* m_color = Q_NULLPTR;
+
+    QPushButton* m_btnSave = Q_NULLPTR;
+    QPushButton* m_btnDelete = Q_NULLPTR;
+    QPushButton* m_btnDirectory = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
 };

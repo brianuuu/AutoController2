@@ -5,7 +5,7 @@
 #include "Managers/serialmanager.h"
 #include "Programs/Modules/Common/runcommand.h"
 
-#define CUSTOM_COMMAND_DIRECTORY "../Resources/System/CustomCommand/"
+#define CUSTOM_COMMAND_DIRECTORY "../Resources/CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
 #define CUSTOM_COMMAND_CUSTOM QString("(Custom)")
 
