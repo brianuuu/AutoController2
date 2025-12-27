@@ -40,6 +40,9 @@ void SettingColor::ResetDefault()
 
 void SettingColor::SetEnabled(bool enabled)
 {
+    this->setEnabled(enabled);
+    this->setText(enabled ? m_currentColor.name().toUpper() : "Disabled");
+
     if (enabled)
     {
         SetColor(m_currentColor);
@@ -49,9 +52,6 @@ void SettingColor::SetEnabled(bool enabled)
         QString const qss = QString("background-color: %1; color: %2").arg(QColor(Qt::lightGray).name(), QColor(Qt::black).name());
         this->setStyleSheet(qss);
     }
-
-    this->setText(enabled ? m_currentColor.name().toUpper() : "Disabled");
-    this->setEnabled(enabled);
 }
 
 void SettingColor::SetColor(QColor color)
