@@ -59,7 +59,8 @@ void SettingColor::SetColor(QColor color)
     m_currentColor = color;
     if (!this->isEnabled()) return;
 
-    QString const qss = QString("background-color: %1; color: %2").arg(color.name(), QColor(color.valueF() < 0.5f ? Qt::white : Qt::black).name());
+    QColor const textColor = QColor((color.valueF() < 0.5f || (color.hue() > 200 && color.hue() < 280 && color.saturationF() >= 0.5f)) ? Qt::white : Qt::black);
+    QString const qss = QString("background-color: %1; color: %2").arg(color.name(), textColor.name());
     this->setStyleSheet(qss);
     this->setText(color.name().toUpper());
 }
