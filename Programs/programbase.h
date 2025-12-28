@@ -53,8 +53,10 @@ signals:
     void notifyFinished(int);
     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
 
-protected slots:
+public slots:
     void OnCanRunChanged();
+    void OnModuleFinishQuit();
+    bool OnModuleErrorQuit();
 
 protected:
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;

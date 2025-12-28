@@ -96,6 +96,32 @@ void ProgramBase::OnCanRunChanged()
     emit notifyCanRun(CanRun());
 }
 
+void ProgramBase::OnModuleFinishQuit()
+{
+    if (!m_started) return;
+
+    // finish program if this module is finished
+    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
+    int const result = module->GetResult();
+    emit notifyFinished(result);
+}
+
+bool ProgramBase::OnModuleErrorQuit()
+{
+    if (!m_started) return true;
+
+    // finish program if this module is errored out
+    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
+    int const result = module->GetResult();
+    if (result < 0)
+    {
+        emit notifyFinished(result);
+        return true;
+    }
+
+    return false;
+}
+
 void ProgramBase::PrintLog(const QString &log, LogType type) const
 {
     emit notifyLog(GetInternalName(), log, type);
