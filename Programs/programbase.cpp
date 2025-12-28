@@ -218,6 +218,15 @@ void ProgramBase::AddSettings
     }
 }
 
+void ProgramBase::AddSeparator(QBoxLayout *layout)
+{
+    QFrame* frame = new QFrame();
+    frame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    frame->setFrameShape(QFrame::HLine);
+    frame->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(frame);
+}
+
 void ProgramBase::AddSpacer(QBoxLayout *layout)
 {
     QWidget* widget = new QWidget();
