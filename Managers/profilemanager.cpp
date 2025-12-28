@@ -11,17 +11,15 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     // setup layout
     this->setWindowTitle("Profile Settings");
 
-    QVBoxLayout* vBoxLayout = new QVBoxLayout();
+    QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     vBoxLayout->setSizeConstraint(QLayout::SetMinimumSize);
     vBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
-    this->setLayout(vBoxLayout);
 
     // system settings
     QGroupBox* systemGroup = new QGroupBox("System");
     vBoxLayout->addWidget(systemGroup);
     {
-        QVBoxLayout* systemLayout = new QVBoxLayout();
-        systemGroup->setLayout(systemLayout);
+        QVBoxLayout* systemLayout = new QVBoxLayout(systemGroup);
 
         m_language = new Setting::SettingLanguage("Language");
         Program::ProgramBase::AddSetting(systemLayout, "Language:", "Language of the Nintendo Switch system or the current game", m_language, true);
