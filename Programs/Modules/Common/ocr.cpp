@@ -2,8 +2,7 @@
 
 #include "Managers/managercollection.h"
 #include "Managers/profilemanager.h"
-
-#define OCR_DIRECTORY QString("../Resources/Tesseract/")
+#include "defines.h"
 
 namespace Module::Common
 {
@@ -33,7 +32,7 @@ void OCR::run()
         m_image.invertPixels();
     }
 
-    m_image.save(OCR_DIRECTORY + GetCaptureName(), "PNG");
+    m_image.save(OCR_PATH + GetCaptureName(), "PNG");
 
     // Check if .traineddata exist
     if (!ProfileManager::OCRTrainedDataExist(m_language))
@@ -59,8 +58,8 @@ void OCR::run()
         arg << "--oem" << "2";
     }
     arg << "-c" << "tessedit_create_txt=1";
-    m_process.setWorkingDirectory(OCR_DIRECTORY);
-    m_process.start(OCR_DIRECTORY + "tesseract.exe", arg);
+    m_process.setWorkingDirectory(OCR_PATH);
+    m_process.start(OCR_PATH + "tesseract.exe", arg);
 
     // wait for process signals
     exec();
@@ -71,7 +70,7 @@ void OCR::run()
     }
 
     // get raw string
-    QFile output(OCR_DIRECTORY + GetOutputTextName());
+    QFile output(OCR_PATH + GetOutputTextName());
     if (output.open(QIODevice::Text | QIODevice::ReadOnly))
     {
         QTextStream in(&output);
@@ -155,7 +154,7 @@ void OCR::OnProcessErrored(QProcess::ProcessError error)
 
 void OCR::OnProcessFinished()
 {
-    if (!QFile::exists(OCR_DIRECTORY + GetOutputTextName()))
+    if (!QFile::exists(OCR_PATH + GetOutputTextName()))
     {
         m_error = "Expected tesseract " + GetOutputTextName() + " not found";
         m_result = -1;

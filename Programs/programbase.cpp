@@ -5,6 +5,7 @@
 #include "Managers/logmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
+#include "defines.h"
 
 namespace Program
 {
@@ -268,11 +269,10 @@ void ProgramBase::AddSpacer(QBoxLayout *layout)
 
 void ProgramBase::CleanOCRFiles()
 {
-    QString const path = "../Resources/Tesseract/";
-    QStringList const files = QDir(path).entryList({"*.png", "*.txt"}, QDir::Files);
+    QStringList const files = QDir(OCR_PATH).entryList({"*.png", "*.txt"}, QDir::Files);
     for (QString const& file : files)
     {
-        QFile::remove(path + file);
+        QFile::remove(OCR_PATH + file);
     }
 }
 

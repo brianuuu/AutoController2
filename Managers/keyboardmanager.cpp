@@ -6,6 +6,7 @@
 #include "Managers/programmanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
+#include "defines.h"
 
 void KeyboardManager::Initialize(Ui::MainWindow *ui)
 {
@@ -30,7 +31,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
 
     QLabel* image = new QLabel(this);
     image->setScaledContents(true);
-    image->setPixmap(QPixmap("../Resources/UI/Mapping.png"));
+    image->setPixmap(QPixmap(RESOURCES_PATH + "UI/Mapping.png"));
     image->resize(668,504);
 
     QPushButton* btnReset = new QPushButton(this);

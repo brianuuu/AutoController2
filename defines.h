@@ -6,4 +6,7 @@
 // matches the version in AutoController2.hex
 #define SERIAL_VERSION 1
 
+#define RESOURCES_PATH QString("../Resources/")
+#define OCR_PATH RESOURCES_PATH + "Tesseract/"
+
 #endif // DEFINES_H

@@ -6,6 +6,7 @@
 #include <qmutex.h>
 #include <qrect.h>
 #include <qpoint.h>
+#include "defines.h"
 
 struct HsvRange
 {
@@ -82,7 +83,7 @@ public:
     static qreal GetBrightnessMean(QImage const& image, HsvRange range, QImage* masked = Q_NULLPTR);
 
     // json utils
-    static QString GetDirectory() { return "../Resources/FrameCapture/"; }
+    static QString GetDirectory() { return RESOURCES_PATH + "FrameCapture/"; }
     static QString GetFormat() { return ".framecapture"; }
 
     // results

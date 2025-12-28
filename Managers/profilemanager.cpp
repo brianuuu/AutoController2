@@ -3,6 +3,7 @@
 #include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 #include "Programs/programbase.h"
+#include "defines.h"
 
 void ProfileManager::Initialize(Ui::MainWindow *ui)
 {
@@ -45,7 +46,7 @@ LanguageType ProfileManager::GetLanguageType() const
 bool ProfileManager::OCRTrainedDataExist(LanguageType type)
 {
     QString const prefix = LanguageToPrefix(type);
-    return QFile::exists("../Resources/Tesseract/" + prefix + ".traineddata");
+    return QFile::exists(OCR_PATH + prefix + ".traineddata");
 }
 
 void ProfileManager::closeEvent(QCloseEvent *event)
