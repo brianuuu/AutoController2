@@ -42,19 +42,23 @@ void OCR::run()
         return;
     }
 
-    QString command = OCR_DIRECTORY + "tesseract.exe ";
-    command += "./capture.png ./output --tessdata-dir . ";
-    command += "-l " + LanguageToPrefix(m_language);
+    QStringList arg;
+    arg << "./capture.png";
+    arg << "./output";
+    arg << "--tessdata-dir" << ".";
+    arg << "-l" << LanguageToPrefix(m_language);
+    arg << "--psm" << "7";
     if (m_language == LT_ChineseSimplified || m_language == LT_ChineseTraditional || m_language == LT_Korean)
     {
-        command += " --psm 7 --oem 0 -c tessedit_create_txt=1";
+        arg << "--oem" << "0";
     }
     else
     {
-        command += " --psm 7 --oem 2 -c tessedit_create_txt=1";
+        arg << "--oem" << "2";
     }
+    arg << "-c" << "tessedit_create_txt=1";
     m_process.setWorkingDirectory(OCR_DIRECTORY);
-    m_process.start(command);
+    m_process.start(OCR_DIRECTORY + "tesseract.exe", arg);
 
     // wait for process signals
     exec();
@@ -76,12 +80,32 @@ void OCR::run()
         return;
     }
 
+    // remove junk character
+    m_resultRawString.remove((char)0xC);
+
+    if (m_isNumber)
+    {
+        // TODO:
+    }
+    else
+    {
+        if (m_resultRawString.isEmpty())
+        {
+            PrintLog("OCR return empty string", LOG_Warning);
+        }
+        else
+        {
+            PrintLog("OCR returned string: " + m_resultRawString);
+        }
+    }
+
+    // TODO: normalize string
     // TODO: entry matching
 }
 
 void OCR::OnProcessErrored(QProcess::ProcessError error)
 {
-    m_error = "Unable to start text recognition, tesseract.exe might be missing.\nProcess exited with code: " + QString::number(error);
+    m_error = QString("Unable to start text recognition, tesseract.exe might be missing.\nProcess exited with: ") + QMetaEnum::fromType<QProcess::ProcessError>().valueToKey(error);
     m_result = -1;
     quit();
 }

@@ -86,6 +86,13 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     connect(m_btnDelete, &QPushButton::clicked, this, &DevFrameCapture::OnDelete);
     connect(m_btnDirectory, &QPushButton::clicked, this, &DevFrameCapture::OnOpenDirectory);
 
+    AddSeparator(layout);
+
+    m_btnOCR = new QPushButton("Run OCR");
+    m_btnOCR->setEnabled(false);
+    AddSetting(layout, "OCR Result:", "", m_btnOCR, true);
+    connect(m_btnOCR, &QPushButton::clicked, this, &DevFrameCapture::OnRunOCR);
+
     AddSpacer(layout);
 
     // set initial text
@@ -112,6 +119,7 @@ void DevFrameCapture::Start()
         break;
     case CaptureHolder::Mode::AreaRangeMatch:
         m_moduleCapture = new Module::Common::FrameCapture(GetRect(), GetRange());
+        m_btnOCR->setEnabled(true);
         break;
     }
 
@@ -122,6 +130,7 @@ void DevFrameCapture::Stop()
 {
     ClearModule((Module::ModuleBase**)&m_moduleCapture);
 
+    m_btnOCR->setEnabled(false);
     m_list->setEnabled(true);
     m_mode->setEnabled(true);
     ProgramBase::Stop();
@@ -426,6 +435,27 @@ void DevFrameCapture::OnDelete()
 void DevFrameCapture::OnOpenDirectory()
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(CaptureHolder::GetDirectory()));
+}
+
+void DevFrameCapture::OnRunOCR()
+{
+    if (!m_moduleCapture) return;
+
+    m_btnOCR->setEnabled(false);
+    m_moduleOCR = AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), false);
+}
+
+void DevFrameCapture::OnOcrFinished()
+{
+    int const result = m_moduleOCR->GetResult();
+    if (m_moduleOCR->GetResult() < 0)
+    {
+        emit notifyFinished(result);
+        return;
+    }
+
+    ClearModule((Module::ModuleBase**)&m_moduleOCR);
+    m_btnOCR->setEnabled(true);
 }
 
 QPoint DevFrameCapture::GetPoint() const

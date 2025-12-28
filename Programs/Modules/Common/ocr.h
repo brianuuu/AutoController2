@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QImage>
+#include <QMetaEnum>
 #include <QProcess>
 
 #include "../modulebase.h"
@@ -21,6 +22,8 @@ public:
 
     // from QThread
     void run() override;
+
+    QString GetResultRawString() const { return m_resultRawString; }
 
 private slots:
     void OnProcessErrored(QProcess::ProcessError error);

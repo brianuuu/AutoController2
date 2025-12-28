@@ -4,9 +4,11 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileDialog>
+#include <QLineEdit>
 
 #include "../programbase.h"
 #include "Programs/Modules/Common/framecapture.h"
+#include "Programs/Modules/Common/ocr.h"
 #include "Programs/Settings/settingcolor.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settingdoublespinbox.h"
@@ -59,6 +61,9 @@ private slots:
     void OnDelete();
     void OnOpenDirectory();
 
+    void OnRunOCR();
+    void OnOcrFinished();
+
 private:
     QPoint GetPoint() const;
     QRect GetRect() const;
@@ -91,8 +96,10 @@ private:
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
     QPushButton* m_btnDirectory = Q_NULLPTR;
+    QPushButton* m_btnOCR = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
+    Module::Common::OCR* m_moduleOCR = Q_NULLPTR;
 };
 }
 
