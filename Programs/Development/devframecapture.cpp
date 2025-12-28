@@ -1,7 +1,9 @@
 #include "devframecapture.h"
+
 #include "Helpers/captureholder.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/videomanager.h"
+#include "Programs/Modules/Common/ocr.h"
 
 #define FRAME_CAPTURE_CUSTOM QString("(Custom)")
 
@@ -88,9 +90,12 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
 
     AddSeparator(layout);
 
+    m_number = new Setting::SettingCheckBox("IsNumber", "Numbers Only");
+    m_savedSettings.insert(m_number);
     m_btnOCR = new QPushButton("Run OCR");
     m_btnOCR->setEnabled(false);
-    AddSetting(layout, "OCR Result:", "", m_btnOCR, true);
+    AddSettings(layout, "OCR:", "", {m_number, m_btnOCR}, true);
+    m_number->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     connect(m_btnOCR, &QPushButton::clicked, this, &DevFrameCapture::OnRunOCR);
 
     AddSpacer(layout);
@@ -443,7 +448,7 @@ void DevFrameCapture::OnRunOCR()
     if (!m_moduleCapture) return;
 
     m_btnOCR->setEnabled(false);
-    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), false);
+    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), m_number->isChecked());
 }
 
 void DevFrameCapture::OnOcrFinished()

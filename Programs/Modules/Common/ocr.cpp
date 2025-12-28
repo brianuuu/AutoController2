@@ -86,21 +86,58 @@ void OCR::run()
 
     // remove junk character
     m_resultRawString.remove((char)0xC);
+    if (m_resultRawString.isEmpty())
+    {
+        PrintLog("OCR returned nothing", LOG_Warning);
+        m_result = 1;
+        return;
+    }
 
     if (m_isNumber)
     {
-        // TODO:
-    }
-    else
-    {
-        if (m_resultRawString.isEmpty())
+        QString numStr;
+        bool hasDigit = false;
+        for (QChar ch : std::as_const(m_resultRawString))
         {
-            PrintLog("OCR return empty string", LOG_Warning);
+            // in case it false detect as these...?
+            if (ch == 'l' || ch == 'i' || ch == 't' || ch == 'F' || ch == 'f')
+            {
+                PrintLog(QString("Letter '") + ch + "' is converted to 1", LOG_Warning);
+                ch = '1';
+            }
+
+            if (ch.isDigit())
+            {
+                numStr += ch;
+                hasDigit = true;
+            }
+        }
+
+        if (!hasDigit)
+        {
+            PrintLog("OCR failed to read any number", LOG_Warning);
+            m_result = 1;
+            return;
+        }
+
+        // This should be number but we check convertion just in case
+        bool ok = false;
+        m_resultNumber = numStr.toInt(&ok);
+
+        if (ok)
+        {
+            PrintLog("OCR returned number: " + numStr);
         }
         else
         {
-            PrintLog("OCR returned string: " + m_resultRawString);
+            PrintLog("OCR failed to convert number", LOG_Warning);
+            m_result = 1;
+            return;
         }
+    }
+    else
+    {
+        PrintLog("OCR returned string: " + m_resultRawString);
     }
 
     // TODO: normalize string

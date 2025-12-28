@@ -24,6 +24,7 @@ public:
     void run() override;
 
     QString GetResultRawString() const { return m_resultRawString; }
+    int GetResultNumber() const { return m_resultNumber; }
 
 private slots:
     void OnProcessErrored(QProcess::ProcessError error);
@@ -43,6 +44,7 @@ private:
 
     // result
     QString     m_resultRawString;
+    int         m_resultNumber;
 
 };
 }

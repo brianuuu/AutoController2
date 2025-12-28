@@ -8,8 +8,8 @@
 
 #include "../programbase.h"
 #include "Programs/Modules/Common/framecapture.h"
-#include "Programs/Modules/Common/ocr.h"
 #include "Programs/Settings/settingcolor.h"
+#include "Programs/Settings/settingcheckbox.h"
 #include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settingdoublespinbox.h"
 #include "Programs/Settings/settingspinbox.h"
@@ -92,6 +92,7 @@ private:
 
     Setting::SettingColor* m_color = Q_NULLPTR;
     Setting::SettingDoubleSpinBox* m_mean = Q_NULLPTR;
+    Setting::SettingCheckBox* m_number = Q_NULLPTR;
 
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
