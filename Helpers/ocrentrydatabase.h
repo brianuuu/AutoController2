@@ -20,9 +20,12 @@ public:
     static OCREntries const& GetEntries(QString const& path, LanguageType language);
     static QString GetExtension() { return ".entries"; }
 
-    // Fix strings
+    // OCR matching utils
     static QString NormalizeString(QString const& str);
     static QString RemoveNonAlphaNumeric(QString const& str);
+    static int GetLevenshteinDistance(QString const& a, QString const& b);
+    static int GetLevenshteinDistanceSubString(QString const& longStr, QString const& shortStr);
+    static int MatchSubStrings(QString const& query, QStringList const& subStrings, int* o_dist = nullptr);
 
 private:
     // Key = path + name (without ../Resource or extension)

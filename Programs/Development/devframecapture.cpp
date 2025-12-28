@@ -94,6 +94,7 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     AddSeparator(layout);
 
     m_number = new Setting::SettingCheckBox("IsNumber", "Numbers Only");
+    m_number->setEnabled(false);
     m_savedSettings.insert(m_number);
     m_btnOCR = new QPushButton("Run OCR");
     m_btnOCR->setEnabled(false);
@@ -115,6 +116,7 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
         }
 
         m_database = new Setting::SettingComboBox("Database", names);
+        m_database->setEnabled(false);
         m_savedSettings.insert(m_database);
         AddSetting(layout, "OCR Entries Preset:", "", m_database, true);
     }
@@ -146,6 +148,8 @@ void DevFrameCapture::Start()
     case CaptureHolder::Mode::AreaRangeMatch:
         m_moduleCapture = new Module::Common::FrameCapture(GetRect(), GetRange());
         m_btnOCR->setEnabled(true);
+        m_number->setEnabled(true);
+        m_database->setEnabled(true);
         break;
     }
 
@@ -158,6 +162,9 @@ void DevFrameCapture::Stop()
     m_moduleCapture = Q_NULLPTR;
 
     m_btnOCR->setEnabled(false);
+    m_number->setEnabled(false);
+    m_database->setEnabled(false);
+
     m_list->setEnabled(true);
     m_mode->setEnabled(true);
     ProgramBase::Stop();
@@ -469,7 +476,22 @@ void DevFrameCapture::OnRunOCR()
     if (!m_moduleCapture) return;
 
     m_btnOCR->setEnabled(false);
-    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOCRFinished, m_moduleCapture->GetResultMasked(), m_number->isChecked());
+    m_number->setEnabled(false);
+    m_database->setEnabled(false);
+
+    Module::Common::OCR* module = new Module::Common::OCR(m_moduleCapture->GetResultMasked(), m_number->isChecked());
+    connect(module, &QThread::finished, this, &DevFrameCapture::OnOCRFinished);
+
+    if (m_database->currentIndex() > 0)
+    {
+        QString const database = m_database->currentText();
+        if (OCREntryDatabase::EnsureDatabase(database))
+        {
+            module->SetOCREntries(database);
+        }
+    }
+
+    AddModule(module);
 }
 
 void DevFrameCapture::OnOCRFinished()
@@ -478,6 +500,8 @@ void DevFrameCapture::OnOCRFinished()
 
     ClearModule(sender());
     m_btnOCR->setEnabled(true);
+    m_number->setEnabled(true);
+    m_database->setEnabled(true);
 }
 
 QPoint DevFrameCapture::GetPoint() const

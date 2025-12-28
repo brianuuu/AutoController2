@@ -1,5 +1,6 @@
 #include "ocr.h"
 
+#include "Helpers/ocrentrydatabase.h"
 #include "Managers/managercollection.h"
 #include "Managers/profilemanager.h"
 #include "defines.h"
@@ -141,8 +142,45 @@ void OCR::run()
         PrintLog("OCR returned string: " + m_resultRawString);
     }
 
-    // TODO: normalize string
-    // TODO: entry matching
+    // no entry match work
+    if (m_database.isEmpty()) return;
+
+    // entry matching
+    OCREntries const& entries = OCREntryDatabase::GetEntries(m_database, m_language);
+    if (entries.isEmpty())
+    {
+        PrintLog(m_database + " database is empty for " + LanguageToString(m_language) +", it may not be supported yet.", LOG_Error);
+        m_result = -1;
+        return;
+    }
+
+    QString const query = OCREntryDatabase::NormalizeString(m_resultRawString);
+
+    // Do comparison with each database string, find the best match entry
+    int minDist = INT_MAX;
+    int minSubStringMatched = -1;
+    for (auto iter = entries.begin(); iter != entries.end(); iter++)
+    {
+        int dist = 0;
+        QStringList const& subStrings = iter.value();
+        int subStringMatched = OCREntryDatabase::MatchSubStrings(query, subStrings, &dist);
+        if (subStringMatched >= 0 && subStringMatched < subStrings.size() && dist < minDist)
+        {
+            minDist = dist;
+            m_resultEntry = iter.key();
+            minSubStringMatched = subStringMatched;
+        }
+    }
+
+    if (m_resultEntry.isEmpty())
+    {
+        PrintLog("OCR text \"" + m_resultRawString + "\" found no matches", LOG_Warning);
+        m_result = 1;
+    }
+    else
+    {
+        PrintLog("OCR text \"" + m_resultRawString + "\" has matched entry \"" + m_resultEntry + "\" (LD = " + QString::number(minDist) + ")");
+    }
 }
 
 void OCR::OnProcessErrored(QProcess::ProcessError error)

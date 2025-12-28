@@ -93,13 +93,13 @@ private:
 
     Setting::SettingColor* m_color = Q_NULLPTR;
     Setting::SettingDoubleSpinBox* m_mean = Q_NULLPTR;
-    Setting::SettingCheckBox* m_number = Q_NULLPTR;
 
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
     QPushButton* m_btnDirectory = Q_NULLPTR;
     QPushButton* m_btnOCR = Q_NULLPTR;
 
+    Setting::SettingCheckBox* m_number = Q_NULLPTR;
     Setting::SettingComboBox* m_database = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
