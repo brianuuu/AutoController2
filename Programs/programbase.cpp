@@ -67,6 +67,7 @@ void ProgramBase::ResetDefault()
 void ProgramBase::Start()
 {
     m_started = true;
+    CleanOcrFiles();
     emit notifyStarted();
 }
 
@@ -263,6 +264,16 @@ void ProgramBase::AddSpacer(QBoxLayout *layout)
     QWidget* widget = new QWidget();
     widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget(widget);
+}
+
+void ProgramBase::CleanOcrFiles()
+{
+    QString const path = "../Resources/Tesseract/";
+    QStringList const files = QDir(path).entryList({"*.png", "*.txt"}, QDir::Files);
+    for (QString const& file : files)
+    {
+        QFile::remove(path + file);
+    }
 }
 
 }
