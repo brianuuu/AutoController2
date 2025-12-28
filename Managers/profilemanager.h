@@ -22,7 +22,7 @@ public:
 
 public:
     LanguageType GetLanguageType() const;
-    static bool OcrTrainedDataExist(LanguageType type);
+    static bool OCRTrainedDataExist(LanguageType type);
 
 protected:
     void closeEvent(QCloseEvent *event) override;

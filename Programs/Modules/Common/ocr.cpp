@@ -36,7 +36,7 @@ void OCR::run()
     m_image.save(OCR_DIRECTORY + GetCaptureName(), "PNG");
 
     // Check if .traineddata exist
-    if (!ProfileManager::OcrTrainedDataExist(m_language))
+    if (!ProfileManager::OCRTrainedDataExist(m_language))
     {
         QString const languageName = LanguageToString(m_language);
         m_error = "Language trained data for '" + languageName + "' for Tesseract is missing, please goto 'Resources/Tesseract' folder and follow the instructions in README.md";

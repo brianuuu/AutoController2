@@ -62,7 +62,7 @@ private slots:
     void OnOpenDirectory();
 
     void OnRunOCR();
-    void OnOcrFinished();
+    void OnOCRFinished();
 
 private:
     QPoint GetPoint() const;

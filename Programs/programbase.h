@@ -80,7 +80,7 @@ public:
     static void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
     static void AddSeparator(QBoxLayout *layout);
     static void AddSpacer(QBoxLayout *layout);
-    static void CleanOcrFiles();
+    static void CleanOCRFiles();
 
 protected:
     SerialManager*      m_serialManager = Q_NULLPTR;

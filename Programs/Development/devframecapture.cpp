@@ -448,10 +448,10 @@ void DevFrameCapture::OnRunOCR()
     if (!m_moduleCapture) return;
 
     m_btnOCR->setEnabled(false);
-    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), m_number->isChecked());
+    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOCRFinished, m_moduleCapture->GetResultMasked(), m_number->isChecked());
 }
 
-void DevFrameCapture::OnOcrFinished()
+void DevFrameCapture::OnOCRFinished()
 {
     if (OnModuleErrorQuit()) return;
 
