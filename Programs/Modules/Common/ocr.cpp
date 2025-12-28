@@ -62,7 +62,11 @@ void OCR::run()
 
     // wait for process signals
     exec();
-    if (m_result < 0 || m_terminate) return;
+    if (m_result < 0 || m_terminate)
+    {
+        m_process.waitForFinished(-1);
+        return;
+    }
 
     // get raw string
     QFile output(OCR_DIRECTORY + GetOutputTextName());
