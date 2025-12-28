@@ -217,6 +217,7 @@ void AudioManager::paintEvent(QPaintEvent *event)
 
         if (drawWidth >= width)
         {
+            qDebug() << "1";
             // More samples then width, will need to ignore some
             float const sampleRatio = float(drawWidth) / float(width);
             for (int i = 0; i < width; i++)
@@ -234,6 +235,7 @@ void AudioManager::paintEvent(QPaintEvent *event)
         }
         else
         {
+            qDebug() << "2";
             // fewer samples than width, we need to scale it up
             float nextXPos = 0.0f;
             float const barWidth = float(width) / float(drawWidth);
@@ -245,7 +247,7 @@ void AudioManager::paintEvent(QPaintEvent *event)
                 float const logMag = spectrogramData[sampleIndex];
                 if (logMag > 0.0f)
                 {
-                    painter.fillRect(int(nextXPos), int((1.0f - logMag) * height), int(barWidth), height, AudioConversionUtils::getMagnitudeColor(logMag));
+                    painter.fillRect(int(nextXPos), int((1.0f - logMag) * height), qCeil(barWidth), height, AudioConversionUtils::getMagnitudeColor(logMag));
                 }
                 nextXPos += barWidth;
             }
