@@ -99,7 +99,6 @@ private:
     QPushButton* m_btnOCR = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
-    Module::Common::OCR* m_moduleOCR = Q_NULLPTR;
 };
 }
 

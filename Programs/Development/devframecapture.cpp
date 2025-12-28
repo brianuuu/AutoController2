@@ -128,7 +128,8 @@ void DevFrameCapture::Start()
 
 void DevFrameCapture::Stop()
 {
-    ClearModule((Module::ModuleBase**)&m_moduleCapture);
+    ClearModule(m_moduleCapture);
+    m_moduleCapture = Q_NULLPTR;
 
     m_btnOCR->setEnabled(false);
     m_list->setEnabled(true);
@@ -442,19 +443,14 @@ void DevFrameCapture::OnRunOCR()
     if (!m_moduleCapture) return;
 
     m_btnOCR->setEnabled(false);
-    m_moduleOCR = AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), false);
+    AddModule<Module::Common::OCR>(&DevFrameCapture::OnOcrFinished, m_moduleCapture->GetResultMasked(), false);
 }
 
 void DevFrameCapture::OnOcrFinished()
 {
-    int const result = m_moduleOCR->GetResult();
-    if (m_moduleOCR->GetResult() < 0)
-    {
-        emit notifyFinished(result);
-        return;
-    }
+    if (OnModuleErrorQuit()) return;
 
-    ClearModule((Module::ModuleBase**)&m_moduleOCR);
+    ClearModule(sender());
     m_btnOCR->setEnabled(true);
 }
 

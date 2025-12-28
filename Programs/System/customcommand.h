@@ -43,7 +43,6 @@ private slots:
     void OnListChanged(QString const& str);
     void OnCommandChanged();
     void OnCommandEdited();
-    void OnCommandFinished();
     void OnCommandSave();
     void OnCommandDelete();
     void OnOpenDirectory();
@@ -60,7 +59,6 @@ private:
     QPushButton* m_btnDelete = Q_NULLPTR;
     QPushButton* m_btnDirectory = Q_NULLPTR;
 
-    Module::ModuleBase* m_module = Q_NULLPTR;
     bool m_validCommand = false;
 };
 }

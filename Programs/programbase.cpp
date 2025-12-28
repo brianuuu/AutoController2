@@ -136,16 +136,21 @@ void ProgramBase::AddModule(Module::ModuleBase *module)
     module->start();
 }
 
-void ProgramBase::ClearModule(Module::ModuleBase** pModule)
+void ProgramBase::ClearModule(QObject *sender)
 {
-    if (!*pModule) return;
+    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender);
+    ClearModule(module);
+}
 
-    (*pModule)->stop();
-    (*pModule)->wait();
-    delete *pModule;
+void ProgramBase::ClearModule(Module::ModuleBase *module)
+{
+    if (!module || !m_modules.contains(module)) return;
 
-    m_modules.remove(*pModule);
-    *pModule = Q_NULLPTR;
+    module->stop();
+    module->wait();
+    delete module;
+
+    m_modules.remove(module);
 }
 
 void ProgramBase::ClearModules()

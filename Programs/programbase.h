@@ -70,7 +70,8 @@ protected:
         return module;
     }
     void AddModule(Module::ModuleBase* module);
-    void ClearModule(Module::ModuleBase** pModule);
+    void ClearModule(QObject* sender);
+    void ClearModule(Module::ModuleBase* module);
     void ClearModules();
 
 public:
