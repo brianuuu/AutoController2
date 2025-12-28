@@ -31,7 +31,7 @@ void OCR::run()
         m_image.invertPixels();
     }
 
-    m_image.save(OCR_DIRECTORY + "capture.png", "PNG");
+    m_image.save(OCR_DIRECTORY + GetCaptureName(), "PNG");
 
     // Check if .traineddata exist
     if (!ProfileManager::OcrTrainedDataExist(m_language))
@@ -43,8 +43,8 @@ void OCR::run()
     }
 
     QStringList arg;
-    arg << "./capture.png";
-    arg << "./output";
+    arg << "./" + GetCaptureName();
+    arg << "./" + GetOutputName();
     arg << "--tessdata-dir" << ".";
     arg << "-l" << LanguageToPrefix(m_language);
     arg << "--psm" << "7";
@@ -65,7 +65,7 @@ void OCR::run()
     if (m_result < 0 || m_terminate) return;
 
     // get raw string
-    QFile output(OCR_DIRECTORY + "output.txt");
+    QFile output(OCR_DIRECTORY + GetOutputTextName());
     if (output.open(QIODevice::Text | QIODevice::ReadOnly))
     {
         QTextStream in(&output);
@@ -75,7 +75,7 @@ void OCR::run()
     }
     else
     {
-        m_error = "Unable to open output.txt";
+        m_error = "Unable to open " + GetOutputTextName();
         m_result = -1;
         return;
     }
@@ -112,9 +112,9 @@ void OCR::OnProcessErrored(QProcess::ProcessError error)
 
 void OCR::OnProcessFinished()
 {
-    if (!QFile::exists(OCR_DIRECTORY + "output.txt"))
+    if (!QFile::exists(OCR_DIRECTORY + GetOutputTextName()))
     {
-        m_error = "Expected tesseract output.txt not found";
+        m_error = "Expected tesseract " + GetOutputTextName() + " not found";
         m_result = -1;
     }
     quit();

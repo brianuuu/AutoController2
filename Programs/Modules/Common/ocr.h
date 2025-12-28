@@ -30,6 +30,11 @@ private slots:
     void OnProcessFinished();
 
 private:
+    QString GetCaptureName() const { return "capture" + QString::number(GetID()) + ".png"; }
+    QString GetOutputName() const { return "output" + QString::number(GetID()); }
+    QString GetOutputTextName() const { return GetOutputName() + ".txt"; }
+
+private:
     QProcess    m_process;
     QImage      m_image;
     bool        m_isNumber = false;
