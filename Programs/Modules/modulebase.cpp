@@ -8,6 +8,10 @@ namespace Module
 
 ModuleBase::ModuleBase(QObject *parent) : QThread(parent)
 {
+    // assign unique ID
+    static uint id = 0;
+    m_id = id++;
+
     connect(this, &ModuleBase::started, this, &ModuleBase::OnStarted, Qt::DirectConnection);
     connect(this, &ModuleBase::finished, this, &ModuleBase::OnFinished, Qt::DirectConnection);
 
@@ -37,7 +41,7 @@ void ModuleBase::OnFinished() const
 
 void ModuleBase::PrintLog(const QString &log, LogType type) const
 {
-    emit notifyLog(GetName(), log, type);
+    emit notifyLog(GetName() + "-" + QString::number(GetID()), log, type);
 }
 
 }

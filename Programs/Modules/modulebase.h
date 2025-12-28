@@ -14,6 +14,7 @@ public:
     explicit ModuleBase(QObject *parent = nullptr);
 
     virtual QString GetName() const = 0;
+    uint GetID() const { return m_id; }
 
     // try stopping module, not thread safe
     virtual void stop() { m_terminate = true; quit(); }
@@ -33,6 +34,7 @@ protected:
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
 protected:
+    uint m_id = 0;
     std::atomic_bool m_terminate = false;
     int m_result = 0;
     QString m_error;
