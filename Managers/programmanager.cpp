@@ -62,7 +62,7 @@ void ProgramManager::OnCategoryChanged(const QString &category)
 {
     m_programList->clear();
 
-    QStringList const& list = m_categoryToPrograms.value(category);
+    QStringList const& list = m_categoryToPrograms[category];
     for (QString const& name : list)
     {
         m_programList->addItem(name);
