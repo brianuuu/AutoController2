@@ -18,6 +18,7 @@ private:
 public:
     static bool EnsureDatabase(QString const& path);
     static OCREntries const& GetEntries(QString const& path, LanguageType language);
+    static QString GetExtension() { return ".entries"; }
 
     // Fix strings
     static QString NormalizeString(QString const& str);

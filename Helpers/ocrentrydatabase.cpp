@@ -3,8 +3,6 @@
 #include "Helpers/jsonhelper.h"
 #include "defines.h"
 
-#define DATABASE_EXTENSION ".entries"
-
 OCREntryDatabase& OCREntryDatabase::instance()
 {
     static OCREntryDatabase database;
@@ -23,7 +21,7 @@ bool OCREntryDatabase::EnsureDatabase(const QString &path)
     if (database.contains(path)) return true;
 
     // read database
-    QJsonObject object = JsonHelper::ReadJson(RESOURCES_PATH + path + DATABASE_EXTENSION);
+    QJsonObject object = JsonHelper::ReadJson(RESOURCES_PATH + path + GetExtension());
     if (object.isEmpty()) return false;
 
     LanguageEntries languageEntries;

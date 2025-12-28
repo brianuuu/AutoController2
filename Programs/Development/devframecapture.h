@@ -3,6 +3,7 @@
 
 #include <QDesktopServices>
 #include <QDir>
+#include <QDirIterator>
 #include <QFileDialog>
 #include <QLineEdit>
 
@@ -98,6 +99,8 @@ private:
     QPushButton* m_btnDelete = Q_NULLPTR;
     QPushButton* m_btnDirectory = Q_NULLPTR;
     QPushButton* m_btnOCR = Q_NULLPTR;
+
+    Setting::SettingComboBox* m_database = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
 };

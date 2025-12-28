@@ -2,6 +2,7 @@
 
 #include "Helpers/captureholder.h"
 #include "Helpers/jsonhelper.h"
+#include "Helpers/ocrentrydatabase.h"
 #include "Managers/videomanager.h"
 #include "Programs/Modules/Common/ocr.h"
 
@@ -19,19 +20,21 @@ DevFrameCapture::DevFrameCapture(QObject *parent) : ProgramBase(parent)
 
 void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
 {
-    QDir const directory(CaptureHolder::GetDirectory());
-    QStringList const files = directory.entryList({"*" + CaptureHolder::GetFormat()}, QDir::Files);
-
-    QStringList names = { FRAME_CAPTURE_CUSTOM };
-    for (QString const& file : files)
     {
-        names << file.mid(0, file.size() - CaptureHolder::GetFormat().size());
-    }
+        QDir const directory(CaptureHolder::GetDirectory());
+        QStringList const files = directory.entryList({"*" + CaptureHolder::GetFormat()}, QDir::Files);
 
-    m_list = new Setting::SettingComboBox("CaptureType", names);
-    m_savedSettings.insert(m_list);
-    AddSetting(layout, "Capture Preset:", "", m_list, true);
-    connect(m_list, &QComboBox::currentTextChanged, this, &DevFrameCapture::OnListChanged);
+        QStringList names = { FRAME_CAPTURE_CUSTOM };
+        for (QString const& file : files)
+        {
+            names << file.mid(0, file.size() - CaptureHolder::GetFormat().size());
+        }
+
+        m_list = new Setting::SettingComboBox("CaptureType", names);
+        m_savedSettings.insert(m_list);
+        AddSetting(layout, "Capture Preset:", "", m_list, true);
+        connect(m_list, &QComboBox::currentTextChanged, this, &DevFrameCapture::OnListChanged);
+    }
 
     static QList<QString> modes =
     {
@@ -97,6 +100,24 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     AddSettings(layout, "OCR:", "", {m_number, m_btnOCR}, true);
     m_number->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     connect(m_btnOCR, &QPushButton::clicked, this, &DevFrameCapture::OnRunOCR);
+
+    {
+        QStringList names = { "None" };
+        QDirIterator it(RESOURCES_PATH, QDirIterator::Subdirectories);
+        while (it.hasNext())
+        {
+            QString const path = it.next();
+            QString const extension = OCREntryDatabase::GetExtension();
+            if (path.endsWith(extension))
+            {
+                names << path.mid(0, path.size() - extension.size()).mid(RESOURCES_PATH.size());
+            }
+        }
+
+        m_database = new Setting::SettingComboBox("Database", names);
+        m_savedSettings.insert(m_database);
+        AddSetting(layout, "OCR Entries Preset:", "", m_database, true);
+    }
 
     AddSpacer(layout);
 
