@@ -44,6 +44,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/captureholder.h Helpers/captureholder.cpp
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
+        Helpers/ocrentrydatabase.h Helpers/ocrentrydatabase.cpp
         Helpers/serialholder.h Helpers/serialholder.cpp
         Helpers/stickpainter.h Helpers/stickpainter.cpp
         Managers/audiomanager.h Managers/audiomanager.cpp

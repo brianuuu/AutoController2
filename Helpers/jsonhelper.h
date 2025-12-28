@@ -2,6 +2,7 @@
 #define JSONHELPER_H
 
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QString>
 
