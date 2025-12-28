@@ -24,6 +24,8 @@ OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert, QObject *parent)
 
 void OCR::run()
 {
+    if (m_result < 0 || m_terminate) return;
+
     // by default, image from FrameCapture has black BG white text
     // OCR works better having white BG black text
     if (m_shouldInvert)

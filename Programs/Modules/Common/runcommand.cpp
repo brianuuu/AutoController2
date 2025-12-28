@@ -44,10 +44,7 @@ RunCommand::RunCommand
 
 void RunCommand::run()
 {
-    if (m_result < 0)
-    {
-        return;
-    }
+    if (m_result < 0 || m_terminate) return;
 
     if (m_name.isEmpty())
     {
