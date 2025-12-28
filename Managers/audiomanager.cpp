@@ -34,6 +34,7 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
     m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int16);
 
+    connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
     connect(m_listDisplay, &QComboBox::currentIndexChanged, this, &AudioManager::OnDisplayChanged);
     connect(m_volumeSlider, &QSlider::valueChanged, this, &AudioManager::OnVolumeChanged);
@@ -217,7 +218,6 @@ void AudioManager::paintEvent(QPaintEvent *event)
 
         if (drawWidth >= width)
         {
-            qDebug() << "1";
             // More samples then width, will need to ignore some
             float const sampleRatio = float(drawWidth) / float(width);
             for (int i = 0; i < width; i++)
@@ -235,7 +235,6 @@ void AudioManager::paintEvent(QPaintEvent *event)
         }
         else
         {
-            qDebug() << "2";
             // fewer samples than width, we need to scale it up
             float nextXPos = 0.0f;
             float const barWidth = float(width) / float(drawWidth);
@@ -343,6 +342,19 @@ void AudioManager::OnRefreshOutputList()
     if (foundPreviousOutput)
     {
         m_listOutput->setCurrentText(previousOutput);
+    }
+}
+
+void AudioManager::OnInputChanged(const QString &str)
+{
+    if (str == "None")
+    {
+        m_listDisplay->setCurrentIndex(0);
+        m_listDisplay->setEnabled(false);
+    }
+    else
+    {
+        m_listDisplay->setEnabled(true);
     }
 }
 
