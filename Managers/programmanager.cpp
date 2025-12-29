@@ -7,6 +7,7 @@
 
 #include "Programs/Development/devcommand.h"
 #include "Programs/Development/devframecapture.h"
+#include "Programs/PokemonLZA/donutmaker.h"
 #include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
@@ -38,6 +39,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     // register all programs
     RegisterProgram<Program::Development::DevCommand>();
     RegisterProgram<Program::Development::DevFrameCapture>();
+    RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::System::CommandRecorder>();
     RegisterProgram<Program::System::CustomCommand>();
 

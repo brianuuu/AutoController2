@@ -1,0 +1,5 @@
+- System: Command Recorder release
+- System: Custom Command release
+
+Bug Fixes:
+- Fixed commands after a loop unable to run and gets stuck
