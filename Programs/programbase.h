@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QLayout>
+#include <QMetaEnum>
 #include <QObject>
 
 #include "Types/logtype.h"
@@ -73,6 +74,14 @@ protected:
     void ClearModule(QObject* sender);
     void ClearModule(Module::ModuleBase* module);
     void ClearModules();
+
+    template<typename T>
+    T SetState(T state)
+    {
+        QString const str = QMetaEnum::fromType<T>().valueToKey(state);
+        PrintLog("State = " + str);
+        return state;
+    }
 
 public:
     static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
