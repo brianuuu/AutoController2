@@ -23,6 +23,7 @@ bool OCREntryDatabase::EnsureDatabase(const QString &path)
     // read database
     QJsonObject object = JsonHelper::ReadJson(RESOURCES_PATH + path + GetExtension());
     if (object.isEmpty()) return false;
+    //JsonHelper::WriteJson(RESOURCES_PATH + path + GetExtension(), object);
 
     LanguageEntries languageEntries;
     for (int i = 0; i < LT_COUNT; i++)
