@@ -6,7 +6,8 @@
 #include <QRegularExpression>
 
 #include "../modulebase.h"
-#include "Managers/managercollection.h"
+#include "Types/systemtype.h"
+#include "defines.h"
 
 namespace Module::Common
 {
@@ -22,6 +23,8 @@ public:
     // from QThread
     void run() override;
 
+    static QString GetDirectory() { return RESOURCES_PATH + "CommandCollection/"; }
+    static QString GetExtension() { return ".command"; }
     static QRegularExpression GetRegularExpression() { return QRegularExpression("[A-Za-z0-9()|,\-\.]*"); }
 
 signals:
@@ -31,7 +34,7 @@ private:
     void SendCurrentCommand(bool isLoopCount = false);
 
 private:
-    SerialManager*  m_serialManager = Q_NULLPTR;
+    SystemType      m_systemType = ST_COUNT;
 
     QString         m_name;
     QString         m_command;

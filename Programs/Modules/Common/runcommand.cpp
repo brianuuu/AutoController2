@@ -1,6 +1,9 @@
 #include "runcommand.h"
 
+#include "Helpers/jsonhelper.h"
 #include "Managers/keyboardmanager.h"
+#include "Managers/managercollection.h"
+#include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
 
 namespace Module::Common
@@ -16,8 +19,30 @@ RunCommand::RunCommand
 {
     if (isName)
     {
-        // TODO: read .ini
         m_name = nameOrCommand;
+
+        ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
+        m_systemType = profileManager->GetSystemType();
+
+        QString const name = Module::Common::RunCommand::GetDirectory() + m_name + Module::Common::RunCommand::GetExtension();
+        QJsonObject const object = JsonHelper::ReadJson(name);
+
+        QVariant command;
+        if (JsonHelper::ReadValue(object, SystemToString(m_systemType), command) && !command.toString().isEmpty())
+        {
+            m_command = command.toString();
+        }
+        else if (JsonHelper::ReadValue(object, "Default", command))
+        {
+            m_systemType = ST_COUNT;
+            m_command = command.toString();
+        }
+        else
+        {
+            m_error = "Command \"" + m_name + "\" not found";
+            m_result = -1;
+            return;
+        }
     }
     else
     {
@@ -27,15 +52,15 @@ RunCommand::RunCommand
     KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
     connect(this, &RunCommand::notifyButton, keyboardManager, &KeyboardManager::OnDisplayButton);
 
-    m_serialManager = ManagerCollection::GetManager<SerialManager>();
-    connect(this, &RunCommand::notifyButton, m_serialManager->GetHolder(), &SerialHolder::OnSendButton);
+    SerialManager* serialManager = ManagerCollection::GetManager<SerialManager>();
+    connect(this, &RunCommand::notifyButton, serialManager->GetHolder(), &SerialHolder::OnSendButton);
 
     if (!SerialManager::VerifyCommand(m_command, m_error))
     {
         m_result = -1;
     }
 
-    if (!m_serialManager->IsConnected())
+    if (!serialManager->IsConnected())
     {
         m_result = -1;
         m_error = "Serial not connected";
@@ -48,11 +73,12 @@ void RunCommand::run()
 
     if (m_name.isEmpty())
     {
-        PrintLog("Running command \"" + m_command + "\"");
+        PrintLog("Running command = " + m_command);
     }
     else
     {
-
+        QString const type = m_systemType == ST_COUNT ? "Default" : SystemToString(m_systemType);
+        PrintLog("Running command \"" + m_name + "\" for \"" + type + "\" = " + m_command);
     }
 
     while(!m_terminate)
