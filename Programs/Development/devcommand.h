@@ -1,0 +1,72 @@
+#ifndef DEVCOMMAND_H
+#define DEVCOMMAND_H
+
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QRegularExpressionValidator>
+
+#include "../programbase.h"
+#include "Programs/Settings/settingcombobox.h"
+#include "Programs/Settings/settinglineedit.h"
+
+namespace Program::Development
+{
+class DevCommand : public ProgramBase
+{
+    Q_OBJECT
+public:
+    explicit DevCommand(QObject* parent = nullptr);
+
+    static QString GetCategory() { return "Development"; }
+    static QString GetName() { return "Command Maker"; }
+
+    // from ProgramBase
+    void PopulateSettings(QBoxLayout* layout) override;
+    QString GetInternalName() const override { return "Dev-CommandMaker"; }
+    QString GetDescription() const override {
+        return "Test and create command for RunCommand modules";
+    }
+
+    bool RequireSerial() const override { return true; }
+    bool RequireVideo() const override { return false; }
+    bool RequireAudio() const override { return false; }
+
+    bool CanRun() const override;
+
+    void Start() override;
+    void Stop() override;
+
+private slots:
+    void OnListChanged(QString const& str);
+    void OnCommandChanged();
+    void OnCommandEdited();
+    void OnCommandSave();
+    void OnCommandDelete();
+    void OnOpenDirectory();
+
+private:
+    void VerifyCommand();
+
+private:
+    Setting::SettingComboBox* m_list = Q_NULLPTR;
+
+    struct CommandSettings
+    {
+        Setting::SettingLineEdit* m_command = Q_NULLPTR;
+        QLabel* m_labelStatus = Q_NULLPTR;
+    };
+    QList<CommandSettings> m_commandSettings;
+
+    QPushButton* m_btnSave = Q_NULLPTR;
+    QPushButton* m_btnDelete = Q_NULLPTR;
+    QPushButton* m_btnDirectory = Q_NULLPTR;
+
+    bool m_validCommand = false;
+};
+
+}
+
+#endif // DEVCOMMAND_H
