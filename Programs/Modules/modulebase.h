@@ -12,6 +12,7 @@ class ModuleBase : public QThread
     Q_OBJECT
 public:
     explicit ModuleBase(QObject *parent = nullptr);
+    static void ResetNextID();
 
     virtual QString GetName() const = 0;
     uint GetID() const { return m_id; }
@@ -38,6 +39,8 @@ protected:
     std::atomic_bool m_terminate = false;
     int m_result = 0;
     QString m_error;
+
+    static uint m_nextID;
 };
 }
 

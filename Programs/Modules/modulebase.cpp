@@ -5,18 +5,23 @@
 
 namespace Module
 {
+uint ModuleBase::m_nextID = 0u;
 
 ModuleBase::ModuleBase(QObject *parent) : QThread(parent)
 {
     // assign unique ID
-    static uint id = 0;
-    m_id = id++;
+    m_id = m_nextID++;
 
     connect(this, &ModuleBase::started, this, &ModuleBase::OnStarted, Qt::DirectConnection);
     connect(this, &ModuleBase::finished, this, &ModuleBase::OnFinished, Qt::DirectConnection);
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ModuleBase::notifyLog, logManager, &LogManager::PrintLog);
+}
+
+void ModuleBase::ResetNextID()
+{
+    m_nextID = 0u;
 }
 
 void ModuleBase::OnStarted() const

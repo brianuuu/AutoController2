@@ -68,7 +68,10 @@ void ProgramBase::ResetDefault()
 void ProgramBase::Start()
 {
     m_started = true;
+
+    Module::ModuleBase::ResetNextID();
     CleanOCRFiles();
+
     emit notifyStarted();
 }
 
