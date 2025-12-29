@@ -6,7 +6,9 @@
 #include <QWidget>
 
 #include "Programs/Settings/settinglanguage.h"
+#include "Programs/Settings/settingsystem.h"
 #include "Types/languagetype.h"
+#include "Types/systemtype.h"
 
 namespace Ui { class MainWindow; }
 
@@ -22,6 +24,8 @@ public:
 
 public:
     LanguageType GetLanguageType() const;
+    SystemType GetSystemType() const;
+
     static bool OCRTrainedDataExist(LanguageType type);
 
 protected:
@@ -40,6 +44,7 @@ private:
 private:
     // System
     Setting::SettingLanguage* m_language = Q_NULLPTR;
+    Setting::SettingSystem* m_system = Q_NULLPTR;
 };
 
 #endif // PROFILEMANAGER_H

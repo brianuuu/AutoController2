@@ -9,22 +9,34 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 {
     connect(ui->PB_ProfileSettings, &QPushButton::clicked, this, &ProfileManager::OnShow);
 
-    // setup layout
     this->setWindowTitle("Global Settings");
+    this->resize(500,200);
 
+    // setup layout
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
-    vBoxLayout->setSizeConstraint(QLayout::SetMinimumSize);
-    vBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
+    QScrollArea* scrollArea = new QScrollArea();
+    QWidget* scrollWidget = new QWidget();
+    QVBoxLayout* scrollLayout = new QVBoxLayout(scrollWidget);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(scrollWidget);
+    vBoxLayout->setContentsMargins(0,0,0,0);
+    vBoxLayout->addWidget(scrollArea);
 
     // system settings
-    QGroupBox* systemGroup = new QGroupBox("System");
-    vBoxLayout->addWidget(systemGroup);
+    Program::ProgramBase::AddText(scrollLayout, "System Settings", true);
+    QGroupBox* systemGroup = new QGroupBox();
+    systemGroup->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    scrollLayout->addWidget(systemGroup);
     {
         QVBoxLayout* systemLayout = new QVBoxLayout(systemGroup);
 
         m_language = new Setting::SettingLanguage("Language");
         Program::ProgramBase::AddSetting(systemLayout, "Language:", "Language of the Nintendo Switch system or the current game", m_language, true);
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
+
+        m_system = new Setting::SettingSystem("System");
+        Program::ProgramBase::AddSetting(systemLayout, "System:", "Type of the current Nintendo Switch system", m_system, true);
     }
 
     LoadSettings();
@@ -41,6 +53,11 @@ bool ProfileManager::OnCloseEvent()
 LanguageType ProfileManager::GetLanguageType() const
 {
     return (LanguageType)m_language->currentIndex();
+}
+
+SystemType ProfileManager::GetSystemType() const
+{
+    return (SystemType)m_system->currentIndex();
 }
 
 bool ProfileManager::OCRTrainedDataExist(LanguageType type)
@@ -81,6 +98,7 @@ void ProfileManager::LoadSettings()
     {
         QJsonObject system = JsonHelper::ReadObject(profileSettings, "System");
         m_language->Load(system);
+        m_system->Load(system);
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(profileSettings, "WindowSize");
@@ -89,6 +107,12 @@ void ProfileManager::LoadSettings()
         {
             this->move(x.toInt(), y.toInt());
         }
+
+        QVariant width, height;
+        if (JsonHelper::ReadValue(windowSize, "Width", width) && JsonHelper::ReadValue(windowSize, "Height", height))
+        {
+            this->resize(width.toInt(), height.toInt());
+        }
     }
 }
 
@@ -96,8 +120,11 @@ void ProfileManager::SaveSettings() const
 {
     QJsonObject system;
     m_language->Save(system);
+    m_system->Save(system);
 
     QJsonObject windowSize;
+    windowSize.insert("Width", this->width());
+    windowSize.insert("Height", this->height());
     windowSize.insert("X", this->pos().x());
     windowSize.insert("Y", this->pos().y());
 
