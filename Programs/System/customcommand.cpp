@@ -158,8 +158,9 @@ void CustomCommand::OnCommandSave()
     {
         m_list->addItem(name);
         m_list->model()->sort(0);
-        m_list->setCurrentText(name);
     }
+
+    m_list->setCurrentText(name);
 }
 
 void CustomCommand::OnCommandDelete()
