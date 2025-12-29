@@ -3,6 +3,7 @@
 
 #include <QElapsedTimer>
 #include <QPointF>
+#include <QRegularExpression>
 
 #include "../modulebase.h"
 #include "Managers/managercollection.h"
@@ -20,6 +21,8 @@ public:
 
     // from QThread
     void run() override;
+
+    static QRegularExpression GetRegularExpression() { return QRegularExpression("[A-Za-z0-9()|,\-\.]*"); }
 
 signals:
     void notifyButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());

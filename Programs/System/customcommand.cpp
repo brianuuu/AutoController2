@@ -32,7 +32,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
 
     m_command = new Setting::SettingLineEdit("CommandEdit");
-    m_command->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9()|,\-\.]*")));
+    m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
     AddSetting(layout, "Current Command:", "", m_command, false);
     connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandChanged);
     connect(m_command, &QLineEdit::textEdited, this, &CustomCommand::OnCommandEdited);
