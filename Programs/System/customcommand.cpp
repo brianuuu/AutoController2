@@ -70,10 +70,12 @@ void CustomCommand::Start()
 {
     ProgramBase::Start();
     AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, m_command->text(), false);
+    m_btnDelete->setEnabled(false);
 }
 
 void CustomCommand::Stop()
 {
+    m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_COMMAND_CUSTOM);
     ProgramBase::Stop();
 }
 

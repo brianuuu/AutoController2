@@ -132,6 +132,7 @@ void DevFrameCapture::Start()
     ProgramBase::Start();
     m_list->setEnabled(false);
     m_mode->setEnabled(false);
+    m_btnDelete->setEnabled(false);
 
     CaptureHolder::Mode const mode = CaptureHolder::Mode(m_mode->currentIndex());
     switch (mode)
@@ -161,6 +162,7 @@ void DevFrameCapture::Stop()
     ClearModule(m_moduleCapture);
     m_moduleCapture = Q_NULLPTR;
 
+    m_btnDelete->setEnabled(m_list->currentText() != FRAME_CAPTURE_CUSTOM);
     m_btnOCR->setEnabled(false);
     m_number->setEnabled(false);
     m_database->setEnabled(false);
