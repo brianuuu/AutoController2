@@ -32,7 +32,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         QVBoxLayout* systemLayout = new QVBoxLayout(systemGroup);
 
         m_language = new Setting::SettingLanguage("Language");
-        Program::ProgramBase::AddSetting(systemLayout, "Language:", "Language of the Nintendo Switch system or the current game", m_language, true);
+        Program::ProgramBase::AddSetting(systemLayout, "Language:", "Language of the Nintendo Switch system or the current game. Required for OCR (Text Recognition)", m_language, true);
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
 
         m_system = new Setting::SettingSystem("System");
