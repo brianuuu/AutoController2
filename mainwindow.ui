@@ -663,7 +663,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Profile Settings</string>
+               <string>Global Settings</string>
               </property>
              </widget>
             </item>

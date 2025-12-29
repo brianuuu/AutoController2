@@ -10,7 +10,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     connect(ui->PB_ProfileSettings, &QPushButton::clicked, this, &ProfileManager::OnShow);
 
     // setup layout
-    this->setWindowTitle("Profile Settings");
+    this->setWindowTitle("Global Settings");
 
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     vBoxLayout->setSizeConstraint(QLayout::SetMinimumSize);
