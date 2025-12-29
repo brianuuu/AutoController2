@@ -253,7 +253,7 @@ bool KeyboardManager::eventFilter(QObject *watched, QEvent *event)
         }
 
         int const key = e->key();
-        if (key == Qt::Key_Meta) // Windows key
+        if (key == Qt::Key_Meta || (key >= Qt::Key_F1 && key <= Qt::Key_F12)) // Windows/Function key
         {
             return false;
         }

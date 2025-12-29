@@ -29,6 +29,9 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_labelCamera = ui->L_CameraDevice;
     m_labelAudio = ui->L_AudioInput;
 
+    // shortcuts
+    new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
+
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
     connect(m_programList, &QListWidget::currentTextChanged, this, &ProgramManager::OnProgramChanged);
@@ -233,7 +236,7 @@ void ProgramManager::StartProgram()
     if (!m_program || m_program->IsRunning() || !m_program->CanRun()) return;
 
     m_program->Start();
-    m_btnStart->setText("Stop Program");
+    m_btnStart->setText("Stop Program (F5)");
     m_btnResetDefault->setEnabled(false);
     m_programCategory->setEnabled(false);
     m_programList->setEnabled(false);
@@ -247,7 +250,7 @@ void ProgramManager::StopProgram()
     if (!m_program || !m_program->IsRunning()) return;
 
     m_program->Stop();
-    m_btnStart->setText("Start Program");
+    m_btnStart->setText("Start Program (F5)");
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_programCategory->setEnabled(true);
     m_programList->setEnabled(true);

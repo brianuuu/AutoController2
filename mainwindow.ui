@@ -735,7 +735,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Start Program</string>
+             <string>Start Program (F5)</string>
             </property>
            </widget>
           </item>

@@ -1,5 +1,4 @@
-- System: Command Recorder release
-- System: Custom Command release
+- Added F5 shortcut and start/stop program
 
 Bug Fixes:
 - Fixed commands after a loop unable to run and gets stuck

@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QListWidget>
+#include <QShortcut>
 #include <QWidget>
 
 #include "Managers/managercollection.h"
