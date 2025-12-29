@@ -9,4 +9,6 @@
 #define RESOURCES_PATH QString("../Resources/")
 #define OCR_PATH RESOURCES_PATH + "Tesseract/"
 
+#define CUSTOM_SELECTION QString("(Custom)")
+
 #endif // DEFINES_H

@@ -7,7 +7,6 @@
 
 #define CUSTOM_COMMAND_DIRECTORY RESOURCES_PATH + "CustomCommand/"
 #define CUSTOM_COMMAND_FORMAT QString(".customcommand")
-#define CUSTOM_COMMAND_CUSTOM QString("(Custom)")
 
 namespace Program::System
 {
@@ -21,7 +20,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     QDir const directory(CUSTOM_COMMAND_DIRECTORY);
     QStringList const files = directory.entryList({"*" + CUSTOM_COMMAND_FORMAT}, QDir::Files);
 
-    QStringList names = { CUSTOM_COMMAND_CUSTOM };
+    QStringList names = { CUSTOM_SELECTION };
     for (QString const& file : files)
     {
         names << file.mid(0, file.size() - CUSTOM_COMMAND_FORMAT.size());
@@ -75,13 +74,13 @@ void CustomCommand::Start()
 
 void CustomCommand::Stop()
 {
-    m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_COMMAND_CUSTOM);
+    m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_SELECTION);
     ProgramBase::Stop();
 }
 
 void CustomCommand::OnListChanged(const QString &str)
 {
-    if (str == CUSTOM_COMMAND_CUSTOM)
+    if (str == CUSTOM_SELECTION)
     {
         // should save custom command
         m_savedSettings.insert(m_command);
@@ -132,7 +131,7 @@ void CustomCommand::OnCommandChanged()
 void CustomCommand::OnCommandEdited()
 {
     // user input only
-    m_list->setCurrentText(CUSTOM_COMMAND_CUSTOM);
+    m_list->setCurrentText(CUSTOM_SELECTION);
 }
 
 void CustomCommand::OnCommandSave()
@@ -144,7 +143,7 @@ void CustomCommand::OnCommandSave()
     QString name = info.fileName();
     name = name.mid(0, name.size() - CUSTOM_COMMAND_FORMAT.size());
 
-    if (name == CUSTOM_COMMAND_CUSTOM)
+    if (name == CUSTOM_SELECTION)
     {
         QMessageBox::critical(m_list, "Error", "This name is not allowed", QMessageBox::Ok);
         return;

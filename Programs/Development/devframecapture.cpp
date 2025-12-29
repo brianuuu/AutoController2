@@ -7,8 +7,6 @@
 #include "Managers/videomanager.h"
 #include "Programs/Modules/Common/ocr.h"
 
-#define FRAME_CAPTURE_CUSTOM QString("(Custom)")
-
 namespace Program::Development
 {
 
@@ -25,7 +23,7 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
         QDir const directory(CaptureHolder::GetDirectory());
         QStringList const files = directory.entryList({"*" + CaptureHolder::GetFormat()}, QDir::Files);
 
-        QStringList names = { FRAME_CAPTURE_CUSTOM };
+        QStringList names = { CUSTOM_SELECTION };
         for (QString const& file : files)
         {
             names << file.mid(0, file.size() - CaptureHolder::GetFormat().size());
@@ -163,7 +161,7 @@ void DevFrameCapture::Stop()
     ClearModule(m_moduleCapture);
     m_moduleCapture = Q_NULLPTR;
 
-    m_btnDelete->setEnabled(m_list->currentText() != FRAME_CAPTURE_CUSTOM);
+    m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_SELECTION);
     m_btnOCR->setEnabled(false);
     m_number->setEnabled(false);
     m_database->setEnabled(false);
@@ -175,7 +173,7 @@ void DevFrameCapture::Stop()
 
 void DevFrameCapture::OnListChanged(const QString &str)
 {
-    if (str == FRAME_CAPTURE_CUSTOM)
+    if (str == CUSTOM_SELECTION)
     {
         // should save settings
         m_savedSettings.insert(m_mode);
@@ -411,7 +409,7 @@ void DevFrameCapture::OnSave()
     QString name = info.fileName();
     name = name.mid(0, name.size() - CaptureHolder::GetFormat().size());
 
-    if (name == FRAME_CAPTURE_CUSTOM)
+    if (name == CUSTOM_SELECTION)
     {
         QMessageBox::critical(m_list, "Error", "This name is not allowed", QMessageBox::Ok);
         return;
@@ -524,7 +522,7 @@ HsvRange DevFrameCapture::GetRange() const
 
 void DevFrameCapture::SwitchToCustom()
 {
-    m_list->setCurrentText(FRAME_CAPTURE_CUSTOM);
+    m_list->setCurrentText(CUSTOM_SELECTION);
 }
 
 void DevFrameCapture::UpdateSettingEnabled()
