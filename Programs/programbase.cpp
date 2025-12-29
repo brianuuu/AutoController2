@@ -3,6 +3,7 @@
 #include "Helpers/jsonhelper.h"
 #include "Managers/audiomanager.h"
 #include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 #include "defines.h"
