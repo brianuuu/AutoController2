@@ -54,6 +54,11 @@ bool OCREntryDatabase::EnsureDatabase(const QString &path)
     return true;
 }
 
+bool OCREntryDatabase::EnsureDatabase(const QString &path, LanguageType language)
+{
+    return EnsureDatabase(path) && !GetEntries(path, language).isEmpty();
+}
+
 const OCREntries &OCREntryDatabase::GetEntries(const QString &path, LanguageType language)
 {
     EntryDatabase const& database = GetDatabase();
@@ -68,6 +73,11 @@ const OCREntries &OCREntryDatabase::GetEntries(const QString &path, LanguageType
 
     static OCREntries emptyEntries;
     return emptyEntries;
+}
+
+QString OCREntryDatabase::GetNoDatabaseError(const QString &path, LanguageType language)
+{
+    return path + " database is empty for " + LanguageToString(language) +", it may not be supported yet.";
 }
 
 QString OCREntryDatabase::NormalizeString(const QString &str)

@@ -17,7 +17,9 @@ private:
 
 public:
     static bool EnsureDatabase(QString const& path);
+    static bool EnsureDatabase(QString const& path, LanguageType language);
     static OCREntries const& GetEntries(QString const& path, LanguageType language);
+    static QString GetNoDatabaseError(QString const& path, LanguageType language);
     static QString GetExtension() { return ".entries"; }
 
     // OCR matching utils

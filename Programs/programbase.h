@@ -83,6 +83,7 @@ public:
     static void CleanOCRFiles();
 
 protected:
+    ProfileManager*     m_profileManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     AudioManager*       m_audioManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;

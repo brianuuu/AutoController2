@@ -149,7 +149,7 @@ void OCR::run()
     OCREntries const& entries = OCREntryDatabase::GetEntries(m_database, m_language);
     if (entries.isEmpty())
     {
-        PrintLog(m_database + " database is empty for " + LanguageToString(m_language) +", it may not be supported yet.", LOG_Error);
+        PrintLog(OCREntryDatabase::GetNoDatabaseError(m_database, m_language), LOG_Error);
         m_result = -1;
         return;
     }

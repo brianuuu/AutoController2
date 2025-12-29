@@ -3,6 +3,7 @@
 #include "Helpers/captureholder.h"
 #include "Helpers/jsonhelper.h"
 #include "Helpers/ocrentrydatabase.h"
+#include "Managers/profilemanager.h"
 #include "Managers/videomanager.h"
 #include "Programs/Modules/Common/ocr.h"
 
@@ -487,7 +488,7 @@ void DevFrameCapture::OnRunOCR()
     if (m_database->currentIndex() > 0)
     {
         QString const database = m_database->currentText();
-        if (OCREntryDatabase::EnsureDatabase(database))
+        if (OCREntryDatabase::EnsureDatabase(database, m_profileManager->GetLanguageType()))
         {
             module->SetOCREntries(database);
         }

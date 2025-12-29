@@ -11,6 +11,7 @@ namespace Program
 {
 ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
+    m_profileManager = ManagerCollection::GetManager<ProfileManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_audioManager = ManagerCollection::GetManager<AudioManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
