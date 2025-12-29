@@ -36,7 +36,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
 
         m_system = new Setting::SettingSystem("System");
-        Program::ProgramBase::AddSetting(systemLayout, "System:", "Type of the current Nintendo Switch system", m_system, true);
+        Program::ProgramBase::AddSetting(systemLayout, "System:", "Type of the current Nintendo Switch system. This can affect what command to be used", m_system, true);
     }
 
     LoadSettings();
