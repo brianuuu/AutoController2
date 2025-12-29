@@ -89,18 +89,21 @@ void RunCommand::run()
             break;
         }
 
-        SendCurrentCommand();
-
-        // wait for QTimer event
-        exec();
+        if (SendCurrentCommand())
+        {
+            // wait for QTimer event
+            exec();
+        }
     }
 
     // final stop command
     emit notifyButton(0);
 }
 
-void RunCommand::SendCurrentCommand(bool isLoopCount)
+bool RunCommand::SendCurrentCommand(bool isLoopCount)
 {
+    bool shouldExec = false;
+
     qsizetype endIndex = m_command.indexOf(',', m_commandIndex + 1);
     QString str = m_command.mid(m_commandIndex, endIndex == -1 ? -1 : endIndex - m_commandIndex);
 
@@ -110,8 +113,7 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
     {
         m_commandIndex++;
         m_commandLoopCounts.push_back(-1);
-        SendCurrentCommand();
-        return;
+        return SendCurrentCommand();
     }
 
     // look for loop end
@@ -122,8 +124,7 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
         {
             // first index is ')' expecting loop count next
             m_commandIndex++;
-            SendCurrentCommand(true);
-            return;
+            return SendCurrentCommand(true);
         }
         else
         {
@@ -179,7 +180,13 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
 
         if (loopLeft == 1)
         {
+            // immediately run next command if loop finished
             m_commandLoopCounts.pop_back();
+            if (endIndex != -1)
+            {
+                m_commandIndex = endIndex + 1;
+                return SendCurrentCommand();
+            }
         }
         else
         {
@@ -204,8 +211,7 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
                     if (loopEndCount == 0)
                     {
                         m_commandIndex++;
-                        SendCurrentCommand();
-                        return;
+                        return SendCurrentCommand();
                     }
                     else
                     {
@@ -220,6 +226,7 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
         //PrintLog("Button: \"" + str + "\"");
         emit notifyButton(buttonFlag, lStick, rStick);
         QTimer::singleShot(duration, this, [this]{ quit(); } );
+        shouldExec = true;
     }
 
     if (endIndex == -1)
@@ -230,6 +237,8 @@ void RunCommand::SendCurrentCommand(bool isLoopCount)
     {
         m_commandIndex = endIndex + 1;
     }
+
+    return shouldExec;
 }
 
 }

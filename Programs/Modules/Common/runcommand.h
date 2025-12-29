@@ -31,7 +31,7 @@ signals:
     void notifyButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
 
 private:
-    void SendCurrentCommand(bool isLoopCount = false);
+    bool SendCurrentCommand(bool isLoopCount = false);
 
 private:
     SystemType      m_systemType = ST_COUNT;
