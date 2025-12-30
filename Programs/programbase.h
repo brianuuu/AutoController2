@@ -76,10 +76,14 @@ protected:
     void ClearModules();
 
     template<typename T>
-    T SetState(T state)
+    T SetState(T state, QString const& log = "")
     {
-        QString const str = QMetaEnum::fromType<T>().valueToKey(state);
-        PrintLog("State = " + str);
+        QString fullLog = QString("State = ") + QMetaEnum::fromType<T>().valueToKey(state);
+        if (!log.isEmpty())
+        {
+            fullLog += ": " + log;
+        }
+        PrintLog(fullLog);
         return state;
     }
 
