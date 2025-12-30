@@ -159,7 +159,7 @@ void OCR::run()
     // Do comparison with each database string, find the best match entry
     int minDist = INT_MAX;
     int minSubStringMatched = -1;
-    for (auto iter = entries.begin(); iter != entries.end(); iter++)
+    for (auto iter = entries.cbegin(), end = entries.cend(); iter != end; iter++)
     {
         int dist = 0;
         QStringList const& subStrings = iter.value();
