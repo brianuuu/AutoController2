@@ -15,7 +15,8 @@ class RunCommand : public ModuleBase
 {
     Q_OBJECT
 public:
-    explicit RunCommand(QString const& nameOrCommand, bool isName, QObject *parent = nullptr);
+    explicit RunCommand(QString const& command);
+    explicit RunCommand(QString const& name, uint startDelay);
 
     // from ModuleBase
     QString GetName() const override { return "Common-RunCommand"; }
@@ -31,6 +32,7 @@ signals:
     void notifyButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
 
 private:
+    void InitCheck();
     bool SendCurrentCommand(bool isLoopCount = false);
 
 private:

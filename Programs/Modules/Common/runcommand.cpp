@@ -9,46 +9,50 @@
 namespace Module::Common
 {
 
-RunCommand::RunCommand
-(
-    const QString &nameOrCommand,
-    bool isName,
-    QObject *parent
-)
-    : ModuleBase(parent)
+RunCommand::RunCommand(const QString &command)
+    : ModuleBase(nullptr)
+    , m_command(command)
 {
-    if (isName)
+    InitCheck();
+}
+
+RunCommand::RunCommand(const QString &name, uint startDelay)
+    : ModuleBase(nullptr)
+    , m_name(name)
+{
+    ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
+    m_systemType = profileManager->GetSystemType();
+
+    QString const fullName = Module::Common::RunCommand::GetDirectory() + m_name + Module::Common::RunCommand::GetExtension();
+    QJsonObject const object = JsonHelper::ReadJson(fullName);
+
+    QVariant command;
+    if (JsonHelper::ReadValue(object, SystemToString(m_systemType), command) && !command.toString().isEmpty())
     {
-        m_name = nameOrCommand;
-
-        ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
-        m_systemType = profileManager->GetSystemType();
-
-        QString const name = Module::Common::RunCommand::GetDirectory() + m_name + Module::Common::RunCommand::GetExtension();
-        QJsonObject const object = JsonHelper::ReadJson(name);
-
-        QVariant command;
-        if (JsonHelper::ReadValue(object, SystemToString(m_systemType), command) && !command.toString().isEmpty())
-        {
-            m_command = command.toString();
-        }
-        else if (JsonHelper::ReadValue(object, "Default", command))
-        {
-            m_systemType = ST_COUNT;
-            m_command = command.toString();
-        }
-        else
-        {
-            m_error = "Command \"" + m_name + "\" not found";
-            m_result = -1;
-            return;
-        }
+        m_command = command.toString();
+    }
+    else if (JsonHelper::ReadValue(object, "Default", command))
+    {
+        m_systemType = ST_COUNT;
+        m_command = command.toString();
     }
     else
     {
-        m_command = nameOrCommand;
+        m_error = "Command \"" + m_name + "\" not found";
+        m_result = -1;
+        return;
     }
 
+    InitCheck();
+
+    if (startDelay > 0)
+    {
+        m_command = "None|" + QString::number(startDelay) + "," + m_command;
+    }
+}
+
+void RunCommand::InitCheck()
+{
     KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
     connect(this, &RunCommand::notifyButton, keyboardManager, &KeyboardManager::OnDisplayButton);
 

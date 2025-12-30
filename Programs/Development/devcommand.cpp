@@ -76,11 +76,11 @@ void DevCommand::Start()
     {
         SystemType const systemType = m_profileManager->GetSystemType();
         QString const systemCommand = m_commandSettings[systemType].m_command->text();
-        AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, systemCommand.isEmpty() ? m_commandSettings[ST_COUNT].m_command->text() : systemCommand, false);
+        AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, systemCommand.isEmpty() ? m_commandSettings[ST_COUNT].m_command->text() : systemCommand);
     }
     else
     {
-        AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, m_list->currentText(), true);
+        AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, m_list->currentText(), 0);
     }
 
     m_btnDelete->setEnabled(false);
