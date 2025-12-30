@@ -21,6 +21,9 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
     connect(m_audioManager->GetInputList(), &QComboBox::currentTextChanged, this, &ProgramBase::OnCanRunChanged);
     connect(m_vlcManager, &VlcManager::notifyHasVideo, this, &ProgramBase::OnCanRunChanged);
 
+    m_timer.setSingleShot(true);
+    connect(&m_timer, &QTimer::timeout, this, &ProgramBase::OnWaitTimeout);
+
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ProgramBase::notifyLog, logManager, &LogManager::PrintLog);
 }

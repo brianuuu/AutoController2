@@ -2,10 +2,12 @@
 #define PROGRAMBASE_H
 
 #include <QComboBox>
+#include <QElapsedTimer>
 #include <QLabel>
 #include <QLayout>
 #include <QMetaEnum>
 #include <QObject>
+#include <QTimer>
 
 #include "Types/logtype.h"
 #include "Managers/managercollection.h"
@@ -59,6 +61,9 @@ public slots:
     void OnModuleFinishQuit();
     bool OnModuleErrorQuit();
 
+protected slots:
+    virtual void OnWaitTimeout() {}
+
 protected:
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
@@ -102,6 +107,8 @@ protected:
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
+    QTimer m_timer;
+    QElapsedTimer m_elapsedTimer;
     QSet<Setting::SettingBase*> m_savedSettings;
     QSet<Module::ModuleBase*> m_modules;
 };
