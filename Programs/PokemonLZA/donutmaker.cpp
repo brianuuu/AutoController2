@@ -27,7 +27,7 @@ void DonutMaker::PopulateSettings(QBoxLayout *layout)
     AddSettings(layout, "Hyper Berry Order:", "Up/Down commands to select berries, separated by commas. Example: 2,-1,0,0 (Four berries, down twice, up once, then same berry twice)", {m_status, m_order}, true);
     connect(m_order, &QLineEdit::textChanged, this, &DonutMaker::OnOrderChanged);
 
-    m_power = new Setting::PokemonLZA::SettingFlavorPower("FlavorPower");
+    m_power = new FlavorPower("FlavorPower");
     m_savedSettings.insert(m_power);
     AddSetting(layout, "Flavor Power Selection:", "Drag & Drop desired flavor power into each slot, each slot can have multiple powers where at least one will be matched (all 3 levels in the same slot will pick any level etc.)", m_power, false);
     m_power->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -43,6 +43,13 @@ bool DonutMaker::CanRun() const
 void DonutMaker::Start()
 {
     ProgramBase::Start();
+
+    m_cachedSlots = m_power->GetPowerSlots();
+    for (int i = 0; i < 3; i++)
+    {
+        m_powerMatched[i] = m_cachedSlots[i].isEmpty();
+    }
+
     StateBackupSave();
 }
 

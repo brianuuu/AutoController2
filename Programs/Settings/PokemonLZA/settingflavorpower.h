@@ -23,7 +23,8 @@ public:
     void ResetDefault() override;
 
     // query
-    QList<QStringList> GetPowerSlots() const;
+    using PowerSlots = QList<QSet<QString>>;
+    PowerSlots GetPowerSlots() const;
 
 private slots:
     void OnFilterChanged();

@@ -69,9 +69,13 @@ private:
     Setting::SettingSpinBox* m_count = Q_NULLPTR;
     Setting::SettingLineEdit* m_order = Q_NULLPTR;
     QLabel* m_status = Q_NULLPTR;
-    Setting::PokemonLZA::SettingFlavorPower* m_power = Q_NULLPTR;
+
+    using FlavorPower = Setting::PokemonLZA::SettingFlavorPower;
+    FlavorPower* m_power = Q_NULLPTR;
+    FlavorPower::PowerSlots m_cachedSlots;
 
     State m_state;
+    bool m_powerMatched[3] = {false, false, false};
     bool m_validOrder = false;
 };
 }

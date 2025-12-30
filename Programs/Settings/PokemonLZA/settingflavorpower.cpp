@@ -109,14 +109,14 @@ void SettingFlavorPower::ResetDefault()
     ResetLists();
 }
 
-QList<QStringList> SettingFlavorPower::GetPowerSlots() const
+SettingFlavorPower::PowerSlots SettingFlavorPower::GetPowerSlots() const
 {
-    QList<QStringList> powerSlots(3);
+    PowerSlots powerSlots(3);
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < m_power[i]->count(); j++)
         {
-            powerSlots[i] << m_power[i]->item(j)->text();
+            powerSlots[i].insert(m_power[i]->item(j)->text());
         }
     }
 
