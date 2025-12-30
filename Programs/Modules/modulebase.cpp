@@ -12,8 +12,8 @@ ModuleBase::ModuleBase(QObject *parent) : QThread(parent)
     // assign unique ID
     m_id = m_nextID++;
 
-    connect(this, &ModuleBase::started, this, &ModuleBase::OnStarted, Qt::DirectConnection);
-    connect(this, &ModuleBase::finished, this, &ModuleBase::OnFinished, Qt::DirectConnection);
+    //connect(this, &ModuleBase::started, this, &ModuleBase::OnStarted, Qt::DirectConnection);
+    //connect(this, &ModuleBase::finished, this, &ModuleBase::OnFinished, Qt::DirectConnection);
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ModuleBase::notifyLog, logManager, &LogManager::PrintLog);
