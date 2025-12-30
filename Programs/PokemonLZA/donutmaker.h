@@ -37,12 +37,17 @@ private:
     {
         BackupSave,
         Restart,
+        LaunchGame,
+        TitleScreen,
+        TitleLoading,
+        WaitLoadFinish,
     };
     Q_ENUM(State)
 
 private slots:
     void OnOrderChanged(QString const& str);
     void OnCommandFinished();
+    void OnFrameCaptureMatched(bool matched);
 
 private:
     void VerifyOrder();
@@ -50,6 +55,7 @@ private:
     // states
     void StateBackupSave();
     void StateRestart();
+    void AddBlackScreenModule();
 
 private:
     Setting::SettingSpinBox* m_count = Q_NULLPTR;

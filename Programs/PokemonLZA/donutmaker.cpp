@@ -1,4 +1,5 @@
 #include "donutmaker.h"
+#include "Programs/Modules/Common/framecapture.h"
 #include "Programs/Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
@@ -63,12 +64,60 @@ void DonutMaker::OnCommandFinished()
     }
     case Restart:
     {
-        // TODO:
+        m_state = SetState(State::LaunchGame, "Waiting for title screen");
+        AddBlackScreenModule();
+        break;
+    }
+    case TitleLoading:
+    {
+        AddBlackScreenModule();
         break;
     }
     default:
     {
         PrintLog("Unhandled state after command is finished", LOG_Error);
+        emit notifyFinished(-1);
+        return;
+    }
+    }
+}
+
+void DonutMaker::OnFrameCaptureMatched(bool matched)
+{
+    switch (m_state)
+    {
+    case LaunchGame:
+    case TitleLoading:
+    {
+        if (matched)
+        {
+            m_state = SetState((State)(m_state + 1));
+        }
+        break;
+    }
+    case TitleScreen:
+    {
+        if (!matched)
+        {
+            // TODO: load backup save
+            ClearModule(sender());
+            m_state = SetState(State::TitleLoading, "Title screen detected, starting game");
+            AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "A|Spam|1000", false);
+        }
+        break;
+    }
+    case WaitLoadFinish:
+    {
+        if (!matched)
+        {
+            ClearModule(sender());
+            emit notifyFinished(0);
+        }
+        break;
+    }
+    default:
+    {
+        PrintLog("Unhandled state after frame capture has result", LOG_Error);
         emit notifyFinished(-1);
         return;
     }
@@ -96,14 +145,22 @@ void DonutMaker::VerifyOrder()
 
 void DonutMaker::StateBackupSave()
 {
-    m_state = SetState(State::BackupSave);
+    m_state = SetState(State::BackupSave, "Putting down backup save");
     AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_BackupSave", true);
 }
 
 void DonutMaker::StateRestart()
 {
-    m_state = SetState(State::Restart);
+    m_state = SetState(State::Restart, "Restarting game");
     AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "System_RestartGame", true);
+}
+
+void DonutMaker::AddBlackScreenModule()
+{
+    Module::Common::FrameCapture* module = new Module::Common::FrameCapture("PLZA_LoadingBlackScreen");
+    connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
+    connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &DonutMaker::OnFrameCaptureMatched);
+    AddModule(module);
 }
 
 }
