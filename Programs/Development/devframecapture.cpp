@@ -289,7 +289,7 @@ void DevFrameCapture::OnListChanged(const QString &str)
             m_maxS->setValue(value.toInt());
             m_maxS->blockSignals(false);
         }
-        if (JsonHelper::ReadValue(object, "MaxS", value))
+        if (JsonHelper::ReadValue(object, "MaxV", value))
         {
             m_maxV->blockSignals(true);
             m_maxV->setValue(value.toInt());
