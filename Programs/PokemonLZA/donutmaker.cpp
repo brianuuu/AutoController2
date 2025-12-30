@@ -45,10 +45,6 @@ void DonutMaker::Start()
     ProgramBase::Start();
 
     m_cachedSlots = m_power->GetPowerSlots();
-    for (int i = 0; i < 3; i++)
-    {
-        m_powerMatched[i] = m_cachedSlots[i].isEmpty();
-    }
 
     StateBackupSave();
 }
@@ -81,6 +77,51 @@ void DonutMaker::OnCommandFinished()
     case EnterHotelZ:
     {
         AddBlackScreenModule();
+        break;
+    }
+    case TalkToAnsha:
+    {
+        QString command = "(Minus|50,None|50)2";
+        QStringList const orders = m_order->text().split(',');
+        for (QString const& order : orders)
+        {
+            int const number = order.toInt();
+            if (number > 0)
+            {
+                command += ",(LDown|50,None|100)" + QString::number(number);
+            }
+            else if (number < 0)
+            {
+                command += ",(LUp|50,None|100)" + QString::number(-number);
+            }
+            command += ",A|50,None|50";
+        }
+
+        m_state = SetState(State::SelectBerries, "Selecting berries");
+        DONUT_MAKER_RUN_COMMAND(command);
+        break;
+    }
+    case SelectBerries:
+    {
+        m_state = SetState(State::MakeDonut, "Making donut");
+        DONUT_MAKER_RUN_COMMAND("PLZA_MakeDonut", 0);
+        break;
+    }
+    case MakeDonut:
+    {
+        m_state = SetState(State::PowerCapture, "Performing OCR on flavor powers");
+
+        m_powerHasOCR.clear();
+        m_powerEntries.clear();
+        for (int i = 0; i < 3; i++)
+        {
+            Module::Common::FrameCapture* module = new Module::Common::FrameCapture("PLZA_FlavorPowerSlot" + QString::number(i+1));
+            connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
+            connect(module, &Module::Common::FrameCapture::notifyResultMean, this, &DonutMaker::OnFrameCaptureMean);
+
+            m_powerHasOCR[module] = false;
+            AddModule(module);
+        }
         break;
     }
     default:
@@ -147,6 +188,83 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
         emit notifyFinished(-1);
         return;
     }
+    }
+}
+
+void DonutMaker::OnFrameCaptureMean(qreal mean, QImage masked)
+{
+    // only expecting State::PowerCapture
+    if (!sender()) return;
+
+    // do this so the FrameCapture module stay
+    Module::Common::FrameCapture* frameCapture = qobject_cast<Module::Common::FrameCapture*>(sender());
+    if (!m_powerHasOCR[frameCapture])
+    {
+        m_powerHasOCR[frameCapture] = true;
+
+        Module::Common::OCR* ocr = new Module::Common::OCR(masked, false);
+        connect(ocr, &QThread::finished, this, &DonutMaker::OnOCRFinished);
+
+        QString const database = "PokemonLZA/FlavorPowers";
+        if (OCREntryDatabase::EnsureDatabase(database, m_profileManager->GetLanguageType()))
+        {
+            ocr->SetOCREntries(database);
+        }
+
+        AddModule(ocr);
+    }
+}
+
+void DonutMaker::OnOCRFinished()
+{
+    // only expecting State::PowerCapture
+    if (OnModuleErrorQuit()) return;
+
+    // wait until there are three OCR results
+    Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
+    m_powerEntries.insert(ocr->GetResultEntry());
+    ClearModule(ocr);
+
+    if (m_powerEntries.size() == 3)
+    {
+        for (Module::ModuleBase* frameCapture : m_powerHasOCR.keys())
+        {
+            ClearModule(frameCapture);
+        }
+
+        // do matching with cached powers
+        bool allFound = true;
+        for (int i = 0; i < 3; i++)
+        {
+            bool found = false;
+            QSet<QString> const& powers = m_cachedSlots[i];
+            if (powers.isEmpty())
+            {
+                // empty slot
+                continue;
+            }
+
+            for (QString const& power : powers)
+            {
+                if (m_powerEntries.contains(power))
+                {
+                    PrintLog(power + " has matched slot " + QString::number(i));
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                // current slot cannot be found, failed donut
+                PrintLog("Cannot find any flavor power in slot " + QString::number(i), LOG_Warning);
+                allFound = false;
+                break;
+            }
+        }
+
+        // TODO:
+        emit notifyFinished(0);
     }
 }
 

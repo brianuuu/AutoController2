@@ -49,6 +49,10 @@ private:
         EnterHotelZLoadWait,
 
         TalkToAnsha,
+        SelectBerries,
+        MakeDonut,
+
+        PowerCapture,
     };
     Q_ENUM(State)
 
@@ -56,6 +60,8 @@ private slots:
     void OnOrderChanged(QString const& str);
     void OnCommandFinished();
     void OnFrameCaptureMatched(bool matched);
+    void OnFrameCaptureMean(qreal mean, QImage masked);
+    void OnOCRFinished();
 
 private:
     void VerifyOrder();
@@ -75,8 +81,10 @@ private:
     FlavorPower::PowerSlots m_cachedSlots;
 
     State m_state;
-    bool m_powerMatched[3] = {false, false, false};
     bool m_validOrder = false;
+
+    QMap<Module::ModuleBase*, bool> m_powerHasOCR;
+    QSet<QString> m_powerEntries;
 };
 }
 
