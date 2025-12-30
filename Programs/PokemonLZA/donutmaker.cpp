@@ -146,7 +146,7 @@ void DonutMaker::VerifyOrder()
 void DonutMaker::StateBackupSave()
 {
     m_state = SetState(State::BackupSave, "Putting down backup save");
-    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_BackupSave", true);
+    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_MakeBackupSave", true);
 }
 
 void DonutMaker::StateRestart()
