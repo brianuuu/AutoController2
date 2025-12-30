@@ -62,12 +62,46 @@ SettingFlavorPower::SettingFlavorPower(const QString &name) : SettingBase(name)
 
 void SettingFlavorPower::Load(QJsonObject &object)
 {
+    QStringList selectedPowers;
 
+    QVariant value;
+    for (int i = 0; i < 3; i++)
+    {
+        if (JsonHelper::ReadValue(object, m_name + "Slot" + QString::number(i), value))
+        {
+            QStringList const list = value.toStringList();
+            m_power[i]->addItems(list);
+            selectedPowers << list;
+        }
+    }
+
+    // find all selected items from available powers
+    QList<QListWidgetItem*> matchedItems;
+    for (QString const& power : std::as_const(selectedPowers))
+    {
+        matchedItems << m_allPower->findItems(power, Qt::MatchExactly);
+    }
+
+    // remove selected items from available powers
+    for (QListWidgetItem* item : std::as_const(matchedItems))
+    {
+        delete m_allPower->takeItem(m_allPower->row(item));
+    }
 }
 
 void SettingFlavorPower::Save(QJsonObject &object) const
 {
+    QStringList list;
+    for (int i = 0; i < 3; i++)
+    {
+        list.clear();
+        for (int j = 0; j < m_power[i]->count(); j++)
+        {
+            list << m_power[i]->item(j)->text();
+        }
 
+        object.insert(m_name + "Slot" + QString::number(i), QJsonArray::fromStringList(list));
+    }
 }
 
 void SettingFlavorPower::ResetDefault()
