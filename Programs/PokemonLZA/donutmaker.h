@@ -4,6 +4,7 @@
 #include "../programbase.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingspinbox.h"
+#include "Programs/Settings/PokemonLZA/settingflavorpower.h"
 
 namespace Program::PokemonLZA
 {
@@ -68,6 +69,7 @@ private:
     Setting::SettingSpinBox* m_count = Q_NULLPTR;
     Setting::SettingLineEdit* m_order = Q_NULLPTR;
     QLabel* m_status = Q_NULLPTR;
+    Setting::PokemonLZA::SettingFlavorPower* m_power = Q_NULLPTR;
 
     State m_state;
     bool m_validOrder = false;

@@ -64,6 +64,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
         Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
+        Programs/Settings/PokemonLZA/settingflavorpower.h Programs/Settings/PokemonLZA/settingflavorpower.cpp
         Programs/Settings/settingbase.h
         Programs/Settings/settingcheckbox.cpp Programs/Settings/settingcheckbox.h
         Programs/Settings/settingcolor.h Programs/Settings/settingcolor.cpp
