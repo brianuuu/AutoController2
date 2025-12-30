@@ -28,6 +28,10 @@ public:
     // from QThread
     void run() override;
 
+signals:
+    void notifyResultMatched(bool);
+    void notifyResultMean(qreal);
+
 private:
     QWaitCondition  m_condition;
     mutable QMutex  m_workMutex;

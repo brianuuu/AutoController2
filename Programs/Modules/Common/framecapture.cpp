@@ -83,6 +83,7 @@ void FrameCapture::run()
                 QColor const target = GetTargetColor();
                 m_resultColor = pixel;
                 m_resultMatched = GetColorMatch(pixel, target);
+                emit notifyResultMatched(m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::PointRangeMatch:
@@ -90,6 +91,7 @@ void FrameCapture::run()
                 HsvRange const range = GetHsvRange();
                 m_resultColor = pixel.toHsv();
                 m_resultMatched = GetColorMatchHSV(pixel, range);
+                emit notifyResultMatched(m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::AreaColorMatch:
@@ -97,12 +99,14 @@ void FrameCapture::run()
                 QColor const target = GetTargetColor();
                 m_resultColor = GetAverageColor(frame);
                 m_resultMatched = GetColorMatch(m_resultColor, target);
+                emit notifyResultMatched(m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::AreaRangeMatch:
             {
                 HsvRange const range = GetHsvRange();
                 m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
+                emit notifyResultMean(m_resultMean);
                 break;
             }
             default: break;
