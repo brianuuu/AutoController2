@@ -24,7 +24,7 @@ void DonutMaker::PopulateSettings(QBoxLayout *layout)
     m_order = new Setting::SettingLineEdit("BerryOrder");
     m_order->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9,\-]*")));
     m_savedSettings.insert(m_order);
-    AddSettings(layout, "Hyper Berry Order:", "Up/Down commands to select berries, separated by commas. Example: 2,-1,0,0 (Four berries, down twice, up once, then same berry twice)", {m_status, m_order}, true);
+    AddSettings(layout, "Hyper Berry Order:", "Up/Down commands to select berries, separated by commas. Positive = Down, Negative = Up. Example: 2,-1,0,0 (Four berries, down twice, up once, then same berry twice)", {m_status, m_order}, true);
     connect(m_order, &QLineEdit::textChanged, this, &DonutMaker::OnOrderChanged);
 
     m_power = new FlavorPower("FlavorPower");
@@ -155,10 +155,17 @@ void DonutMaker::VerifyOrder()
     m_validOrder = true;
 
     QStringList const orders = m_order->text().split(',');
-    for (QString const& order : orders)
+    if (orders.size() < 3)
     {
-        order.toInt(&m_validOrder);
-        if (!m_validOrder) break;
+        m_validOrder = false;
+    }
+    else
+    {
+        for (QString const& order : orders)
+        {
+            order.toInt(&m_validOrder);
+            if (!m_validOrder) break;
+        }
     }
 
     QPalette palette = m_status->palette();
