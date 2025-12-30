@@ -151,6 +151,7 @@ void DevFrameCapture::Start()
         m_number->setEnabled(true);
         m_database->setEnabled(true);
         break;
+    default: break;
     }
 
     AddModule(m_moduleCapture);
@@ -173,6 +174,7 @@ void DevFrameCapture::Stop()
 
 void DevFrameCapture::OnListChanged(const QString &str)
 {
+    m_btnDelete->setEnabled(!m_started && m_list->currentText() != CUSTOM_SELECTION);
     if (str == CUSTOM_SELECTION)
     {
         // should save settings
@@ -189,7 +191,6 @@ void DevFrameCapture::OnListChanged(const QString &str)
         m_savedSettings.insert(m_maxV);
         m_savedSettings.insert(m_color);
         m_savedSettings.insert(m_mean);
-        m_btnDelete->setEnabled(false);
         return;
     }
     else
@@ -208,7 +209,6 @@ void DevFrameCapture::OnListChanged(const QString &str)
         m_savedSettings.remove(m_maxV);
         m_savedSettings.remove(m_color);
         m_savedSettings.remove(m_mean);
-        m_btnDelete->setEnabled(true);
     }
 
     QString const name = CaptureHolder::GetDirectory() + str + CaptureHolder::GetFormat();

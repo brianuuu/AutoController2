@@ -94,6 +94,7 @@ void DevCommand::Stop()
 
 void DevCommand::OnListChanged(const QString &str)
 {
+    m_btnDelete->setEnabled(!m_started && m_list->currentText() != CUSTOM_SELECTION);
     if (str == CUSTOM_SELECTION)
     {
         // should save custom command
@@ -101,7 +102,6 @@ void DevCommand::OnListChanged(const QString &str)
         {
             m_savedSettings.insert(settings.m_command);
         }
-        m_btnDelete->setEnabled(false);
         return;
     }
     else
@@ -111,7 +111,6 @@ void DevCommand::OnListChanged(const QString &str)
         {
             m_savedSettings.remove(settings.m_command);
         }
-        m_btnDelete->setEnabled(true);
     }
 
     QString const name = Module::Common::RunCommand::GetDirectory() + str + Module::Common::RunCommand::GetExtension();
