@@ -32,17 +32,31 @@ public:
     void Start() override;
     void Stop() override;
 
+private:
+    enum State
+    {
+        BackupSave,
+        Restart,
+    };
+    Q_ENUM(State)
+
 private slots:
     void OnOrderChanged(QString const& str);
+    void OnCommandFinished();
 
 private:
     void VerifyOrder();
+
+    // states
+    void StateBackupSave();
+    void StateRestart();
 
 private:
     Setting::SettingSpinBox* m_count = Q_NULLPTR;
     Setting::SettingLineEdit* m_order = Q_NULLPTR;
     QLabel* m_status = Q_NULLPTR;
 
+    State m_state;
     bool m_validOrder = false;
 };
 }

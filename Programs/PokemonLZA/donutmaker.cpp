@@ -1,4 +1,5 @@
 #include "donutmaker.h"
+#include "Programs/Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
 {
@@ -35,6 +36,7 @@ bool DonutMaker::CanRun() const
 void DonutMaker::Start()
 {
     ProgramBase::Start();
+    StateBackupSave();
 }
 
 void DonutMaker::Stop()
@@ -45,6 +47,32 @@ void DonutMaker::Stop()
 void DonutMaker::OnOrderChanged(const QString &str)
 {
     VerifyOrder();
+}
+
+void DonutMaker::OnCommandFinished()
+{
+    if (OnModuleErrorQuit()) return;
+    ClearModule(sender());
+
+    switch (m_state)
+    {
+    case BackupSave:
+    {
+        StateRestart();
+        break;
+    }
+    case Restart:
+    {
+        // TODO:
+        break;
+    }
+    default:
+    {
+        PrintLog("Unhandled state after command is finished", LOG_Error);
+        emit notifyFinished(-1);
+        return;
+    }
+    }
 }
 
 void DonutMaker::VerifyOrder()
@@ -64,6 +92,18 @@ void DonutMaker::VerifyOrder()
     m_status->setText(m_validOrder ? "Valid" : "Invalid");
 
     OnCanRunChanged();
+}
+
+void DonutMaker::StateBackupSave()
+{
+    m_state = SetState(State::BackupSave);
+    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_BackupSave", true);
+}
+
+void DonutMaker::StateRestart()
+{
+    m_state = SetState(State::Restart);
+    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "System_RestartGame", true);
 }
 
 }
