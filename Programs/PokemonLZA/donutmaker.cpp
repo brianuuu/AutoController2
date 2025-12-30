@@ -1,5 +1,9 @@
 #include "donutmaker.h"
+
+#include "Helpers/ocrentrydatabase.h"
+#include "Managers/profilemanager.h"
 #include "Programs/Modules/Common/framecapture.h"
+#include "Programs/Modules/Common/ocr.h"
 #include "Programs/Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
