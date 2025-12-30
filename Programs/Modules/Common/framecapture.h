@@ -30,7 +30,7 @@ public:
 
 signals:
     void notifyResultMatched(bool);
-    void notifyResultMean(qreal);
+    void notifyResultMean(qreal, QImage);
 
 private:
     QWaitCondition  m_condition;
