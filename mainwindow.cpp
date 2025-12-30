@@ -119,6 +119,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         if (widget->isActiveWindow())
         {
             if (m_logManager) m_logManager->raise();
+            if (m_profileManager) m_profileManager->raise();
             if (m_keyboardManager) m_keyboardManager->raise();
             if (m_vlcManager) m_vlcManager->raise();
             this->raise();
