@@ -99,10 +99,9 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
     {
         if (!matched)
         {
-            // TODO: load backup save
             ClearModule(sender());
             m_state = SetState(State::TitleLoading, "Title screen detected, starting game");
-            AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "A|Spam|1000", false);
+            AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_LoadBackupSave", true);
         }
         break;
     }
