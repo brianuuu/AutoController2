@@ -96,6 +96,12 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
         return false;
     }
 
+    if (command.contains("()") || command.contains("(,") || command.contains(",)"))
+    {
+        errorMsg = "Invalid loop command";
+        return false;
+    }
+
     int minDuration = INT_MAX;
     bool isLoopCount = false;
     bool hasInfiniteLoop = false;
