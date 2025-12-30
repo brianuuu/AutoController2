@@ -36,11 +36,18 @@ private:
     enum State
     {
         BackupSave,
+
         Restart,
-        LaunchGame,
         TitleScreen,
-        TitleLoading,
-        WaitLoadFinish,
+        GameLoadStart,
+        GameLoadWait,
+
+        FlyToHotelZ,
+        FlyToHotelZLoadWait,
+        EnterHotelZ,
+        EnterHotelZLoadWait,
+
+        TalkToAnsha,
     };
     Q_ENUM(State)
 

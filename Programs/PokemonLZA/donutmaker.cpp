@@ -5,6 +5,8 @@
 namespace Program::PokemonLZA
 {
 
+#define DONUT_MAKER_RUN_COMMAND(...) AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, __VA_ARGS__)
+
 DonutMaker::DonutMaker(QObject *parent) : ProgramBase(parent)
 {
 
@@ -63,12 +65,9 @@ void DonutMaker::OnCommandFinished()
         break;
     }
     case Restart:
-    {
-        m_state = SetState(State::LaunchGame, "Waiting for title screen");
-        AddBlackScreenModule();
-        break;
-    }
-    case TitleLoading:
+    case GameLoadStart:
+    case FlyToHotelZ:
+    case EnterHotelZ:
     {
         AddBlackScreenModule();
         break;
@@ -86,31 +85,48 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
 {
     switch (m_state)
     {
-    case LaunchGame:
-    case TitleLoading:
+    case Restart:
+    case GameLoadStart:
+    case FlyToHotelZ:
+    case EnterHotelZ:
     {
+        // wait for black screen
         if (matched)
         {
+            m_elapsedTimer.start();
             m_state = SetState((State)(m_state + 1));
         }
         break;
     }
     case TitleScreen:
+    case GameLoadWait:
+    case FlyToHotelZLoadWait:
+    case EnterHotelZLoadWait:
     {
-        if (!matched)
+        // wait for black screen to be not black anymore + buffer from black detection
+        if (!matched && m_elapsedTimer.elapsed() > 300)
         {
             ClearModule(sender());
-            m_state = SetState(State::TitleLoading, "Title screen detected, starting game");
-            AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_LoadBackupSave", true);
-        }
-        break;
-    }
-    case WaitLoadFinish:
-    {
-        if (!matched)
-        {
-            ClearModule(sender());
-            emit notifyFinished(0);
+            if (m_state == TitleScreen)
+            {
+                m_state = SetState(State::GameLoadStart, "Title screen detected, starting game");
+                DONUT_MAKER_RUN_COMMAND("PLZA_LoadBackupSave", 500);
+            }
+            else if (m_state == GameLoadWait)
+            {
+                m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
+                DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 1000);
+            }
+            else if (m_state == FlyToHotelZLoadWait)
+            {
+                m_state = SetState(State::EnterHotelZ, "Entering Hotel Z");
+                DONUT_MAKER_RUN_COMMAND("PLZA_EnterHotelZ", 1000);
+            }
+            else if (m_state == EnterHotelZLoadWait)
+            {
+                m_state = SetState(State::TalkToAnsha, "Going forward to talk to Ansha");
+                DONUT_MAKER_RUN_COMMAND("PLZA_TalkToAnsha", 1000);
+            }
         }
         break;
     }
@@ -145,13 +161,13 @@ void DonutMaker::VerifyOrder()
 void DonutMaker::StateBackupSave()
 {
     m_state = SetState(State::BackupSave, "Putting down backup save");
-    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "PLZA_MakeBackupSave", true);
+    DONUT_MAKER_RUN_COMMAND("PLZA_MakeBackupSave", 0);
 }
 
 void DonutMaker::StateRestart()
 {
     m_state = SetState(State::Restart, "Restarting game");
-    AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, "System_RestartGame", true);
+    DONUT_MAKER_RUN_COMMAND("System_RestartGame", 0);
 }
 
 void DonutMaker::AddBlackScreenModule()
