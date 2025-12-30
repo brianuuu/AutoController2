@@ -83,7 +83,7 @@ protected:
         {
             fullLog += ": " + log;
         }
-        PrintLog(fullLog);
+        PrintLog(fullLog, LOG_Important);
         return state;
     }
 
