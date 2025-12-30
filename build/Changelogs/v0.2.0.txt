@@ -2,3 +2,4 @@
 
 Bug Fixes:
 - Fixed commands after a loop unable to run and gets stuck
+- Fixed command getting ignored if one run immediately after another (require .hex update)

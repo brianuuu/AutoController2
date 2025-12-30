@@ -30,7 +30,7 @@ This project is based on auto-controller code written by brianuuuuSonic
 
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
 #define CHECK_BIT(var,pos) (var & (1UL << pos))
-#define VERSION 1
+#define VERSION 2
 
 // Main entry point.
 int main(void) {
@@ -193,12 +193,6 @@ void HID_Task(void) {
 		left_y = uart_getchar();
 		right_x = uart_getchar();
 		right_y = uart_getchar();
-		
-		// Discard the rest
-		while (uart_available() > 0)
-		{
-			uart_getchar();
-		}
 		
 		uart_putchar((char)VERSION);
 		waiting_input = false;
