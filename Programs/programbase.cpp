@@ -109,6 +109,8 @@ void ProgramBase::OnModuleFinishQuit()
 
     // finish program if this module is finished
     Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
+    if (!module) return;
+
     int const result = module->GetResult();
     emit notifyFinished(result);
 }
@@ -119,6 +121,8 @@ bool ProgramBase::OnModuleErrorQuit()
 
     // finish program if this module is errored out
     Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
+    if (!module) return false;
+
     int const result = module->GetResult();
     if (result < 0)
     {
