@@ -57,6 +57,11 @@ void FrameCapture::run()
         return;
     }
 
+    if (!m_preset.isEmpty())
+    {
+        PrintLog("Detecting with preset \"" + m_preset + "\"");
+    }
+
     QColor pixel;
     QImage frame;
     while (m_result == 0 && !m_terminate)
