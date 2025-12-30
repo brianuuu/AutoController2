@@ -23,6 +23,11 @@ FrameCapture::FrameCapture(QRect rect, HsvRange range, QColor displayColor, QObj
     , CaptureHolder(rect, range, displayColor)
 {}
 
+FrameCapture::FrameCapture(const QString &preset, QColor displayColor, QObject *parent)
+    : ModuleBase(parent)
+    , CaptureHolder(preset, displayColor)
+{}
+
 void FrameCapture::stop()
 {
     QMutexLocker workLocker(&m_workMutex);
@@ -32,6 +37,8 @@ void FrameCapture::stop()
 
 void FrameCapture::PushFrameData(const QImage &frame)
 {
+    if (!isRunning()) return;
+
     QMutexLocker locker(&m_workMutex);
     if (m_pendingWork) return;
 
@@ -43,9 +50,16 @@ void FrameCapture::PushFrameData(const QImage &frame)
 
 void FrameCapture::run()
 {
+    if (m_mode == Mode::Invalid)
+    {
+        m_error = "Preset \"" + m_preset + "\" does not exist";
+        m_result = -1;
+        return;
+    }
+
     QColor pixel;
     QImage frame;
-    while (!m_terminate)
+    while (m_result == 0 && !m_terminate)
     {
         {
             // wait for work
@@ -91,6 +105,7 @@ void FrameCapture::run()
                 m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
                 break;
             }
+            default: break;
             }
 
             // this is free to do next work

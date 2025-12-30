@@ -1,5 +1,6 @@
 #include "captureholder.h"
 
+#include "Helpers/jsonhelper.h"
 #include "Managers/managercollection.h"
 #include "Managers/videomanager.h"
 
@@ -41,6 +42,76 @@ CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor displayColor)
     , m_mode(Mode::AreaRangeMatch)
 {
     Register();
+}
+
+CaptureHolder::CaptureHolder(const QString &preset, QColor displayColor)
+    : m_preset(preset)
+    , m_displayColor(displayColor)
+{
+    // read preset json
+    QString const name = GetDirectory() + m_preset + GetFormat();
+    QJsonObject const object = JsonHelper::ReadJson(name);
+    if (object.isEmpty()) return;
+
+    QVariant value;
+    if (!JsonHelper::ReadValue(object, "Mode", value)) return;
+    Mode mode = (Mode)value.toInt();
+
+    if (!JsonHelper::ReadValue(object, "Left", value)) return;
+    m_point.setX(value.toInt());
+
+    if (!JsonHelper::ReadValue(object, "Top", value)) return;
+    m_point.setY(value.toInt());
+
+    if (mode == Mode::AreaColorMatch || mode == Mode::AreaRangeMatch)
+    {
+        QSize size;
+        if (!JsonHelper::ReadValue(object, "Width", value)) return;
+        size.setWidth(value.toInt());
+
+        if (!JsonHelper::ReadValue(object, "Height", value)) return;
+        size.setHeight(value.toInt());
+
+        m_rect = QRect(m_point, size);
+    }
+
+    if (mode == Mode::PointRangeMatch || mode == Mode::AreaRangeMatch)
+    {
+        int minH, minS, minV, maxH, maxS, maxV;
+        if (!JsonHelper::ReadValue(object, "MinH", value)) return;
+        minH = value.toInt();
+        if (!JsonHelper::ReadValue(object, "MinS", value)) return;
+        minS = value.toInt();
+        if (!JsonHelper::ReadValue(object, "MinV", value)) return;
+        minV = value.toInt();
+        if (!JsonHelper::ReadValue(object, "MaxH", value)) return;
+        maxH = value.toInt();
+        if (!JsonHelper::ReadValue(object, "MaxS", value)) return;
+        maxS = value.toInt();
+        if (!JsonHelper::ReadValue(object, "MaxV", value)) return;
+        maxV = value.toInt();
+
+        m_range = HsvRange(minH, minS, minV, maxH, maxS, maxV);
+    }
+
+    if (mode == Mode::PointColorMatch || mode == Mode::AreaColorMatch)
+    {
+        if (!JsonHelper::ReadValue(object, "Color", value)) return;
+        m_targetColor = QColor(value.toUInt());
+    }
+
+    if (mode == Mode::AreaRangeMatch)
+    {
+        if (!JsonHelper::ReadValue(object, "Mean", value)) return;
+        m_targetMean = value.toDouble();
+    }
+
+    // if everything goes right then we finally set mode
+    m_mode = mode;
+    if (m_mode != Mode::Invalid)
+    {
+        Register();
+    }
 }
 
 CaptureHolder::~CaptureHolder()
@@ -91,6 +162,7 @@ void CaptureHolder::PushFrameData(const QImage &frame)
         m_testImage = frame.copy(m_rect);
         break;
     }
+    default: break;
     }
 }
 

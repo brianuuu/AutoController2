@@ -16,6 +16,7 @@ public:
     explicit FrameCapture(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);
     explicit FrameCapture(QRect rect, QColor testColor, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);
     explicit FrameCapture(QRect rect, HsvRange range, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);
+    explicit FrameCapture(QString const& preset, QColor displayColor = QColor(0,255,0), QObject *parent = nullptr);
 
     // from ModuleBase
     QString GetName() const override { return "Common-FrameCapture"; }
