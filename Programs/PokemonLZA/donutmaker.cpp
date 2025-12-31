@@ -124,16 +124,12 @@ void DonutMaker::OnCommandFinished()
         m_state = SetState(State::PowerCapture, "Performing OCR on flavor powers");
 
         CleanOCRFiles();
-        m_powerHasOCR.clear();
         m_powerEntries.clear();
         for (int i = 0; i < 3; i++)
         {
-            Module::Common::FrameCapture* module = new Module::Common::FrameCapture("PLZA_FlavorPowerSlot" + QString::number(i+1));
-            connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
-            connect(module, &Module::Common::FrameCapture::notifyResultMean, this, &DonutMaker::OnFrameCaptureMean);
-
-            m_powerHasOCR[module] = false;
-            AddModule(module);
+            Module::Common::OCR* ocr = new Module::Common::OCR("PLZA_FlavorPowerSlot" + QString::number(i+1), FlavorPower::GetDatabase());
+            connect(ocr, &QThread::finished, this, &DonutMaker::OnOCRFinished);
+            AddModule(ocr);
         }
         break;
     }
@@ -223,24 +219,6 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
     }
 }
 
-void DonutMaker::OnFrameCaptureMean(qreal mean, QImage masked)
-{
-    // only expecting State::PowerCapture
-    if (!sender()) return;
-
-    // do this so the FrameCapture module stay
-    Module::Common::FrameCapture* frameCapture = qobject_cast<Module::Common::FrameCapture*>(sender());
-    if (!m_powerHasOCR[frameCapture])
-    {
-        m_powerHasOCR[frameCapture] = true;
-
-        Module::Common::OCR* ocr = new Module::Common::OCR(masked, false);
-        connect(ocr, &QThread::finished, this, &DonutMaker::OnOCRFinished);
-        ocr->SetOCREntries(FlavorPower::GetDatabase());
-        AddModule(ocr);
-    }
-}
-
 void DonutMaker::OnOCRFinished()
 {
     // only expecting State::PowerCapture
@@ -249,7 +227,6 @@ void DonutMaker::OnOCRFinished()
     // wait until there are three OCR results
     Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
     m_powerEntries.push_back(ocr->GetResultEntry());
-    ClearModule(ocr);
 
     if (m_powerEntries.size() == 3)
     {

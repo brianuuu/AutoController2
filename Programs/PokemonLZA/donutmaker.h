@@ -63,7 +63,6 @@ private slots:
     void OnOrderChanged(QString const& str);
     void OnCommandFinished();
     void OnFrameCaptureMatched(bool matched);
-    void OnFrameCaptureMean(qreal mean, QImage masked);
     void OnOCRFinished();
 
 private:
@@ -87,7 +86,6 @@ private:
     State m_state;
     bool m_validOrder = false;
 
-    QMap<Module::ModuleBase*, bool> m_powerHasOCR;
     QList<QString> m_powerEntries;
     int m_donutCount = 0;
 };
