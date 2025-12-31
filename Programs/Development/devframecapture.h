@@ -22,6 +22,7 @@ class DevFrameCapture : public ProgramBase
     Q_OBJECT
 public:
     explicit DevFrameCapture(QObject* parent = nullptr);
+    ~DevFrameCapture();
 
     static QString GetCategory() { return "Development"; }
     static QString GetName() { return "Frame Capture"; }
@@ -65,6 +66,9 @@ private slots:
     void OnRunOCR();
     void OnOCRFinished();
 
+    void OnSetFixedImage();
+    void OnClearFixedImage();
+
 private:
     QPoint GetPoint() const;
     QRect GetRect() const;
@@ -76,6 +80,8 @@ private:
     void UpdateRange();
 
 private:
+    VideoManager* m_videoManager = Q_NULLPTR;
+
     Setting::SettingComboBox* m_list = Q_NULLPTR;
     Setting::SettingComboBox* m_mode = Q_NULLPTR;
 
@@ -101,6 +107,9 @@ private:
 
     Setting::SettingCheckBox* m_number = Q_NULLPTR;
     Setting::SettingComboBox* m_database = Q_NULLPTR;
+
+    QPushButton* m_btnFixedImage = Q_NULLPTR;
+    QPushButton* m_btnClearImage = Q_NULLPTR;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
 };

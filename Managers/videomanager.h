@@ -39,6 +39,9 @@ public:
     void PushFrameData(unsigned char const* data);
     QImage GetFrameData() const;
 
+    void SetFixedImage(QImage const& image);
+    void ClearFixedImage();
+
     void RegisterCapture(CaptureHolder* holder);
     void UnregisterCapture(CaptureHolder* holder);
 
@@ -81,6 +84,7 @@ private:
     // Frame data
     mutable QMutex  m_mutex;
     QImage          m_frame;
+    QImage          m_fixedImage;
 
     // Overlays
     QTimer          m_resolutionTimer;

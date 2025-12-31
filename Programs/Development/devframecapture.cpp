@@ -12,9 +12,14 @@ namespace Program::Development
 
 DevFrameCapture::DevFrameCapture(QObject *parent) : ProgramBase(parent)
 {
-    VideoManager* videoManager = ManagerCollection::GetManager<VideoManager>();
-    connect(videoManager, &VideoManager::notifyMousePressed, this, &DevFrameCapture::OnMousePressed);
-    connect(videoManager, &VideoManager::notifyMouseMoved, this, &DevFrameCapture::OnMouseMoved);
+    m_videoManager = ManagerCollection::GetManager<VideoManager>();
+    connect(m_videoManager, &VideoManager::notifyMousePressed, this, &DevFrameCapture::OnMousePressed);
+    connect(m_videoManager, &VideoManager::notifyMouseMoved, this, &DevFrameCapture::OnMouseMoved);
+}
+
+DevFrameCapture::~DevFrameCapture()
+{
+    m_videoManager->ClearFixedImage();
 }
 
 void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
@@ -119,6 +124,14 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
         m_savedSettings.insert(m_database);
         AddSetting(layout, "OCR Entries Preset:", "", m_database, true);
     }
+
+    AddSeparator(layout);
+
+    m_btnFixedImage = new QPushButton("Set Image");
+    m_btnClearImage = new QPushButton("Clear Image");
+    AddSettings(layout, "Fixed Image:", "", {m_btnFixedImage, m_btnClearImage}, true);
+    connect(m_btnFixedImage, &QPushButton::clicked, this, &DevFrameCapture::OnSetFixedImage);
+    connect(m_btnClearImage, &QPushButton::clicked, this, &DevFrameCapture::OnClearFixedImage);
 
     AddSpacer(layout);
 
@@ -504,6 +517,19 @@ void DevFrameCapture::OnOCRFinished()
     m_btnOCR->setEnabled(true);
     m_number->setEnabled(true);
     m_database->setEnabled(true);
+}
+
+void DevFrameCapture::OnSetFixedImage()
+{
+    QString file = QFileDialog::getOpenFileName(m_btnFixedImage, tr("Import Image"), "", "PNG file (*.png)");
+    if (file.isEmpty()) return;
+
+    m_videoManager->SetFixedImage(QImage(file).convertToFormat(QImage::Format_ARGB32));
+}
+
+void DevFrameCapture::OnClearFixedImage()
+{
+    m_videoManager->ClearFixedImage();
 }
 
 QPoint DevFrameCapture::GetPoint() const

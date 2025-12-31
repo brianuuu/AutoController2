@@ -62,7 +62,7 @@ void VideoManager::PushFrameData(const unsigned char *data)
     QSize const resolution = GetResolution();
 
     QMutexLocker locker(&m_mutex);
-    m_frame = QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32);
+    m_frame = m_fixedImage.isNull() ? QImage(data, resolution.width(), resolution.height(), QImage::Format_ARGB32) : m_fixedImage;
 
     QMutexLocker captureLocker(&m_captureMutex);
     if (m_captureHolders.empty())
@@ -73,7 +73,7 @@ void VideoManager::PushFrameData(const unsigned char *data)
     else
     {
         QSize const captrueRes = CaptureHolder::GetCaptureResolution();
-        QImage const fram720p = (resolution == captrueRes) ? m_frame.copy() : m_frame.scaled(captrueRes);
+        QImage const fram720p = (m_frame.size() == captrueRes) ? m_frame.copy() : m_frame.scaled(captrueRes);
 
         // we don't need m_frame anymore
         locker.unlock();
@@ -92,6 +92,18 @@ QImage VideoManager::GetFrameData() const
 {
     QMutexLocker locker(&m_mutex);
     return m_frame.copy();
+}
+
+void VideoManager::SetFixedImage(const QImage &image)
+{
+    QMutexLocker locker(&m_mutex);
+    m_fixedImage = image;
+}
+
+void VideoManager::ClearFixedImage()
+{
+    QMutexLocker locker(&m_mutex);
+    m_fixedImage = QImage();
 }
 
 void VideoManager::RegisterCapture(CaptureHolder *holder)
