@@ -123,6 +123,7 @@ void DonutMaker::OnCommandFinished()
     {
         m_state = SetState(State::PowerCapture, "Performing OCR on flavor powers");
 
+        CleanOCRFiles();
         m_powerHasOCR.clear();
         m_powerEntries.clear();
         for (int i = 0; i < 3; i++)
@@ -252,9 +253,8 @@ void DonutMaker::OnOCRFinished()
 
     if (m_powerEntries.size() == 3)
     {
-        // clear all modules/OCR files
+        // clear all modules
         ClearModules();
-        CleanOCRFiles();
 
         // do matching with cached powers
         bool allFound = true;
