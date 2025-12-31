@@ -8,7 +8,6 @@
 namespace Program::PokemonLZA
 {
 
-#define DONUT_MAKER_DATABASE "PokemonLZA/FlavorPowers"
 #define DONUT_MAKER_RUN_COMMAND(...) AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, __VA_ARGS__)
 
 DonutMaker::DonutMaker(QObject *parent) : ProgramBase(parent)
@@ -18,6 +17,8 @@ DonutMaker::DonutMaker(QObject *parent) : ProgramBase(parent)
 
 void DonutMaker::PopulateSettings(QBoxLayout *layout)
 {
+    AddText(layout, "Make sure correct language is set in Global Settings", true, LogTypeToColor(LOG_State));
+
     m_count = new Setting::SettingSpinBox("Count", 1, 999);
     m_savedSettings.insert(m_count);
     AddSetting(layout, "Target Amount:", "No. of the same donut to make", m_count, true);

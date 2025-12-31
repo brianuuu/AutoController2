@@ -206,6 +206,16 @@ QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold
     return label;
 }
 
+QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold, QColor color)
+{
+    QLabel* label = AddText(layout, str, isBold);
+    QPalette palette = label->palette();
+    palette.setColor(QPalette::WindowText, color);
+    label->setPalette(palette);
+
+    return label;
+}
+
 void ProgramBase::AddSetting
 (
     QBoxLayout *layout,
