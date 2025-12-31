@@ -521,7 +521,7 @@ void DevFrameCapture::OnOCRFinished()
 
 void DevFrameCapture::OnSetFixedImage()
 {
-    QString file = QFileDialog::getOpenFileName(m_btnFixedImage, tr("Import Image"), "", "PNG file (*.png)");
+    QString file = QFileDialog::getOpenFileName(m_btnFixedImage, tr("Import Image"), "../Screenshots", "PNG file (*.png)");
     if (file.isEmpty()) return;
 
     m_videoManager->SetFixedImage(QImage(file).convertToFormat(QImage::Format_ARGB32));
