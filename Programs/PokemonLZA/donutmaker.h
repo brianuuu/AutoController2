@@ -36,13 +36,12 @@ public:
 private:
     enum State
     {
-        BackupSave,
-
         Restart,
         TitleScreen,
         GameLoadStart,
         GameLoadWait,
 
+        BackupSave,
         FlyToHotelZ,
         FlyToHotelZLoadWait,
         EnterHotelZ,
@@ -51,8 +50,12 @@ private:
         TalkToAnsha,
         SelectBerries,
         MakeDonut,
-
         PowerCapture,
+        QuitDonut,
+
+        FlyToVertPC,
+        FlyToVertPCLoadWait,
+        WalkToNurseJoy,
     };
     Q_ENUM(State)
 
@@ -67,6 +70,7 @@ private:
     void VerifyOrder();
 
     // states
+    void StateFlyToVertPC();
     void StateBackupSave();
     void StateRestart();
     void AddBlackScreenModule();
@@ -84,7 +88,8 @@ private:
     bool m_validOrder = false;
 
     QMap<Module::ModuleBase*, bool> m_powerHasOCR;
-    QSet<QString> m_powerEntries;
+    QList<QString> m_powerEntries;
+    int m_donutCount = 0;
 };
 }
 

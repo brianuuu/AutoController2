@@ -48,9 +48,10 @@ void DonutMaker::Start()
 {
     ProgramBase::Start();
 
+    m_donutCount = 0;
     m_cachedSlots = m_power->GetPowerSlots();
 
-    StateBackupSave();
+    StateFlyToVertPC();
 }
 
 void DonutMaker::Stop()
@@ -72,13 +73,15 @@ void DonutMaker::OnCommandFinished()
     {
     case BackupSave:
     {
-        StateRestart();
+        m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
+        DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 0);
         break;
     }
     case Restart:
     case GameLoadStart:
     case FlyToHotelZ:
     case EnterHotelZ:
+    case FlyToVertPC:
     {
         AddBlackScreenModule();
         break;
@@ -128,6 +131,16 @@ void DonutMaker::OnCommandFinished()
         }
         break;
     }
+    case QuitDonut:
+    {
+        StateFlyToVertPC();
+        break;
+    }
+    case WalkToNurseJoy:
+    {
+        StateBackupSave();
+        break;
+    }
     default:
     {
         PrintLog("Unhandled state after command is finished", LOG_Error);
@@ -145,6 +158,7 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
     case GameLoadStart:
     case FlyToHotelZ:
     case EnterHotelZ:
+    case FlyToVertPC:
     {
         // wait for black screen
         if (matched)
@@ -158,6 +172,7 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
     case GameLoadWait:
     case FlyToHotelZLoadWait:
     case EnterHotelZLoadWait:
+    case FlyToVertPCLoadWait:
     {
         // wait for black screen to be not black anymore + buffer from black detection
         if (!matched && m_elapsedTimer.elapsed() > 300)
@@ -182,6 +197,11 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
             {
                 m_state = SetState(State::TalkToAnsha, "Going forward to talk to Ansha");
                 DONUT_MAKER_RUN_COMMAND("PLZA_TalkToAnsha", 1000);
+            }
+            else if (m_state == FlyToVertPCLoadWait)
+            {
+                m_state = SetState(State::WalkToNurseJoy, "Walking up to Nurse Joy");
+                DONUT_MAKER_RUN_COMMAND("None|1000,B|LUp|50,LUp|1200");
             }
         }
         break;
@@ -226,15 +246,13 @@ void DonutMaker::OnOCRFinished()
 
     // wait until there are three OCR results
     Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
-    m_powerEntries.insert(ocr->GetResultEntry());
+    m_powerEntries.push_back(ocr->GetResultEntry());
     ClearModule(ocr);
 
     if (m_powerEntries.size() == 3)
     {
-        for (Module::ModuleBase* frameCapture : m_powerHasOCR.keys())
-        {
-            ClearModule(frameCapture);
-        }
+        // clear all modules
+        ClearModules();
 
         // do matching with cached powers
         bool allFound = true;
@@ -267,8 +285,29 @@ void DonutMaker::OnOCRFinished()
             }
         }
 
-        // TODO:
-        emit notifyFinished(0);
+        if (allFound)
+        {
+            m_donutCount++;
+            PrintLog("Current donut found! " + QString::number(m_count->value() - m_donutCount) + " remaining", LOG_Important);
+
+            if (m_donutCount == m_count->value())
+            {
+                // finished!
+                emit notifyFinished(0);
+            }
+            else
+            {
+                // correct donut, put down a backup save
+                m_state = SetState(State::QuitDonut, "Quitting donut menu");
+                DONUT_MAKER_RUN_COMMAND("B|Spam|4000,None|50");
+            }
+        }
+        else
+        {
+            // wrong donut, restart game load backup save
+            m_state = SetState(State::Restart, "Restarting game");
+            DONUT_MAKER_RUN_COMMAND("System_RestartGame", 0);
+        }
     }
 }
 
@@ -277,7 +316,7 @@ void DonutMaker::VerifyOrder()
     m_validOrder = true;
 
     QStringList const orders = m_order->text().split(',');
-    if (orders.size() < 3)
+    if (orders.size() < 3 || orders.size() > 8)
     {
         m_validOrder = false;
     }
@@ -298,16 +337,16 @@ void DonutMaker::VerifyOrder()
     OnCanRunChanged();
 }
 
+void DonutMaker::StateFlyToVertPC()
+{
+    m_state = SetState(State::FlyToVertPC, "Flying to Vert Pokemon Center");
+    DONUT_MAKER_RUN_COMMAND("PLZA_FlyToVertPC", 0);
+}
+
 void DonutMaker::StateBackupSave()
 {
     m_state = SetState(State::BackupSave, "Putting down backup save");
     DONUT_MAKER_RUN_COMMAND("PLZA_MakeBackupSave", 0);
-}
-
-void DonutMaker::StateRestart()
-{
-    m_state = SetState(State::Restart, "Restarting game");
-    DONUT_MAKER_RUN_COMMAND("System_RestartGame", 0);
 }
 
 void DonutMaker::AddBlackScreenModule()
