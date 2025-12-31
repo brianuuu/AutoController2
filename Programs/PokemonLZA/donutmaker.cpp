@@ -1,6 +1,5 @@
 #include "donutmaker.h"
 
-#include "Managers/profilemanager.h"
 #include "Programs/Modules/Common/framecapture.h"
 #include "Programs/Modules/Common/ocr.h"
 #include "Programs/Modules/Common/runcommand.h"
