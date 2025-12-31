@@ -1,0 +1,5 @@
+-Add controller mapping
+-Controller fixed 8 directions
+-Stats
+-Running time
+-Log file
