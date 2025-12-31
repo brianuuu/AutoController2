@@ -252,8 +252,9 @@ void DonutMaker::OnOCRFinished()
 
     if (m_powerEntries.size() == 3)
     {
-        // clear all modules
+        // clear all modules/OCR files
         ClearModules();
+        CleanOCRFiles();
 
         // do matching with cached powers
         bool allFound = true;
