@@ -8,11 +8,25 @@
 namespace Module::Common
 {
 
-OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert, QObject *parent)
-    : ModuleBase(parent)
-    , m_image(image)
+OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert)
+    : m_image(image)
     , m_isNumber(isNumber)
     , m_shouldInvert(shouldInvert)
+{
+    Init();
+}
+
+OCR::OCR(const QString &preset, const QString &database, bool isNumber, QColor displayColor)
+    : CaptureHolder(preset, displayColor)
+    , m_isNumber(isNumber)
+    , m_shouldInvert(true)
+    , m_preset(preset)
+    , m_database(database)
+{
+    Init();
+}
+
+void OCR::Init()
 {
     ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
     m_language = profileManager->GetLanguageType();
@@ -22,8 +36,60 @@ OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert, QObject *parent)
     connect(&m_process, &QProcess::finished, this, &OCR::OnProcessFinished);
 }
 
+void OCR::PushFrameData(const QImage &frame)
+{
+    if (!isRunning()) return;
+
+    QMutexLocker locker(&m_workMutex);
+    if (m_pendingWork) return;
+
+    CaptureHolder::PushFrameData(frame);
+
+    m_pendingWork = true;
+    m_condition.wakeOne();
+}
+
 void OCR::run()
 {
+    // if it has preset, do frame capture ourself
+    if (!m_preset.isEmpty())
+    {
+        if (m_mode == Mode::Invalid)
+        {
+            m_error = "Preset \"" + m_preset + "\" does not exist";
+            m_result = -1;
+            return;
+        }
+
+        PrintLog("Detecting with preset \"" + m_preset + "\"");
+        QImage frame;
+        {
+            // wait for work
+            QMutexLocker workLocker(&m_workMutex);
+            while (!m_pendingWork && !m_terminate)
+            {
+                m_condition.wait(&m_workMutex);
+            }
+
+            if (m_terminate) return;
+            frame = GetFrameData();
+        }
+
+        // Note: this never reset m_pendingWork = false since we only need it once
+        QMutexLocker resultLocker(&m_resultMutex);
+        HsvRange const range = GetHsvRange();
+        m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
+        m_image = m_resultMasked.copy();
+    }
+
+    if (m_image.isNull())
+    {
+        m_error = "No image provided";
+        m_result = -1;
+        return;
+    }
+
+    // last chance to terminate
     if (m_result < 0 || m_terminate) return;
 
     // by default, image from FrameCapture has black BG white text

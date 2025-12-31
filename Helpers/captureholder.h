@@ -48,6 +48,7 @@ public:
     };
 
 public:
+    CaptureHolder() {}
     CaptureHolder(QPoint point, QColor targetColor, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, QColor targetColor, QColor displayColor = QColor(0,255,0));
