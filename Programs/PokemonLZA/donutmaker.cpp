@@ -290,7 +290,7 @@ void DonutMaker::OnOCRFinished()
         if (allFound)
         {
             m_donutCount++;
-            PrintLog("Current donut found! " + QString::number(m_count->value() - m_donutCount) + " remaining", LOG_Important);
+            PrintLog("Correct donut found! " + QString::number(m_count->value() - m_donutCount) + " remaining", LOG_Important);
 
             if (m_donutCount == m_count->value())
             {
