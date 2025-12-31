@@ -25,6 +25,7 @@ public:
     // query
     using PowerSlots = QList<QSet<QString>>;
     PowerSlots GetPowerSlots() const;
+    static QString GetDatabase() { return "PokemonLZA/FlavorPowers"; }
 
 private slots:
     void OnFilterChanged();

@@ -134,8 +134,8 @@ void SettingFlavorPower::OnFilterChanged()
 
 void SettingFlavorPower::ResetLists()
 {
-    OCREntryDatabase::EnsureDatabase("PokemonLZA/FlavorPowers");
-    OCREntries const& entries = OCREntryDatabase::GetEntries("PokemonLZA/FlavorPowers", LT_English);
+    OCREntryDatabase::EnsureDatabase(GetDatabase());
+    OCREntries const& entries = OCREntryDatabase::GetEntries(GetDatabase(), LT_English);
 
     for (int i = 0; i < 3; i++)
     {

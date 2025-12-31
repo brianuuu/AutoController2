@@ -51,7 +51,7 @@ void DonutMaker::Start()
     m_donutCount = 0;
     m_cachedSlots = m_power->GetPowerSlots();
 
-    if (!EnsureOCRDatabase(DONUT_MAKER_DATABASE))
+    if (!EnsureOCRDatabase(FlavorPower::GetDatabase()))
     {
         return;
     }
@@ -236,7 +236,7 @@ void DonutMaker::OnFrameCaptureMean(qreal mean, QImage masked)
 
         Module::Common::OCR* ocr = new Module::Common::OCR(masked, false);
         connect(ocr, &QThread::finished, this, &DonutMaker::OnOCRFinished);
-        ocr->SetOCREntries(DONUT_MAKER_DATABASE);
+        ocr->SetOCREntries(FlavorPower::GetDatabase());
         AddModule(ocr);
     }
 }
