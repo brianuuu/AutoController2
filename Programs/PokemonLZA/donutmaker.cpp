@@ -157,6 +157,8 @@ void DonutMaker::OnCommandFinished()
 
 void DonutMaker::OnFrameCaptureMatched(bool matched)
 {
+    if (!sender()) return;
+
     switch (m_state)
     {
     case Restart:

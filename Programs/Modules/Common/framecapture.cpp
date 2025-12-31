@@ -90,6 +90,7 @@ void FrameCapture::run()
                 m_resultMatched = GetColorMatch(pixel, target);
 
                 resultLocker.unlock();
+                if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
             }
@@ -100,6 +101,7 @@ void FrameCapture::run()
                 m_resultMatched = GetColorMatchHSV(pixel, range);
 
                 resultLocker.unlock();
+                if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
             }
@@ -110,6 +112,7 @@ void FrameCapture::run()
                 m_resultMatched = GetColorMatch(m_resultColor, target);
 
                 resultLocker.unlock();
+                if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
             }
@@ -119,6 +122,7 @@ void FrameCapture::run()
                 m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
 
                 resultLocker.unlock();
+                if (m_terminate) return;
                 emit notifyResultMean(m_resultMean, m_resultMasked);
                 break;
             }
