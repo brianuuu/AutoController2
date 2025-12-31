@@ -143,7 +143,10 @@ void SettingFlavorPower::ResetLists()
     }
 
     m_allPower->clear();
-    m_allPower->addItems(entries.keys());
+    for (auto const& [entry, subStrings] : entries)
+    {
+        m_allPower->addItem(entry);
+    }
 }
 
 }

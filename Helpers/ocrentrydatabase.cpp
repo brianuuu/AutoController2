@@ -18,7 +18,7 @@ bool OCREntryDatabase::EnsureDatabase(const QString &path)
 {
     // check if database already exist
     EntryDatabase& database = GetDatabase();
-    if (database.contains(path)) return true;
+    if (database.count(path)) return true;
 
     // read database
     QJsonObject object = JsonHelper::ReadJson(RESOURCES_PATH + path + GetExtension());
@@ -46,28 +46,28 @@ bool OCREntryDatabase::EnsureDatabase(const QString &path)
                 //qDebug() << value.toString();
                 valueList.push_back(NormalizeString(value.toString()));
             }
-            entries.insert(it.key(), valueList);
+            entries[it.key()] = valueList;
         }
-        languageEntries.insert(language, entries);
+        languageEntries[language] = entries;
     }
-    database.insert(path, languageEntries);
+    database[path] = languageEntries;
     return true;
 }
 
 bool OCREntryDatabase::EnsureDatabase(const QString &path, LanguageType language)
 {
-    return EnsureDatabase(path) && !GetEntries(path, language).isEmpty();
+    return EnsureDatabase(path) && !GetEntries(path, language).empty();
 }
 
 const OCREntries &OCREntryDatabase::GetEntries(const QString &path, LanguageType language)
 {
     EntryDatabase const& database = GetDatabase();
-    if (database.contains(path))
+    if (database.count(path))
     {
-        LanguageEntries const& languageEntries = database[path];
-        if (languageEntries.contains(language))
+        LanguageEntries const& languageEntries = database.at(path);
+        if (languageEntries.count(language))
         {
-            return GetDatabase()[path][language];
+            return languageEntries.at(language);
         }
     }
 

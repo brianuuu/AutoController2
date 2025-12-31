@@ -5,9 +5,9 @@
 #include <QString>
 #include "Types/languagetype.h"
 
-using OCREntries = QMap<QString, QStringList>;
-using LanguageEntries = QMap<LanguageType, OCREntries>;
-using EntryDatabase = QMap<QString, LanguageEntries>;
+using OCREntries = std::map<QString, QStringList>;
+using LanguageEntries = std::map<LanguageType, OCREntries>;
+using EntryDatabase = std::map<QString, LanguageEntries>;
 
 class OCREntryDatabase
 {

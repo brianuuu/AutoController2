@@ -147,7 +147,7 @@ void OCR::run()
 
     // entry matching
     OCREntries const& entries = OCREntryDatabase::GetEntries(m_database, m_language);
-    if (entries.isEmpty())
+    if (entries.empty())
     {
         PrintLog(OCREntryDatabase::GetNoDatabaseError(m_database, m_language), LOG_Error);
         m_result = -1;
@@ -159,15 +159,14 @@ void OCR::run()
     // Do comparison with each database string, find the best match entry
     int minDist = INT_MAX;
     int minSubStringMatched = -1;
-    for (auto iter = entries.cbegin(), end = entries.cend(); iter != end; iter++)
+    for (auto const& [entry, subStrings] : entries)
     {
         int dist = 0;
-        QStringList const& subStrings = iter.value();
         int subStringMatched = OCREntryDatabase::MatchSubStrings(query, subStrings, &dist);
         if (subStringMatched >= 0 && subStringMatched < subStrings.size() && dist < minDist)
         {
             minDist = dist;
-            m_resultEntry = iter.key();
+            m_resultEntry = entry;
             minSubStringMatched = subStringMatched;
         }
     }
