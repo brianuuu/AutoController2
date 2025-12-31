@@ -1,6 +1,7 @@
 #include "programbase.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Helpers/ocrentrydatabase.h"
 #include "Managers/audiomanager.h"
 #include "Managers/logmanager.h"
 #include "Managers/profilemanager.h"
@@ -177,6 +178,21 @@ void ProgramBase::ClearModules()
     }
 
     m_modules.clear();
+}
+
+bool ProgramBase::EnsureOCRDatabase(const QString &database)
+{
+    if (!OCREntryDatabase::EnsureDatabase(database, m_profileManager->GetLanguageType()))
+    {
+        PrintLog(OCREntryDatabase::GetNoDatabaseError(database, m_profileManager->GetLanguageType()), LOG_Error);
+        emit notifyFinished(-1);
+        return false;
+    }
+    else
+    {
+        PrintLog(database + " database cached for language: " + LanguageToString(m_profileManager->GetLanguageType()), LOG_Important);
+        return true;
+    }
 }
 
 QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)

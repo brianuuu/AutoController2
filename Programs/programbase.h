@@ -92,6 +92,8 @@ protected:
         return state;
     }
 
+    bool EnsureOCRDatabase(QString const& database);
+
 public:
     static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
     static void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);

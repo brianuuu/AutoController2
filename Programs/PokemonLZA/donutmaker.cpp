@@ -1,6 +1,5 @@
 #include "donutmaker.h"
 
-#include "Helpers/ocrentrydatabase.h"
 #include "Managers/profilemanager.h"
 #include "Programs/Modules/Common/framecapture.h"
 #include "Programs/Modules/Common/ocr.h"
@@ -9,6 +8,7 @@
 namespace Program::PokemonLZA
 {
 
+#define DONUT_MAKER_DATABASE "PokemonLZA/FlavorPowers"
 #define DONUT_MAKER_RUN_COMMAND(...) AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, __VA_ARGS__)
 
 DonutMaker::DonutMaker(QObject *parent) : ProgramBase(parent)
@@ -50,6 +50,11 @@ void DonutMaker::Start()
 
     m_donutCount = 0;
     m_cachedSlots = m_power->GetPowerSlots();
+
+    if (!EnsureOCRDatabase(DONUT_MAKER_DATABASE))
+    {
+        return;
+    }
 
     StateFlyToVertPC();
 }
@@ -228,13 +233,7 @@ void DonutMaker::OnFrameCaptureMean(qreal mean, QImage masked)
 
         Module::Common::OCR* ocr = new Module::Common::OCR(masked, false);
         connect(ocr, &QThread::finished, this, &DonutMaker::OnOCRFinished);
-
-        QString const database = "PokemonLZA/FlavorPowers";
-        if (OCREntryDatabase::EnsureDatabase(database, m_profileManager->GetLanguageType()))
-        {
-            ocr->SetOCREntries(database);
-        }
-
+        ocr->SetOCREntries(DONUT_MAKER_DATABASE);
         AddModule(ocr);
     }
 }
