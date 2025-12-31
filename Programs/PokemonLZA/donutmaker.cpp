@@ -187,7 +187,7 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
             ClearModule(sender());
             if (m_state == TitleScreen)
             {
-                m_state = SetState(State::GameLoadStart, "Title screen detected, starting game");
+                m_state = SetState(State::GameLoadStart, "Title screen detected, loading backup save");
                 DONUT_MAKER_RUN_COMMAND("PLZA_LoadBackupSave", 500);
             }
             else if (m_state == GameLoadWait)
