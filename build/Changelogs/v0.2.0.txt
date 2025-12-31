@@ -1,5 +1,7 @@
+- PLZA: Donut Maker first release
 - Added F5 shortcut and start/stop program
 
 Bug Fixes:
 - Fixed commands after a loop unable to run and gets stuck
 - Fixed command getting ignored if one run immediately after another (require .hex update)
+- Fixed Program Settings scroll bar not working when program is running
