@@ -19,7 +19,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
-    m_settingsParent = ui->SA_ProgramSetting;
+    m_settingsParent = ui->BL_ProgramSetting;
     m_settingsLayout = qobject_cast<QBoxLayout*>(ui->BL_ProgramSetting->layout());
     m_btnStart = ui->PB_StartProgram;
     m_btnResetDefault = ui->PB_RestoreDefault;
