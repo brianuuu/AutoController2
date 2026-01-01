@@ -148,7 +148,7 @@ void LogManager::PrintLog(const QString &category, const QString &log, LogType t
 
     if (!m_logFile.isEmpty())
     {
-        QFile file(m_logFile);
+        QFile file(LOG_PATH + m_logFile);
         if(file.open(QIODevice::Append))
         {
             QTextStream stream(&file);
