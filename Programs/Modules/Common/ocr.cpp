@@ -17,7 +17,7 @@ OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert)
 }
 
 OCR::OCR(const QString &preset, const QString &database, bool isNumber, QColor displayColor)
-    : CaptureHolder(preset, displayColor)
+    : CaptureHolder(preset, displayColor, true)
     , m_isNumber(isNumber)
     , m_shouldInvert(true)
     , m_preset(preset)

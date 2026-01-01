@@ -204,9 +204,12 @@ void VideoManager::paintEvent(QPaintEvent *event)
                 QPoint const topLeft = captureRect.top() < 17 ? captureRect.bottomLeft() + QPoint(0,1) : captureRect.topLeft() - QPoint(0,17);
                 if (mode == CaptureHolder::Mode::AreaRangeMatch)
                 {
-                    painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
-                    painter.setPen(Qt::white);
-                    painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                    if (!holder->GetIsOCR())
+                    {
+                        painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
+                        painter.setPen(Qt::white);
+                        painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                    }
                     painter.drawImage(captureRect, holder->GetResultMasked());
                 }
                 else

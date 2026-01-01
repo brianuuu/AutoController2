@@ -53,13 +53,14 @@ public:
     CaptureHolder(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, QColor targetColor, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, HsvRange range, QColor displayColor = QColor(0,255,0));
-    CaptureHolder(QString const& preset, QColor displayColor = QColor(0,255,0));
+    CaptureHolder(QString const& preset, QColor displayColor = QColor(0,255,0), bool isOCR = false);
     ~CaptureHolder();
 
     // get init data
     Mode GetMode() const { return m_mode; }
     QColor GetDisplayColor() const { return m_displayColor; }
     qreal GetTargetMean() const { return m_targetMean; }
+    bool GetIsOCR() const { return m_isOCR; } // ignore displaying data in media view
 
     // set fixed data
     void SetArea(QRect rect);
@@ -106,6 +107,7 @@ protected:
     Mode    m_mode;
     QString m_preset;
     qreal   m_targetMean = 0.0;
+    bool    m_isOCR = false;
 
     mutable QMutex  m_mutex;
     // fixed data

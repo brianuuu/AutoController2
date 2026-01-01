@@ -44,9 +44,10 @@ CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor displayColor)
     Register();
 }
 
-CaptureHolder::CaptureHolder(const QString &preset, QColor displayColor)
+CaptureHolder::CaptureHolder(const QString &preset, QColor displayColor, bool isOCR)
     : m_preset(preset)
     , m_displayColor(displayColor)
+    , m_isOCR(isOCR)
 {
     // read preset json
     QString const name = GetDirectory() + m_preset + GetFormat();
