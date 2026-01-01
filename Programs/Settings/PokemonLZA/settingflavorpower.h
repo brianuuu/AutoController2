@@ -28,7 +28,7 @@ public:
     static QString GetDatabase() { return "PokemonLZA/FlavorPowers"; }
 
 private slots:
-    void OnFilterChanged();
+    void OnFilterChanged(QString const& str);
 
 private:
     void ResetLists();

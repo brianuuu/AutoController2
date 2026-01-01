@@ -43,8 +43,8 @@ SettingFlavorPower::SettingFlavorPower(const QString &name) : SettingBase(name)
     label->setAlignment(Qt::AlignCenter);
 
     m_filter = new QLineEdit();
-    m_filter->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z\-]*")));
-    m_filter->setPlaceholderText("Filter");
+    m_filter->setValidator(new QRegularExpressionValidator(QRegularExpression("[A-Za-z0-9,\-]*")));
+    m_filter->setPlaceholderText("Filter (use comma to do multiple filters)");
     connect(m_filter, &QLineEdit::textChanged, this, &SettingFlavorPower::OnFilterChanged);
 
     m_allPower = new QListWidget();
@@ -123,12 +123,25 @@ SettingFlavorPower::PowerSlots SettingFlavorPower::GetPowerSlots() const
     return powerSlots;
 }
 
-void SettingFlavorPower::OnFilterChanged()
+void SettingFlavorPower::OnFilterChanged(const QString &str)
 {
+    QStringList const filters = str.split(',');
     for (int i = 0; i < m_allPower->count(); i++)
     {
         QListWidgetItem* item = m_allPower->item(i);
-        item->setHidden(!item->text().contains(m_filter->text()));
+        QString const itemText = item->text();
+
+        bool allFilterFound = true;
+        for (QString const& filter : filters)
+        {
+            if (!itemText.contains(filter))
+            {
+                allFilterFound = false;
+                break;
+            }
+        }
+
+        item->setHidden(!allFilterFound);
     }
 }
 
