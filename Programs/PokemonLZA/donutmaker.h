@@ -21,7 +21,7 @@ public:
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "PLZA-DonutMaker"; }
     QString GetDescription() const override {
-        return "Automatically make donuts with specific flavor powers";
+        return "Make donuts and reset until one or multiple of the same donut with specified flavor power is found";
     }
 
     bool RequireSerial() const override { return true; }
