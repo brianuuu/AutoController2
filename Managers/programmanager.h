@@ -38,6 +38,7 @@ private slots:
     void OnProgramFinished(int result);
     void OnResetDefault();
     void OnManualOpen();
+    void OnUpTimeUpdate();
 
 private:
     void LoadSettings();
@@ -66,6 +67,7 @@ private:
     QLabel*         m_labelSerial = Q_NULLPTR;
     QLabel*         m_labelCamera = Q_NULLPTR;
     QLabel*         m_labelAudio = Q_NULLPTR;
+    QLabel*         m_labelUpTime = Q_NULLPTR;
     QMap<QString, QStringList>  m_categoryToPrograms;
 
     using ProgramCtor = Program::ProgramBase*(*)();
@@ -73,6 +75,8 @@ private:
 
     // Members
     Program::ProgramBase*   m_program = Q_NULLPTR;
+    QDateTime   m_startTime;
+    QTimer      m_upTimer;
 };
 
 #endif // PROGRAMMANAGER_H

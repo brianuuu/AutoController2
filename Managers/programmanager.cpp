@@ -28,6 +28,9 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_labelSerial = ui->L_SerialPort;
     m_labelCamera = ui->L_CameraDevice;
     m_labelAudio = ui->L_AudioInput;
+    m_labelUpTime = ui->L_UpTime;
+
+    m_upTimer.setInterval(500);
 
     // shortcuts
     new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
@@ -38,6 +41,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnStart, &QPushButton::clicked, this, &ProgramManager::OnProgramStartStop);
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
     connect(m_btnManual, &QPushButton::clicked, this, &ProgramManager::OnManualOpen);
+    connect(&m_upTimer, &QTimer::timeout, this, &ProgramManager::OnUpTimeUpdate);
 
     // register all programs
     RegisterProgram<Program::Development::DevCommand>();
@@ -85,6 +89,7 @@ void ProgramManager::OnCategoryChanged(const QString &category)
 void ProgramManager::OnProgramChanged(const QString &name)
 {
     RemoveProgram();
+    m_labelUpTime->setText("00:00:00");
     if (name.isEmpty()) return;
 
     QString const category = m_programCategory->currentText();
@@ -196,6 +201,13 @@ void ProgramManager::OnManualOpen()
     QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
 }
 
+void ProgramManager::OnUpTimeUpdate()
+{
+    qint64 const secs = m_startTime.secsTo(QDateTime::currentDateTime());
+    QTime const time(0, 0, secs);
+    m_labelUpTime->setText(time.toString("hh:mm:ss"));
+}
+
 void ProgramManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
@@ -240,6 +252,9 @@ void ProgramManager::StartProgram()
     m_programCategory->setEnabled(false);
     m_programList->setEnabled(false);
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
+    m_startTime = QDateTime::currentDateTime();
+    m_upTimer.start();
+    OnUpTimeUpdate();
     m_program->Start();
 
     emit notifyStartStop();
@@ -250,6 +265,7 @@ void ProgramManager::StopProgram()
     if (!m_program || !m_program->IsRunning()) return;
 
     m_program->Stop();
+    m_upTimer.stop();
     m_btnStart->setText("Start Program (F5)");
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_programCategory->setEnabled(true);
