@@ -23,7 +23,7 @@ public:
     bool OnCloseEvent();
     bool OnInitShow();
 
-    void SetCurrentLogFile(QString const& file);
+    void SetCurrentLogName(QString const& name);
     void SetClearLogEnabled(bool enable);
 
     static QString GetLogFileName(QString const& name);

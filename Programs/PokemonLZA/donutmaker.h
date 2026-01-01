@@ -28,6 +28,7 @@ public:
     bool RequireVideo() const override { return true; }
     bool RequireAudio() const override { return false; }
 
+    bool ShouldLog() const override { return true; }
     bool CanRun() const override;
 
     void Start() override;

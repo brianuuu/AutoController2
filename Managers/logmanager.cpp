@@ -118,9 +118,9 @@ void LogManager::SaveSettings() const
     JsonHelper::WriteSetting("LogWindow", settings);
 }
 
-void LogManager::SetCurrentLogFile(const QString &file)
+void LogManager::SetCurrentLogName(const QString &name)
 {
-    m_logFile = file;
+    m_logFile = name.isEmpty() ? "" : GetLogFileName(name);
 }
 
 void LogManager::SetClearLogEnabled(bool enable)

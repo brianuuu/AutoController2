@@ -116,11 +116,8 @@ void ProgramManager::OnCanRunChanged(bool canRun)
 
     if (!canRun && m_program->IsRunning())
     {
-        StopProgram();
-
         m_logManager->PrintLog(m_program->GetInternalName(), "Program forced stopped as Serial or Camera is turned off", LOG_Warning);
-        // TODO: log file name
-        m_logManager->SetCurrentLogFile("");
+        StopProgram();
     }
 
     auto fnSetPalette = [](QLabel* label, bool valid)
@@ -145,18 +142,19 @@ void ProgramManager::OnProgramStartStop()
     bool const canRun = m_program->CanRun();
     if (m_program->IsRunning())
     {
-        StopProgram();
-
         m_logManager->PrintLog(m_program->GetInternalName(), "Program stopped by user", LOG_Warning);
-        // TODO: log file name
-        m_logManager->SetCurrentLogFile("");
+        StopProgram();
     }
     else if (canRun)
     {
-        m_logManager->ClearLog();
-        // TODO: set log file
-        m_logManager->PrintLog(m_program->GetInternalName(), "Program started");
+        // set log file name
+        if (m_program->ShouldLog())
+        {
+            m_logManager->SetCurrentLogName(m_program->GetInternalName());
+        }
 
+        m_logManager->OnClearLog();
+        m_logManager->PrintLog(m_program->GetInternalName(), "Program started");
         StartProgram();
     }
 
@@ -167,8 +165,6 @@ void ProgramManager::OnProgramFinished(int result)
 {
     if (m_program && m_program->IsRunning())
     {
-        StopProgram();
-
         if (result < 0)
         {
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error", LOG_Error);
@@ -177,8 +173,8 @@ void ProgramManager::OnProgramFinished(int result)
         {
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!", LOG_Success);
         }
-        // TODO: log file name
-        m_logManager->SetCurrentLogFile("");
+
+        StopProgram();
     }
 }
 
@@ -262,6 +258,7 @@ void ProgramManager::StartProgram()
 
 void ProgramManager::StopProgram()
 {
+    m_logManager->SetCurrentLogName("");
     if (!m_program || !m_program->IsRunning()) return;
 
     m_program->Stop();
