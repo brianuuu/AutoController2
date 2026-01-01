@@ -23,14 +23,18 @@ void LogManager::Initialize(Ui::MainWindow *ui)
     m_browser = new QTextBrowser();
     vBoxLayout->addWidget(m_browser);
 
-    m_btnClear = new QPushButton("Clear Log");
-    vBoxLayout->addWidget(m_btnClear);
-    connect(m_btnClear, &QPushButton::clicked, this, [this]
-    {
-        ClearLog();
-    });
+    QHBoxLayout* hBoxLayout = new QHBoxLayout();
+    vBoxLayout->addLayout(hBoxLayout);
 
-    ClearLog();
+    m_btnSave = new QPushButton("Save Log");
+    hBoxLayout->addWidget(m_btnSave);
+    connect(m_btnSave, &QPushButton::clicked, this, &LogManager::OnSaveLog);
+
+    m_btnClear = new QPushButton("Clear Log");
+    hBoxLayout->addWidget(m_btnClear);
+    connect(m_btnClear, &QPushButton::clicked, this, &LogManager::OnClearLog);
+
+    OnClearLog();
     LoadSettings();
 }
 
@@ -124,6 +128,11 @@ void LogManager::SetClearLogEnabled(bool enable)
     m_btnClear->setEnabled(enable);
 }
 
+QString LogManager::GetLogFileName(const QString &name)
+{
+    return QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss") + "_" + name + ".log";
+}
+
 void LogManager::PrintLog(const QString &category, const QString &log, LogType type)
 {
     QString const header = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - [" + category + "]";
@@ -147,9 +156,29 @@ void LogManager::PrintLog(const QString &category, const QString &log, LogType t
             file.close();
         }
     }
+
+    // Clear if there are too many logs
+    if (m_logCount >= 10000)
+    {
+        OnClearLog();
+    }
 }
 
-void LogManager::ClearLog()
+void LogManager::OnSaveLog()
+{
+    QString const nameWithTime = GetLogFileName("Log");
+    QFile file(LOG_PATH + nameWithTime);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        stream << m_browser->toPlainText();
+        file.close();
+
+        PrintLog("Global", "Log file saved: " + nameWithTime);
+    }
+}
+
+void LogManager::OnClearLog()
 {
     m_logCount = 0;
     m_browser->clear();

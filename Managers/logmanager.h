@@ -26,12 +26,16 @@ public:
     void SetCurrentLogFile(QString const& file);
     void SetClearLogEnabled(bool enable);
 
+    static QString GetLogFileName(QString const& name);
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 public slots:
     void PrintLog(QString const& category, QString const& log, LogType type = LOG_Normal);
-    void ClearLog();
+
+    void OnSaveLog();
+    void OnClearLog();
 
     void OnShow();
 
@@ -42,6 +46,7 @@ private:
 private:
     // UI
     QTextBrowser*   m_browser = Q_NULLPTR;
+    QPushButton*    m_btnSave = Q_NULLPTR;
     QPushButton*    m_btnClear = Q_NULLPTR;
 
     // Members
