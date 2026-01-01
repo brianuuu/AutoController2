@@ -33,7 +33,7 @@ void DonutMaker::PopulateSettings(QBoxLayout *layout)
 
     m_power = new FlavorPower("FlavorPower");
     m_savedSettings.insert(m_power);
-    AddSetting(layout, "Flavor Power Selection:", "Drag & drop desired flavor power into each slot, target donut will match at least one of the flavor powers in each slot (having all 3 levels in a slot will pick any level etc.). You can also double-click to remove power from a slot", m_power, false);
+    AddSetting(layout, "Flavor Power Selection:", "Drag & drop desired flavor power into each slot (order does not matter), target donut will match at least one of the flavor powers in each slot (having all 3 levels in a slot will pick any level etc.). You can also double-click to remove power from a slot", m_power, false);
     m_power->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     VerifyOrder();
