@@ -29,6 +29,7 @@ SettingFlavorPower::SettingFlavorPower(const QString &name) : SettingBase(name)
         m_power[i]->setSortingEnabled(true);
         m_power[i]->setDragDropMode(QAbstractItemView::DragDrop);
         m_power[i]->setDefaultDropAction(Qt::MoveAction);
+        m_power[i]->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
         QLabel* label = new QLabel("Slot " + QString::number(i + 1));
         label->setFont(font);
@@ -52,6 +53,7 @@ SettingFlavorPower::SettingFlavorPower(const QString &name) : SettingBase(name)
     m_allPower->setSortingEnabled(true);
     m_allPower->setDragDropMode(QAbstractItemView::DragDrop);
     m_allPower->setDefaultDropAction(Qt::MoveAction);
+    m_allPower->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     vBoxLayout->addWidget(label);
     vBoxLayout->addWidget(m_filter);
