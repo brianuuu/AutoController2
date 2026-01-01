@@ -29,6 +29,7 @@ public:
 
 private slots:
     void OnFilterChanged(QString const& str);
+    void OnSlotItemRemove(QListWidgetItem* item);
 
 private:
     void ResetLists();

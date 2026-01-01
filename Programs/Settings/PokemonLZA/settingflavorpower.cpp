@@ -30,6 +30,7 @@ SettingFlavorPower::SettingFlavorPower(const QString &name) : SettingBase(name)
         m_power[i]->setDragDropMode(QAbstractItemView::DragDrop);
         m_power[i]->setDefaultDropAction(Qt::MoveAction);
         m_power[i]->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        connect(m_power[i], &QListWidget::itemDoubleClicked, this, &SettingFlavorPower::OnSlotItemRemove);
 
         QLabel* label = new QLabel("Slot " + QString::number(i + 1));
         label->setFont(font);
@@ -145,6 +146,13 @@ void SettingFlavorPower::OnFilterChanged(const QString &str)
 
         item->setHidden(!allFilterFound);
     }
+}
+
+void SettingFlavorPower::OnSlotItemRemove(QListWidgetItem *item)
+{
+    QListWidget* widget = qobject_cast<QListWidget*>(sender());
+    widget->takeItem(widget->row(item));
+    m_allPower->addItem(item);
 }
 
 void SettingFlavorPower::ResetLists()
