@@ -200,7 +200,7 @@ void ProgramManager::OnManualOpen()
 void ProgramManager::OnUpTimeUpdate()
 {
     qint64 const secs = m_startTime.secsTo(QDateTime::currentDateTime());
-    QTime const time(0, 0, secs);
+    QTime const time = QTime(0, 0).addSecs(secs);
     m_labelUpTime->setText(time.toString("hh:mm:ss"));
 }
 
