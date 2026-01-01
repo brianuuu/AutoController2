@@ -30,7 +30,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_labelAudio = ui->L_AudioInput;
     m_labelUpTime = ui->L_UpTime;
 
-    m_upTimer.setInterval(500);
+    m_upTimer.setInterval(200);
 
     // shortcuts
     new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
