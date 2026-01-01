@@ -1,5 +1,7 @@
 - PLZA: Donut Maker first release
-- Added F5 shortcut and start/stop program
+- Added F5 shortcut to start/stop program
+- Added Up Time display when running a program
+- Some progra now automatically export log file
 
 Bug Fixes:
 - Fixed commands after a loop unable to run and gets stuck
