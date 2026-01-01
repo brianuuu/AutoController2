@@ -2,6 +2,8 @@
 #define LOGTYPE_H
 
 #include <QColor>
+#include <QGuiApplication>
+#include <QPalette>
 #include <QString>
 
 enum LogType
@@ -18,7 +20,7 @@ static QColor LogTypeToColor(LogType type)
 {
     switch (type)
     {
-    case LOG_Normal:    return QColor(0,0,0);
+    case LOG_Normal:    return QGuiApplication::palette().windowText().color();
     case LOG_Success:   return QColor(0,170,0);
     case LOG_Warning:   return QColor(255,120,0);
     case LOG_Error:     return QColor(255,0,0);

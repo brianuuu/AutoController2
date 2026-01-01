@@ -136,7 +136,7 @@ QString LogManager::GetLogFileName(const QString &name)
 void LogManager::PrintLog(const QString &category, const QString &log, LogType type)
 {
     QString const header = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - [" + category + "]";
-    QColor const color = type == LOG_Normal ? QGuiApplication::palette().windowText().color() : LogTypeToColor(type);
+    QColor const color = LogTypeToColor(type);
     QString r,g,b;
     r.setNum(color.red(), 16); if (color.red() < 0x10) r = "0" + r;
     g.setNum(color.green(), 16); if (color.green() < 0x10) g = "0" + g;
