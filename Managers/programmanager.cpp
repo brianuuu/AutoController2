@@ -235,12 +235,12 @@ void ProgramManager::StartProgram()
 {
     if (!m_program || m_program->IsRunning() || !m_program->CanRun()) return;
 
-    m_program->Start();
     m_btnStart->setText("Stop Program (F5)");
     m_btnResetDefault->setEnabled(false);
     m_programCategory->setEnabled(false);
     m_programList->setEnabled(false);
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
+    m_program->Start();
 
     emit notifyStartStop();
 }
