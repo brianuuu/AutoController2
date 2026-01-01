@@ -104,8 +104,7 @@ void OCR::run()
     // Check if .traineddata exist
     if (!ProfileManager::OCRTrainedDataExist(m_language))
     {
-        QString const languageName = LanguageToString(m_language);
-        m_error = "Language trained data for '" + languageName + "' for Tesseract is missing, please goto 'Resources/Tesseract' folder and follow the instructions in README.md";
+        m_error = ProfileManager::GetNoTrainedDataError(m_language);
         m_result = -1;
         return;
     }

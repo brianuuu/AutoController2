@@ -182,9 +182,16 @@ void ProgramBase::ClearModules()
 
 bool ProgramBase::EnsureOCRDatabase(const QString &database)
 {
-    if (!OCREntryDatabase::EnsureDatabase(database, m_profileManager->GetLanguageType()))
+    LanguageType const language = m_profileManager->GetLanguageType();
+    if (!OCREntryDatabase::EnsureDatabase(database, language))
     {
-        PrintLog(OCREntryDatabase::GetNoDatabaseError(database, m_profileManager->GetLanguageType()), LOG_Error);
+        PrintLog(OCREntryDatabase::GetNoDatabaseError(database, language), LOG_Error);
+        emit notifyFinished(-1);
+        return false;
+    }
+    else if (!ProfileManager::OCRTrainedDataExist(language))
+    {
+        PrintLog(ProfileManager::GetNoTrainedDataError(language), LOG_Error);
         emit notifyFinished(-1);
         return false;
     }

@@ -66,6 +66,12 @@ bool ProfileManager::OCRTrainedDataExist(LanguageType type)
     return QFile::exists(OCR_PATH + prefix + ".traineddata");
 }
 
+QString ProfileManager::GetNoTrainedDataError(LanguageType type)
+{
+    QString const languageName = LanguageToString(type);
+    return "Language trained data for '" + languageName + "' for Tesseract is missing, please goto 'Resources/Tesseract' folder and follow the instructions in README.md";
+}
+
 void ProfileManager::closeEvent(QCloseEvent *event)
 {
     SaveSettings();
@@ -84,11 +90,10 @@ void ProfileManager::OnShow()
 
 void ProfileManager::OnLanguageChanged(int index)
 {
-    LanguageType type = (LanguageType)index;
+    LanguageType const type = (LanguageType)index;
     if (!OCRTrainedDataExist(GetLanguageType()))
     {
-        QString const languageName = LanguageToString(type);
-        QMessageBox::warning(this, "Warning", "Language trained data for '" + languageName + "' for Tesseract is missing, please goto 'Resources/Tesseract' folder and follow the instructions in README.md.", QMessageBox::Ok);
+        QMessageBox::warning(this, "Warning", GetNoTrainedDataError(type), QMessageBox::Ok);
     }
 }
 

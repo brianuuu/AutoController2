@@ -27,6 +27,7 @@ public:
     SystemType GetSystemType() const;
 
     static bool OCRTrainedDataExist(LanguageType type);
+    static QString GetNoTrainedDataError(LanguageType type);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
