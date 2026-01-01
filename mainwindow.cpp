@@ -16,7 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Auto Controller 2 v" + VERSION);
+    QString title = "Auto Controller 2 v" + VERSION;
+    if (IS_BETA)
+    {
+        title += " (Beta)";
+    }
+    this->setWindowTitle(title);
 
     m_logManager = ManagerCollection::AddManager<LogManager>();
     m_profileManager = ManagerCollection::AddManager<ProfileManager>();
