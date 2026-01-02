@@ -249,7 +249,7 @@ void DonutMaker::OnOCRFinished()
             {
                 if (m_powerEntries.contains(power))
                 {
-                    PrintLog(power + " has matched slot " + QString::number(i));
+                    PrintLog(power + " has matched Slot " + QString::number(i+1));
                     found = true;
                     break;
                 }
@@ -258,7 +258,7 @@ void DonutMaker::OnOCRFinished()
             if (!found)
             {
                 // current slot cannot be found, failed donut
-                PrintLog("Cannot find any flavor power in slot " + QString::number(i), LOG_Warning);
+                PrintLog("Cannot find any flavor power in Slot " + QString::number(i+1), LOG_Warning);
                 allFound = false;
                 break;
             }
