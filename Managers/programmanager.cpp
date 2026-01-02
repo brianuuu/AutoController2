@@ -14,6 +14,7 @@
 
 #define PROGRAM_MANUAL_PATH "../Manuals/"
 #define PROGRAM_STATS_INI "../Stats.ini"
+#define STREAM_COUNTER_PATH "../StreamCounters/"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
@@ -38,6 +39,11 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_btnStatsEdit = ui->PB_StatsEdit;
     m_btnStatsReset = ui->PB_StatsReset;
     m_labelStats = ui->L_Stats;
+
+    if (!QDir(STREAM_COUNTER_PATH).exists())
+    {
+        QDir().mkdir(STREAM_COUNTER_PATH);
+    }
 
     // shortcuts
     new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
@@ -114,12 +120,12 @@ void ProgramManager::IncrementStat(int &refValue, int amount)
 void ProgramManager::UpdateStats(bool reset)
 {
     // Delete all stream counter text files
-    //QDirIterator it(QString(STREAM_COUNTER_PATH));
-    //while (it.hasNext())
-    //{
-    //    QString dir = it.next();
-    //    QFile::remove(dir);
-    //}
+    QDirIterator it(QString(STREAM_COUNTER_PATH));
+    while (it.hasNext())
+    {
+        QString dir = it.next();
+        QFile::remove(dir);
+    }
 
     if (!m_program)
     {
@@ -160,20 +166,20 @@ void ProgramManager::UpdateStats(bool reset)
             statsStr += key + ": " + QString::number(count);
 
             // Write to individual files for each stat
-            //if (m_settings->isStreamCounterEnabled())
-            //{
-            //    QFile file(STREAM_COUNTER_PATH + key + ".txt");
-            //    if(file.open(QIODevice::WriteOnly))
-            //    {
-            //        QTextStream stream(&file);
-            //        if (!m_settings->isStreamCounterExcludePrefix())
-            //        {
-            //            stream << key + ": ";
-            //        }
-            //        stream << count;
-            //        file.close();
-            //    }
-            //}
+            if (m_profileManager->StreamCounterEnabled())
+            {
+                QFile file(STREAM_COUNTER_PATH + key + ".txt");
+                if(file.open(QIODevice::WriteOnly))
+                {
+                    QTextStream stream(&file);
+                    if (!m_profileManager->StreamCounterExcludePrefix())
+                    {
+                        stream << key + ": ";
+                    }
+                    stream << count;
+                    file.close();
+                }
+            }
         }
     }
     m_labelStats->setText(statsStr);

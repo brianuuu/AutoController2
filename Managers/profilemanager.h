@@ -9,6 +9,7 @@
 #include <QWidget>
 
 #include "Programs/Settings/settingcheckbox.h"
+#include "Programs/Settings/settingcombobox.h"
 #include "Programs/Settings/settinglanguage.h"
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingspinbox.h"
@@ -35,6 +36,8 @@ public:
 
     // Program
     void PlaySound(quint64 minutes = INT64_MAX);
+    bool StreamCounterEnabled() const;
+    bool StreamCounterExcludePrefix() const;
 
     // Utils
     static bool OCRTrainedDataExist(LanguageType type);
@@ -74,6 +77,7 @@ private:
     QToolButton* m_btnCustomSound = Q_NULLPTR;
     Setting::SettingSpinBox* m_playSoundSuppress = Q_NULLPTR;
     QMediaPlayer* m_mediaPlayer = Q_NULLPTR;
+    Setting::SettingComboBox* m_streamCounter = Q_NULLPTR;
 };
 
 #endif // PROFILEMANAGER_H

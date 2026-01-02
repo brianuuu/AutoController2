@@ -72,6 +72,9 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 
         m_playSoundSuppress = new Setting::SettingSpinBox("SoundSuppress", 0, INT_MAX, 1);
         Program::ProgramBase::AddSetting(layout, "Sound Suppression:", "Prevent sound from playing if program duration is less than this many minutes", m_playSoundSuppress, true);
+
+        m_streamCounter = new Setting::SettingComboBox("StreamCounter", {"Disabled", "Enabled (Full Stat)", "Enabled (Numbers Only)"});
+        Program::ProgramBase::AddSetting(layout, "Stream Counter:", "Program with stats will export each as individual text files to \"StreamCounters\" folder", m_streamCounter, true);
     }
 
     LoadSettings();
@@ -119,6 +122,16 @@ void ProfileManager::PlaySound(quint64 minutes)
     }
 
     m_mediaPlayer->play();
+}
+
+bool ProfileManager::StreamCounterEnabled() const
+{
+    return m_streamCounter->currentIndex() != 0;
+}
+
+bool ProfileManager::StreamCounterExcludePrefix() const
+{
+    return m_streamCounter->currentIndex() == 2;
 }
 
 bool ProfileManager::OCRTrainedDataExist(LanguageType type)
@@ -198,6 +211,7 @@ void ProfileManager::LoadSettings()
         m_customSoundEnabled->Load(program);
         m_customSoundPath->Load(program);
         m_playSoundSuppress->Load(program);
+        m_streamCounter->Load(program);
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(profileSettings, "WindowSize");
@@ -226,6 +240,7 @@ void ProfileManager::SaveSettings() const
     m_customSoundEnabled->Save(program);
     m_customSoundPath->Save(program);
     m_playSoundSuppress->Save(program);
+    m_streamCounter->Save(program);
 
     QJsonObject windowSize;
     windowSize.insert("Width", this->width());

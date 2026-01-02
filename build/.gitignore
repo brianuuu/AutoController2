@@ -1,6 +1,7 @@
 /Desktop_*
 /Logs
 /Screenshots
+/StreamCounters
 *.zip
 Stats.ini
 UserSettings.json
