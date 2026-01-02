@@ -4,6 +4,7 @@
 #include "Helpers/ocrentrydatabase.h"
 #include "Managers/audiomanager.h"
 #include "Managers/logmanager.h"
+#include "Managers/programmanager.h"
 #include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
@@ -13,6 +14,7 @@ namespace Program
 {
 ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
+    m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_audioManager = ManagerCollection::GetManager<AudioManager>();
@@ -135,6 +137,16 @@ bool ProgramBase::OnModuleErrorQuit()
     }
 
     return false;
+}
+
+void ProgramBase::RegisterStat(int &refValue, const QString &name)
+{
+    m_programManager->RegisterStat(refValue, name);
+}
+
+void ProgramBase::IncrementStat(int &refValue, int amount)
+{
+    m_programManager->IncrementStat(refValue, amount);
 }
 
 void ProgramBase::PrintLog(const QString &log, LogType type) const

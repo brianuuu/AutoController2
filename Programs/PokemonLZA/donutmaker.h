@@ -19,6 +19,7 @@ public:
 
     // from ProgramBase
     void PopulateSettings(QBoxLayout* layout) override;
+    void RegisterStats() override;
     QString GetInternalName() const override { return "PLZA-DonutMaker"; }
     QString GetDescription() const override {
         return "Make donuts and reset until one or multiple of the same donut with specified flavor power is found";
@@ -89,6 +90,9 @@ private:
 
     QList<QString> m_powerEntries;
     int m_donutCount = 0;
+
+    int m_statMade = 0;
+    int m_statFound = 0;
 };
 }
 

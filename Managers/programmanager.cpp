@@ -12,6 +12,7 @@
 #include "Programs/System/customcommand.h"
 
 #define PROGRAM_MANUAL_PATH "../Manuals/"
+#define PROGRAM_STATS_INI "../Stats.ini"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
@@ -32,6 +33,10 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 
     m_upTimer.setInterval(200);
 
+    m_btnStatsEdit = ui->PB_StatsEdit;
+    m_btnStatsReset = ui->PB_StatsReset;
+    m_labelStats = ui->L_Stats;
+
     // shortcuts
     new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
 
@@ -42,6 +47,8 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(m_btnResetDefault, &QPushButton::clicked, this, &ProgramManager::OnResetDefault);
     connect(m_btnManual, &QPushButton::clicked, this, &ProgramManager::OnManualOpen);
     connect(&m_upTimer, &QTimer::timeout, this, &ProgramManager::OnUpTimeUpdate);
+    connect(m_btnStatsEdit, &QPushButton::clicked, this, &ProgramManager::OnStatsEdit);
+    connect(m_btnStatsReset, &QPushButton::clicked, this, &ProgramManager::OnStatsReset);
 
     // register all programs
     RegisterProgram<Program::Development::DevCommand>();
@@ -69,6 +76,113 @@ bool ProgramManager::OnCloseEvent()
     return true;
 }
 
+void ProgramManager::RegisterStat(int& refValue, const QString &name)
+{
+    if (!m_program) return;
+
+    m_stats[&refValue] = name;
+
+    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
+    stats.beginGroup(m_program->GetInternalName());
+
+    // Grab value from ini, resave if ini file doesn't exist
+    refValue = stats.value(name, 0).toInt();
+    stats.setValue(name, refValue);
+
+    UpdateStats();
+}
+
+void ProgramManager::IncrementStat(int &refValue, int amount)
+{
+    if (!m_program || !m_stats.contains(&refValue)) return;
+
+    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
+    stats.beginGroup(m_program->GetInternalName());
+    QString const name = m_stats.value(&refValue);
+
+    // Grab value from ini, increment and save
+    refValue = stats.value(name).toInt();
+    refValue += amount;
+    refValue = qMax(refValue, 0); // no negative, but something probably went wrong...?
+    stats.setValue(name, refValue);
+
+    UpdateStats();
+}
+
+void ProgramManager::UpdateStats(bool reset)
+{
+    // Delete all stream counter text files
+    //QDirIterator it(QString(STREAM_COUNTER_PATH));
+    //while (it.hasNext())
+    //{
+    //    QString dir = it.next();
+    //    QFile::remove(dir);
+    //}
+
+    if (!m_program)
+    {
+        m_labelStats->setText("N/A");
+        m_btnStatsReset->setEnabled(false);
+        return;
+    }
+
+    // Grab stats for current program
+    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
+    stats.beginGroup(m_program->GetInternalName());
+
+    // Update label
+    QStringList const list = stats.allKeys();
+    QString statsStr;
+    if (list.isEmpty())
+    {
+        statsStr = "N/A";
+        m_btnStatsReset->setEnabled(false);
+    }
+    else
+    {
+        m_btnStatsReset->setEnabled(true);
+        for (int i = 0; i < list.size(); i++)
+        {
+            QString const& key = list[i];
+            if (i != 0)
+            {
+                statsStr += ", ";
+            }
+
+            if (reset)
+            {
+                stats.setValue(key, 0);
+            }
+
+            int count = stats.value(key, 0).toInt();
+            statsStr += key + ": " + QString::number(count);
+
+            // Write to individual files for each stat
+            //if (m_settings->isStreamCounterEnabled())
+            //{
+            //    QFile file(STREAM_COUNTER_PATH + key + ".txt");
+            //    if(file.open(QIODevice::WriteOnly))
+            //    {
+            //        QTextStream stream(&file);
+            //        if (!m_settings->isStreamCounterExcludePrefix())
+            //        {
+            //            stream << key + ": ";
+            //        }
+            //        stream << count;
+            //        file.close();
+            //    }
+            //}
+        }
+    }
+    m_labelStats->setText(statsStr);
+}
+
+void ProgramManager::ClearStats()
+{
+    m_stats.clear();
+    UpdateStats();
+}
+
 void ProgramManager::OnCategoryChanged(const QString &category)
 {
     m_programList->clear();
@@ -89,13 +203,13 @@ void ProgramManager::OnCategoryChanged(const QString &category)
 void ProgramManager::OnProgramChanged(const QString &name)
 {
     RemoveProgram();
-    m_labelUpTime->setText("00:00:00");
     if (name.isEmpty()) return;
 
     QString const category = m_programCategory->currentText();
     m_program = m_programCtors.value(category + name)();
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
+    m_program->RegisterStats();
 
     m_btnManual->setEnabled(QFile::exists(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
@@ -204,6 +318,23 @@ void ProgramManager::OnUpTimeUpdate()
     m_labelUpTime->setText(time.toString("hh:mm:ss"));
 }
 
+void ProgramManager::OnStatsEdit()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_STATS_INI));
+}
+
+void ProgramManager::OnStatsReset()
+{
+    if (!m_program) return;
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::warning(this, "Reset Stats", "This will reset all stats for current program to 0, continue?\nIf you want to edit individual stats, press Edit.", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        UpdateStats(true);
+    }
+}
+
 void ProgramManager::LoadSettings()
 {
     QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
@@ -286,6 +417,9 @@ void ProgramManager::RegisterProgram()
 
 void ProgramManager::RemoveProgram()
 {
+    m_labelUpTime->setText("00:00:00");
+    ClearStats();
+
     if (!m_program) return;
 
     if (m_program->IsRunning())

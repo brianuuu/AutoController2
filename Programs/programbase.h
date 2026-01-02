@@ -27,6 +27,7 @@ public:
     void SaveSettings() const;
 
     virtual void PopulateSettings(QBoxLayout* layout) = 0;
+    virtual void RegisterStats() {}
     virtual QString GetInternalName() const = 0;
     virtual QString GetDescription() const = 0;
 
@@ -66,6 +67,9 @@ protected slots:
     virtual void OnWaitTimeout() {}
 
 protected:
+    void RegisterStat(int& refValue, QString const& name);
+    void IncrementStat(int& refValue, int amount = 1);
+
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
     template<typename T, typename Func, typename... Args>
@@ -105,6 +109,7 @@ public:
     static void CleanOCRFiles();
 
 protected:
+    ProgramManager*     m_programManager = Q_NULLPTR;
     ProfileManager*     m_profileManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     AudioManager*       m_audioManager = Q_NULLPTR;

@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QListWidget>
+#include <QSettings>
 #include <QShortcut>
 #include <QWidget>
 
@@ -27,6 +28,9 @@ public:
     bool AllowKeyboardInput() const { return !IsRunning() || !m_program->RequireSerial() || m_program->CanControlWhileRunning(); }
     bool IsRunning() const { return m_program && m_program->IsRunning(); }
 
+    void RegisterStat(int& refValue, QString const& name);
+    void IncrementStat(int& refValue, int amount = 1);
+
 signals:
     void notifyStartStop();
 
@@ -40,6 +44,9 @@ private slots:
     void OnManualOpen();
     void OnUpTimeUpdate();
 
+    void OnStatsEdit();
+    void OnStatsReset();
+
 private:
     void LoadSettings();
     void SaveSettings() const;
@@ -50,6 +57,9 @@ private:
     template<class T>
     void RegisterProgram();
     void RemoveProgram();
+
+    void UpdateStats(bool reset = false);
+    void ClearStats();
 
 private:
     // Managers
@@ -77,6 +87,12 @@ private:
     Program::ProgramBase*   m_program = Q_NULLPTR;
     QDateTime   m_startTime;
     QTimer      m_upTimer;
+
+    // Stats
+    QPushButton*    m_btnStatsEdit = Q_NULLPTR;
+    QPushButton*    m_btnStatsReset = Q_NULLPTR;
+    QLabel*         m_labelStats = Q_NULLPTR;
+    QMap<int*, QString> m_stats;
 };
 
 #endif // PROGRAMMANAGER_H

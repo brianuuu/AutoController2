@@ -39,6 +39,12 @@ void DonutMaker::PopulateSettings(QBoxLayout *layout)
     VerifyOrder();
 }
 
+void DonutMaker::RegisterStats()
+{
+    RegisterStat(m_statMade, "Made");
+    RegisterStat(m_statFound, "Found");
+}
+
 bool DonutMaker::CanRun() const
 {
     return ProgramBase::CanRun() && m_validOrder;
@@ -117,6 +123,7 @@ void DonutMaker::OnCommandFinished()
     {
         m_state = SetState(State::MakeDonut, "Making donut");
         DONUT_MAKER_RUN_COMMAND("PLZA_MakeDonut", 0);
+        IncrementStat(m_statMade);
         break;
     }
     case MakeDonut:
@@ -268,6 +275,7 @@ void DonutMaker::OnOCRFinished()
         {
             m_donutCount++;
             PrintLog("Correct donut found! " + QString::number(m_count->value() - m_donutCount) + " remaining", LOG_Important);
+            IncrementStat(m_statFound);
 
             if (m_donutCount == m_count->value())
             {
