@@ -779,6 +779,51 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="font">
+             <font>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Stats -</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="L_Stats">
+            <property name="text">
+             <string>N/A</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="PB_StatsEdit">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="PB_StatsReset">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
