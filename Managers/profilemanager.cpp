@@ -2,6 +2,8 @@
 
 #include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
+#include "Managers/managercollection.h"
+#include "Managers/audiomanager.h"
 #include "Programs/programbase.h"
 #include "defines.h"
 
@@ -25,18 +27,51 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 
     // system settings
     Program::ProgramBase::AddText(scrollLayout, "System Settings", true);
-    QGroupBox* systemGroup = new QGroupBox();
-    systemGroup->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    scrollLayout->addWidget(systemGroup);
     {
-        QVBoxLayout* systemLayout = new QVBoxLayout(systemGroup);
+        QGroupBox* group = new QGroupBox();
+        group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        scrollLayout->addWidget(group);
+        QVBoxLayout* layout = new QVBoxLayout(group);
 
         m_language = new Setting::SettingLanguage("Language");
-        Program::ProgramBase::AddSetting(systemLayout, "Language:", "Language of the Nintendo Switch system or the current game. Required for OCR (Text Recognition)", m_language, true);
+        Program::ProgramBase::AddSetting(layout, "Language:", "Language of the Nintendo Switch system or the current game. Required for OCR (Text Recognition)", m_language, true);
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
 
         m_system = new Setting::SettingSystem("System");
-        Program::ProgramBase::AddSetting(systemLayout, "System:", "Type of the current Nintendo Switch system. This can affect what command to be used", m_system, true);
+        Program::ProgramBase::AddSetting(layout, "System:", "Type of the current Nintendo Switch system. This can affect what command to be used", m_system, true);
+    }
+
+    // program settings
+    Program::ProgramBase::AddText(scrollLayout, "Program Settings", true);
+    {
+        QGroupBox* group = new QGroupBox();
+        group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        scrollLayout->addWidget(group);
+        QVBoxLayout* layout = new QVBoxLayout(group);
+
+        m_playSound = new Setting::SettingCheckBox("PlaySound", "", true);
+        m_btnPlaySound = new QPushButton("Play Sound");
+        Program::ProgramBase::AddSettings(layout, "Play Sound at Program Finish:", "A sound will be played when a program finishes", {m_playSound, m_btnPlaySound}, true);
+        m_playSound->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        connect(m_playSound, &QCheckBox::checkStateChanged, this, &ProfileManager::OnPlaySoundChecked);
+        connect(m_btnPlaySound, &QPushButton::clicked, this, [this]{ PlaySound(); });
+
+        m_customSoundEnabled = new Setting::SettingCheckBox("CustomSoundEnabled", "", false);
+        m_customSoundPath = new Setting::SettingLineEdit("CustomSoundPath");
+        m_customSoundPath->setReadOnly(true);
+        m_customSoundPath->setEnabled(false);
+        m_btnCustomSound = new QToolButton();
+        m_btnCustomSound->setText("...");
+        m_btnCustomSound->setEnabled(false);
+        Program::ProgramBase::AddSettings(layout, "Custom Sound:", "Play this custom sound instead of the default one", {m_customSoundEnabled, m_customSoundPath, m_btnCustomSound}, true);
+        m_customSoundEnabled->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        m_btnCustomSound->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        connect(m_customSoundEnabled, &QCheckBox::checkStateChanged, this, &ProfileManager::OnCustomSoundChecked);
+        connect(m_customSoundPath, &QLineEdit::textChanged, this, &ProfileManager::OnCustomSoundChanged);
+        connect(m_btnCustomSound, &QToolButton::clicked, this, &ProfileManager::OnCustomSoundClicked);
+
+        m_playSoundSuppress = new Setting::SettingSpinBox("SoundSuppress", 0, INT_MAX, 1);
+        Program::ProgramBase::AddSetting(layout, "Sound Suppression:", "Prevent sound from playing if program duration is less than this many minutes", m_playSoundSuppress, true);
     }
 
     LoadSettings();
@@ -58,6 +93,32 @@ LanguageType ProfileManager::GetLanguageType() const
 SystemType ProfileManager::GetSystemType() const
 {
     return (SystemType)m_system->currentIndex();
+}
+
+void ProfileManager::PlaySound(quint64 minutes)
+{
+    if (!m_playSound->isChecked() || minutes < m_playSoundSuppress->value()) return;
+
+    if (m_mediaPlayer)
+    {
+        m_mediaPlayer->stop();
+        delete m_mediaPlayer;
+    }
+
+    AudioManager* audioManager = ManagerCollection::GetManager<AudioManager>();
+    m_mediaPlayer = new QMediaPlayer(this);
+    m_mediaPlayer->setAudioOutput(audioManager->GetAudioOutput());
+
+    if (m_customSoundEnabled->isChecked() && !m_customSoundPath->text().isEmpty())
+    {
+        m_mediaPlayer->setSource(QUrl::fromLocalFile(m_customSoundPath->text()));
+    }
+    else
+    {
+        m_mediaPlayer->setSource(QUrl::fromLocalFile(RESOURCES_PATH + "PokemonBW/06-caught-a-pokemon.mp3"));
+    }
+
+    m_mediaPlayer->play();
 }
 
 bool ProfileManager::OCRTrainedDataExist(LanguageType type)
@@ -97,6 +158,33 @@ void ProfileManager::OnLanguageChanged(int index)
     }
 }
 
+void ProfileManager::OnPlaySoundChecked(Qt::CheckState state)
+{
+    bool const enabled = state == Qt::Checked;
+    m_btnPlaySound->setEnabled(enabled);
+}
+
+void ProfileManager::OnCustomSoundChecked(Qt::CheckState state)
+{
+    bool const enabled = state == Qt::Checked;
+    m_customSoundPath->setEnabled(enabled);
+    m_btnCustomSound->setEnabled(enabled);
+}
+
+void ProfileManager::OnCustomSoundChanged(const QString &file)
+{
+    // Save directory
+    QFileInfo info(file);
+    m_path = info.dir().absolutePath();
+}
+
+void ProfileManager::OnCustomSoundClicked()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Select Custom Sound"), m_path, "Sounds (*.mp3 *.wav)");
+    if (file == Q_NULLPTR) return;
+    m_customSoundPath->setText(file);
+}
+
 void ProfileManager::LoadSettings()
 {
     QJsonObject profileSettings = JsonHelper::ReadSetting("ProfileSettings");
@@ -104,6 +192,12 @@ void ProfileManager::LoadSettings()
         QJsonObject system = JsonHelper::ReadObject(profileSettings, "System");
         m_language->Load(system);
         m_system->Load(system);
+
+        QJsonObject program = JsonHelper::ReadObject(profileSettings, "Program");
+        m_playSound->Load(program);
+        m_customSoundEnabled->Load(program);
+        m_customSoundPath->Load(program);
+        m_playSoundSuppress->Load(program);
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(profileSettings, "WindowSize");
@@ -127,6 +221,12 @@ void ProfileManager::SaveSettings() const
     m_language->Save(system);
     m_system->Save(system);
 
+    QJsonObject program;
+    m_playSound->Save(program);
+    m_customSoundEnabled->Save(program);
+    m_customSoundPath->Save(program);
+    m_playSoundSuppress->Save(program);
+
     QJsonObject windowSize;
     windowSize.insert("Width", this->width());
     windowSize.insert("Height", this->height());
@@ -135,6 +235,7 @@ void ProfileManager::SaveSettings() const
 
     QJsonObject profileSettings;
     profileSettings.insert("System", system);
+    profileSettings.insert("Program", program);
     profileSettings.insert("WindowSize", windowSize);
 
     JsonHelper::WriteSetting("ProfileSettings", profileSettings);

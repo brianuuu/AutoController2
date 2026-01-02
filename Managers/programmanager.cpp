@@ -2,8 +2,9 @@
 
 #include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
-#include "Managers/logmanager.h"
 #include "Managers/keyboardmanager.h"
+#include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
 
 #include "Programs/Development/devcommand.h"
 #include "Programs/Development/devframecapture.h"
@@ -17,6 +18,7 @@
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_profileManager = ManagerCollection::GetManager<ProfileManager>();
 
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
@@ -288,6 +290,7 @@ void ProgramManager::OnProgramFinished(int result)
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!", LOG_Success);
         }
 
+        m_profileManager->PlaySound(m_startTime.secsTo(QDateTime::currentDateTime()) / 60);
         StopProgram();
     }
 }

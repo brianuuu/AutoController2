@@ -64,6 +64,7 @@ private:
 private:
     // Managers
     LogManager*     m_logManager = Q_NULLPTR;
+    ProfileManager* m_profileManager = Q_NULLPTR;
 
     // UI
     QComboBox*      m_programCategory = Q_NULLPTR;

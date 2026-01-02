@@ -31,6 +31,7 @@ public:
     QAudioFormat const GetAudioFormat() const { return m_audioFormat; }
     QString GetDeviceName() const { return m_listInput->currentText(); }
     QComboBox* GetInputList() const { return m_listInput; }
+    QAudioOutput* GetAudioOutput() { return &m_audioOutput; }
 
     void Start();
     void Stop();
