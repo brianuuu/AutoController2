@@ -42,8 +42,8 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     layout->itemAt(layout->count() - 2)->widget()->layout()->addWidget(m_labelStatus);
 
     m_description = new Setting::SettingTextEdit("Description");
-    m_description->setMaximumHeight(100);
     AddSetting(layout, "Description:", "", m_description, false);
+    m_description->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(m_description, &QTextEdit::textChanged, this, &CustomCommand::OnCommandEdited);
 
     m_btnSave = new QPushButton("Save As...");
@@ -53,8 +53,6 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     connect(m_btnSave, &QPushButton::clicked, this, &CustomCommand::OnCommandSave);
     connect(m_btnDelete, &QPushButton::clicked, this, &CustomCommand::OnCommandDelete);
     connect(m_btnDirectory, &QPushButton::clicked, this, &CustomCommand::OnOpenDirectory);
-
-    AddSpacer(layout);
 
     // set initial text
     OnListChanged(m_list->currentText());
