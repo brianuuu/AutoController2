@@ -1,4 +1,5 @@
 - PLZA: Donut Maker first release
+- Added PLZA - Auto Battle Custom Command
 - Added F5 shortcut to start/stop program
 - Added Up Time display when running a program
 - Some programs now automatically export log file
