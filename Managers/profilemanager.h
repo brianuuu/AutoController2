@@ -35,6 +35,7 @@ public:
     SystemType GetSystemType() const;
 
     // Program
+    QComboBox* GetStreamCounterComboBox() { return m_streamCounter; }
     void PlaySound(quint64 minutes = INT64_MAX);
     bool StreamCounterEnabled() const;
     bool StreamCounterExcludePrefix() const;

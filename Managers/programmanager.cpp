@@ -57,6 +57,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     connect(&m_upTimer, &QTimer::timeout, this, &ProgramManager::OnUpTimeUpdate);
     connect(m_btnStatsEdit, &QPushButton::clicked, this, &ProgramManager::OnStatsEdit);
     connect(m_btnStatsReset, &QPushButton::clicked, this, &ProgramManager::OnStatsReset);
+    connect(m_profileManager->GetStreamCounterComboBox(), &QComboBox::currentIndexChanged, this, [this] { UpdateStats(); });
 
     // register all programs
     RegisterProgram<Program::Development::DevCommand>();
