@@ -1,5 +1,8 @@
 - PLZA: Donut Maker first release
-- Added PLZA - Auto Battle Custom Command
+- Added PLZA - Auto Battle to Custom Command
+- Added sound when program finishes
+- Ported Stats system from Auto Controller 1
+- Ported Stream Counter system from Auto Controller 1
 - Added F5 shortcut to start/stop program
 - Added Up Time display when running a program
 - Some programs now automatically export log file
