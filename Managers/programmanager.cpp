@@ -105,21 +105,80 @@ void ProgramManager::IncrementStat(int &refValue, int amount)
 {
     if (!m_program || !m_stats.contains(&refValue)) return;
 
-    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
-    stats.beginGroup(m_program->GetInternalName());
-    QString const name = m_stats.value(&refValue);
-
-    // Grab value from ini, increment and save
-    refValue = stats.value(name).toInt();
+    // don't read ini anymore, RegisterStat() will get initial value
     refValue += amount;
     refValue = qMax(refValue, 0); // no negative, but something probably went wrong...?
-    stats.setValue(name, refValue);
 
     UpdateStats();
 }
 
 void ProgramManager::UpdateStats(bool reset)
 {
+    if (!m_program || m_stats.isEmpty())
+    {
+        m_labelStats->setText("N/A");
+        m_btnStatsReset->setEnabled(false);
+        return;
+    }
+
+    // Update label
+    QString statsStr;
+    m_btnStatsEdit->setEnabled(!m_program->IsRunning());
+    m_btnStatsReset->setEnabled(true);
+    int i = 0;
+    for (auto iter = m_stats.begin(); iter != m_stats.end(); iter++, i++)
+    {
+        QString const& key = iter.value();
+        if (i != 0)
+        {
+            statsStr += ", ";
+        }
+
+        if (reset)
+        {
+            *iter.key() = 0;
+        }
+
+        int const count = *iter.key();
+        statsStr += key + ": " + QString::number(count);
+
+        // Write to individual files for each stat
+        if (m_profileManager->StreamCounterEnabled())
+        {
+            QFile file(STREAM_COUNTER_PATH + key + ".txt");
+            if(file.open(QIODevice::WriteOnly))
+            {
+                QTextStream stream(&file);
+                if (!m_profileManager->StreamCounterExcludePrefix())
+                {
+                    stream << key + ": ";
+                }
+                stream << count;
+                file.close();
+            }
+        }
+    }
+    m_labelStats->setText(statsStr);
+}
+
+void ProgramManager::SaveStats()
+{
+    if (!m_program || m_stats.empty()) return;
+
+    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
+    stats.beginGroup(m_program->GetInternalName());
+
+    // save stats of the program
+    for (auto iter = m_stats.begin(); iter != m_stats.end(); iter++)
+    {
+        stats.setValue(iter.value(), *iter.key());
+    }
+}
+
+void ProgramManager::ClearStats()
+{
+    SaveStats();
+
     // Delete all stream counter text files
     QDirIterator it(QString(STREAM_COUNTER_PATH));
     while (it.hasNext())
@@ -128,66 +187,6 @@ void ProgramManager::UpdateStats(bool reset)
         QFile::remove(dir);
     }
 
-    if (!m_program)
-    {
-        m_labelStats->setText("N/A");
-        m_btnStatsReset->setEnabled(false);
-        return;
-    }
-
-    // Grab stats for current program
-    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
-    stats.beginGroup(m_program->GetInternalName());
-
-    // Update label
-    QStringList const list = stats.allKeys();
-    QString statsStr;
-    if (list.isEmpty())
-    {
-        statsStr = "N/A";
-        m_btnStatsReset->setEnabled(false);
-    }
-    else
-    {
-        m_btnStatsReset->setEnabled(true);
-        for (int i = 0; i < list.size(); i++)
-        {
-            QString const& key = list[i];
-            if (i != 0)
-            {
-                statsStr += ", ";
-            }
-
-            if (reset)
-            {
-                stats.setValue(key, 0);
-            }
-
-            int count = stats.value(key, 0).toInt();
-            statsStr += key + ": " + QString::number(count);
-
-            // Write to individual files for each stat
-            if (m_profileManager->StreamCounterEnabled())
-            {
-                QFile file(STREAM_COUNTER_PATH + key + ".txt");
-                if(file.open(QIODevice::WriteOnly))
-                {
-                    QTextStream stream(&file);
-                    if (!m_profileManager->StreamCounterExcludePrefix())
-                    {
-                        stream << key + ": ";
-                    }
-                    stream << count;
-                    file.close();
-                }
-            }
-        }
-    }
-    m_labelStats->setText(statsStr);
-}
-
-void ProgramManager::ClearStats()
-{
     m_stats.clear();
     UpdateStats();
 }
@@ -386,6 +385,7 @@ void ProgramManager::StartProgram()
 
     m_btnStart->setText("Stop Program (F5)");
     m_btnResetDefault->setEnabled(false);
+    m_btnStatsEdit->setEnabled(false);
     m_programCategory->setEnabled(false);
     m_programList->setEnabled(false);
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
@@ -399,6 +399,7 @@ void ProgramManager::StartProgram()
 
 void ProgramManager::StopProgram()
 {
+    SaveStats();
     m_logManager->SetCurrentLogName("");
     if (!m_program || !m_program->IsRunning()) return;
 
@@ -406,6 +407,7 @@ void ProgramManager::StopProgram()
     m_upTimer.stop();
     m_btnStart->setText("Start Program (F5)");
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
+    m_btnStatsEdit->setEnabled(true);
     m_programCategory->setEnabled(true);
     m_programList->setEnabled(true);
     m_settingsParent->setEnabled(true);

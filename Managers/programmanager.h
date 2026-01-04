@@ -59,6 +59,7 @@ private:
     void RemoveProgram();
 
     void UpdateStats(bool reset = false);
+    void SaveStats();
     void ClearStats();
 
 private:

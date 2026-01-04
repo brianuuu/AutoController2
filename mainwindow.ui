@@ -800,6 +800,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="PB_StatsEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>40</width>
