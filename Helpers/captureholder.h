@@ -6,6 +6,7 @@
 #include <qmutex.h>
 #include <qrect.h>
 #include <qpoint.h>
+#include <shared_mutex>
 #include "defines.h"
 
 struct HsvRange
@@ -53,14 +54,13 @@ public:
     CaptureHolder(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, QColor targetColor, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, HsvRange range, QColor displayColor = QColor(0,255,0));
-    CaptureHolder(QString const& preset, QColor displayColor = QColor(0,255,0), bool isOCR = false);
+    CaptureHolder(QString const& preset, QColor displayColor = QColor(0,255,0));
     ~CaptureHolder();
 
     // get init data
     Mode GetMode() const { return m_mode; }
     QColor GetDisplayColor() const { return m_displayColor; }
     qreal GetTargetMean() const { return m_targetMean; }
-    bool GetIsOCR() const { return m_isOCR; } // ignore displaying data in media view
 
     // set fixed data
     void SetArea(QRect rect);
@@ -96,6 +96,7 @@ public:
     qreal GetResultMean() const;
     QColor GetResultColor() const;
     QImage GetResultMasked() const;
+    QString GetResultString() const;
 
 private:
     void Register();
@@ -109,7 +110,7 @@ protected:
     qreal   m_targetMean = 0.0;
     bool    m_isOCR = false;
 
-    mutable QMutex  m_mutex;
+    mutable std::shared_mutex m_mutex;
     // fixed data
     QRect       m_rect;
     QPoint      m_point;
@@ -121,11 +122,12 @@ protected:
     QColor  m_testColor;
 
     // results
-    mutable QMutex  m_resultMutex;
+    mutable std::shared_mutex m_resultMutex;
     bool    m_resultMatched = false;
     qreal   m_resultMean = 0.0;
     QColor  m_resultColor = QColor(0,0,0);
     QImage  m_resultMasked;
+    QString m_resultString;
 };
 
 #endif // CAPTUREHOLDER_H

@@ -80,7 +80,7 @@ void FrameCapture::run()
         }
         {
             // analyze
-            QMutexLocker resultLocker(&m_resultMutex);
+            std::unique_lock lock(m_resultMutex);
             switch (m_mode)
             {
             case CaptureHolder::Mode::PointColorMatch:
@@ -88,8 +88,9 @@ void FrameCapture::run()
                 QColor const target = GetTargetColor();
                 m_resultColor = pixel;
                 m_resultMatched = GetColorMatch(pixel, target);
+                m_resultString = m_resultColor.name().toUpper();
 
-                resultLocker.unlock();
+                lock.unlock();
                 if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
@@ -99,8 +100,9 @@ void FrameCapture::run()
                 HsvRange const range = GetHsvRange();
                 m_resultColor = pixel.toHsv();
                 m_resultMatched = GetColorMatchHSV(pixel, range);
+                m_resultString = m_resultColor.name().toUpper();
 
-                resultLocker.unlock();
+                lock.unlock();
                 if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
@@ -110,8 +112,9 @@ void FrameCapture::run()
                 QColor const target = GetTargetColor();
                 m_resultColor = GetAverageColor(frame);
                 m_resultMatched = GetColorMatch(m_resultColor, target);
+                m_resultString = m_resultColor.name().toUpper();
 
-                resultLocker.unlock();
+                lock.unlock();
                 if (m_terminate) return;
                 emit notifyResultMatched(m_resultMatched);
                 break;
@@ -120,8 +123,9 @@ void FrameCapture::run()
             {
                 HsvRange const range = GetHsvRange();
                 m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
+                m_resultString = QString::number(m_resultMean, 'f', 4);
 
-                resultLocker.unlock();
+                lock.unlock();
                 if (m_terminate) return;
                 emit notifyResultMean(m_resultMean, m_resultMasked);
                 break;

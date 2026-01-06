@@ -17,7 +17,7 @@ OCR::OCR(const QImage &image, bool isNumber, bool shouldInvert)
 }
 
 OCR::OCR(const QString &preset, const QString &database, bool isNumber, QColor displayColor)
-    : CaptureHolder(preset, displayColor, true)
+    : CaptureHolder(preset, displayColor)
     , m_isNumber(isNumber)
     , m_shouldInvert(true)
     , m_preset(preset)
@@ -76,7 +76,7 @@ void OCR::run()
         }
 
         // Note: this never reset m_pendingWork = false since we only need it once
-        QMutexLocker resultLocker(&m_resultMutex);
+        std::unique_lock lock(m_resultMutex);
         HsvRange const range = GetHsvRange();
         m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
         m_image = m_resultMasked.copy();

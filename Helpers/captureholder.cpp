@@ -4,6 +4,8 @@
 #include "Managers/managercollection.h"
 #include "Managers/videomanager.h"
 
+#include <mutex>
+
 #define SET_BIT(var,pos) (var |= (1U << pos))
 #define CLEAR_BIT(var,pos) (var &= ~(1U << pos))
 #define COLOR_MATCH_THRESHOLD 10
@@ -44,10 +46,9 @@ CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor displayColor)
     Register();
 }
 
-CaptureHolder::CaptureHolder(const QString &preset, QColor displayColor, bool isOCR)
+CaptureHolder::CaptureHolder(const QString &preset, QColor displayColor)
     : m_preset(preset)
     , m_displayColor(displayColor)
-    , m_isOCR(isOCR)
 {
     // read preset json
     QString const name = GetDirectory() + m_preset + GetFormat();
@@ -122,25 +123,25 @@ CaptureHolder::~CaptureHolder()
 
 void CaptureHolder::SetArea(QRect rect)
 {
-    QMutexLocker locker(&m_mutex);
+    std::unique_lock lock(m_mutex);
     m_rect = rect;
 }
 
 void CaptureHolder::SetPoint(QPoint point)
 {
-    QMutexLocker locker(&m_mutex);
+    std::unique_lock lock(m_mutex);
     m_point = point;
 }
 
 void CaptureHolder::SetTargetColor(QColor target)
 {
-    QMutexLocker locker(&m_mutex);
+    std::unique_lock lock(m_mutex);
     m_targetColor = target;
 }
 
 void CaptureHolder::SetHsvRange(HsvRange range)
 {
-    QMutexLocker locker(&m_mutex);
+    std::unique_lock lock(m_mutex);
     m_range = range;
 }
 
@@ -148,7 +149,7 @@ void CaptureHolder::PushFrameData(const QImage &frame)
 {
     // frame should already be in 1280x720
     // this is called by VLC thread
-    QMutexLocker locker(&m_mutex);
+    std::unique_lock lock(m_mutex);
     switch (m_mode)
     {
     case Mode::PointColorMatch:
@@ -169,62 +170,68 @@ void CaptureHolder::PushFrameData(const QImage &frame)
 
 QImage CaptureHolder::GetFrameData() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_testImage.copy();
 }
 
 QColor CaptureHolder::GetPixelData() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_testColor;
 }
 
 QRect CaptureHolder::GetRect() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_rect;
 }
 
 QPoint CaptureHolder::GetPoint() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_point;
 }
 
 QColor CaptureHolder::GetTargetColor() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_targetColor;
 }
 
 HsvRange CaptureHolder::GetHsvRange() const
 {
-    QMutexLocker locker(&m_mutex);
+    std::shared_lock lock(m_mutex);
     return m_range;
 }
 
 bool CaptureHolder::GetResultMatched() const
 {
-    QMutexLocker locker(&m_resultMutex);
+    std::shared_lock lock(m_resultMutex);
     return m_resultMatched;
 }
 
 qreal CaptureHolder::GetResultMean() const
 {
-    QMutexLocker locker(&m_resultMutex);
+    std::shared_lock lock(m_resultMutex);
     return m_resultMean;
 }
 
 QColor CaptureHolder::GetResultColor() const
 {
-    QMutexLocker locker(&m_resultMutex);
+    std::shared_lock lock(m_resultMutex);
     return m_resultColor;
 }
 
 QImage CaptureHolder::GetResultMasked() const
 {
-    QMutexLocker locker(&m_resultMutex);
+    std::shared_lock lock(m_resultMutex);
     return m_resultMasked.copy();
+}
+
+QString CaptureHolder::GetResultString() const
+{
+    std::shared_lock lock(m_resultMutex);
+    return m_resultString;
 }
 
 bool CaptureHolder::GetColorMatch(QColor testColor, QColor target)

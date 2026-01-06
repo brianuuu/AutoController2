@@ -201,22 +201,29 @@ void VideoManager::paintEvent(QPaintEvent *event)
 
             if (m_showCaptureResult)
             {
+                QString const resultString = holder->GetResultString();
+                QFontMetrics const fontMatrics(painter.font());
+                int const stringWidth = resultString.isEmpty() ? 0 : fontMatrics.horizontalAdvance(resultString) + 8;
+
                 QPoint const topLeft = captureRect.top() < 17 ? captureRect.bottomLeft() + QPoint(0,1) : captureRect.topLeft() - QPoint(0,17);
                 if (mode == CaptureHolder::Mode::AreaRangeMatch)
                 {
-                    if (!holder->GetIsOCR())
+                    if (stringWidth > 0)
                     {
-                        painter.fillRect(QRect(topLeft,QSize(55,16)), Qt::black);
+                        painter.fillRect(QRect(topLeft,QSize(stringWidth,16)), Qt::black);
                         painter.setPen(Qt::white);
-                        painter.drawText(topLeft + QPoint(4,14), QString::number(holder->GetResultMean(), 'f', 4));
+                        painter.drawText(topLeft + QPoint(4,14), resultString);
                     }
                     painter.drawImage(captureRect, holder->GetResultMasked());
                 }
                 else
                 {
-                    painter.fillRect(QRect(topLeft,QSize(70,16)), Qt::black);
-                    painter.setPen(holder->GetResultMatched() ? Qt::green : Qt::white);
-                    painter.drawText(topLeft + QPoint(4,14), holder->GetResultColor().name().toUpper());
+                    if (stringWidth > 0)
+                    {
+                        painter.fillRect(QRect(topLeft,QSize(stringWidth,16)), Qt::black);
+                        painter.setPen(holder->GetResultMatched() ? Qt::green : Qt::white);
+                        painter.drawText(topLeft + QPoint(4,14), resultString);
+                    }
                 }
             }
 
