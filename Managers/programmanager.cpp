@@ -287,13 +287,14 @@ void ProgramManager::OnProgramFinished(int result)
 {
     if (m_program && m_program->IsRunning())
     {
+        QString const upTime = " (Up time = " + m_labelUpTime->text() + ")";
         if (result < 0)
         {
-            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error", LOG_Error);
+            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error" + upTime, LOG_Error);
         }
         else
         {
-            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!", LOG_Success);
+            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!" + upTime, LOG_Success);
         }
 
         m_profileManager->PlaySound(m_startTime.secsTo(QDateTime::currentDateTime()) / 60);
