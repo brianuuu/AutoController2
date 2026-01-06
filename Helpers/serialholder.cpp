@@ -97,7 +97,7 @@ void SerialHolder::OnConnectTimeout()
     if (m_serialState == SerialState::FeedbackOK)
     {
         m_serialState = SerialState::Connected;
-        emit notifyLog("Global", "Serial Connected", LOG_Success);
+        emit notifyLog("Global", "Serial Connected (Version = " + QString::number(m_serialVersion) + ")", LOG_Success);
         emit notifySerialStatus();
         emit notifyConnectTimeout(false);
         return;
