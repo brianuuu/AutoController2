@@ -5,7 +5,6 @@
 #include <QImage>
 #include <QMetaEnum>
 #include <QProcess>
-#include <QWaitCondition>
 
 #include "../modulebase.h"
 #include "Helpers/captureholder.h"
@@ -23,9 +22,7 @@ public:
 
     // from ModuleBase
     QString GetName() const override { return "Common-OCR"; }
-
-    // from CaptureHolder
-    void PushFrameData(QImage const& frame) override;
+    void stop() override;
 
     // from QThread
     void run() override;
@@ -55,9 +52,6 @@ private:
     // frame capture
     QString     m_preset;
     QString     m_database;
-    QWaitCondition  m_condition;
-    mutable QMutex  m_workMutex;
-    bool        m_pendingWork = false;
 
     // result
     QString     m_resultEntry;

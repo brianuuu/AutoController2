@@ -1,8 +1,6 @@
 #ifndef FRAMECAPTURE_H
 #define FRAMECAPTURE_H
 
-#include <QWaitCondition>
-
 #include "../modulebase.h"
 #include "Helpers/captureholder.h"
 
@@ -22,20 +20,12 @@ public:
     QString GetName() const override { return "Common-FrameCapture"; }
     void stop() override;
 
-    // from CaptureHolder
-    void PushFrameData(QImage const& frame) override;
-
     // from QThread
     void run() override;
 
 signals:
     void notifyResultMatched(bool);
     void notifyResultMean(qreal, QImage);
-
-private:
-    QWaitCondition  m_condition;
-    mutable QMutex  m_workMutex;
-    bool    m_pendingWork = false;
 };
 
 }

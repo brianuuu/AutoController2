@@ -6,6 +6,7 @@
 #include <qmutex.h>
 #include <qrect.h>
 #include <qpoint.h>
+#include <qwaitcondition.h>
 #include <shared_mutex>
 #include "defines.h"
 
@@ -108,7 +109,6 @@ protected:
     Mode    m_mode;
     QString m_preset;
     qreal   m_targetMean = 0.0;
-    bool    m_isOCR = false;
 
     mutable std::shared_mutex m_mutex;
     // fixed data
@@ -128,6 +128,10 @@ protected:
     QColor  m_resultColor = QColor(0,0,0);
     QImage  m_resultMasked;
     QString m_resultString;
+
+    QWaitCondition  m_condition;
+    mutable QMutex  m_workMutex;
+    bool    m_pendingWork = true; // default block, wait for client to unlock at run()
 };
 
 #endif // CAPTUREHOLDER_H

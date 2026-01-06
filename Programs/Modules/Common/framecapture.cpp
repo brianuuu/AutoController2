@@ -35,19 +35,6 @@ void FrameCapture::stop()
     m_condition.wakeOne();
 }
 
-void FrameCapture::PushFrameData(const QImage &frame)
-{
-    if (!isRunning()) return;
-
-    QMutexLocker locker(&m_workMutex);
-    if (m_pendingWork) return;
-
-    CaptureHolder::PushFrameData(frame);
-
-    m_pendingWork = true;
-    m_condition.wakeOne();
-}
-
 void FrameCapture::run()
 {
     if (m_mode == Mode::Invalid)
@@ -69,6 +56,7 @@ void FrameCapture::run()
         {
             // wait for work
             QMutexLocker workLocker(&m_workMutex);
+            m_pendingWork = false;
             while (!m_pendingWork && !m_terminate)
             {
                 m_condition.wait(&m_workMutex);
@@ -132,10 +120,6 @@ void FrameCapture::run()
             }
             default: break;
             }
-
-            // this is free to do next work
-            QMutexLocker workLocker(&m_workMutex);
-            m_pendingWork = false;
         }
     }
 }

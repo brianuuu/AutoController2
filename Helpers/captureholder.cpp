@@ -147,6 +147,9 @@ void CaptureHolder::SetHsvRange(HsvRange range)
 
 void CaptureHolder::PushFrameData(const QImage &frame)
 {
+    QMutexLocker locker(&m_workMutex);
+    if (m_pendingWork) return;
+
     // frame should already be in 1280x720
     // this is called by VLC thread
     std::unique_lock lock(m_mutex);
@@ -166,6 +169,9 @@ void CaptureHolder::PushFrameData(const QImage &frame)
     }
     default: break;
     }
+
+    m_pendingWork = true;
+    m_condition.wakeOne();
 }
 
 QImage CaptureHolder::GetFrameData() const

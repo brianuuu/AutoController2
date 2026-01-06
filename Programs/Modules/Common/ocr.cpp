@@ -26,6 +26,13 @@ OCR::OCR(const QString &preset, const QString &database, bool isNumber, QColor d
     Init();
 }
 
+void OCR::stop()
+{
+    QMutexLocker workLocker(&m_workMutex);
+    ModuleBase::stop();
+    m_condition.wakeOne();
+}
+
 void OCR::Init()
 {
     ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
@@ -34,19 +41,6 @@ void OCR::Init()
     m_process.moveToThread(this);
     connect(&m_process, &QProcess::errorOccurred, this, &OCR::OnProcessErrored);
     connect(&m_process, &QProcess::finished, this, &OCR::OnProcessFinished);
-}
-
-void OCR::PushFrameData(const QImage &frame)
-{
-    if (!isRunning()) return;
-
-    QMutexLocker locker(&m_workMutex);
-    if (m_pendingWork) return;
-
-    CaptureHolder::PushFrameData(frame);
-
-    m_pendingWork = true;
-    m_condition.wakeOne();
 }
 
 void OCR::run()
@@ -66,6 +60,7 @@ void OCR::run()
         {
             // wait for work
             QMutexLocker workLocker(&m_workMutex);
+            m_pendingWork = false;
             while (!m_pendingWork && !m_terminate)
             {
                 m_condition.wait(&m_workMutex);
