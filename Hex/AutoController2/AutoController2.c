@@ -30,7 +30,7 @@ This project is based on auto-controller code written by brianuuuuSonic
 
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
 #define CHECK_BIT(var,pos) (var & (1UL << pos))
-#define VERSION 2
+#define VERSION 3
 
 // Main entry point.
 int main(void) {
@@ -180,7 +180,8 @@ void HID_Task(void) {
 			}
 		}
 	}
-	else if (waiting_input && uart_available() >= 8)
+	
+	if (waiting_input && uart_available() >= 8)
 	{
 		echoes = 0;
 		button_flag = 0;
