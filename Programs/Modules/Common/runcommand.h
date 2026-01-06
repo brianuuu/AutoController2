@@ -29,19 +29,15 @@ public:
     static QRegularExpression GetRegularExpression() { return QRegularExpression("[A-Za-z0-9()|,\-\.]*"); }
 
 signals:
-    void notifyButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
-
-private:
-    void InitCheck();
-    bool SendCurrentCommand(bool isLoopCount = false);
+    void notifyCommand(QString const& command);
+    void notifyClear();
 
 private:
     SystemType      m_systemType = ST_COUNT;
 
     QString         m_name;
     QString         m_command;
-    int             m_commandIndex = 0;
-    QVector<int>    m_commandLoopCounts;
+    uint            m_startDelay;
 };
 } // namespace Module
 

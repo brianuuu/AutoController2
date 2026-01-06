@@ -1,7 +1,9 @@
 #include "serialholder.h"
 
-#include "Managers/managercollection.h"
+#include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
+#include "Managers/managercollection.h"
+#include "Types/buttontype.h"
 #include "defines.h"
 
 SerialHolder::SerialHolder(QObject *parent)
@@ -13,6 +15,13 @@ SerialHolder::SerialHolder(QObject *parent)
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &SerialHolder::notifyLog, logManager, &LogManager::PrintLog);
+
+    KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
+    connect(this, &SerialHolder::notifyDisplayButton, keyboardManager, &KeyboardManager::OnDisplayButton);
+
+    m_commandTimer.setSingleShot(true);
+    m_commandTimer.moveToThread(this);
+    connect(&m_commandTimer, &QTimer::timeout, this, [this] { SendCurrentCommand(); });
 
     this->moveToThread(this);
     this->start();
@@ -118,6 +127,28 @@ void SerialHolder::OnDisconnectTimeout()
     emit notifyDisconnectTimeout();
 }
 
+void SerialHolder::OnSendCommand(const QString &command)
+{
+    m_command = command;
+    m_commandIndex = 0;
+    m_commandLoopCounts.clear();
+
+    SendCurrentCommand();
+}
+
+void SerialHolder::OnClearCommand()
+{
+    if (m_command.isEmpty()) return;
+
+    m_command.clear();
+    m_commandIndex = 0;
+    m_commandTimer.stop();
+    m_commandLoopCounts.clear();
+
+    SendButton(0);
+    emit notifyDisplayButton(0);
+}
+
 void SerialHolder::Connect(const QString &name)
 {
     QMutexLocker locker(&m_mutex);
@@ -166,6 +197,161 @@ void SerialHolder::Disconnect()
     else
     {
         OnDisconnectTimeout();
+    }
+}
+
+void SerialHolder::SendCurrentCommand(bool isLoopCount)
+{
+    // check completion
+    if (m_commandIndex == -1 || m_commandIndex >= m_command.size())
+    {
+        OnClearCommand();
+        emit notifyCommandFinished();
+        return;
+    }
+
+    qsizetype endIndex = m_command.indexOf(',', m_commandIndex + 1);
+    QString str = m_command.mid(m_commandIndex, endIndex == -1 ? -1 : endIndex - m_commandIndex);
+
+    // look for loop start
+    qsizetype const loopStartIndex = str.indexOf('(');
+    if (loopStartIndex == 0)
+    {
+        m_commandIndex++;
+        m_commandLoopCounts.push_back(-1);
+        SendCurrentCommand();
+        return;
+    }
+
+    // look for loop end
+    qsizetype const loopEndIndex = str.indexOf(')');
+    if (loopEndIndex >= 0)
+    {
+        if (loopEndIndex == 0)
+        {
+            // first index is ')' expecting loop count next
+            m_commandIndex++;
+            SendCurrentCommand(true);
+            return;
+        }
+        else
+        {
+            // remove all char after ')' so number remains
+            str = str.mid(0, loopEndIndex);
+            endIndex = m_commandIndex + loopEndIndex - 1;
+        }
+    }
+
+    quint32 buttonFlag = 0;
+    QPointF lStick(0,0);
+    QPointF rStick(0,0);
+
+    QStringList const buttons = str.split('|');
+    for (int b = 0; b < buttons.size() - 1; b++)
+    {
+        QString const& button = buttons[b].toLower();
+        if (button.startsWith("lx") || button.startsWith("ly") || button.startsWith("rx") || button.startsWith("ry"))
+        {
+            qreal const stickPos = button.mid(2).toDouble();
+            if (button.startsWith("lx"))
+            {
+                lStick.setX(stickPos);
+            }
+            else if (button.startsWith("ly"))
+            {
+                lStick.setY(stickPos);
+            }
+            else if (button.startsWith("rx"))
+            {
+                rStick.setX(stickPos);
+            }
+            else if (button.startsWith("ry"))
+            {
+                rStick.setY(stickPos);
+            }
+        }
+        else
+        {
+            buttonFlag |= StringToButtonFlag(button);
+        }
+    }
+
+    int duration = buttons.back().toInt();
+    if (isLoopCount)
+    {
+        // found a loop count
+        int& loopLeft = m_commandLoopCounts.back();
+        if (loopLeft == -1)
+        {
+            loopLeft = duration;
+        }
+
+        if (loopLeft == 1)
+        {
+            // immediately run next command if loop finished
+            m_commandLoopCounts.pop_back();
+
+            if (endIndex == -1)
+            {
+                m_commandIndex = -1;
+            }
+            else
+            {
+                m_commandIndex = endIndex + 1;
+            }
+
+            SendCurrentCommand();
+            return;
+        }
+        else
+        {
+            m_commandIndex--;
+            if (loopLeft > 1)
+            {
+                // if loopCount is 0 it loops forever
+                loopLeft--;
+            }
+
+            // roll back to '('
+            int loopEndCount = 0;
+            while (m_commandIndex > 0)
+            {
+                m_commandIndex--;
+                if (m_command[m_commandIndex] == ')')
+                {
+                    loopEndCount++;
+                }
+                else if (m_command[m_commandIndex] == '(')
+                {
+                    if (loopEndCount == 0)
+                    {
+                        m_commandIndex++;
+                        SendCurrentCommand();
+                        return;
+                    }
+                    else
+                    {
+                        loopEndCount--;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        //PrintLog("Button: \"" + str + "\"");
+        OnSendButton(buttonFlag, lStick, rStick);
+        emit notifyDisplayButton(buttonFlag, lStick, rStick);
+        m_commandTimer.start(duration);
+    }
+
+    if (endIndex == -1)
+    {
+        m_commandIndex = -1;
+    }
+    else
+    {
+        m_commandIndex = endIndex + 1;
     }
 }
 
