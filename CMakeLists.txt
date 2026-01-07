@@ -76,6 +76,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Settings/settingsystem.h Programs/Settings/settingsystem.cpp
         Programs/Settings/settingtextbrowser.h Programs/Settings/settingtextbrowser.cpp
         Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
+        Programs/Settings/settingthreadpriority.h Programs/Settings/settingthreadpriority.cpp
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
         Programs/programbase.h Programs/programbase.cpp
