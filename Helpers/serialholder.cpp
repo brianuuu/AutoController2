@@ -3,6 +3,7 @@
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
 #include "Managers/managercollection.h"
+#include "Managers/profilemanager.h"
 #include "Types/buttontype.h"
 #include "defines.h"
 
@@ -23,8 +24,9 @@ SerialHolder::SerialHolder(QObject *parent)
     m_commandTimer.moveToThread(this);
     connect(&m_commandTimer, &QTimer::timeout, this, [this] { SendCurrentCommand(); });
 
+    ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
     this->moveToThread(this);
-    this->start();
+    this->start(profileManager->GetSerialPriority());
 }
 
 SerialHolder::~SerialHolder()
