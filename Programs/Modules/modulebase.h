@@ -23,6 +23,7 @@ public:
     // should only be accessed when module is finished
     int GetResult() const { return m_result; }
     QString GetError() const { return m_error; }
+    Priority GetPriority() const { return m_priority; }
 
 signals:
     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
@@ -39,6 +40,7 @@ protected:
     std::atomic_bool m_terminate = false;
     int m_result = 0;
     QString m_error;
+    Priority m_priority = HighPriority;
 
     static uint m_nextID;
 };

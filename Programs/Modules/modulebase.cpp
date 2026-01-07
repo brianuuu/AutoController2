@@ -2,6 +2,7 @@
 
 #include "Managers/managercollection.h"
 #include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
 
 namespace Module
 {
@@ -17,6 +18,9 @@ ModuleBase::ModuleBase(QObject *parent) : QThread(parent)
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ModuleBase::notifyLog, logManager, &LogManager::PrintLog);
+
+    ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
+    m_priority = profileManager->GetModulePriority();
 }
 
 void ModuleBase::ResetNextID()

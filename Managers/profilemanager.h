@@ -14,6 +14,7 @@
 #include "Programs/Settings/settinglineedit.h"
 #include "Programs/Settings/settingspinbox.h"
 #include "Programs/Settings/settingsystem.h"
+#include "Programs/Settings/settingthreadpriority.h"
 #include "Types/languagetype.h"
 #include "Types/systemtype.h"
 
@@ -39,6 +40,10 @@ public:
     void PlaySound(quint64 minutes = INT64_MAX);
     bool StreamCounterEnabled() const;
     bool StreamCounterExcludePrefix() const;
+
+    // Performance
+    QThread::Priority GetModulePriority() { return m_modulePriority->GetPriority(); }
+    QThread::Priority GetSerialPriority() { return m_serialPriority->GetPriority(); }
 
     // Utils
     static bool OCRTrainedDataExist(LanguageType type);
@@ -79,6 +84,11 @@ private:
     Setting::SettingSpinBox* m_playSoundSuppress = Q_NULLPTR;
     QMediaPlayer* m_mediaPlayer = Q_NULLPTR;
     Setting::SettingComboBox* m_streamCounter = Q_NULLPTR;
+
+    // Performance
+    Setting::SettingThreadPriority* m_mainPriority = Q_NULLPTR;
+    Setting::SettingThreadPriority* m_modulePriority = Q_NULLPTR;
+    Setting::SettingThreadPriority* m_serialPriority = Q_NULLPTR;
 };
 
 #endif // PROFILEMANAGER_H

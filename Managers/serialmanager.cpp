@@ -1,10 +1,11 @@
 #include "serialmanager.h"
 
 #include "../ui_mainwindow.h"
-#include "defines.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
+#include "defines.h"
 
 SerialManager::SerialManager(QWidget* parent) : QWidget(parent)
 {
@@ -22,6 +23,9 @@ void SerialManager::Initialize(Ui::MainWindow *ui)
 {
     m_keyboardManager = ManagerCollection::GetManager<KeyboardManager>();
     m_logManager = ManagerCollection::GetManager<LogManager>();
+
+    ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
+    m_serialHolder->setPriority(profileManager->GetSerialPriority());
 
     m_list = ui->CB_SerialPort;
     m_btnRefresh = ui->PB_SerialRefresh;

@@ -26,7 +26,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     vBoxLayout->addWidget(scrollArea);
 
     // system settings
-    Program::ProgramBase::AddText(scrollLayout, "System Settings", true);
+    Program::ProgramBase::AddText(scrollLayout, "System Settings", true, true);
     {
         QGroupBox* group = new QGroupBox();
         group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -42,7 +42,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     }
 
     // program settings
-    Program::ProgramBase::AddText(scrollLayout, "Program Settings", true);
+    Program::ProgramBase::AddText(scrollLayout, "Program Settings", true, true);
     {
         QGroupBox* group = new QGroupBox();
         group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -75,6 +75,24 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 
         m_streamCounter = new Setting::SettingComboBox("StreamCounter", {"Disabled", "Enabled (Full Stat)", "Enabled (Numbers Only)"});
         Program::ProgramBase::AddSetting(layout, "Stream Counter:", "Program with stats will export each as individual text files to \"StreamCounters\" folder", m_streamCounter, true);
+    }
+
+    // performance settings
+    Program::ProgramBase::AddText(scrollLayout, "Performance Settings", true, true);
+    {
+        QGroupBox* group = new QGroupBox();
+        group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        scrollLayout->addWidget(group);
+        QVBoxLayout* layout = new QVBoxLayout(group);
+
+        m_mainPriority = new Setting::SettingThreadPriority("MainPriority", QThread::HighestPriority);
+        Program::ProgramBase::AddSetting(layout, "Main Thread Priority:", "Thread priority for main GUI thread, include drawing video & audio feed (Require restart)", m_mainPriority, true);
+
+        m_modulePriority = new Setting::SettingThreadPriority("ModulePriority", QThread::HighPriority);
+        Program::ProgramBase::AddSetting(layout, "Module Thread Priority:", "Thread priority for modules used when running programs", m_modulePriority, true);
+
+        m_serialPriority = new Setting::SettingThreadPriority("SerialPriority", QThread::NormalPriority);
+        Program::ProgramBase::AddSetting(layout, "Serial Thread Priority:", "Thread priority for serial holder in charge of dispatching commands (Require restart)", m_serialPriority, true);
     }
 
     LoadSettings();
@@ -212,6 +230,11 @@ void ProfileManager::LoadSettings()
         m_customSoundPath->Load(program);
         m_playSoundSuppress->Load(program);
         m_streamCounter->Load(program);
+
+        QJsonObject performance = JsonHelper::ReadObject(profileSettings, "Performance");
+        m_mainPriority->Load(performance);
+        m_modulePriority->Load(performance);
+        m_serialPriority->Load(performance);
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(profileSettings, "WindowSize");
@@ -242,6 +265,11 @@ void ProfileManager::SaveSettings() const
     m_playSoundSuppress->Save(program);
     m_streamCounter->Save(program);
 
+    QJsonObject performance;
+    m_mainPriority->Save(performance);
+    m_modulePriority->Save(performance);
+    m_serialPriority->Save(performance);
+
     QJsonObject windowSize;
     windowSize.insert("Width", this->width());
     windowSize.insert("Height", this->height());
@@ -251,6 +279,7 @@ void ProfileManager::SaveSettings() const
     QJsonObject profileSettings;
     profileSettings.insert("System", system);
     profileSettings.insert("Program", program);
+    profileSettings.insert("Performance", performance);
     profileSettings.insert("WindowSize", windowSize);
 
     JsonHelper::WriteSetting("ProfileSettings", profileSettings);

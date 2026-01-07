@@ -160,7 +160,7 @@ void ProgramBase::AddModule(Module::ModuleBase *module)
 
     m_modules.insert(module);
     module->moveToThread(module);
-    module->start();
+    module->start(module->GetPriority());
 }
 
 void ProgramBase::ClearModule(QObject *sender)
