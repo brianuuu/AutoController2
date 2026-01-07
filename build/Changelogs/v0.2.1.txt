@@ -1,0 +1,3 @@
+- Improved reliability for command inputs (require .hex update)
+- The above change should fix sometimes Donut Maker miss a HOME button input
+- Added thread priority settings (user shouldn't have to change them)
