@@ -214,18 +214,22 @@ bool ProgramBase::EnsureOCRDatabase(const QString &database)
     }
 }
 
-QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold)
+QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold, bool isBig)
 {
     QLabel* label = new QLabel(str);
     QFont font = label->font();
     font.setBold(isBold);
+    if (isBig)
+    {
+        font.setPointSize(font.pointSize() + 4);
+    }
     label->setFont(font);
     layout->addWidget(label);
 
     return label;
 }
 
-QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold, QColor color)
+QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold, QColor color, bool isBig)
 {
     QLabel* label = AddText(layout, str, isBold);
     QPalette palette = label->palette();

@@ -100,8 +100,8 @@ protected:
     bool EnsureOCRDatabase(QString const& database);
 
 public:
-    static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold);
-    static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold, QColor color);
+    static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold, bool isBig = false);
+    static QLabel* AddText(QBoxLayout* layout, QString const& str, bool isBold, QColor color, bool isBig = false);
     static void AddSetting(QBoxLayout *layout, QString const& name, QString const& description, QWidget* setting, bool isHorizontal);
     static void AddSettings(QBoxLayout *layout, QString const& name, QString const& description, QList<QWidget*> settings, bool isHorizontal);
     static void AddSeparator(QBoxLayout *layout);
