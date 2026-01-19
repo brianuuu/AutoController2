@@ -57,12 +57,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Managers/serialmanager.h Managers/serialmanager.cpp
         Managers/videomanager.h Managers/videomanager.cpp
         Managers/vlcmanager.h Managers/vlcmanager.cpp
+        Modules/Common/framecapture.h Modules/Common/framecapture.cpp
+        Modules/Common/ocr.h Modules/Common/ocr.cpp
+        Modules/Common/runcommand.h Modules/Common/runcommand.cpp
+        Modules/modulebase.h Modules/modulebase.cpp
         Programs/Development/devcommand.h Programs/Development/devcommand.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
-        Programs/Modules/Common/framecapture.h Programs/Modules/Common/framecapture.cpp
-        Programs/Modules/Common/ocr.h Programs/Modules/Common/ocr.cpp
-        Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
-        Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp

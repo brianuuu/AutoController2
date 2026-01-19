@@ -8,7 +8,7 @@
 #include <QLineEdit>
 
 #include "../programbase.h"
-#include "Programs/Modules/Common/framecapture.h"
+#include "Modules/Common/framecapture.h"
 #include "Settings/settingcolor.h"
 #include "Settings/settingcheckbox.h"
 #include "Settings/settingcombobox.h"

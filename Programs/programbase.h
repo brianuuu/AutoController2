@@ -11,7 +11,7 @@
 
 #include "Types/logtype.h"
 #include "Managers/managercollection.h"
-#include "Programs/Modules/modulebase.h"
+#include "Modules/modulebase.h"
 #include "Settings/settingbase.h"
 
 namespace Program

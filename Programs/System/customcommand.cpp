@@ -2,7 +2,7 @@
 
 #include "Helpers/jsonhelper.h"
 #include "Managers/serialmanager.h"
-#include "Programs/Modules/Common/runcommand.h"
+#include "Modules/Common/runcommand.h"
 #include "defines.h"
 
 #define CUSTOM_COMMAND_DIRECTORY RESOURCES_PATH + "CustomCommand/"

@@ -28,6 +28,7 @@ QString SettingThreadPriority::PriorityToString(QThread::Priority priority)
     case QThread::InheritPriority:      return "Inherited";
         break;
     }
+    return "Unknown";
 }
 
 QThread::Priority SettingThreadPriority::StringToPriority(const QString &str)

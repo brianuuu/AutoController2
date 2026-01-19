@@ -5,7 +5,7 @@
 #include "Helpers/ocrentrydatabase.h"
 #include "Managers/profilemanager.h"
 #include "Managers/videomanager.h"
-#include "Programs/Modules/Common/ocr.h"
+#include "Modules/Common/ocr.h"
 
 namespace Program::Development
 {

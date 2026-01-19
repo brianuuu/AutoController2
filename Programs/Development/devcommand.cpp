@@ -3,7 +3,7 @@
 #include "Helpers/jsonhelper.h"
 #include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
-#include "Programs/Modules/Common/runcommand.h"
+#include "Modules/Common/runcommand.h"
 #include "Types/systemtype.h"
 #include "defines.h"
 

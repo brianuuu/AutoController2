@@ -1,8 +1,8 @@
 #include "donutmaker.h"
 
-#include "Programs/Modules/Common/framecapture.h"
-#include "Programs/Modules/Common/ocr.h"
-#include "Programs/Modules/Common/runcommand.h"
+#include "Modules/Common/framecapture.h"
+#include "Modules/Common/ocr.h"
+#include "Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
 {
