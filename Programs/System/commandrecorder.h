@@ -4,8 +4,8 @@
 #include <QElapsedTimer>
 
 #include "../programbase.h"
-#include "Programs/Settings/settingcombobox.h"
-#include "Programs/Settings/settingtextbrowser.h"
+#include "Settings/settingcombobox.h"
+#include "Settings/settingtextbrowser.h"
 
 namespace Program::System
 {

@@ -12,7 +12,7 @@
 #include "Types/logtype.h"
 #include "Managers/managercollection.h"
 #include "Programs/Modules/modulebase.h"
-#include "Programs/Settings/settingbase.h"
+#include "Settings/settingbase.h"
 
 namespace Program
 {

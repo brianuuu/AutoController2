@@ -64,22 +64,22 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Modules/Common/runcommand.h Programs/Modules/Common/runcommand.cpp
         Programs/Modules/modulebase.h Programs/Modules/modulebase.cpp
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
-        Programs/Settings/PokemonLZA/settingflavorpower.h Programs/Settings/PokemonLZA/settingflavorpower.cpp
-        Programs/Settings/settingbase.h
-        Programs/Settings/settingcheckbox.cpp Programs/Settings/settingcheckbox.h
-        Programs/Settings/settingcolor.h Programs/Settings/settingcolor.cpp
-        Programs/Settings/settingcombobox.h Programs/Settings/settingcombobox.cpp
-        Programs/Settings/settingdoublespinbox.h Programs/Settings/settingdoublespinbox.cpp
-        Programs/Settings/settinglanguage.h Programs/Settings/settinglanguage.cpp
-        Programs/Settings/settinglineedit.h Programs/Settings/settinglineedit.cpp
-        Programs/Settings/settingspinbox.h Programs/Settings/settingspinbox.cpp
-        Programs/Settings/settingsystem.h Programs/Settings/settingsystem.cpp
-        Programs/Settings/settingtextbrowser.h Programs/Settings/settingtextbrowser.cpp
-        Programs/Settings/settingtextedit.h Programs/Settings/settingtextedit.cpp
-        Programs/Settings/settingthreadpriority.h Programs/Settings/settingthreadpriority.cpp
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
         Programs/programbase.h Programs/programbase.cpp
+        Settings/PokemonLZA/settingflavorpower.h Settings/PokemonLZA/settingflavorpower.cpp
+        Settings/settingbase.h
+        Settings/settingcheckbox.cpp Settings/settingcheckbox.h
+        Settings/settingcolor.h Settings/settingcolor.cpp
+        Settings/settingcombobox.h Settings/settingcombobox.cpp
+        Settings/settingdoublespinbox.h Settings/settingdoublespinbox.cpp
+        Settings/settinglanguage.h Settings/settinglanguage.cpp
+        Settings/settinglineedit.h Settings/settinglineedit.cpp
+        Settings/settingspinbox.h Settings/settingspinbox.cpp
+        Settings/settingsystem.h Settings/settingsystem.cpp
+        Settings/settingtextbrowser.h Settings/settingtextbrowser.cpp
+        Settings/settingtextedit.h Settings/settingtextedit.cpp
+        Settings/settingthreadpriority.h Settings/settingthreadpriority.cpp
         Types/buttontype.h
         Types/languagetype.h
         Types/logtype.h

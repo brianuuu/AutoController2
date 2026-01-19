@@ -9,8 +9,8 @@
 #include <QRegularExpressionValidator>
 
 #include "../programbase.h"
-#include "Programs/Settings/settingcombobox.h"
-#include "Programs/Settings/settinglineedit.h"
+#include "Settings/settingcombobox.h"
+#include "Settings/settinglineedit.h"
 
 namespace Program::Development
 {

@@ -8,13 +8,13 @@
 #include <QToolButton>
 #include <QWidget>
 
-#include "Programs/Settings/settingcheckbox.h"
-#include "Programs/Settings/settingcombobox.h"
-#include "Programs/Settings/settinglanguage.h"
-#include "Programs/Settings/settinglineedit.h"
-#include "Programs/Settings/settingspinbox.h"
-#include "Programs/Settings/settingsystem.h"
-#include "Programs/Settings/settingthreadpriority.h"
+#include "Settings/settingcheckbox.h"
+#include "Settings/settingcombobox.h"
+#include "Settings/settinglanguage.h"
+#include "Settings/settinglineedit.h"
+#include "Settings/settingspinbox.h"
+#include "Settings/settingsystem.h"
+#include "Settings/settingthreadpriority.h"
 #include "Types/languagetype.h"
 #include "Types/systemtype.h"
 

@@ -7,7 +7,7 @@
 #include <cstdio>
 
 #include "Helpers/jsonhelper.h"
-#include "Programs/Settings/settingthreadpriority.h"
+#include "Settings/settingthreadpriority.h"
 
 int main(int argc, char *argv[])
 {

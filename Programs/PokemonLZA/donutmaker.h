@@ -2,9 +2,9 @@
 #define DONUTMAKER_H
 
 #include "../programbase.h"
-#include "Programs/Settings/settinglineedit.h"
-#include "Programs/Settings/settingspinbox.h"
-#include "Programs/Settings/PokemonLZA/settingflavorpower.h"
+#include "Settings/settinglineedit.h"
+#include "Settings/settingspinbox.h"
+#include "Settings/PokemonLZA/settingflavorpower.h"
 
 namespace Program::PokemonLZA
 {

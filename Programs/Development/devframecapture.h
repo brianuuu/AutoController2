@@ -9,11 +9,11 @@
 
 #include "../programbase.h"
 #include "Programs/Modules/Common/framecapture.h"
-#include "Programs/Settings/settingcolor.h"
-#include "Programs/Settings/settingcheckbox.h"
-#include "Programs/Settings/settingcombobox.h"
-#include "Programs/Settings/settingdoublespinbox.h"
-#include "Programs/Settings/settingspinbox.h"
+#include "Settings/settingcolor.h"
+#include "Settings/settingcheckbox.h"
+#include "Settings/settingcombobox.h"
+#include "Settings/settingdoublespinbox.h"
+#include "Settings/settingspinbox.h"
 
 namespace Program::Development
 {
