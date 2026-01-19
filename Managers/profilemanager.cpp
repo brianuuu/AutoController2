@@ -95,6 +95,18 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(layout, "Serial Thread Priority:", "Thread priority for serial holder in charge of dispatching commands (Require restart)", m_serialPriority, true);
     }
 
+    // development settings
+    Program::ProgramBase::AddText(scrollLayout, "Development Settings", true, true);
+    {
+        QGroupBox* group = new QGroupBox();
+        group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        scrollLayout->addWidget(group);
+        QVBoxLayout* layout = new QVBoxLayout(group);
+
+        m_debugConsole = new Setting::SettingCheckBox("DebugConsole", "", false);
+        Program::ProgramBase::AddSetting(layout, "Enable Debug Console:", "Display additional debug logs that doesn't show in output log (Require restart)", m_debugConsole, true);
+    }
+
     LoadSettings();
 }
 
@@ -235,6 +247,9 @@ void ProfileManager::LoadSettings()
         m_mainPriority->Load(performance);
         m_modulePriority->Load(performance);
         m_serialPriority->Load(performance);
+
+        QJsonObject development = JsonHelper::ReadObject(profileSettings, "Development");
+        m_debugConsole->Load(development);
     }
     {
         QJsonObject windowSize = JsonHelper::ReadObject(profileSettings, "WindowSize");
@@ -270,6 +285,9 @@ void ProfileManager::SaveSettings() const
     m_modulePriority->Save(performance);
     m_serialPriority->Save(performance);
 
+    QJsonObject development;
+    m_debugConsole->Save(development);
+
     QJsonObject windowSize;
     windowSize.insert("Width", this->width());
     windowSize.insert("Height", this->height());
@@ -280,6 +298,7 @@ void ProfileManager::SaveSettings() const
     profileSettings.insert("System", system);
     profileSettings.insert("Program", program);
     profileSettings.insert("Performance", performance);
+    profileSettings.insert("Development", development);
     profileSettings.insert("WindowSize", windowSize);
 
     JsonHelper::WriteSetting("ProfileSettings", profileSettings);

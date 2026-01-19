@@ -89,6 +89,9 @@ private:
     Setting::SettingThreadPriority* m_mainPriority = Q_NULLPTR;
     Setting::SettingThreadPriority* m_modulePriority = Q_NULLPTR;
     Setting::SettingThreadPriority* m_serialPriority = Q_NULLPTR;
+
+    // Development
+    Setting::SettingCheckBox* m_debugConsole = Q_NULLPTR;
 };
 
 #endif // PROFILEMANAGER_H
