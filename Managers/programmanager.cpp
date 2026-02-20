@@ -5,6 +5,7 @@
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
 #include "Managers/profilemanager.h"
+#include "Managers/videomanager.h"
 
 #include "Programs/Development/devcommand.h"
 #include "Programs/Development/devframecapture.h"
@@ -20,6 +21,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
+    m_videoManager = ManagerCollection::GetManager<VideoManager>();
 
     m_programCategory = ui->CB_ProgramCategory;
     m_programList = ui->LW_ProgramList;
@@ -269,6 +271,26 @@ void ProgramManager::OnProgramStartStop()
     }
     else if (canRun)
     {
+        if (m_program->RequireVideo())
+        {
+            QImage const frame = m_videoManager->GetFrameData();
+            bool border = true;
+            for (int y = 0; y < frame.height(); y++)
+            {
+                if ((frame.pixel(0,y) & 0x00FFFFFF) != 0 || (frame.pixel(frame.width() - 1,y) & 0x00FFFFFF) != 0) // Not black
+                {
+                    border = false;
+                    break;
+                }
+            }
+
+            if (border)
+            {
+                QMessageBox::critical(this, "Error", "Black border detected, please go to Switch Settings->TV Settings->Adjust Screen Size and set to 100%.");
+                return;
+            }
+        }
+
         // set log file name
         if (m_program->ShouldLog())
         {
