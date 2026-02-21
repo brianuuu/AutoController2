@@ -43,6 +43,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->installEventFilter(this);
     m_logManager->PrintLog("Global", "Initialization completed");
+
+    // check for update
+    m_networkManager = new QNetworkAccessManager();
+    connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::OnNetworkManagerFinished);
+    m_networkRequest.setUrl(QUrl("https://raw.githubusercontent.com/brianuuu/AutoController2/refs/heads/main/build/UpdateVersion.ini"));
+    m_networkManager->get(m_networkRequest);
+    ui->L_Update->setText("Checking for Update...");
 }
 
 MainWindow::~MainWindow()
@@ -171,4 +178,79 @@ void MainWindow::SaveSettings() const
     settings.insert("WindowSize", windowSize);
 
     JsonHelper::WriteSetting("MainWindow", settings);
+}
+
+void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
+{
+    QString link = "https://github.com/brianuuu/AutoController2/releases";
+
+    if (reply->error())
+    {
+        QString message = "Update check failed: " + reply->errorString();
+        message += "\n\nDo you want to check the release page for newest version?";
+
+        QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+        resBtn = QMessageBox::question(this, "Error", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+        if (resBtn == QMessageBox::Yes)
+        {
+            QDesktopServices::openUrl(QUrl(link));
+        }
+
+        ui->L_Update->setText("Update Check Failed");
+        return;
+    }
+    else if (m_lastestVersion.isEmpty())
+    {
+        QString const answer = reply->readAll();
+        int const verStart = answer.indexOf("Version=\"") + 9;
+        int const verEnd = answer.indexOf('\"', verStart);
+        m_lastestVersion = answer.mid(verStart, verEnd - verStart);
+
+        QStringList newVerNo = m_lastestVersion.split('.');
+        QStringList curVerNo = QString(VERSION).split('.');
+
+        bool outdated = false;
+        for (int i = 0; i < newVerNo.size(); i++)
+        {
+            if (newVerNo[i] > curVerNo[i])
+            {
+                outdated = true;
+                break;
+            }
+            else if (curVerNo[i] > newVerNo[i])
+            {
+                // Program is newer than github, not commited yet
+                ui->L_Update->setText("Github not commited.");
+                return;
+            }
+        }
+
+        if (outdated)
+        {
+            // get changelog data
+            m_networkRequest.setUrl(QUrl("https://raw.githubusercontent.com/brianuuu/AutoController2/refs/heads/main/build/Changelogs/v" + m_lastestVersion + ".txt"));
+            m_networkManager->get(m_networkRequest);
+        }
+        else
+        {
+            ui->L_Update->setText("Program Up to Date!");
+        }
+    }
+    else
+    {
+        ui->L_Update->setText("<html><head/><body><p><a href=\"" + link + "\">Update Available!</span></a></p></body></html>");
+
+        QString const changeLog = reply->readAll();
+        QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+        QString message = "New version v" + m_lastestVersion + " available, do you wish to download it?";
+        message += "\n\nChange Log:\n" + changeLog;
+        resBtn = QMessageBox::question(this, "Update", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+        if (resBtn == QMessageBox::Yes)
+        {
+            QDesktopServices::openUrl(QUrl(link));
+            this->close();
+        }
+    }
 }

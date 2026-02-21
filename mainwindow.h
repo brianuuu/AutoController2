@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #include "Managers/managercollection.h"
 
@@ -28,6 +30,9 @@ private:
     void LoadSettings();
     void SaveSettings() const;
 
+private slots:
+    void OnNetworkManagerFinished(QNetworkReply *reply);
+
 private:
     Ui::MainWindow *ui;
 
@@ -39,5 +44,10 @@ private:
     SerialManager*      m_serialManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;
     ProgramManager*     m_programManager = Q_NULLPTR;
+
+    // update checker
+    QNetworkAccessManager   *m_networkManager = Q_NULLPTR;
+    QNetworkRequest         m_networkRequest;
+    QString                 m_lastestVersion;
 };
 #endif // MAINWINDOW_H
