@@ -3,6 +3,7 @@
 #include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/logmanager.h"
+#include "Managers/profilemanager.h"
 #include "Managers/audiomanager.h"
 #include "Managers/videomanager.h"
 
@@ -47,9 +48,18 @@ static void eventCallbacks(const libvlc_event_t* event, void* ptr)
     emit parent->notifyStateChanged();
 }
 
+static void logCallbacks(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
+{
+    printf("[LibVLC %s] ", level == LIBVLC_DEBUG ? "Debug" : (level == LIBVLC_NOTICE ? "NOTICE" : (level == LIBVLC_WARNING  ? "Warning" : "Error")));
+    vprintf(fmt, args);
+    printf("\n");
+}
+
 void VlcManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_profileManager = ManagerCollection::GetManager<ProfileManager>();
+
     m_btnCameraStart = ui->PB_CameraStart;
     m_btnScreenshot = ui->PB_Screenshot;
     m_audioDisplay = ui->CB_AudioDisplay;
@@ -64,6 +74,10 @@ void VlcManager::Initialize(Ui::MainWindow *ui)
         "--vout", "dummy",
     };
     m_instance = libvlc_new(sizeof(vlc_args) / sizeof(vlc_args[0]), vlc_args);
+    if (m_profileManager->GetHasDebugConsole())
+    {
+        libvlc_log_set(m_instance, logCallbacks, this);
+    }
     m_mediaPlayer = libvlc_media_player_new(m_instance);
 
     // Event callbacks
@@ -113,6 +127,10 @@ VlcManager::~VlcManager()
     delete[] ctxVideo.m_pixels;
 
     libvlc_media_player_release(m_mediaPlayer);
+    if (m_profileManager->GetHasDebugConsole())
+    {
+        libvlc_log_unset(m_instance);
+    }
     libvlc_release(m_instance);
 }
 

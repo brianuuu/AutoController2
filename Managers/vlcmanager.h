@@ -80,6 +80,7 @@ private:
 
     // Managers
     LogManager*     m_logManager = Q_NULLPTR;
+    ProfileManager* m_profileManager = Q_NULLPTR;
 
     // UI
     QPushButton*    m_btnCameraStart = Q_NULLPTR;

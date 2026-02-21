@@ -42,8 +42,11 @@ public:
     bool StreamCounterExcludePrefix() const;
 
     // Performance
-    QThread::Priority GetModulePriority() { return m_modulePriority->GetPriority(); }
-    QThread::Priority GetSerialPriority() { return m_serialPriority->GetPriority(); }
+    QThread::Priority GetModulePriority() const { return m_modulePriority->GetPriority(); }
+    QThread::Priority GetSerialPriority() const { return m_serialPriority->GetPriority(); }
+
+    // Development
+    bool GetHasDebugConsole() const { return m_debugConsole->isChecked(); }
 
     // Utils
     static bool OCRTrainedDataExist(LanguageType type);
