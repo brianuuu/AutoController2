@@ -1,8 +1,6 @@
 #ifndef COMMANDRECORDER_H
 #define COMMANDRECORDER_H
 
-#include <QElapsedTimer>
-
 #include "../programbase.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settingtextbrowser.h"
@@ -45,7 +43,6 @@ private:
     Setting::SettingComboBox* m_nothing = Q_NULLPTR;
     Setting::SettingTextBrowser* m_browser = Q_NULLPTR;
 
-    QElapsedTimer m_timer;
     quint32 m_buttonFlags = 0;
     QPointF m_lStick = QPointF();
     QPointF m_rStick = QPointF();

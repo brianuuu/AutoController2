@@ -76,6 +76,7 @@ void ProgramBase::ResetDefault()
 void ProgramBase::Start()
 {
     m_started = true;
+    m_elapsedTimer.invalidate();
 
     Module::ModuleBase::ResetNextID();
     CleanOCRFiles();

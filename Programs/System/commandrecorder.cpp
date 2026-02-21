@@ -30,7 +30,6 @@ void CommandRecorder::Start()
     ProgramBase::Start();
     m_nothing->setEnabled(false);
 
-    m_timer.invalidate();
     m_buttonFlags = 0;
     m_lStick = QPointF();
     m_rStick = QPointF();
@@ -56,9 +55,9 @@ void CommandRecorder::Stop()
 {
     // record final Nothing
     int const nothingIndex = m_nothing->currentIndex();
-    if ((nothingIndex == 2 || nothingIndex == 3) && m_timer.isValid())
+    if ((nothingIndex == 2 || nothingIndex == 3) && m_elapsedTimer.isValid())
     {
-        quint64 const elapsed = m_timer.restart();
+        quint64 const elapsed = m_elapsedTimer.restart();
         QString const command = "Nothing|" + QString::number(elapsed);
         AppendCommand(command);
     }
@@ -71,9 +70,9 @@ void CommandRecorder::OnUserInput(quint32 buttonFlag, QPointF lStick, QPointF rS
 {
     if (!IsRunning()) return;
 
-    if (!m_timer.isValid())
+    if (!m_elapsedTimer.isValid())
     {
-        m_timer.start();
+        m_elapsedTimer.start();
         m_buttonFlags = buttonFlag;
         m_lStick = lStick;
         m_rStick = rStick;
@@ -115,7 +114,7 @@ void CommandRecorder::OnUserInput(quint32 buttonFlag, QPointF lStick, QPointF rS
         }
     }
 
-    quint64 const elapsed = m_timer.restart();
+    quint64 const elapsed = m_elapsedTimer.restart();
     command += QString::number(elapsed);
     AppendCommand(command);
 
