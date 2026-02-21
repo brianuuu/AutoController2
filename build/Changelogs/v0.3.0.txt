@@ -1,2 +1,3 @@
+- Fixed DonutMaker timing for Switch 1
 - Ported black border detection for programs that require camera
 - Added global settings to enable development console
