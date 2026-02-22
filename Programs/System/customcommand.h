@@ -1,5 +1,5 @@
-#ifndef CUSTOMCOMMAND_H
-#define CUSTOMCOMMAND_H
+#ifndef SYSTEM_CUSTOMCOMMAND_H
+#define SYSTEM_CUSTOMCOMMAND_H
 
 #include <QDesktopServices>
 #include <QDir>
@@ -63,4 +63,4 @@ private:
 };
 }
 
-#endif // CUSTOMCOMMAND_H
+#endif // SYSTEM_CUSTOMCOMMAND_H

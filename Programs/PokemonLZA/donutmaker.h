@@ -1,5 +1,5 @@
-#ifndef DONUTMAKER_H
-#define DONUTMAKER_H
+#ifndef PLZA_DONUTMAKER_H
+#define PLZA_DONUTMAKER_H
 
 #include "../programbase.h"
 #include "Settings/settinglineedit.h"
@@ -96,4 +96,4 @@ private:
 };
 }
 
-#endif // DONUTMAKER_H
+#endif // PLZA_DONUTMAKER_H

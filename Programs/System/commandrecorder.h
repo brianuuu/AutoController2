@@ -1,5 +1,5 @@
-#ifndef COMMANDRECORDER_H
-#define COMMANDRECORDER_H
+#ifndef SYSTEM_COMMANDRECORDER_H
+#define SYSTEM_COMMANDRECORDER_H
 
 #include "../programbase.h"
 #include "Settings/settingcombobox.h"
@@ -49,4 +49,4 @@ private:
 };
 }
 
-#endif // COMMANDRECORDER_H
+#endif // SYSTEM_COMMANDRECORDER_H
