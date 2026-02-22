@@ -64,6 +64,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Modules/modulebase.h Modules/modulebase.cpp
         Programs/Development/devcommand.h Programs/Development/devcommand.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
+        Programs/Development/devsounddetection.h Programs/Development/devsounddetection.cpp
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp
