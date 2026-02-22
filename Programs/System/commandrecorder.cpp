@@ -38,7 +38,7 @@ void CommandRecorder::Start()
     if (nothingIndex == 1 || nothingIndex == 3)
     {
         // immedately start timer so it records Nothing
-        m_timer.start();
+        m_elapsedTimer.start();
     }
 
     m_browser->clear();
