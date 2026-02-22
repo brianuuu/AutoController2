@@ -3,18 +3,28 @@
 #include "../ui_mainwindow.h"
 #include "Helpers/audioconversionutils.h"
 #include "Helpers/jsonhelper.h"
+#include "Helpers/peakfinder.h"
+#include "Managers/logmanager.h"
 
 #define AUDIO_HEIGHT 100
 #define AUDIO_RAW_WAVE_SCALE 0.04
+#define MAX_DETECTION_WINDOW 100
 
 AudioManager::~AudioManager()
 {
     fftwf_free(m_fftDataIn);
     fftwf_free(m_fftDataOut);
+
+    for (AudioFileHolder* holder : std::as_const(m_audioFileHolders))
+    {
+        delete holder;
+    }
 }
 
 void AudioManager::Initialize(Ui::MainWindow *ui)
 {
+    m_logManager = ManagerCollection::GetManager<LogManager>();
+
     m_listInput = ui->CB_AudioInput;
     m_listOutput = ui->CB_AudioOutput;
     m_listDisplay = ui->CB_AudioDisplay;
@@ -34,6 +44,9 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     m_audioFormat.setChannelConfig(QAudioFormat::ChannelConfigStereo);
     m_audioFormat.setSampleFormat(QAudioFormat::SampleFormat::Int16);
 
+    // Sound detection
+    m_cachedSpikes.reserve(MAX_DETECTION_WINDOW);
+
     connect(m_listInput, &QComboBox::currentTextChanged, this, &AudioManager::OnInputChanged);
     connect(m_listOutput, &QComboBox::currentTextChanged, this, &AudioManager::OnOutputChanged);
     connect(m_listDisplay, &QComboBox::currentIndexChanged, this, &AudioManager::OnDisplayChanged);
@@ -41,6 +54,7 @@ void AudioManager::Initialize(Ui::MainWindow *ui)
     connect(&m_devices, &QMediaDevices::audioInputsChanged, this, &AudioManager::OnRefreshInputList);
     connect(&m_devices, &QMediaDevices::audioOutputsChanged, this, &AudioManager::OnRefreshOutputList);
     connect(this, &AudioManager::notifyDraw, this, &AudioManager::OnDraw);
+    connect(this, &AudioManager::notifyFFTBufferData, this, [this]{ ProcessFFTBufferData(); });
 
     OnRefreshInputList();
     OnRefreshOutputList();
@@ -147,6 +161,171 @@ void AudioManager::ToggleSpectrogram(bool enabled)
     if (enabled)
     {
         m_listDisplay->setCurrentIndex((int)AudioDisplayType::Spectrogram);
+    }
+}
+
+int AudioManager::AddDetection(const QString &fileName, float minScore, int lowFreqFilter)
+{
+    AudioFileHolder* holder = nullptr;
+    if (!m_audioFileHolders.contains(fileName))
+    {
+        QString errorStr;
+        holder = new AudioFileHolder(this);
+        if (!holder->loadWaveFile(fileName, m_audioFormat, minScore, lowFreqFilter, errorStr))
+        {
+            m_logManager->PrintLog("Audio", errorStr, LOG_Error);
+            delete holder;
+            return 0;
+        }
+
+        if (holder->getWindowCount() > MAX_DETECTION_WINDOW)
+        {
+            m_logManager->PrintLog("Audio", "Detection sound has " + QString::number(holder->getWindowCount()) + " windows exceeded " + QString::number(MAX_DETECTION_WINDOW) + " limit");
+            delete holder;
+            return 0;
+        }
+
+        m_audioFileHolders[fileName] = holder;
+        holder->setID(m_audioFileHolders.size());
+    }
+    else
+    {
+        holder = m_audioFileHolders[fileName];
+
+        // Update settings in case they are different
+        holder->setMinScore(minScore);
+        holder->setFreqStart(lowFreqFilter);
+    }
+
+    // Return the ID of the sound
+    m_logManager->PrintLog("Audio", holder->getFileName() + " cached (" + QString::number(holder->getWindowCount()) + " windows, ID: " + QString::number(holder->getID()) + ")");
+    return holder->getID();
+}
+
+void AudioManager::StartDetection(int id)
+{
+    for (AudioFileHolder* holder : std::as_const(m_audioFileHolders))
+    {
+        if (holder->getID() == id)
+        {
+            holder->getWindowSkipCounter() = 0;
+            m_detectingSounds.insert(holder);
+            qDebug() << "Started detecting" << holder->getFileName();
+            return;
+        }
+    }
+
+    m_logManager->PrintLog("Audio", "Invalid sound detection ID", LOG_Error);
+}
+
+void AudioManager::StopDetection(int id)
+{
+    // If specified ID, just remove that one
+    if (id > 0)
+    {
+        for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+        {
+            if (holder->getID() == id)
+            {
+                holder->getWindowSkipCounter() = 0;
+                m_detectingSounds.remove(holder);
+                qDebug() << "Stopped detecting" << holder->getFileName();
+                return;
+            }
+        }
+        //emit printLog("Invalid sound detection ID", LOG_ERROR);
+        return;
+    }
+
+    // Clear all
+    for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+    {
+        holder->getWindowSkipCounter() = 0;
+    }
+    m_detectingSounds.clear();
+    m_cachedSpikes.clear();
+    m_detectedWindowSize = 0;
+}
+
+bool AudioManager::HasDetection(int id)
+{
+    for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+    {
+        if (holder->getID() == id)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void AudioManager::DoDetection()
+{
+    if (m_detectingSounds.isEmpty()) return;
+
+    for (QVector<float> const& spectrogramData : std::as_const(m_spectrogramData))
+    {
+        // Get spikes for the current spectrogram
+        QVector<float> convData;
+        AudioConversionUtils::spikeConvolution(0, spectrogramData.size(), spectrogramData, convData);
+
+        SpikeIDScore spikes;
+        PeakFinder::findPeaks(convData, spikes, 0, false);
+
+        if (m_cachedSpikes.size() == MAX_DETECTION_WINDOW)
+        {
+            m_cachedSpikes.pop_front();
+        }
+        m_cachedSpikes.push_back(spikes);
+
+        for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+        {
+            // Need to wait for enough windows to compare
+            int windowCount = holder->getWindowCount();
+            if (m_cachedSpikes.size() < windowCount)
+            {
+                continue;
+            }
+
+            // Previously detected
+            int& windowSkipCounter = holder->getWindowSkipCounter();
+            if (windowSkipCounter > 0)
+            {
+                windowSkipCounter--;
+                continue;
+            }
+
+            // Get the score by finding if current windows contains the template's spikes
+            // If so add the score by the magnitude of the spike and average to no. in the window
+            float score = 0.0f;
+            QVector<SpikeIDScore> const& spikesCollection = holder->getSpikesCollection();
+            for (int i = 0; i < spikesCollection.size(); i++)
+            {
+                float tempScore = 0.0f;
+                SpikeIDScore const& curCachedSpikes = m_cachedSpikes[m_cachedSpikes.size() - spikesCollection.size() + i];
+                SpikeIDScore const& curSpikesCollection = spikesCollection[i];
+                for (auto iter = curSpikesCollection.begin(); iter != curSpikesCollection.end(); iter++)
+                {
+                    if (curCachedSpikes.contains(iter.key()))
+                    {
+                        tempScore += iter.value();
+                    }
+                }
+                tempScore /= curSpikesCollection.size();
+                score += tempScore;
+            }
+            score /= spikesCollection.size();
+            holder->setScore(score);
+
+            if (score > holder->getMinScore())
+            {
+                m_logManager->PrintLog("Audio", holder->getFileName() + " detected with score " + QString::number(score) + " > " + QString::number(holder->getMinScore()), LOG_Success);
+                emit notifySoundDetected(holder->getID());
+                windowSkipCounter = spikesCollection.size();
+                m_detectedWindowSize = spikesCollection.size();
+            }
+        }
     }
 }
 
@@ -287,8 +466,37 @@ void AudioManager::paintEvent(QPaintEvent *event)
                 imagePainter.drawPoint(width - 1, i);
             }
 
+            // A sound is detected!
+            if (m_detectedWindowSize > 0)
+            {
+                QPen pen;
+                pen.setWidth(4);
+                pen.setColor(Qt::green);
+                imagePainter.setPen(pen);
+                imagePainter.drawRect(width - m_detectedWindowSize - 1, 0, m_detectedWindowSize, height);
+                m_detectedWindowSize = 0;
+            }
+
             // Finally draw the image on widget
             painter.drawImage(this->rect(), m_displayImage);
+
+            // Debug draw the score of detecting sounds
+            if (!m_detectingSounds.isEmpty())
+            {
+                QFont font = painter.font();
+                font.setPointSize(12);
+                painter.setFont(font);
+                int textPos = height - 4;
+                for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+                {
+                    QString text = holder->getFileName() + ": " + QString::number(holder->getScore());
+                    painter.setPen(Qt::black);
+                    painter.drawText(QPoint(4, textPos), text);
+                    painter.setPen(Qt::red);
+                    painter.drawText(QPoint(3, textPos-1), text);
+                    textPos += 15;
+                }
+            }
         }
         break;
     }
@@ -475,6 +683,11 @@ void AudioManager::WriteFFTBufferData(const QVector<float> &newData)
         }
     }
 
+    emit notifyFFTBufferData();
+}
+
+void AudioManager::ProcessFFTBufferData()
+{
     // Check if we have enough data
     int unprocessedDataSize = m_fftNewDataStart - m_fftAnalysisStart;
     if (m_fftNewDataStart < m_fftAnalysisStart)
@@ -514,6 +727,8 @@ void AudioManager::WriteFFTBufferData(const QVector<float> &newData)
             AudioConversionUtils::fft(FFT_SAMPLE_COUNT, m_fftDataIn, m_fftDataOut);
             AudioConversionUtils::fftOutToSpectrogram(FFT_SAMPLE_COUNT, m_fftDataOut, spectrogramData);
         }
+
+        DoDetection();
     }
     else
     {
@@ -545,4 +760,5 @@ void AudioManager::ClearFFTBufferData()
     }
 
     m_displayImage.fill(Qt::black);
+    m_detectedWindowSize = 0;
 }

@@ -43,11 +43,11 @@ private slots:
     void OnPlaySound();
 
 private:
-
+    QString GetFileName() const;
 
 private:
-    AudioManager* m_audioManager = Q_NULLPTR;
     QMediaPlayer* m_mediaPlayer = Q_NULLPTR;
+    int m_soundID = 0;
     bool m_validSound = false;
 
     QPushButton* m_btnPlay = Q_NULLPTR;

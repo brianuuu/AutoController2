@@ -8,7 +8,6 @@ namespace Program::Development
 DevSoundDetection::DevSoundDetection(QObject *parent)
     : ProgramBase{parent}
 {
-    m_audioManager = ManagerCollection::GetManager<AudioManager>();
 }
 
 void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
@@ -46,6 +45,16 @@ bool DevSoundDetection::CanRun() const
 void DevSoundDetection::Start()
 {
     ProgramBase::Start();
+
+    m_soundID = m_audioManager->AddDetection(m_file->text(), m_minScore->value(), m_lowPassFilter->value());
+    if (m_soundID == 0)
+    {
+        emit notifyFinished(-1);
+    }
+    else
+    {
+        m_audioManager->StartDetection(m_soundID);
+    }
 }
 
 void DevSoundDetection::Stop()
@@ -55,7 +64,7 @@ void DevSoundDetection::Stop()
 
 void DevSoundDetection::OnFileChanged()
 {
-    m_validSound = QFile::exists(RESOURCES_PATH + m_file->text() + ".wav");
+    m_validSound = QFile::exists(GetFileName());
     m_btnPlay->setEnabled(m_validSound);
     OnCanRunChanged();
 }
@@ -70,8 +79,13 @@ void DevSoundDetection::OnPlaySound()
 
     m_mediaPlayer = new QMediaPlayer(this);
     m_mediaPlayer->setAudioOutput(m_audioManager->GetAudioOutput());
-    m_mediaPlayer->setSource(QUrl::fromLocalFile(RESOURCES_PATH + m_file->text() + ".wav"));
+    m_mediaPlayer->setSource(QUrl::fromLocalFile(GetFileName()));
     m_mediaPlayer->play();
+}
+
+QString DevSoundDetection::GetFileName() const
+{
+    return RESOURCES_PATH + m_file->text() + ".wav";
 }
 
 }

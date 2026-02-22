@@ -65,6 +65,7 @@ public slots:
 
 protected slots:
     virtual void OnWaitTimeout() {}
+    virtual void OnSoundDetected(int id) {}
 
 protected:
     void RegisterStat(int& refValue, QString const& name);

@@ -22,6 +22,7 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 
     connect(m_serialManager->GetHolder(), &SerialHolder::notifySerialStatus, this, &ProgramBase::OnCanRunChanged);
     connect(m_audioManager->GetInputList(), &QComboBox::currentTextChanged, this, &ProgramBase::OnCanRunChanged);
+    connect(m_audioManager, &AudioManager::notifySoundDetected, this, &ProgramBase::OnSoundDetected);
     connect(m_vlcManager, &VlcManager::notifyHasVideo, this, &ProgramBase::OnCanRunChanged);
 
     m_timer.setSingleShot(true);
@@ -91,7 +92,9 @@ void ProgramBase::Start()
 
 void ProgramBase::Stop()
 {
+    m_audioManager->StopDetection();
     m_audioManager->ToggleSpectrogram(false);
+
     ClearModules();
     m_started = false;
 }

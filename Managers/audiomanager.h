@@ -16,6 +16,9 @@
 
 #include <fftw3.h>
 
+#include "Helpers/audiofileholder.h"
+#include "Managers/managercollection.h"
+
 namespace Ui { class MainWindow; }
 
 class AudioManager : public QWidget
@@ -41,8 +44,13 @@ public:
     void LoadSettings();
     void SaveSettings() const;
 
-    // sound detection
+    // Sound detection
     void ToggleSpectrogram(bool enabled);
+    int AddDetection(QString const& fileName, float minScore, int lowFreqFilter);
+    void StartDetection(int id);
+    void StopDetection(int id = 0);
+    bool HasDetection(int id);
+    void DoDetection();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -50,6 +58,8 @@ protected:
 
 signals:
     void notifyDraw();
+    void notifyFFTBufferData();
+    void notifySoundDetected(int id);
 
 private: // types
     enum class AudioDisplayType
@@ -81,9 +91,12 @@ private:
 
     // Spectrogram
     void WriteFFTBufferData(QVector<float> const& newData);
+    void ProcessFFTBufferData();
     void ClearFFTBufferData();
 
 private:
+    LogManager* m_logManager = Q_NULLPTR;
+
     // UI
     QComboBox*  m_listInput = Q_NULLPTR;
     QComboBox*  m_listOutput = Q_NULLPTR;
@@ -117,6 +130,12 @@ private:
     QMutex          m_sinkMutex;
     QAudioSink*     m_audioSink = Q_NULLPTR;
     QIODevice*      m_audioDevice = Q_NULLPTR;
+
+    // Sound detection
+    QMap<QString, AudioFileHolder*>     m_audioFileHolders;
+    QSet<AudioFileHolder*>              m_detectingSounds;
+    QVector<SpikeIDScore>               m_cachedSpikes;
+    int                                 m_detectedWindowSize = 0;
 };
 
 #endif // AUDIOMANAGER_H
