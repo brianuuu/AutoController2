@@ -41,6 +41,9 @@ public:
     void LoadSettings();
     void SaveSettings() const;
 
+    // sound detection
+    void ToggleSpectrogram(bool enabled);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;

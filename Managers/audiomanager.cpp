@@ -141,6 +141,15 @@ void AudioManager::SaveSettings() const
     JsonHelper::WriteSetting("AudioSettings", settings);
 }
 
+void AudioManager::ToggleSpectrogram(bool enabled)
+{
+    m_listDisplay->setEnabled(!enabled);
+    if (enabled)
+    {
+        m_listDisplay->setCurrentIndex((int)AudioDisplayType::Spectrogram);
+    }
+}
+
 void AudioManager::paintEvent(QPaintEvent *event)
 {
     int const width = this->width();

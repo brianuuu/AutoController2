@@ -81,11 +81,17 @@ void ProgramBase::Start()
     Module::ModuleBase::ResetNextID();
     CleanOCRFiles();
 
+    if (RequireAudio())
+    {
+        m_audioManager->ToggleSpectrogram(true);
+    }
+
     emit notifyStarted();
 }
 
 void ProgramBase::Stop()
 {
+    m_audioManager->ToggleSpectrogram(false);
     ClearModules();
     m_started = false;
 }
