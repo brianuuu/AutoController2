@@ -46,8 +46,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
         Helpers/ocrentrydatabase.h Helpers/ocrentrydatabase.cpp
+        Helpers/peakfinder.cpp Helpers/peakfinder.h
         Helpers/serialholder.h Helpers/serialholder.cpp
         Helpers/stickpainter.h Helpers/stickpainter.cpp
+        Helpers/wavfile.cpp Helpers/wavfile.h
         Managers/audiomanager.h Managers/audiomanager.cpp
         Managers/joystickmanager.h Managers/joystickmanager.cpp
         Managers/keyboardmanager.h Managers/keyboardmanager.cpp
