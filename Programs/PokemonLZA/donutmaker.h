@@ -36,7 +36,7 @@ public:
     void Stop() override;
 
 private:
-    enum State
+    enum class State
     {
         Restart,
         TitleScreen,
@@ -59,7 +59,6 @@ private:
         FlyToVertPCLoadWait,
         WalkToNurseJoy,
     };
-    Q_ENUM(State)
 
 private slots:
     void OnOrderChanged(QString const& str);

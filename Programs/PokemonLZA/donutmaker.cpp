@@ -82,22 +82,22 @@ void DonutMaker::OnCommandFinished()
 
     switch (m_state)
     {
-    case BackupSave:
+    case State::BackupSave:
     {
         m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
         DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 0);
         break;
     }
-    case Restart:
-    case GameLoadStart:
-    case FlyToHotelZ:
-    case EnterHotelZ:
-    case FlyToVertPC:
+    case State::Restart:
+    case State::GameLoadStart:
+    case State::FlyToHotelZ:
+    case State::EnterHotelZ:
+    case State::FlyToVertPC:
     {
         AddBlackScreenModule();
         break;
     }
-    case TalkToAnsha:
+    case State::TalkToAnsha:
     {
         QString command = "(Minus|50,None|50)2";
         QStringList const orders = m_order->text().split(',');
@@ -119,14 +119,14 @@ void DonutMaker::OnCommandFinished()
         DONUT_MAKER_RUN_COMMAND(command);
         break;
     }
-    case SelectBerries:
+    case State::SelectBerries:
     {
         m_state = SetState(State::MakeDonut, "Making donut");
         DONUT_MAKER_RUN_COMMAND("PLZA_MakeDonut", 0);
         IncrementStat(m_statMade);
         break;
     }
-    case MakeDonut:
+    case State::MakeDonut:
     {
         m_state = SetState(State::PowerCapture, "Performing OCR on flavor powers");
 
@@ -140,12 +140,12 @@ void DonutMaker::OnCommandFinished()
         }
         break;
     }
-    case QuitDonut:
+    case State::QuitDonut:
     {
         StateFlyToVertPC();
         break;
     }
-    case WalkToNurseJoy:
+    case State::WalkToNurseJoy:
     {
         StateBackupSave();
         break;
@@ -165,51 +165,51 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
 
     switch (m_state)
     {
-    case Restart:
-    case GameLoadStart:
-    case FlyToHotelZ:
-    case EnterHotelZ:
-    case FlyToVertPC:
+    case State::Restart:
+    case State::GameLoadStart:
+    case State::FlyToHotelZ:
+    case State::EnterHotelZ:
+    case State::FlyToVertPC:
     {
         // wait for black screen
         if (matched)
         {
             m_elapsedTimer.start();
-            m_state = SetState((State)(m_state + 1));
+            m_state = SetState((State)((int)m_state + 1));
         }
         break;
     }
-    case TitleScreen:
-    case GameLoadWait:
-    case FlyToHotelZLoadWait:
-    case EnterHotelZLoadWait:
-    case FlyToVertPCLoadWait:
+    case State::TitleScreen:
+    case State::GameLoadWait:
+    case State::FlyToHotelZLoadWait:
+    case State::EnterHotelZLoadWait:
+    case State::FlyToVertPCLoadWait:
     {
         // wait for black screen to be not black anymore + buffer from black detection
         if (!matched && m_elapsedTimer.elapsed() > 300)
         {
             ClearModule(sender());
-            if (m_state == TitleScreen)
+            if (m_state == State::TitleScreen)
             {
                 m_state = SetState(State::GameLoadStart, "Title screen detected, loading backup save");
                 DONUT_MAKER_RUN_COMMAND("PLZA_LoadBackupSave", 500);
             }
-            else if (m_state == GameLoadWait)
+            else if (m_state == State::GameLoadWait)
             {
                 m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
                 DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 1000);
             }
-            else if (m_state == FlyToHotelZLoadWait)
+            else if (m_state == State::FlyToHotelZLoadWait)
             {
                 m_state = SetState(State::EnterHotelZ, "Entering Hotel Z");
                 DONUT_MAKER_RUN_COMMAND("PLZA_EnterHotelZ", 1000);
             }
-            else if (m_state == EnterHotelZLoadWait)
+            else if (m_state == State::EnterHotelZLoadWait)
             {
                 m_state = SetState(State::TalkToAnsha, "Going forward to talk to Ansha");
                 DONUT_MAKER_RUN_COMMAND("PLZA_TalkToAnsha", 1000);
             }
-            else if (m_state == FlyToVertPCLoadWait)
+            else if (m_state == State::FlyToVertPCLoadWait)
             {
                 m_state = SetState(State::WalkToNurseJoy, "Walking up to Nurse Joy");
                 DONUT_MAKER_RUN_COMMAND("None|1000,B|LUp|50,LUp|1200");

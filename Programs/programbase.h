@@ -89,7 +89,7 @@ protected:
     template<typename T>
     T SetState(T state, QString const& log = "")
     {
-        QString fullLog = QString("State = ") + QMetaEnum::fromType<T>().valueToKey(state);
+        QString fullLog = "State = " + QString::number((int)state);
         if (!log.isEmpty())
         {
             fullLog += ": " + log;
