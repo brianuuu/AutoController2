@@ -276,6 +276,7 @@ void SerialManager::OnConnectTimeout(bool failed, quint8 version)
         else
         {
             msg = "Failed to receive feedback from Arduino/Teensy.";
+            msg += "\nNote: .hex file from Auto Controller 1 is NOT compatible";
         }
         QMessageBox::critical(this, "Error", msg, QMessageBox::Ok);
     }
