@@ -143,7 +143,7 @@ bool AudioFileHolder::loadWaveFile(const QString &filename, const QAudioFormat &
     return true;
 }
 
-void AudioFileHolder::getFrequencyRange(int &start, int &end)
+void AudioFileHolder::getFrequencyRange(int &start, int &end) const
 {
     start = m_freqStart;
     end = m_freqEnd;
@@ -154,7 +154,7 @@ int AudioFileHolder::getWindowCount() const
     return m_spikesCollection.size();
 }
 
-const QVector<SpikeIDScore> &AudioFileHolder::getSpikesCollection()
+const QVector<SpikeIDScore> &AudioFileHolder::getSpikesCollection() const
 {
     return m_spikesCollection;
 }

@@ -15,7 +15,7 @@ AudioManager::~AudioManager()
     fftwf_free(m_fftDataIn);
     fftwf_free(m_fftDataOut);
 
-    for (AudioFileHolder* holder : std::as_const(m_audioFileHolders))
+    for (AudioFileHolder const* holder : std::as_const(m_audioFileHolders))
     {
         delete holder;
     }
@@ -249,7 +249,7 @@ void AudioManager::StopDetection(int id)
 
 bool AudioManager::HasDetection(int id)
 {
-    for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
+    for (AudioFileHolder const* holder : std::as_const(m_detectingSounds))
     {
         if (holder->getID() == id)
         {

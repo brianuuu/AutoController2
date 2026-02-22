@@ -25,14 +25,14 @@ public:
     void setFreqStart(int freqStart) { m_freqStart = freqStart; }
 
     // Getters
-    int getID() { return m_id; }
-    float getScore() { return m_score; }
-    void getFrequencyRange(int& start, int& end);
+    int getID() const { return m_id; }
+    float getScore() const { return m_score; }
+    void getFrequencyRange(int& start, int& end) const;
     int getWindowCount() const;
-    QString const& getFileName() { return m_fileName; }
-    float getMinScore() { return m_minScore; }
+    QString const& getFileName() const { return m_fileName; }
+    float getMinScore() const { return m_minScore; }
     int& getWindowSkipCounter() { return m_windowSkipCounter; }
-    QVector<SpikeIDScore> const& getSpikesCollection();
+    QVector<SpikeIDScore> const& getSpikesCollection() const;
 
 signals:
 
