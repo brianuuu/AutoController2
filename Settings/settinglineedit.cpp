@@ -3,6 +3,17 @@
 
 namespace Setting
 {
+SettingLineEdit::SettingLineEdit
+(
+    const QString &name,
+    const QString &defaultValue
+)
+    : SettingBase(name)
+    , m_defaultValue(defaultValue)
+{
+    this->setText(defaultValue);
+}
+
 void SettingLineEdit::Load(QJsonObject &object)
 {
     QVariant text;
@@ -19,6 +30,6 @@ void SettingLineEdit::Save(QJsonObject &object) const
 
 void SettingLineEdit::ResetDefault()
 {
-    this->clear();
+    this->setText(m_defaultValue);
 }
 }
