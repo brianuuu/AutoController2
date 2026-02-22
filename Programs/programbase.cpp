@@ -102,7 +102,7 @@ bool ProgramBase::ValidVideo() const
 
 bool ProgramBase::ValidAudio() const
 {
-    return !RequireAudio() || m_audioManager->GetDeviceName() != "None";
+    return !RequireAudio() || (m_audioManager->GetDeviceName() != "None" && m_vlcManager->HasVideo());
 }
 
 void ProgramBase::OnCanRunChanged()
