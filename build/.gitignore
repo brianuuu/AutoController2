@@ -3,5 +3,5 @@
 /Screenshots
 /StreamCounters
 *.zip
-Stats.ini
+Stats.json
 UserSettings.json

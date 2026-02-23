@@ -16,7 +16,7 @@
 #include "Programs/System/customcommand.h"
 
 #define PROGRAM_MANUAL_PATH "../Manuals/"
-#define PROGRAM_STATS_INI "../Stats.ini"
+#define PROGRAM_STATS_JSON "../Stats.json"
 #define STREAM_COUNTER_PATH "../StreamCounters/"
 
 void ProgramManager::Initialize(Ui::MainWindow *ui)
@@ -97,12 +97,14 @@ void ProgramManager::RegisterStat(int& refValue, const QString &name)
 
     m_stats[&refValue] = name;
 
-    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
-    stats.beginGroup(m_program->GetInternalName());
+    QJsonObject json = JsonHelper::ReadJson(PROGRAM_STATS_JSON);
+    QJsonObject stats = JsonHelper::ReadObject(json, m_program->GetInternalName());
 
-    // Grab value from ini, resave if ini file doesn't exist
-    refValue = stats.value(name, 0).toInt();
-    stats.setValue(name, refValue);
+    QVariant value;
+    if (JsonHelper::ReadValue(stats, name, value))
+    {
+        refValue = value.toInt();
+    }
 
     UpdateStats();
 }
@@ -171,14 +173,17 @@ void ProgramManager::SaveStats()
 {
     if (!m_program || m_stats.empty()) return;
 
-    QSettings stats(PROGRAM_STATS_INI, QSettings::IniFormat, this);
-    stats.beginGroup(m_program->GetInternalName());
+    QJsonObject json = JsonHelper::ReadJson(PROGRAM_STATS_JSON);
 
     // save stats of the program
+    QJsonObject stats;
     for (auto iter = m_stats.begin(); iter != m_stats.end(); iter++)
     {
-        stats.setValue(iter.value(), *iter.key());
+        stats.insert(iter.value(), *iter.key());
     }
+
+    json.insert(m_program->GetInternalName(), stats);
+    JsonHelper::WriteJson(PROGRAM_STATS_JSON, json);
 }
 
 void ProgramManager::ClearStats()
@@ -356,7 +361,7 @@ void ProgramManager::OnUpTimeUpdate()
 
 void ProgramManager::OnStatsEdit()
 {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_STATS_INI));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_STATS_JSON));
 }
 
 void ProgramManager::OnStatsReset()
