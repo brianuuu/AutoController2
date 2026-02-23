@@ -18,7 +18,7 @@ void RespawnReset::PopulateSettings(QBoxLayout *layout)
 {
     m_waitTime = new Setting::SettingDoubleSpinBox("WaitTime", 1.0, 30.0, 5.0);
     m_savedSettings.insert(m_waitTime);
-    AddSetting(layout, "Wait Time:", "How many seconds to wait after game started", m_waitTime, true);
+    AddSetting(layout, "Wait Time:", "How many seconds to wait for shiny sound after game started", m_waitTime, true);
 
     AddSpacer(layout);
 }
