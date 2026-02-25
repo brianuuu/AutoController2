@@ -4,11 +4,14 @@
 #include "Helpers/jsonhelper.h"
 #include "Managers/managercollection.h"
 #include "Managers/audiomanager.h"
+#include "Managers/discordmanager.h"
 #include "Programs/programbase.h"
 #include "defines.h"
 
 void ProfileManager::Initialize(Ui::MainWindow *ui)
 {
+    m_discordManager = ManagerCollection::GetManager<DiscordManager>();
+
     connect(ui->PB_ProfileSettings, &QPushButton::clicked, this, &ProfileManager::OnShow);
 
     this->setWindowTitle("Global Settings");
@@ -77,6 +80,25 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(layout, "Stream Counter:", "Program with stats will export each as individual text files to \"StreamCounters\" folder", m_streamCounter, true);
     }
 
+    // discord settings
+    Program::ProgramBase::AddText(scrollLayout, "Discord Settings", true, true);
+    {
+        QGroupBox* group = new QGroupBox();
+        group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        scrollLayout->addWidget(group);
+        QVBoxLayout* layout = new QVBoxLayout(group);
+
+        m_discordManager->m_settingToken = new Setting::SettingLineEdit("BotToken");
+        m_discordManager->m_settingToken->setEchoMode(QLineEdit::Password);
+        Program::ProgramBase::AddSetting(layout, "Bot Token:", "Token of your discord bot, do not share this with anyone and keep it safe", m_discordManager->m_settingToken, true);
+
+        m_discordManager->m_settingUser = new Setting::SettingLineEdit("UserID");
+        Program::ProgramBase::AddSetting(layout, "User ID:", "The bot will send program status to this user", m_discordManager->m_settingUser, true);
+
+        m_discordManager->m_settingChannel = new Setting::SettingLineEdit("ChannelID");
+        Program::ProgramBase::AddSetting(layout, "Channel ID:", "The bot will send program status to this channel, it must have appropriate permissions in that server", m_discordManager->m_settingChannel, true);
+    }
+
     // performance settings
     Program::ProgramBase::AddText(scrollLayout, "Performance Settings", true, true);
     {
@@ -108,6 +130,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     }
 
     LoadSettings();
+    m_discordManager->Initialize();
 }
 
 bool ProfileManager::OnCloseEvent()
@@ -243,6 +266,11 @@ void ProfileManager::LoadSettings()
         m_playSoundSuppress->Load(program);
         m_streamCounter->Load(program);
 
+        QJsonObject discord = JsonHelper::ReadObject(profileSettings, "Discord");
+        m_discordManager->m_settingToken->Load(discord);
+        m_discordManager->m_settingUser->Load(discord);
+        m_discordManager->m_settingChannel->Load(discord);
+
         QJsonObject performance = JsonHelper::ReadObject(profileSettings, "Performance");
         m_mainPriority->Load(performance);
         m_modulePriority->Load(performance);
@@ -269,9 +297,12 @@ void ProfileManager::LoadSettings()
 
 void ProfileManager::SaveSettings() const
 {
+    QJsonObject profileSettings;
+
     QJsonObject system;
     m_language->Save(system);
     m_system->Save(system);
+    profileSettings.insert("System", system);
 
     QJsonObject program;
     m_playSound->Save(program);
@@ -279,26 +310,29 @@ void ProfileManager::SaveSettings() const
     m_customSoundPath->Save(program);
     m_playSoundSuppress->Save(program);
     m_streamCounter->Save(program);
+    profileSettings.insert("Program", program);
+
+    QJsonObject discord;
+    m_discordManager->m_settingToken->Save(discord);
+    m_discordManager->m_settingUser->Save(discord);
+    m_discordManager->m_settingChannel->Save(discord);
+    profileSettings.insert("Discord", discord);
 
     QJsonObject performance;
     m_mainPriority->Save(performance);
     m_modulePriority->Save(performance);
     m_serialPriority->Save(performance);
+    profileSettings.insert("Performance", performance);
 
     QJsonObject development;
     m_debugConsole->Save(development);
+    profileSettings.insert("Development", development);
 
     QJsonObject windowSize;
     windowSize.insert("Width", this->width());
     windowSize.insert("Height", this->height());
     windowSize.insert("X", this->pos().x());
     windowSize.insert("Y", this->pos().y());
-
-    QJsonObject profileSettings;
-    profileSettings.insert("System", system);
-    profileSettings.insert("Program", program);
-    profileSettings.insert("Performance", performance);
-    profileSettings.insert("Development", development);
     profileSettings.insert("WindowSize", windowSize);
 
     JsonHelper::WriteSetting("ProfileSettings", profileSettings);

@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/discordmanager.h"
 #include "Managers/joystickmanager.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle(title);
 
     m_logManager = ManagerCollection::AddManager<LogManager>();
+    m_discordManager = ManagerCollection::AddManager<DiscordManager>();
     m_profileManager = ManagerCollection::AddManager<ProfileManager>();
     m_joystickManager = ManagerCollection::AddManager<JoystickManager>(this);
     m_keyboardManager = ManagerCollection::AddManager<KeyboardManager>();
@@ -100,11 +102,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
     delete m_vlcManager;
     delete m_keyboardManager;
     delete m_profileManager;
+    delete m_discordManager;
     delete m_logManager;
 
     m_vlcManager = Q_NULLPTR;
     m_keyboardManager = Q_NULLPTR;
     m_profileManager = Q_NULLPTR;
+    m_discordManager = Q_NULLPTR;
     m_logManager = Q_NULLPTR;
 
     QMainWindow::closeEvent(event);

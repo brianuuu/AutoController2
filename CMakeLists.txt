@@ -52,6 +52,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/stickpainter.h Helpers/stickpainter.cpp
         Helpers/wavfile.cpp Helpers/wavfile.h
         Managers/audiomanager.h Managers/audiomanager.cpp
+        Managers/discordmanager.h Managers/discordmanager.cpp
         Managers/joystickmanager.h Managers/joystickmanager.cpp
         Managers/keyboardmanager.h Managers/keyboardmanager.cpp
         Managers/logmanager.h Managers/logmanager.cpp

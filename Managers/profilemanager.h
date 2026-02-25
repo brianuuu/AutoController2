@@ -8,6 +8,7 @@
 #include <QToolButton>
 #include <QWidget>
 
+#include "Managers/managercollection.h"
 #include "Settings/settingcheckbox.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settinglanguage.h"
@@ -73,6 +74,7 @@ private:
 
 private:
     QString m_path;
+    DiscordManager* m_discordManager = Q_NULLPTR;
 
     // System
     Setting::SettingLanguage* m_language = Q_NULLPTR;
