@@ -61,6 +61,7 @@ private:
     void UpdateStats(bool reset = false);
     void SaveStats();
     void ClearStats();
+    void MigrateStatsToJson();
 
 private:
     // Managers

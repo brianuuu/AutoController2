@@ -81,6 +81,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     std::sort(categories.begin(), categories.end());
     m_programCategory->addItems(categories);
 
+    MigrateStatsToJson();
     LoadSettings();
 }
 
@@ -200,6 +201,32 @@ void ProgramManager::ClearStats()
 
     m_stats.clear();
     UpdateStats();
+}
+
+void ProgramManager::MigrateStatsToJson()
+{
+    QString const statsIni = "../Stats.ini";
+    if (!QFile::exists(statsIni)) return;
+
+    QJsonObject json = JsonHelper::ReadJson(PROGRAM_STATS_JSON);
+
+    QSettings statsSettings(statsIni, QSettings::IniFormat, this);
+    for (QString const& program : statsSettings.childGroups())
+    {
+        QJsonObject programStats;
+
+        statsSettings.beginGroup(program);
+        for (QString const& key : statsSettings.allKeys())
+        {
+            programStats.insert(key, statsSettings.value(key).toInt());
+        }
+        statsSettings.endGroup();
+
+        json.insert(program, programStats);
+    }
+
+    JsonHelper::WriteJson(PROGRAM_STATS_JSON, json);
+    QFile::remove(statsIni);
 }
 
 void ProgramManager::OnCategoryChanged(const QString &category)
