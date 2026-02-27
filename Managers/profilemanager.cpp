@@ -93,10 +93,24 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(layout, "Bot Token:", "Token of your discord bot, do not share this with anyone and keep it safe", m_discordManager->m_settingToken, true);
 
         m_discordManager->m_settingUser = new Setting::SettingLineEdit("UserID");
-        Program::ProgramBase::AddSetting(layout, "User ID:", "The bot will send program status to this user", m_discordManager->m_settingUser, true);
+        m_discordManager->m_settingUser->setEnabled(false);
+        m_discordManager->m_btnTestUser = new QPushButton("Send Test DM");
+        m_discordManager->m_btnTestUser->setEnabled(false);
+        m_discordManager->m_btnTestUser->setFixedWidth(130);
+        Program::ProgramBase::AddSettings(layout, "User ID:", "The bot will send program status to this user", {m_discordManager->m_settingUser, m_discordManager->m_btnTestUser}, true);
+        m_discordManager->m_btnTestUser->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
         m_discordManager->m_settingChannel = new Setting::SettingLineEdit("ChannelID");
-        Program::ProgramBase::AddSetting(layout, "Channel ID:", "The bot will send program status to this channel, it must have appropriate permissions in that server", m_discordManager->m_settingChannel, true);
+        m_discordManager->m_settingChannel->setEnabled(false);
+        m_discordManager->m_btnTestChannel = new QPushButton("Send Test Message");
+        m_discordManager->m_btnTestChannel->setEnabled(false);
+        m_discordManager->m_btnTestChannel->setFixedWidth(130);
+        Program::ProgramBase::AddSettings(layout, "Channel ID:", "The bot will send program status to this channel, it must have appropriate permissions in that server", {m_discordManager->m_settingChannel, m_discordManager->m_btnTestChannel}, true);
+        m_discordManager->m_btnTestChannel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+        m_discordManager->m_btnStartStop = new QPushButton("Start Bot");
+        m_discordManager->m_btnStartStop->setEnabled(false);
+        Program::ProgramBase::AddSetting(layout, "Toggle Bot:", "Application will start bot automatically at launch if bot has started", m_discordManager->m_btnStartStop, true);
     }
 
     // performance settings
@@ -129,8 +143,8 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(layout, "Enable Debug Console:", "Display additional debug logs that doesn't show in output log (Require restart)", m_debugConsole, true);
     }
 
-    LoadSettings();
     m_discordManager->Initialize();
+    LoadSettings();
 }
 
 bool ProfileManager::OnCloseEvent()
@@ -270,6 +284,11 @@ void ProfileManager::LoadSettings()
         m_discordManager->m_settingToken->Load(discord);
         m_discordManager->m_settingUser->Load(discord);
         m_discordManager->m_settingChannel->Load(discord);
+        QVariant enabled;
+        if (JsonHelper::ReadValue(discord, "DefaultEnabled", enabled) && enabled.toBool())
+        {
+            m_discordManager->SetEnabled(true);
+        }
 
         QJsonObject performance = JsonHelper::ReadObject(profileSettings, "Performance");
         m_mainPriority->Load(performance);
@@ -316,6 +335,7 @@ void ProfileManager::SaveSettings() const
     m_discordManager->m_settingToken->Save(discord);
     m_discordManager->m_settingUser->Save(discord);
     m_discordManager->m_settingChannel->Save(discord);
+    discord.insert("DefaultEnabled", m_discordManager->IsEnabled());
     profileSettings.insert("Discord", discord);
 
     QJsonObject performance;

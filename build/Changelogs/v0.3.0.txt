@@ -1,5 +1,6 @@
 - Ported Respawn Reset for PLZA
 - Fixed DonutMaker timing for Switch 1
+- Ported discord bot functionaility
 - Ported black border detection for programs that require camera
 - Moved stats from .ini to .json (existing .ini will auto become .json)
 - Added global settings to enable development console
