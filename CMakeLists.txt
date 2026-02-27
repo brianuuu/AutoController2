@@ -18,6 +18,7 @@ find_package(Qt6 REQUIRED COMPONENTS SerialPort)
 find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
 find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 
 set(LibVLC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/LibVLC")
 set(fftw_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/fftw")
@@ -41,6 +42,46 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${app_icon_resource_windows}
+        External/QDiscord/Discord.h
+        External/QDiscord/Discord/Client.cpp External/QDiscord/Discord/Client.h
+        External/QDiscord/Discord/GatewayEvents.cpp External/QDiscord/Discord/GatewayEvents.h
+        External/QDiscord/Discord/GatewaySocket.cpp External/QDiscord/Discord/GatewaySocket.h
+        External/QDiscord/Discord/HttpService.cpp External/QDiscord/Discord/HttpService.h
+        External/QDiscord/Discord/Objects/Activity.cpp External/QDiscord/Discord/Objects/Activity.h
+        External/QDiscord/Discord/Objects/Attachment.cpp External/QDiscord/Discord/Objects/Attachment.h
+        External/QDiscord/Discord/Objects/Ban.cpp External/QDiscord/Discord/Objects/Ban.h
+        External/QDiscord/Discord/Objects/Channel.cpp External/QDiscord/Discord/Objects/Channel.h
+        External/QDiscord/Discord/Objects/Connection.cpp External/QDiscord/Discord/Objects/Connection.h
+        External/QDiscord/Discord/Objects/Embed.cpp External/QDiscord/Discord/Objects/Embed.h
+        External/QDiscord/Discord/Objects/Emoji.cpp External/QDiscord/Discord/Objects/Emoji.h
+        External/QDiscord/Discord/Objects/Guild.cpp External/QDiscord/Discord/Objects/Guild.h
+        External/QDiscord/Discord/Objects/GuildEmbed.cpp External/QDiscord/Discord/Objects/GuildEmbed.h
+        External/QDiscord/Discord/Objects/GuildMember.cpp External/QDiscord/Discord/Objects/GuildMember.h
+        External/QDiscord/Discord/Objects/Integration.cpp External/QDiscord/Discord/Objects/Integration.h
+        External/QDiscord/Discord/Objects/Invite.cpp External/QDiscord/Discord/Objects/Invite.h
+        External/QDiscord/Discord/Objects/Message.cpp External/QDiscord/Discord/Objects/Message.h
+        External/QDiscord/Discord/Objects/Overwrite.cpp External/QDiscord/Discord/Objects/Overwrite.h
+        External/QDiscord/Discord/Objects/PresenceUpdate.cpp External/QDiscord/Discord/Objects/PresenceUpdate.h
+        External/QDiscord/Discord/Objects/Reaction.cpp External/QDiscord/Discord/Objects/Reaction.h
+        External/QDiscord/Discord/Objects/Role.cpp External/QDiscord/Discord/Objects/Role.h
+        External/QDiscord/Discord/Objects/User.cpp External/QDiscord/Discord/Objects/User.h
+        External/QDiscord/Discord/Objects/VoiceRegion.cpp External/QDiscord/Discord/Objects/VoiceRegion.h
+        External/QDiscord/Discord/Objects/VoiceState.cpp External/QDiscord/Discord/Objects/VoiceState.h
+        External/QDiscord/Discord/Objects/Webhook.cpp External/QDiscord/Discord/Objects/Webhook.h
+        External/QDiscord/Discord/Patches/ChannelPatch.cpp External/QDiscord/Discord/Patches/ChannelPatch.h
+        External/QDiscord/Discord/Patches/EmojiPatch.cpp External/QDiscord/Discord/Patches/EmojiPatch.h
+        External/QDiscord/Discord/Patches/GuildEmbedPatch.cpp External/QDiscord/Discord/Patches/GuildEmbedPatch.h
+        External/QDiscord/Discord/Patches/GuildMemberPatch.cpp External/QDiscord/Discord/Patches/GuildMemberPatch.h
+        External/QDiscord/Discord/Patches/GuildPatch.cpp External/QDiscord/Discord/Patches/GuildPatch.h
+        External/QDiscord/Discord/Patches/IntegrationPatch.cpp External/QDiscord/Discord/Patches/IntegrationPatch.h
+        External/QDiscord/Discord/Patches/MessagePatch.cpp External/QDiscord/Discord/Patches/MessagePatch.h
+        External/QDiscord/Discord/Patches/Patch.h
+        External/QDiscord/Discord/Patches/RolePatch.cpp External/QDiscord/Discord/Patches/RolePatch.h
+        External/QDiscord/Discord/Patches/UserPatch.cpp External/QDiscord/Discord/Patches/UserPatch.h
+        External/QDiscord/Discord/Patches/WebhookPatch.cpp External/QDiscord/Discord/Patches/WebhookPatch.h
+        External/QDiscord/Discord/Payload.h External/QDiscord/Discord/Promise.h
+        External/QDiscord/Discord/Token.cpp External/QDiscord/Discord/Token.h
+        External/QDiscord/Discord/Url.cpp External/QDiscord/Discord/Url.h
         Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
         Helpers/audiofileholder.cpp Helpers/audiofileholder.h
         Helpers/captureholder.h Helpers/captureholder.cpp
@@ -117,6 +158,7 @@ target_link_libraries(AutoController2 PRIVATE Qt6::SerialPort)
 target_link_libraries(AutoController2 PRIVATE Qt6::Multimedia)
 target_link_libraries(AutoController2 PRIVATE Qt6::Concurrent)
 target_link_libraries(AutoController2 PRIVATE Qt6::Network)
+target_link_libraries(AutoController2 PRIVATE Qt6::WebSockets)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlc.lib)
 target_link_libraries(AutoController2 PRIVATE ${LibVLC_DIR}/libvlccore.lib)
 target_link_libraries(AutoController2 PRIVATE ${fftw_DIR}/libfftw3f-3.lib)
