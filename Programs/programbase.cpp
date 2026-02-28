@@ -61,6 +61,12 @@ void ProgramBase::SaveSettings() const
     JsonHelper::WriteSetting("ProgramSettings", allSettings);
 }
 
+void ProgramBase::PopulateSettings(QBoxLayout *layout)
+{
+    AddText(layout, "This program has no settings.", false, true);
+    AddSpacer(layout);
+}
+
 bool ProgramBase::CanRun() const
 {
     return ValidSerial() && ValidVideo() && ValidAudio();

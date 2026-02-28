@@ -26,7 +26,7 @@ public:
     void LoadSettings();
     void SaveSettings() const;
 
-    virtual void PopulateSettings(QBoxLayout* layout) = 0;
+    virtual void PopulateSettings(QBoxLayout* layout);
     virtual void RegisterStats() {}
     virtual QString GetInternalName() const = 0;
     virtual QString GetDescription() const = 0;
