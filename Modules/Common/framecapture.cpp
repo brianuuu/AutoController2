@@ -112,9 +112,11 @@ void FrameCapture::run()
                 HsvRange const range = GetHsvRange();
                 m_resultMean = GetBrightnessMean(frame, range, &m_resultMasked);
                 m_resultString = QString::number(m_resultMean, 'f', 4);
+                m_resultMatched = m_resultMean >= m_targetMean;
 
                 lock.unlock();
                 if (m_terminate) return;
+                emit notifyResultMatched(m_resultMatched);
                 emit notifyResultMean(m_resultMean, m_resultMasked);
                 break;
             }
