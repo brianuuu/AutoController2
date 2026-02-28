@@ -307,7 +307,7 @@ void ProgramManager::OnProgramStartStop()
     }
     else if (canRun)
     {
-        if (m_program->RequireVideo())
+        if (m_program->RequireVideo() && !m_program->BypassBorderCheck())
         {
             QImage const frame = m_videoManager->GetFrameData();
 

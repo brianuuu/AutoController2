@@ -38,6 +38,7 @@ public:
     bool RequireVideo() const override { return true; }
     bool RequireAudio() const override { return false; }
 
+    bool BypassBorderCheck() const override { return true; }
     bool CanControlWhileRunning() const override { return true; }
     bool CanEditWhileRunning() const override { return true; }
 

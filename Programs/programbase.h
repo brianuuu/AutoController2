@@ -36,6 +36,7 @@ public:
     virtual bool RequireAudio() const = 0;
 
     virtual bool ShouldLog() const { return false; }
+    virtual bool BypassBorderCheck() const { return false; }
     virtual bool CanControlWhileRunning() const { return false; }
     virtual bool CanEditWhileRunning() const { return false; }
     virtual bool CanRun() const;
