@@ -30,6 +30,7 @@ public:
 
 signals:
     void notifyCommand(QString const& command);
+    void notifyFinished();
     void notifyClear();
 
 private:

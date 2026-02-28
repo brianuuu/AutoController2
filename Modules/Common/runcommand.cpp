@@ -87,6 +87,10 @@ void RunCommand::run()
         // terminate, we have to stop current command
         emit notifyClear();
     }
+    else
+    {
+        emit notifyFinished();
+    }
 }
 
 }
