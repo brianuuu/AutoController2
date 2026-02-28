@@ -310,17 +310,28 @@ void ProgramManager::OnProgramStartStop()
         if (m_program->RequireVideo())
         {
             QImage const frame = m_videoManager->GetFrameData();
-            bool border = true;
-            for (int y = 0; y < frame.height(); y++)
+
+            bool xBorder = true;
+            for (int x = 0; x < frame.width(); x++)
             {
-                if ((frame.pixel(0,y) & 0x00FFFFFF) != 0 || (frame.pixel(frame.width() - 1,y) & 0x00FFFFFF) != 0) // Not black
+                if ((frame.pixel(0,x) & 0x00FFFFFF) != 0 || (frame.pixel(frame.height() - 1,x) & 0x00FFFFFF) != 0) // top/bottom not black
                 {
-                    border = false;
+                    xBorder = false;
                     break;
                 }
             }
 
-            if (border)
+            bool yBorder = true;
+            for (int y = 0; y < frame.height(); y++)
+            {
+                if ((frame.pixel(0,y) & 0x00FFFFFF) != 0 || (frame.pixel(frame.width() - 1,y) & 0x00FFFFFF) != 0) // left/right not black
+                {
+                    yBorder = false;
+                    break;
+                }
+            }
+
+            if (xBorder || yBorder)
             {
                 QMessageBox::critical(this, "Error", "Black border detected, please go to Switch Settings->TV Settings->Adjust Screen Size and set to 100%.");
                 return;
