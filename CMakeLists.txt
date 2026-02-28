@@ -110,6 +110,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Development/devcommand.h Programs/Development/devcommand.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
         Programs/Development/devsounddetection.h Programs/Development/devsounddetection.cpp
+        Programs/PokemonFRLG/starterreset.cpp Programs/PokemonFRLG/starterreset.h
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
         Programs/PokemonLZA/respawnreset.cpp Programs/PokemonLZA/respawnreset.h
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp

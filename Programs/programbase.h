@@ -12,6 +12,8 @@
 #include "Types/logtype.h"
 #include "Managers/managercollection.h"
 #include "Modules/modulebase.h"
+#include "Modules/Common/framecapture.h"
+#include "Modules/Common/runcommand.h"
 #include "Settings/settingbase.h"
 
 namespace Program
@@ -65,6 +67,8 @@ public slots:
     bool OnModuleErrorQuit();
 
 protected slots:
+    virtual void OnCommandFinished() {}
+    virtual void OnFrameCaptureMatched(bool matched) {}
     virtual void OnWaitTimeout() {}
     virtual void OnSoundDetected(int id) {}
 
@@ -86,6 +90,22 @@ protected:
     void ClearModule(QObject* sender);
     void ClearModule(Module::ModuleBase* module);
     void ClearModules();
+
+    template<typename... Args>
+    void AddRunCommand(Args... args)
+    {
+        Module::Common::RunCommand* module = new Module::Common::RunCommand(args...);
+        connect(module, &Module::Common::RunCommand::notifyFinished, this, &ProgramBase::OnCommandFinished);
+        AddModule(module);
+    }
+
+    template<typename... Args>
+    void AddFrameCapture(Args... args)
+    {
+        Module::Common::FrameCapture* module = new Module::Common::FrameCapture(args...);
+        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
+        AddModule(module);
+    }
 
     template<typename T>
     T SetState(T state, QString const& log = "")

@@ -145,6 +145,9 @@ bool ProgramBase::OnModuleErrorQuit()
     Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
     if (!module) return false;
 
+    // module was already deleted
+    if (!m_modules.contains(module)) return true;
+
     int const result = module->GetResult();
     if (result < 0)
     {
@@ -173,6 +176,8 @@ void ProgramBase::PrintLog(const QString &log, LogType type) const
 void ProgramBase::AddModule(Module::ModuleBase *module)
 {
     if (!module) return;
+
+    connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
 
     m_modules.insert(module);
     module->moveToThread(module);
