@@ -13,6 +13,7 @@ enum LogType
     LOG_Warning,
     LOG_Error,
     LOG_Important,
+    LOG_Shiny,
     LOG_State,
 };
 
@@ -25,6 +26,7 @@ static QColor LogTypeToColor(LogType type)
     case LOG_Warning:   return QColor(255,120,0);
     case LOG_Error:     return QColor(255,0,0);
     case LOG_Important: return QColor(255,0,255);
+    case LOG_Shiny:     return QColor(255,255,0);
     case LOG_State:     return QColor(0,170,255);
     }
 
