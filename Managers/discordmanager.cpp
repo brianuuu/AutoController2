@@ -28,7 +28,7 @@ void DiscordManager::OnSettingChanged()
 
     m_btnTestUser->setEnabled(m_enabled && !m_settingUser->text().isEmpty());
     m_btnTestChannel->setEnabled(m_enabled && !m_settingChannel->text().isEmpty());
-    m_btnStartStop->setEnabled(hasToken);
+    m_btnStartStop->setEnabled(hasToken && (!m_settingUser->text().isEmpty() || !m_settingChannel->text().isEmpty()));
     m_btnStartStop->setText(m_enabled ? "Stop Bot" : "Start Bot");
 }
 
@@ -55,7 +55,7 @@ void DiscordManager::OnTestChannel()
 
 void DiscordManager::OnToggled()
 {
-    if (m_settingToken->text().isEmpty()) return;
+    if (m_settingToken->text().isEmpty() || (m_settingUser->text().isEmpty() && !m_settingChannel->text().isEmpty())) return;
 
     if (m_enabled)
     {
