@@ -196,24 +196,24 @@ void ProgramBase::ClearModule(QObject *sender)
 void ProgramBase::ClearModule(Module::ModuleBase *module)
 {
     if (!module || !m_modules.contains(module)) return;
+    m_modules.remove(module);
 
     module->stop();
     module->wait();
     delete module;
-
-    m_modules.remove(module);
 }
 
 void ProgramBase::ClearModules()
 {
-    for (Module::ModuleBase* module : std::as_const(m_modules))
+    auto temp = m_modules;
+    m_modules.clear();
+
+    for (Module::ModuleBase* module : std::as_const(temp))
     {
         module->stop();
         module->wait();
         delete module;
     }
-
-    m_modules.clear();
 }
 
 bool ProgramBase::EnsureOCRDatabase(const QString &database)
