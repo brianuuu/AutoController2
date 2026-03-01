@@ -19,6 +19,58 @@ void DiscordManager::SetEnabled(bool enabled)
     }
 }
 
+void DiscordManager::SendMessage(const Discord::Embed &embed, bool isMention, bool dmOnly, const QImage *img)
+{
+    if (!m_enabled) return;
+
+    // create attachment
+    Discord::UploadAttachment u;
+    if (img)
+    {
+        u.type = Discord::UploadImageSupportedExtension::PNG;
+        u.name = "attachment.png";
+        QBuffer buffer(&u.file);
+        buffer.open(QIODevice::WriteOnly);
+        (*img).save(&buffer, "PNG");
+    }
+
+    // mention
+    QString const mention = isMention ? GetUserMention() : "";
+
+    // send to channel
+    if (!m_settingChannel->text().isEmpty() && !dmOnly)
+    {
+        snowflake_t id = m_settingChannel->text().toULongLong();
+        if (img)
+        {
+            m_client->createImageMessage(id, u, embed, mention);
+        }
+        else
+        {
+            m_client->createMessage(id, embed, mention);
+        }
+    }
+
+    // send DM
+    if (!m_settingUser->text().isEmpty())
+    {
+        snowflake_t id = m_settingUser->text().toULongLong();
+        m_client->createDm(id).then(
+            [this, img, u, embed, mention](Discord::Channel const& c)
+            {
+                if (img)
+                {
+                    m_client->createImageMessage(c.id(), u, embed, mention);
+                }
+                else
+                {
+                    m_client->createMessage(c.id(), embed, mention);
+                }
+            }
+        );
+    }
+}
+
 void DiscordManager::OnSettingChanged()
 {
     bool const hasToken = !m_settingToken->text().isEmpty();

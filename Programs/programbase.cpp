@@ -3,10 +3,12 @@
 #include "Helpers/jsonhelper.h"
 #include "Helpers/ocrentrydatabase.h"
 #include "Managers/audiomanager.h"
+#include "Managers/discordmanager.h"
 #include "Managers/logmanager.h"
 #include "Managers/programmanager.h"
 #include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
+#include "Managers/videomanager.h"
 #include "Managers/vlcmanager.h"
 #include "defines.h"
 
@@ -16,8 +18,10 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
     m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
+    m_discordManager = ManagerCollection::GetManager<DiscordManager>();
     m_serialManager = ManagerCollection::GetManager<SerialManager>();
     m_audioManager = ManagerCollection::GetManager<AudioManager>();
+    m_videoManager = ManagerCollection::GetManager<VideoManager>();
     m_vlcManager = ManagerCollection::GetManager<VlcManager>();
 
     connect(m_serialManager->GetHolder(), &SerialHolder::notifySerialStatus, this, &ProgramBase::OnCanRunChanged);
@@ -236,6 +240,41 @@ bool ProgramBase::EnsureOCRDatabase(const QString &database)
         PrintLog(database + " database cached for language: " + LanguageToString(m_profileManager->GetLanguageType()), LOG_Important);
         return true;
     }
+}
+
+void ProgramBase::SendDiscordMessage(const QString &title, bool isMention, bool dmOnly, bool hasImage, LogType type, const QList<Discord::EmbedField> &fields)
+{
+    if (!m_discordManager->IsEnabled()) return;
+
+    Discord::Embed embed = m_discordManager->GetEmbedTemplate(title);
+    embed.setColor(LogTypeToColor(type).rgb() & 0xFFFFFF);
+
+    // add custom fields
+    for (Discord::EmbedField const& field : fields)
+    {
+        embed.addField(field);
+    }
+
+    // append program stats
+    QString fieldMsg = m_programManager->GetCurrentCategory() + ": " + m_programManager->GetCurrentProgram();
+    fieldMsg += "\n Up Time: " + m_programManager->GetUpTimeString();
+
+    QString const statsString = m_programManager->GetStatsString();
+    if (statsString != "N/A")
+    {
+        fieldMsg += "\n" + statsString;
+    }
+    embed.addField(Discord::EmbedField("Program Stats", fieldMsg, false));
+
+    // get image
+    QImage frame;
+    if (hasImage)
+    {
+        frame = m_videoManager->GetFrameData();
+    }
+
+    // send message
+    m_discordManager->SendMessage(embed, isMention, dmOnly, hasImage ? &frame : Q_NULLPTR);
 }
 
 QLabel *ProgramBase::AddText(QBoxLayout *layout, const QString &str, bool isBold, bool isBig)

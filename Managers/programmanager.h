@@ -28,6 +28,11 @@ public:
     bool AllowKeyboardInput() const { return !IsRunning() || !m_program->RequireSerial() || m_program->CanControlWhileRunning(); }
     bool IsRunning() const { return m_program && m_program->IsRunning(); }
 
+    QString GetCurrentCategory() const { return m_programCategory->currentText(); }
+    QString GetCurrentProgram() const { return m_programList->currentItem()->text(); }
+    QString GetUpTimeString() const { return m_labelUpTime->text(); }
+    QString GetStatsString() const { return m_labelStats->text(); }
+
     void RegisterStat(Stat& stat);
 
 signals:

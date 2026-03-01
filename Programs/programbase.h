@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QTimer>
 
+#include "External/QDiscord/Discord/Objects/Embed.h"
 #include "Types/logtype.h"
 #include "Types/stat.h"
 #include "Managers/managercollection.h"
@@ -55,6 +56,8 @@ public:
     bool ValidSerial() const;
     bool ValidVideo() const;
     bool ValidAudio() const;
+
+    void SendDiscordMessage(QString const& title, bool isMention, bool dmOnly, bool hasImage, LogType type, QList<Discord::EmbedField> const& fields = {});
 
 signals:
     void notifyCanRun(bool);
@@ -125,8 +128,10 @@ public:
 protected:
     ProgramManager*     m_programManager = Q_NULLPTR;
     ProfileManager*     m_profileManager = Q_NULLPTR;
+    DiscordManager*     m_discordManager = Q_NULLPTR;
     SerialManager*      m_serialManager = Q_NULLPTR;
     AudioManager*       m_audioManager = Q_NULLPTR;
+    VideoManager*       m_videoManager = Q_NULLPTR;
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
