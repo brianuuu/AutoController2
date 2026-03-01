@@ -10,6 +10,7 @@
 #include <QTimer>
 
 #include "Types/logtype.h"
+#include "Types/stat.h"
 #include "Managers/managercollection.h"
 #include "Modules/modulebase.h"
 #include "Modules/Common/framecapture.h"
@@ -73,8 +74,7 @@ protected slots:
     virtual void OnSoundDetected(int id) {}
 
 protected:
-    void RegisterStat(int& refValue, QString const& name);
-    void IncrementStat(int& refValue, int amount = 1);
+    void RegisterStat(Stat& stat, QString const& name);
 
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 

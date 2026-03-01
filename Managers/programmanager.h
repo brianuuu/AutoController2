@@ -28,8 +28,7 @@ public:
     bool AllowKeyboardInput() const { return !IsRunning() || !m_program->RequireSerial() || m_program->CanControlWhileRunning(); }
     bool IsRunning() const { return m_program && m_program->IsRunning(); }
 
-    void RegisterStat(int& refValue, QString const& name);
-    void IncrementStat(int& refValue, int amount = 1);
+    void RegisterStat(Stat& stat);
 
 signals:
     void notifyStartStop();
@@ -58,7 +57,7 @@ private:
     void RegisterProgram();
     void RemoveProgram();
 
-    void UpdateStats(bool reset = false);
+    void UpdateStats() const;
     void SaveStats();
     void ClearStats();
     void MigrateStatsToJson();
@@ -96,7 +95,7 @@ private:
     QPushButton*    m_btnStatsEdit = Q_NULLPTR;
     QPushButton*    m_btnStatsReset = Q_NULLPTR;
     QLabel*         m_labelStats = Q_NULLPTR;
-    QMap<int*, QString> m_stats;
+    QList<Stat*>    m_stats;
 };
 
 #endif // PROGRAMMANAGER_H

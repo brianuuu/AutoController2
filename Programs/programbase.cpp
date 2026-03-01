@@ -158,14 +158,10 @@ bool ProgramBase::OnModuleErrorQuit()
     return false;
 }
 
-void ProgramBase::RegisterStat(int &refValue, const QString &name)
+void ProgramBase::RegisterStat(Stat &stat, const QString &name)
 {
-    m_programManager->RegisterStat(refValue, name);
-}
-
-void ProgramBase::IncrementStat(int &refValue, int amount)
-{
-    m_programManager->IncrementStat(refValue, amount);
+    stat.SetName(name);
+    m_programManager->RegisterStat(stat);
 }
 
 void ProgramBase::PrintLog(const QString &log, LogType type) const

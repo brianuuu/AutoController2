@@ -53,8 +53,8 @@ private: // function
 private: // members
     State m_state;
 
-    int m_statReset = 0;
-    int m_statShiny = 0;
+    Stat m_statReset;
+    Stat m_statShiny;
 };
 }
 

@@ -38,7 +38,7 @@ void RespawnReset::Start()
 
     m_state = SetState(State::Restart, "Restarting game");
     AddRunCommand("System_RestartGame", 0);
-    IncrementStat(m_statReset);
+    ++m_statReset;
 }
 
 void RespawnReset::Stop()
@@ -126,7 +126,7 @@ void RespawnReset::OnWaitTimeout()
     m_state = SetState(State::Restart, "No shiny detected, restarting game");
     m_audioManager->StopDetection(m_shinySoundID);
     AddRunCommand("System_RestartGame", 0);
-    IncrementStat(m_statReset);
+    ++m_statReset;
 }
 
 void RespawnReset::OnSoundDetected(int id)
@@ -138,7 +138,7 @@ void RespawnReset::OnSoundDetected(int id)
     m_state = SetState(State::Capture, "Capturing video");
     AddRunCommand("PLZA_CaptureHome", 0);
     PrintLog("SHINY POKEMON FOUND!", LOG_Success);
-    IncrementStat(m_statShiny);
+    ++m_statShiny;
 }
 
 }

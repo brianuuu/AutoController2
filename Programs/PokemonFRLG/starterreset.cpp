@@ -30,7 +30,7 @@ void StarterReset::StateSoftReset()
 {
     m_state = SetState(State::SoftReset, "Restarting game");
     AddRunCommand("FRLG_SoftReset", 0);
-    IncrementStat(m_statReset);
+    ++m_statReset;
 }
 
 void StarterReset::OnCommandFinished()
@@ -108,13 +108,13 @@ void StarterReset::OnFrameCaptureMatched(bool matched)
         ClearModules();
         if (matched)
         {
-            PrintLog("Starter No." + QString::number(m_statReset) + " is SHINY!", LOG_Success);
+            PrintLog("Starter No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
             m_state = SetState(State::Capture, "Taking screenshot");
             AddRunCommand("Capture|50,Nothing|100");
         }
         else
         {
-            PrintLog("Starter No." + QString::number(m_statReset) + " is not shiny...", LOG_Warning);
+            PrintLog("Starter No." + m_statReset.GetString() + " is not shiny...", LOG_Warning);
             StateSoftReset();
         }
         break;

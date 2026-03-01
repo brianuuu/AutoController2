@@ -132,6 +132,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Types/buttontype.h
         Types/languagetype.h
         Types/logtype.h
+        Types/stat.h
         Types/systemtype.h
         defines.h
     )

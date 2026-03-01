@@ -118,7 +118,7 @@ void DonutMaker::OnCommandFinished()
     {
         m_state = SetState(State::MakeDonut, "Making donut");
         AddRunCommand("PLZA_MakeDonut", 0);
-        IncrementStat(m_statMade);
+        ++m_statMade;
         break;
     }
     case State::MakeDonut:
@@ -270,7 +270,7 @@ void DonutMaker::OnOCRFinished()
         {
             m_donutCount++;
             PrintLog("Correct donut found! " + QString::number(m_count->value() - m_donutCount) + " remaining", LOG_Important);
-            IncrementStat(m_statFound);
+            ++m_statFound;
 
             if (m_donutCount == m_count->value())
             {

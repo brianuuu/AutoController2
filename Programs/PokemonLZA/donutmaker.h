@@ -89,8 +89,8 @@ private:
     QList<QString> m_powerEntries;
     int m_donutCount = 0;
 
-    int m_statMade = 0;
-    int m_statFound = 0;
+    Stat m_statMade;
+    Stat m_statFound;
 };
 }
 

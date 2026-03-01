@@ -94,37 +94,26 @@ bool ProgramManager::OnCloseEvent()
     return true;
 }
 
-void ProgramManager::RegisterStat(int& refValue, const QString &name)
+void ProgramManager::RegisterStat(Stat &stat)
 {
     if (!m_program) return;
 
-    m_stats[&refValue] = name;
+    m_stats.push_back(&stat);
 
     QJsonObject json = JsonHelper::ReadJson(PROGRAM_STATS_JSON);
     QJsonObject stats = JsonHelper::ReadObject(json, m_program->GetInternalName());
 
     QVariant value;
-    if (JsonHelper::ReadValue(stats, name, value))
+    if (JsonHelper::ReadValue(stats, stat.GetName(), value))
     {
-        refValue = value.toInt();
+        stat.SetValue(value.toInt());
     }
 
+    connect(&stat, &Stat::notifyStatChanged, this, [this]{ UpdateStats(); SaveStats(); });
     UpdateStats();
 }
 
-void ProgramManager::IncrementStat(int &refValue, int amount)
-{
-    if (!m_program || !m_stats.contains(&refValue)) return;
-
-    // don't read ini anymore, RegisterStat() will get initial value
-    refValue += amount;
-    refValue = qMax(refValue, 0); // no negative, but something probably went wrong...?
-
-    UpdateStats();
-    SaveStats();
-}
-
-void ProgramManager::UpdateStats(bool reset)
+void ProgramManager::UpdateStats() const
 {
     if (!m_program || m_stats.isEmpty())
     {
@@ -138,21 +127,20 @@ void ProgramManager::UpdateStats(bool reset)
     m_btnStatsEdit->setEnabled(!m_program->IsRunning());
     m_btnStatsReset->setEnabled(true);
     int i = 0;
-    for (auto iter = m_stats.begin(); iter != m_stats.end(); iter++, i++)
+    for (Stat const* stat : std::as_const(m_stats))
     {
-        QString const& key = iter.value();
+        if (stat->GetValue() == 0 && stat->GetHideZero())
+        {
+            continue;
+        }
+
+        QString const& key = stat->GetName();
         if (i != 0)
         {
             statsStr += ", ";
         }
 
-        if (reset)
-        {
-            *iter.key() = 0;
-        }
-
-        int const count = *iter.key();
-        statsStr += key + ": " + QString::number(count);
+        statsStr += key + ": " + stat->GetString();
 
         // Write to individual files for each stat
         if (m_profileManager->StreamCounterEnabled())
@@ -165,10 +153,12 @@ void ProgramManager::UpdateStats(bool reset)
                 {
                     stream << key + ": ";
                 }
-                stream << count;
+                stream << stat->GetValue();
                 file.close();
             }
         }
+
+        i++;
     }
     m_labelStats->setText(statsStr);
 }
@@ -181,9 +171,9 @@ void ProgramManager::SaveStats()
 
     // save stats of the program
     QJsonObject stats;
-    for (auto iter = m_stats.begin(); iter != m_stats.end(); iter++)
+    for (Stat const* stat : std::as_const(m_stats))
     {
-        stats.insert(iter.value(), *iter.key());
+        stats.insert(stat->GetName(), stat->GetValue());
     }
 
     json.insert(m_program->GetInternalName(), stats);
@@ -413,7 +403,11 @@ void ProgramManager::OnStatsReset()
     reply = QMessageBox::warning(this, "Reset Stats", "This will reset all stats for current program to 0, continue?\nIf you want to edit individual stats, press Edit.", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
-        UpdateStats(true);
+        for (Stat* const stat : std::as_const(m_stats))
+        {
+            // this sends UpdateStats() signal
+            stat->ResetValue();
+        }
     }
 }
 
