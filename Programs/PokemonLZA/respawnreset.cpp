@@ -132,8 +132,7 @@ void RespawnReset::OnWaitTimeout()
 void RespawnReset::OnSoundDetected(int id)
 {
     m_timer.stop();
-
-    // TODO: discord
+    SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
 
     m_state = SetState(State::Capture, "Capturing video");
     AddRunCommand("PLZA_CaptureHome", 0);
