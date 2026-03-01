@@ -121,6 +121,7 @@ void ProgramManager::IncrementStat(int &refValue, int amount)
     refValue = qMax(refValue, 0); // no negative, but something probably went wrong...?
 
     UpdateStats();
+    SaveStats();
 }
 
 void ProgramManager::UpdateStats(bool reset)
