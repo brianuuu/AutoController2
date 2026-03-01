@@ -97,7 +97,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         m_discordManager->m_btnTestUser = new QPushButton("Send Test DM");
         m_discordManager->m_btnTestUser->setEnabled(false);
         m_discordManager->m_btnTestUser->setFixedWidth(130);
-        Program::ProgramBase::AddSettings(layout, "User ID:", "The bot will send program status to this user", {m_discordManager->m_settingUser, m_discordManager->m_btnTestUser}, true);
+        Program::ProgramBase::AddSettings(layout, "User ID:", "The bot will send program status to this user (shiny, finished, error etc.)", {m_discordManager->m_settingUser, m_discordManager->m_btnTestUser}, true);
         m_discordManager->m_btnTestUser->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
         m_discordManager->m_settingChannel = new Setting::SettingLineEdit("ChannelID");
