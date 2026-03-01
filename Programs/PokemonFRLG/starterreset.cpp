@@ -13,11 +13,11 @@ void StarterReset::PopulateSettings(QBoxLayout *layout)
 {
     m_seedFrame = new Setting::SettingSpinBox("SeedFrame", 0, 9999);
     m_savedSettings.insert(m_seedFrame);
-    AddSetting(layout, "Seed Frame:", "Wait this many frames (not accurate) before pressing A at title screen. This settings is changed by the program while running", m_seedFrame, true);
+    AddSetting(layout, "Seed Frame:", "Wait this many frames (not accurate) before pressing A at the title screen. This setting is changed by the program while running", m_seedFrame, true);
 
     m_advanceFrame = new Setting::SettingSpinBox("AdvanceFrame", 0, 9999);
     m_savedSettings.insert(m_advanceFrame);
-    AddSetting(layout, "Advance Frame:", "Wait this many frames (not accurate) before finishing dialogue after picking starter. This settings is changed by the program while running", m_advanceFrame, true);
+    AddSetting(layout, "Advance Frame:", "Wait this many frames (not accurate) before finishing dialogue after picking starter. This setting is changed by the program while running", m_advanceFrame, true);
 
     m_confirmDelay = new Setting::SettingSpinBox("ConfirmDelay", 0, 9999, 1000);
     m_savedSettings.insert(m_confirmDelay);
@@ -155,6 +155,7 @@ void StarterReset::OnFrameCaptureMatched(bool matched)
 
             m_state = SetState(State::Capture, "Taking screenshot");
             AddRunCommand("Capture|50,Nothing|100");
+            ++m_statShiny;
         }
         else
         {
