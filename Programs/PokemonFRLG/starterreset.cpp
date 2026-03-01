@@ -36,7 +36,7 @@ void StarterReset::Start()
 {
     ProgramBase::Start();
 
-    m_currentMaxFrame = m_advanceFrame->value();
+    m_currentMaxFrame = qMax(m_seedFrame->value(), m_advanceFrame->value());
     StateSoftReset();
 }
 
