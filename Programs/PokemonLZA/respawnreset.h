@@ -42,8 +42,8 @@ private: // types
     };
 
 private slots:
-    void OnCommandFinished();
-    void OnFrameCaptureMatched(bool matched);
+    void OnCommandFinished() override;
+    void OnFrameCaptureMatched(bool matched) override;
     void OnWaitTimeout() override;
     void OnSoundDetected(int id) override;
 

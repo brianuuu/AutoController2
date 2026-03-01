@@ -1,12 +1,8 @@
 #include "respawnreset.h"
 #include "Managers/audiomanager.h"
-#include "Modules/Common/framecapture.h"
-#include "Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
 {
-
-#define RESPAWN_RESET_RUN_COMMAND(...) AddModule<Module::Common::RunCommand>(&RespawnReset::OnCommandFinished, __VA_ARGS__)
 
 RespawnReset::RespawnReset(QObject *parent)
     : ProgramBase{parent}
@@ -41,7 +37,7 @@ void RespawnReset::Start()
     }
 
     m_state = SetState(State::Restart, "Restarting game");
-    RESPAWN_RESET_RUN_COMMAND("System_RestartGame", 0);
+    AddRunCommand("System_RestartGame", 0);
     IncrementStat(m_statReset);
 }
 
@@ -60,10 +56,7 @@ void RespawnReset::OnCommandFinished()
     case State::Restart:
     case State::GameLoadStart:
     {
-        Module::Common::FrameCapture* module = new Module::Common::FrameCapture("PLZA_LoadingBlackScreen");
-        connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
-        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &RespawnReset::OnFrameCaptureMatched);
-        AddModule(module);
+        AddFrameCapture("PLZA_LoadingBlackScreen");
         break;
     }
     case State::Capture:
@@ -108,7 +101,7 @@ void RespawnReset::OnFrameCaptureMatched(bool matched)
             if (m_state == State::TitleScreen)
             {
                 m_state = SetState(State::GameLoadStart, "Title screen detected, entering game");
-                RESPAWN_RESET_RUN_COMMAND("A|Spam|2500");
+                AddRunCommand("A|Spam|2500");
             }
             else if (m_state == State::GameLoadWait)
             {
@@ -132,7 +125,7 @@ void RespawnReset::OnWaitTimeout()
 {
     m_state = SetState(State::Restart, "No shiny detected, restarting game");
     m_audioManager->StopDetection(m_shinySoundID);
-    RESPAWN_RESET_RUN_COMMAND("System_RestartGame", 0);
+    AddRunCommand("System_RestartGame", 0);
     IncrementStat(m_statReset);
 }
 
@@ -143,7 +136,7 @@ void RespawnReset::OnSoundDetected(int id)
     // TODO: discord
 
     m_state = SetState(State::Capture, "Capturing video");
-    RESPAWN_RESET_RUN_COMMAND("PLZA_CaptureHome", 0);
+    AddRunCommand("PLZA_CaptureHome", 0);
     PrintLog("SHINY POKEMON FOUND!", LOG_Success);
     IncrementStat(m_statShiny);
 }

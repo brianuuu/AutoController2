@@ -62,8 +62,8 @@ private:
 
 private slots:
     void OnOrderChanged(QString const& str);
-    void OnCommandFinished();
-    void OnFrameCaptureMatched(bool matched);
+    void OnCommandFinished() override;
+    void OnFrameCaptureMatched(bool matched) override;
     void OnOCRFinished();
 
 private:
@@ -73,7 +73,6 @@ private:
     void StateFlyToVertPC();
     void StateBackupSave();
     void StateRestart();
-    void AddBlackScreenModule();
 
 private:
     Setting::SettingSpinBox* m_count = Q_NULLPTR;

@@ -78,15 +78,7 @@ protected:
 
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 
-    template<typename T, typename Func, typename... Args>
-    T* AddModule(Func func, Args... args)
-    {
-        T* module = new T(args...);
-        connect(module, &QThread::finished, this, func);
-        AddModule(module);
-        return module;
-    }
-    void AddModule(Module::ModuleBase* module);
+    void AddModule(Module::ModuleBase* module, bool finish = false);
     void ClearModule(QObject* sender);
     void ClearModule(Module::ModuleBase* module);
     void ClearModules();

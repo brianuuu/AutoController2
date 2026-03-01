@@ -1,13 +1,8 @@
 #include "donutmaker.h"
-
-#include "Modules/Common/framecapture.h"
 #include "Modules/Common/ocr.h"
-#include "Modules/Common/runcommand.h"
 
 namespace Program::PokemonLZA
 {
-
-#define DONUT_MAKER_RUN_COMMAND(...) AddModule<Module::Common::RunCommand>(&DonutMaker::OnCommandFinished, __VA_ARGS__)
 
 DonutMaker::DonutMaker(QObject *parent) : ProgramBase(parent)
 {
@@ -85,7 +80,7 @@ void DonutMaker::OnCommandFinished()
     case State::BackupSave:
     {
         m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
-        DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 0);
+        AddRunCommand("PLZA_FlyToHotelZ", 0);
         break;
     }
     case State::Restart:
@@ -94,7 +89,7 @@ void DonutMaker::OnCommandFinished()
     case State::EnterHotelZ:
     case State::FlyToVertPC:
     {
-        AddBlackScreenModule();
+        AddFrameCapture("PLZA_LoadingBlackScreen");
         break;
     }
     case State::TalkToAnsha:
@@ -116,13 +111,13 @@ void DonutMaker::OnCommandFinished()
         }
 
         m_state = SetState(State::SelectBerries, "Selecting berries");
-        DONUT_MAKER_RUN_COMMAND(command);
+        AddRunCommand(command);
         break;
     }
     case State::SelectBerries:
     {
         m_state = SetState(State::MakeDonut, "Making donut");
-        DONUT_MAKER_RUN_COMMAND("PLZA_MakeDonut", 0);
+        AddRunCommand("PLZA_MakeDonut", 0);
         IncrementStat(m_statMade);
         break;
     }
@@ -192,27 +187,27 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
             if (m_state == State::TitleScreen)
             {
                 m_state = SetState(State::GameLoadStart, "Title screen detected, loading backup save");
-                DONUT_MAKER_RUN_COMMAND("PLZA_LoadBackupSave", 500);
+                AddRunCommand("PLZA_LoadBackupSave", 500);
             }
             else if (m_state == State::GameLoadWait)
             {
                 m_state = SetState(State::FlyToHotelZ, "Flying to Hotel Z");
-                DONUT_MAKER_RUN_COMMAND("PLZA_FlyToHotelZ", 1000);
+                AddRunCommand("PLZA_FlyToHotelZ", 1000);
             }
             else if (m_state == State::FlyToHotelZLoadWait)
             {
                 m_state = SetState(State::EnterHotelZ, "Entering Hotel Z");
-                DONUT_MAKER_RUN_COMMAND("PLZA_EnterHotelZ", 1000);
+                AddRunCommand("PLZA_EnterHotelZ", 1000);
             }
             else if (m_state == State::EnterHotelZLoadWait)
             {
                 m_state = SetState(State::TalkToAnsha, "Going forward to talk to Ansha");
-                DONUT_MAKER_RUN_COMMAND("PLZA_TalkToAnsha", 1000);
+                AddRunCommand("PLZA_TalkToAnsha", 1000);
             }
             else if (m_state == State::FlyToVertPCLoadWait)
             {
                 m_state = SetState(State::WalkToNurseJoy, "Walking up to Nurse Joy");
-                DONUT_MAKER_RUN_COMMAND("None|1000,B|LUp|50,LUp|1200");
+                AddRunCommand("None|1000,B|LUp|50,LUp|1200");
             }
         }
         break;
@@ -286,14 +281,14 @@ void DonutMaker::OnOCRFinished()
             {
                 // correct donut, put down a backup save
                 m_state = SetState(State::QuitDonut, "Quitting donut menu");
-                DONUT_MAKER_RUN_COMMAND("B|Spam|4000,None|50");
+                AddRunCommand("B|Spam|4000,None|50");
             }
         }
         else
         {
             // wrong donut, restart game load backup save
             m_state = SetState(State::Restart, "Restarting game");
-            DONUT_MAKER_RUN_COMMAND("System_RestartGame", 0);
+            AddRunCommand("System_RestartGame", 0);
         }
     }
 }
@@ -327,21 +322,13 @@ void DonutMaker::VerifyOrder()
 void DonutMaker::StateFlyToVertPC()
 {
     m_state = SetState(State::FlyToVertPC, "Flying to Vert Pokemon Center");
-    DONUT_MAKER_RUN_COMMAND("PLZA_FlyToVertPC", 0);
+    AddRunCommand("PLZA_FlyToVertPC", 0);
 }
 
 void DonutMaker::StateBackupSave()
 {
     m_state = SetState(State::BackupSave, "Putting down backup save");
-    DONUT_MAKER_RUN_COMMAND("PLZA_MakeBackupSave", 0);
-}
-
-void DonutMaker::AddBlackScreenModule()
-{
-    Module::Common::FrameCapture* module = new Module::Common::FrameCapture("PLZA_LoadingBlackScreen");
-    connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
-    connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &DonutMaker::OnFrameCaptureMatched);
-    AddModule(module);
+    AddRunCommand("PLZA_MakeBackupSave", 0);
 }
 
 }

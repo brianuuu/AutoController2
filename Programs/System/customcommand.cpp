@@ -66,7 +66,8 @@ bool CustomCommand::CanRun() const
 void CustomCommand::Start()
 {
     ProgramBase::Start();
-    AddModule<Module::Common::RunCommand>(&ProgramBase::OnModuleFinishQuit, m_command->text());
+    Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->text());
+    AddModule(module, true);
     m_btnDelete->setEnabled(false);
 }
 

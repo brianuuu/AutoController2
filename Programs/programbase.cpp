@@ -173,11 +173,18 @@ void ProgramBase::PrintLog(const QString &log, LogType type) const
     emit notifyLog(GetInternalName(), log, type);
 }
 
-void ProgramBase::AddModule(Module::ModuleBase *module)
+void ProgramBase::AddModule(Module::ModuleBase *module, bool finish)
 {
     if (!module) return;
 
-    connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
+    if (finish)
+    {
+        connect(module, &QThread::finished, this, &ProgramBase::OnModuleFinishQuit);
+    }
+    else
+    {
+        connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
+    }
 
     m_modules.insert(module);
     module->moveToThread(module);
