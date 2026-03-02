@@ -59,6 +59,7 @@ private: // members
     Setting::SettingSpinBox* m_advanceFrame = Q_NULLPTR;
     Setting::SettingSpinBox* m_confirmDelay = Q_NULLPTR;
     int m_currentMaxFrame = 0;
+    int m_dialogCount = 0;
 
     State m_state;
 

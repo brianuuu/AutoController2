@@ -51,6 +51,7 @@ void StarterReset::StateSoftReset()
     m_state = SetState(State::SoftReset, "Restarting game");
     AddRunCommand("FRLG_SoftReset", 0);
     ++m_statReset;
+    m_dialogCount = 0;
 }
 
 void StarterReset::GetNextPermutation()
@@ -104,8 +105,9 @@ void StarterReset::OnCommandFinished()
     }
     case State::ConfirmStarter:
     {
-        m_state = SetState(State::MenuToStarter, "Go to starter's summary");
-        AddRunCommand("FRLG_StarterCheck", 0);
+        // TODO: error stat?
+        PrintLog("Unable to detect rival dialog finish for too long", LOG_Error);
+        emit notifyFinished(-1);
         break;
     }
     case State::MenuToStarter:
@@ -140,8 +142,32 @@ void StarterReset::OnFrameCaptureMatched(bool matched)
         if (matched)
         {
             ClearModules();
-            m_state = SetState(State::ConfirmStarter, "Waiting for " + QString::number(m_advanceFrame->value()) + " frames and confirming starter");
-            AddRunCommand("None|" + QString::number(m_advanceFrame->value() * 20 + m_confirmDelay->value()) + ",B|Spam|11000");
+            m_state = SetState(State::ConfirmStarter, "Waiting for " + QString::number(m_advanceFrame->value()) + " frames and spam B until all dialogue finishes");
+            AddRunCommand("(A|50,None|50)2,None|" + QString::number(m_advanceFrame->value() * 20 + m_confirmDelay->value()) + ",B|Spam|15000");
+            AddFrameCapture("FRLG_DialogBox");
+        }
+        break;
+    }
+    case State::ConfirmStarter:
+    {
+        if (m_dialogCount == 0 && !matched)
+        {
+            // starter dialogue finished
+            m_elapsedTimer.restart();
+            ++m_dialogCount;
+        }
+        else if (m_dialogCount == 1 && matched && m_elapsedTimer.elapsed() > 300)
+        {
+            // rival dialogue started
+            m_elapsedTimer.restart();
+            ++m_dialogCount;
+        }
+        else if (m_dialogCount == 2 && !matched && m_elapsedTimer.elapsed() > 300)
+        {
+            // rival dialogue finished
+            ClearModules();
+            m_state = SetState(State::MenuToStarter, "Go to starter's summary");
+            AddRunCommand("FRLG_StarterCheck", 0);
         }
         break;
     }
