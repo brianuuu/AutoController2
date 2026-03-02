@@ -249,7 +249,7 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
         QMessageBox::StandardButton resBtn = QMessageBox::Yes;
         QString message = "New version v" + m_lastestVersion + " available, do you wish to download it?";
         message += "\n\nChange Log:\n" + changeLog;
-        resBtn = QMessageBox::question(this, "Update", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        resBtn = QMessageBox::question(this, "Update Available!", message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
         if (resBtn == QMessageBox::Yes)
         {
