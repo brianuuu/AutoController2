@@ -135,6 +135,6 @@ Discord::Embed DiscordManager::GetEmbedTemplate(const QString &title)
 {
     Discord::Embed embed;
     embed.setTitle(title);
-    embed.setDescription("By Auto Controller 2 v" + QString(VERSION) + " ([GitHub](https://github.com/brianuuu/AutoController2)/[Discord](https://discord.gg/GWEurpGZNM))");
+    embed.setDescription("By Auto Controller 2 v" + VERSION + " ([GitHub](https://github.com/brianuuu/AutoController2)/[Discord](https://discord.gg/GWEurpGZNM))");
     return embed;
 }

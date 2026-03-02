@@ -212,7 +212,7 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
         m_lastestVersion = answer.mid(verStart, verEnd - verStart);
 
         QStringList newVerNo = m_lastestVersion.split('.');
-        QStringList curVerNo = QString(VERSION).split('.');
+        QStringList curVerNo = VERSION.split('.');
 
         bool outdated = false;
         for (int i = 0; i < newVerNo.size(); i++)
