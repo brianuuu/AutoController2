@@ -214,8 +214,8 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
         QStringList newVerNo = m_lastestVersion.split('.');
         QStringList curVerNo = VERSION.split('.');
 
-        bool outdated = false;
-        for (int i = 0; i < newVerNo.size(); i++)
+        bool outdated = (m_lastestVersion == VERSION && IS_BETA);
+        for (int i = 0; i < newVerNo.size() && !outdated; i++)
         {
             if (newVerNo[i] > curVerNo[i])
             {
