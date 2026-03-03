@@ -32,6 +32,7 @@ public:
     QString GetCurrentProgram() const { return m_programList->currentItem()->text(); }
     QString GetUpTimeString() const { return m_labelUpTime->text(); }
     QString GetStatsString() const { return m_labelStats->text(); }
+    qint64 GetUpTime() const { return m_startTime.secsTo(QDateTime::currentDateTime()); }
 
     void RegisterStat(Stat& stat);
 
@@ -70,6 +71,7 @@ private:
 private:
     // Managers
     LogManager*     m_logManager = Q_NULLPTR;
+    DiscordManager* m_discordManager = Q_NULLPTR;
     ProfileManager* m_profileManager = Q_NULLPTR;
     VideoManager*   m_videoManager = Q_NULLPTR;
 
@@ -95,6 +97,7 @@ private:
     Program::ProgramBase*   m_program = Q_NULLPTR;
     QDateTime   m_startTime;
     QTimer      m_upTimer;
+    qint64      m_upHour = 0;
 
     // Stats
     QPushButton*    m_btnStatsEdit = Q_NULLPTR;

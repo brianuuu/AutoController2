@@ -2,6 +2,7 @@
 
 #include "../ui_mainwindow.h"
 #include "Helpers/jsonhelper.h"
+#include "Managers/discordmanager.h"
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
 #include "Managers/profilemanager.h"
@@ -23,6 +24,7 @@
 void ProgramManager::Initialize(Ui::MainWindow *ui)
 {
     m_logManager = ManagerCollection::GetManager<LogManager>();
+    m_discordManager = ManagerCollection::GetManager<DiscordManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
     m_videoManager = ManagerCollection::GetManager<VideoManager>();
 
@@ -359,7 +361,7 @@ void ProgramManager::OnProgramFinished(int result)
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!" + upTime, LOG_Success);
         }
 
-        m_profileManager->PlaySound(m_startTime.secsTo(QDateTime::currentDateTime()) / 60);
+        m_profileManager->PlaySound(GetUpTime() / 60);
         StopProgram();
     }
 }
@@ -385,9 +387,19 @@ void ProgramManager::OnManualOpen()
 
 void ProgramManager::OnUpTimeUpdate()
 {
-    qint64 const secs = m_startTime.secsTo(QDateTime::currentDateTime());
+    qint64 const secs = GetUpTime();
+    qint64 const mins = secs / 60;
+    qint64 const hours = mins / 60;
+
     QTime const time = QTime(0, 0).addSecs(secs);
     m_labelUpTime->setText(time.toString("hh:mm:ss"));
+
+    // long running discord message
+    if (m_program && hours > m_upHour && m_discordManager->m_settingHourlyUpdate->isChecked())
+    {
+        m_upHour = hours;
+        m_program->SendDiscordMessage("Program Status", false, true, false, LOG_Normal);
+    }
 }
 
 void ProgramManager::OnStatsEdit()
@@ -458,6 +470,7 @@ void ProgramManager::StartProgram()
     m_settingsParent->setEnabled(m_program->CanEditWhileRunning());
     m_startTime = QDateTime::currentDateTime();
     m_upTimer.start();
+    m_upHour = 0;
     OnUpTimeUpdate();
     m_program->Start();
 

@@ -105,12 +105,15 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         m_discordManager->m_btnTestChannel = new QPushButton("Send Test Message");
         m_discordManager->m_btnTestChannel->setEnabled(false);
         m_discordManager->m_btnTestChannel->setFixedWidth(130);
-        Program::ProgramBase::AddSettings(layout, "Channel ID:", "The bot will send program status to this channel, it must have appropriate permissions in that server", {m_discordManager->m_settingChannel, m_discordManager->m_btnTestChannel}, true);
+        Program::ProgramBase::AddSettings(layout, "Channel ID:", "The bot will only send special program status to this channel (shiny etc.), it must have appropriate permissions in that server", {m_discordManager->m_settingChannel, m_discordManager->m_btnTestChannel}, true);
         m_discordManager->m_btnTestChannel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
         m_discordManager->m_btnStartStop = new QPushButton("Start Bot");
         m_discordManager->m_btnStartStop->setEnabled(false);
         Program::ProgramBase::AddSetting(layout, "Toggle Bot:", "Application will start bot automatically at launch if bot has started", m_discordManager->m_btnStartStop, true);
+
+        m_discordManager->m_settingHourlyUpdate = new Setting::SettingCheckBox("HourlyUpdate", "", true);
+        Program::ProgramBase::AddSetting(layout, "Hourly Status Update:", "Send Program Status message every hour to remind user a program is running", m_discordManager->m_settingHourlyUpdate, true);
     }
 
     // performance settings
@@ -284,6 +287,7 @@ void ProfileManager::LoadSettings()
         m_discordManager->m_settingToken->Load(discord);
         m_discordManager->m_settingUser->Load(discord);
         m_discordManager->m_settingChannel->Load(discord);
+        m_discordManager->m_settingHourlyUpdate->Load(discord);
         QVariant enabled;
         if (JsonHelper::ReadValue(discord, "DefaultEnabled", enabled) && enabled.toBool())
         {
@@ -335,6 +339,7 @@ void ProfileManager::SaveSettings() const
     m_discordManager->m_settingToken->Save(discord);
     m_discordManager->m_settingUser->Save(discord);
     m_discordManager->m_settingChannel->Save(discord);
+    m_discordManager->m_settingHourlyUpdate->Save(discord);
     discord.insert("DefaultEnabled", m_discordManager->IsEnabled());
     profileSettings.insert("Discord", discord);
 
