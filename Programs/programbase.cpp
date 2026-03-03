@@ -147,7 +147,7 @@ bool ProgramBase::OnModuleErrorQuit()
 
     // finish program if this module is errored out
     Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
-    if (!module) return false;
+    if (!module) return true;
 
     // module was already deleted
     if (!m_modules.contains(module)) return true;
