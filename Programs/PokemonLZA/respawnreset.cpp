@@ -132,12 +132,13 @@ void RespawnReset::OnWaitTimeout()
 void RespawnReset::OnSoundDetected(int id)
 {
     m_timer.stop();
-    SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
+    PrintLog("SHINY POKEMON FOUND!", LOG_Success);
 
     m_state = SetState(State::Capture, "Capturing video");
     AddRunCommand("PLZA_CaptureHome", 0);
-    PrintLog("SHINY POKEMON FOUND!", LOG_Success);
     ++m_statShiny;
+
+    SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
 }
 
 }
