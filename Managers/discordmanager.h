@@ -8,6 +8,7 @@
 #include "External/QDiscord/Discord/Client.h"
 #include "Settings/settingcheckbox.h"
 #include "Settings/settinglineedit.h"
+#include "Settings/settingspinbox.h"
 
 namespace Ui { class MainWindow; }
 
@@ -31,6 +32,7 @@ public:
     Setting::SettingLineEdit* m_settingUser = Q_NULLPTR;
     Setting::SettingLineEdit* m_settingChannel = Q_NULLPTR;
     Setting::SettingCheckBox* m_settingHourlyUpdate = Q_NULLPTR;
+    Setting::SettingSpinBox* m_settingFinishSuppress = Q_NULLPTR;
     QPushButton* m_btnTestUser = Q_NULLPTR;
     QPushButton* m_btnTestChannel = Q_NULLPTR;
     QPushButton* m_btnStartStop = Q_NULLPTR;

@@ -114,6 +114,9 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 
         m_discordManager->m_settingHourlyUpdate = new Setting::SettingCheckBox("HourlyUpdate", "", true);
         Program::ProgramBase::AddSetting(layout, "Hourly Status Update:", "Send Program Status message every hour to remind user a program is running", m_discordManager->m_settingHourlyUpdate, true);
+
+        m_discordManager->m_settingFinishSuppress = new Setting::SettingSpinBox("FinishSuppress", 0, INT_MAX, 10);
+        Program::ProgramBase::AddSetting(layout, "Finish Notification Suppression:", "Prevent sending program finish/error notification if program duration is less than this many minutes", m_discordManager->m_settingFinishSuppress, true);
     }
 
     // performance settings
@@ -288,6 +291,7 @@ void ProfileManager::LoadSettings()
         m_discordManager->m_settingUser->Load(discord);
         m_discordManager->m_settingChannel->Load(discord);
         m_discordManager->m_settingHourlyUpdate->Load(discord);
+        m_discordManager->m_settingFinishSuppress->Load(discord);
         QVariant enabled;
         if (JsonHelper::ReadValue(discord, "DefaultEnabled", enabled) && enabled.toBool())
         {
@@ -340,6 +344,7 @@ void ProfileManager::SaveSettings() const
     m_discordManager->m_settingUser->Save(discord);
     m_discordManager->m_settingChannel->Save(discord);
     m_discordManager->m_settingHourlyUpdate->Save(discord);
+    m_discordManager->m_settingFinishSuppress->Save(discord);
     discord.insert("DefaultEnabled", m_discordManager->IsEnabled());
     profileSettings.insert("Discord", discord);
 

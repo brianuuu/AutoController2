@@ -352,14 +352,23 @@ void ProgramManager::OnProgramFinished(bool success, QString msg)
     if (m_program && m_program->IsRunning())
     {
         int const mins = GetUpTime() / 60;
+        bool const sendDiscordMessage = mins >= m_discordManager->m_settingFinishSuppress->value();
         QString const upTime = " (Up time = " + m_labelUpTime->text() + ")";
         if (success)
         {
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!" + upTime, LOG_Success);
+            if (sendDiscordMessage)
+            {
+                m_program->SendDiscordMessage("Program Finished", false, true, false, LOG_Success);
+            }
         }
         else
         {
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error" + (msg.isEmpty() ? "" : (": " + msg)) + upTime, LOG_Error);
+            if (sendDiscordMessage)
+            {
+                Discord::EmbedField embedField("Error Message", msg, false);
+                m_program->SendDiscordMessage("Error Occured", false, true, true, LOG_Error, {embedField});
             }
         }
 
