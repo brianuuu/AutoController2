@@ -41,6 +41,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
 
         section.m_settings.insert(m_language);
         section.m_settings.insert(m_system);
+        AddResetButtonToSection(section);
     }
 
     // program settings
@@ -79,6 +80,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         section.m_settings.insert(m_customSoundPath);
         section.m_settings.insert(m_playSoundSuppress);
         section.m_settings.insert(m_streamCounter);
+        AddResetButtonToSection(section);
     }
 
     // discord settings
@@ -120,6 +122,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         section.m_settings.insert(m_discordManager->m_settingChannel);
         section.m_settings.insert(m_discordManager->m_settingHourlyUpdate);
         section.m_settings.insert(m_discordManager->m_settingFinishSuppress);
+        AddResetButtonToSection(section);
     }
 
     // performance settings
@@ -138,6 +141,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         section.m_settings.insert(m_mainPriority);
         section.m_settings.insert(m_modulePriority);
         section.m_settings.insert(m_serialPriority);
+        AddResetButtonToSection(section);
     }
 
     // development settings
@@ -148,6 +152,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(section.m_layout, "Enable Debug Console:", "Display additional debug logs that doesn't show in output log (Require restart)", m_debugConsole, true);
 
         section.m_settings.insert(m_debugConsole);
+        AddResetButtonToSection(section);
     }
 
     m_discordManager->Initialize();
@@ -164,6 +169,17 @@ ProfileManager::Section &ProfileManager::CreateSection(QVBoxLayout* parentLayout
     Section& section = m_sections[name];
     section.m_layout = new QVBoxLayout(group);
     return section;
+}
+
+void ProfileManager::AddResetButtonToSection(Section &section)
+{
+    section.m_btnReset = new QPushButton("Reset Default Settings");
+    section.m_layout->addWidget(section.m_btnReset);
+    connect(section.m_btnReset, &QPushButton::clicked, this, &ProfileManager::OnResetSection);
+
+    QFont font = section.m_btnReset->font();
+    font.setPointSize(12);
+    section.m_btnReset->setFont(font);
 }
 
 bool ProfileManager::OnCloseEvent()
@@ -246,6 +262,33 @@ void ProfileManager::OnShow()
         this->showNormal();
     }
     this->activateWindow();
+}
+
+void ProfileManager::OnResetSection()
+{
+    QWidget* widget = qobject_cast<QWidget*>(sender());
+    for (auto& [name, section] : m_sections)
+    {
+        if (widget == section.m_btnReset)
+        {
+            QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+            resBtn = QMessageBox::warning(this, "Warning", "Are you sure you want to restore current section '" + name + "' to default settings?\nThis will wipe the current settings.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+            if (resBtn == QMessageBox::Yes)
+            {
+                for (Setting::SettingBase* setting : std::as_const(section.m_settings))
+                {
+                    setting->ResetDefault();
+                }
+
+                if (name == "Discord" && m_discordManager->IsEnabled())
+                {
+                    m_discordManager->SetEnabled(false);
+                }
+            }
+            return;
+        }
+    }
 }
 
 void ProfileManager::OnLanguageChanged(int index)

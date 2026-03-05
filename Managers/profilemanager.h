@@ -59,6 +59,7 @@ protected:
 
 private slots:
     void OnShow();
+    void OnResetSection();
 
     // System
     void OnLanguageChanged(int index);
@@ -81,6 +82,7 @@ private:
     void SaveSettings() const;
 
     Section& CreateSection(QVBoxLayout* parentLayout, QString const& name);
+    void AddResetButtonToSection(Section& section);
 
 private:
     QString m_path;
