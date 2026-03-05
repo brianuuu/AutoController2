@@ -1,6 +1,7 @@
 #ifndef PROFILEMANAGER_H
 #define PROFILEMANAGER_H
 
+#include <QBoxLayout>
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QMediaPlayer>
@@ -68,13 +69,23 @@ private slots:
     void OnCustomSoundChanged(QString const& file);
     void OnCustomSoundClicked();
 
+private: // types
+    struct Section {
+        QVBoxLayout* m_layout = Q_NULLPTR;
+        QPushButton* m_btnReset = Q_NULLPTR;
+        QSet<Setting::SettingBase*> m_settings;
+    };
+
 private:
     void LoadSettings();
     void SaveSettings() const;
 
+    Section& CreateSection(QVBoxLayout* parentLayout, QString const& name);
+
 private:
     QString m_path;
     DiscordManager* m_discordManager = Q_NULLPTR;
+    std::map<QString, Section> m_sections;
 
     // System
     Setting::SettingLanguage* m_language = Q_NULLPTR;

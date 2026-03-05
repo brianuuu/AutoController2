@@ -107,14 +107,12 @@ void DiscordManager::OnTestChannel()
 
 void DiscordManager::OnToggled()
 {
-    if (m_settingToken->text().isEmpty() || (m_settingUser->text().isEmpty() && !m_settingChannel->text().isEmpty())) return;
-
     if (m_enabled)
     {
         m_client->logout();
         m_enabled = false;
     }
-    else
+    else if (!m_settingToken->text().isEmpty() && (!m_settingUser->text().isEmpty() || !m_settingChannel->text().isEmpty()))
     {
         Discord::Token token;
         token.generate(m_settingToken->text(), Discord::Token::Type::BOT);
