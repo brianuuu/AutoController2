@@ -347,21 +347,23 @@ void ProgramManager::OnProgramStartStop()
     m_btnStart->setEnabled(canRun);
 }
 
-void ProgramManager::OnProgramFinished(int result)
+void ProgramManager::OnProgramFinished(bool success, QString msg)
 {
     if (m_program && m_program->IsRunning())
     {
+        int const mins = GetUpTime() / 60;
         QString const upTime = " (Up time = " + m_labelUpTime->text() + ")";
-        if (result < 0)
-        {
-            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error" + upTime, LOG_Error);
-        }
-        else
+        if (success)
         {
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!" + upTime, LOG_Success);
         }
+        else
+        {
+            m_logManager->PrintLog(m_program->GetInternalName(), "Program finished with an error" + (msg.isEmpty() ? "" : (": " + msg)) + upTime, LOG_Error);
+            }
+        }
 
-        m_profileManager->PlaySound(GetUpTime() / 60);
+        m_profileManager->PlaySound(mins);
         StopProgram();
     }
 }

@@ -138,7 +138,7 @@ void ProgramBase::OnModuleFinishQuit()
     if (!module) return;
 
     int const result = module->GetResult();
-    emit notifyFinished(result);
+    emit notifyFinished(result == 0);
 }
 
 bool ProgramBase::OnModuleErrorQuit()
@@ -155,7 +155,7 @@ bool ProgramBase::OnModuleErrorQuit()
     int const result = module->GetResult();
     if (result < 0)
     {
-        emit notifyFinished(result);
+        emit notifyFinished(false);
         return true;
     }
 
@@ -220,19 +220,29 @@ void ProgramBase::ClearModules()
     }
 }
 
+void ProgramBase::UnhandedStateRunCommand()
+{
+    emit notifyFinished(false, "Unhandled state after command is finished");
+}
+
+void ProgramBase::UnhandedStateFrameCapture()
+{
+    emit notifyFinished(false, "Unhandled state after frame capture has result");
+}
+
 bool ProgramBase::EnsureOCRDatabase(const QString &database)
 {
     LanguageType const language = m_profileManager->GetLanguageType();
     if (!OCREntryDatabase::EnsureDatabase(database, language))
     {
         PrintLog(OCREntryDatabase::GetNoDatabaseError(database, language), LOG_Error);
-        emit notifyFinished(-1);
+        emit notifyFinished(false);
         return false;
     }
     else if (!ProfileManager::OCRTrainedDataExist(language))
     {
         PrintLog(ProfileManager::GetNoTrainedDataError(language), LOG_Error);
-        emit notifyFinished(-1);
+        emit notifyFinished(false);
         return false;
     }
     else

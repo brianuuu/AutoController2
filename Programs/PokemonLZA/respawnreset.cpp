@@ -32,7 +32,7 @@ void RespawnReset::Start()
     m_shinySoundID = m_audioManager->AddDetection("PokemonLA/ShinySFX", 0.19f, 5000);
     if (m_shinySoundID == 0)
     {
-        emit notifyFinished(-1);
+        emit notifyFinished(false);
         return;
     }
 
@@ -62,13 +62,12 @@ void RespawnReset::OnCommandFinished()
     case State::Capture:
     {
         // finished!
-        emit notifyFinished(0);
+        emit notifyFinished(true);
         break;
     }
     default:
     {
-        PrintLog("Unhandled state after command is finished", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateRunCommand();
         return;
     }
     }
@@ -114,8 +113,7 @@ void RespawnReset::OnFrameCaptureMatched(bool matched)
     }
     default:
     {
-        PrintLog("Unhandled state after frame capture has result", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateFrameCapture();
         return;
     }
     }

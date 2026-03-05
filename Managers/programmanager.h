@@ -44,7 +44,7 @@ private slots:
     void OnProgramChanged(QString const& name);
     void OnCanRunChanged(bool canRun);
     void OnProgramStartStop();
-    void OnProgramFinished(int result);
+    void OnProgramFinished(bool success, QString msg = "");
     void OnResetDefault();
     void OnManualOpen();
     void OnUpTimeUpdate();

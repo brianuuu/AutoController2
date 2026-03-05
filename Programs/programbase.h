@@ -62,7 +62,7 @@ public:
 signals:
     void notifyCanRun(bool);
     void notifyStarted();
-    void notifyFinished(int);
+    void notifyFinished(bool success, QString msg = "");
     void notifyLog(QString const& category, QString const& log, LogType type = LOG_Normal) const;
 
 public slots:
@@ -101,6 +101,9 @@ protected:
         connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
         AddModule(module);
     }
+
+    void UnhandedStateRunCommand();
+    void UnhandedStateFrameCapture();
 
     template<typename T>
     T SetState(T state, QString const& log = "")

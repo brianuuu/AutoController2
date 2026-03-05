@@ -98,16 +98,12 @@ void StarterReset::OnCommandFinished()
     }
     case State::GetStarter:
     {
-        // TODO: error stat?
-        PrintLog("Unable to detect Yes/No box for too long", LOG_Error);
-        emit notifyFinished(-1);
+        emit notifyFinished(false, "Unable to detect Yes/No box for too long");
         break;
     }
     case State::ConfirmStarter:
     {
-        // TODO: error stat?
-        PrintLog("Unable to detect rival dialog finish for too long", LOG_Error);
-        emit notifyFinished(-1);
+        emit notifyFinished(false, "Unable to detect rival dialog finish for too long");
         break;
     }
     case State::MenuToStarter:
@@ -119,13 +115,12 @@ void StarterReset::OnCommandFinished()
     case State::Capture:
     {
         // finished!
-        emit notifyFinished(0);
+        emit notifyFinished(true);
         break;
     }
     default:
     {
-        PrintLog("Unhandled state after command is finished", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateRunCommand();
         return;
     }
     }
@@ -194,8 +189,7 @@ void StarterReset::OnFrameCaptureMatched(bool matched)
     }
     default:
     {
-        PrintLog("Unhandled state after frame capture has result", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateFrameCapture();
         return;
     }
     }

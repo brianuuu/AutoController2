@@ -49,7 +49,7 @@ void DevSoundDetection::Start()
     m_soundID = m_audioManager->AddDetection(m_file->text(), m_minScore->value(), m_lowPassFilter->value());
     if (m_soundID == 0)
     {
-        emit notifyFinished(-1);
+        emit notifyFinished(false);
     }
     else
     {

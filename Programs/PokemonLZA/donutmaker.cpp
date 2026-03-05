@@ -147,8 +147,7 @@ void DonutMaker::OnCommandFinished()
     }
     default:
     {
-        PrintLog("Unhandled state after command is finished", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateRunCommand();
         return;
     }
     }
@@ -214,8 +213,7 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
     }
     default:
     {
-        PrintLog("Unhandled state after frame capture has result", LOG_Error);
-        emit notifyFinished(-1);
+        UnhandedStateFrameCapture();
         return;
     }
     }
@@ -275,7 +273,7 @@ void DonutMaker::OnOCRFinished()
             if (m_donutCount == m_count->value())
             {
                 // finished!
-                emit notifyFinished(0);
+                emit notifyFinished(true);
             }
             else
             {
