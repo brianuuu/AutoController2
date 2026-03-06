@@ -2,6 +2,8 @@
 #include "defines.h"
 #include "peakfinder.h"
 
+int AudioFileHolder::m_nextID = 0;
+
 AudioFileHolder::AudioFileHolder(QObject *parent) : QObject(parent)
 {
     m_wavFile = nullptr;
@@ -11,6 +13,8 @@ AudioFileHolder::AudioFileHolder(QObject *parent) : QObject(parent)
     m_score = 0.0f;
     m_minScore = 10000.0f;
     m_windowSkipCounter = 0;
+
+    m_id = ++m_nextID;
 }
 
 AudioFileHolder::~AudioFileHolder()

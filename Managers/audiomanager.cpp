@@ -167,7 +167,19 @@ void AudioManager::ToggleSpectrogram(bool enabled)
 int AudioManager::AddDetection(const QString &fileName, float minScore, int lowFreqFilter)
 {
     AudioFileHolder* holder = nullptr;
-    if (!m_audioFileHolders.contains(fileName))
+
+    bool hasHolder = m_audioFileHolders.contains(fileName);
+    if (hasHolder)
+    {
+        holder = m_audioFileHolders[fileName];
+        if (holder->getMinScore() != minScore || holder->getFreqStart() != lowFreqFilter)
+        {
+            delete holder;
+            hasHolder = false;
+        }
+    }
+
+    if (!hasHolder)
     {
         QString errorStr;
         holder = new AudioFileHolder(this);
@@ -186,15 +198,6 @@ int AudioManager::AddDetection(const QString &fileName, float minScore, int lowF
         }
 
         m_audioFileHolders[fileName] = holder;
-        holder->setID(m_audioFileHolders.size());
-    }
-    else
-    {
-        holder = m_audioFileHolders[fileName];
-
-        // Update settings in case they are different
-        holder->setMinScore(minScore);
-        holder->setFreqStart(lowFreqFilter);
     }
 
     // Return the ID of the sound
