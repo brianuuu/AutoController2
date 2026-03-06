@@ -93,7 +93,7 @@ void StarterReset::OnCommandFinished()
     {
         m_state = SetState(State::GetStarter, "Spam A until Yes/No box appears");
         AddRunCommand("A|Spam|10000");
-        AddFrameCapture("FRLG_StarterYesNo");
+        AddFrameCapture("FRLG_YesNoBox");
         break;
     }
     case State::GetStarter:
