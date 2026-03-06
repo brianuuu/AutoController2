@@ -3,5 +3,7 @@
 /Screenshots
 /StreamCounters
 *.zip
+!/ManualsRaw/#GettingStarted.zip
+/ManualsRaw/#GettingStarted.doc
 Stats.json
 UserSettings.json
