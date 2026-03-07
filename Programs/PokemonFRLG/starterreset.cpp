@@ -4,20 +4,14 @@ namespace Program::PokemonFRLG
 {
 
 StarterReset::StarterReset(QObject *parent)
-    : ProgramBase{parent}
+    : PermutationBase{parent}
 {
     
 }
 
 void StarterReset::PopulateSettings(QBoxLayout *layout)
 {
-    m_seedFrame = new Setting::SettingSpinBox("SeedFrame", 0, 9999);
-    m_savedSettings.insert(m_seedFrame);
-    AddSetting(layout, "Seed Frame:", "Wait this many frames (not accurate) before pressing A at the title screen. This setting is changed by the program while running", m_seedFrame, true);
-
-    m_advanceFrame = new Setting::SettingSpinBox("AdvanceFrame", 0, 9999);
-    m_savedSettings.insert(m_advanceFrame);
-    AddSetting(layout, "Advance Frame:", "Wait this many frames (not accurate) before finishing dialogue after picking starter. This setting is changed by the program while running", m_advanceFrame, true);
+    PermutationBase::PopulateSettings(layout);
 
     m_confirmDelay = new Setting::SettingSpinBox("ConfirmDelay", 0, 9999, 1000);
     m_savedSettings.insert(m_confirmDelay);
@@ -26,23 +20,15 @@ void StarterReset::PopulateSettings(QBoxLayout *layout)
     AddSpacer(layout);
 }
 
-void StarterReset::RegisterStats()
-{
-    RegisterStat(m_statReset, "Resets");
-    RegisterStat(m_statShiny, "Shinies");
-}
-
 void StarterReset::Start()
 {
-    ProgramBase::Start();
-
-    m_currentMaxFrame = qMax(m_seedFrame->value(), m_advanceFrame->value());
+    PermutationBase::Start();
     StateSoftReset();
 }
 
 void StarterReset::Stop()
 {
-    ProgramBase::Stop();
+    PermutationBase::Stop();
 }
 
 void StarterReset::StateSoftReset()
@@ -52,28 +38,6 @@ void StarterReset::StateSoftReset()
     AddRunCommand("FRLG_SoftReset", 0);
     ++m_statReset;
     m_dialogCount = 0;
-}
-
-void StarterReset::GetNextPermutation()
-{
-    // Order: 0-0, 1-0, 0-1, 2-0, 2-1, 2-2, 1-2, 0-2, 3-0, 3-1, 3-2, 3-3, 2-3, 1-3, 0-3, 4-0, etc.
-    if (m_advanceFrame->value() == m_currentMaxFrame)
-    {
-        if (m_seedFrame->value() == 0)
-        {
-            ++m_currentMaxFrame;
-            m_seedFrame->setValue(m_currentMaxFrame);
-            m_advanceFrame->setValue(0);
-        }
-        else
-        {
-            m_seedFrame->setValue(m_seedFrame->value() - 1);
-        }
-    }
-    else
-    {
-        m_advanceFrame->setValue(m_advanceFrame->value() + 1);
-    }
 }
 
 void StarterReset::OnCommandFinished()
