@@ -308,7 +308,6 @@ void AudioManager::DoDetection()
             for (int i = 0; i < spikesCollection.size(); i++)
             {
                 // compare the difference is value, the less difference, the higher the score
-                // need to compare both ways for unmatching results
                 float tempScore = 0.0f;
                 SpikeIDScore const& curCachedSpikes = m_cachedSpikes[m_cachedSpikes.size() - spikesCollection.size() + i];
                 SpikeIDScore const& curSpikesCollection = spikesCollection[i];
@@ -320,15 +319,7 @@ void AudioManager::DoDetection()
                         tempScore += qMax(0.0f, 1.0f - diff);
                     }
                 }
-                for (auto iter = curCachedSpikes.begin(); iter != curCachedSpikes.end(); iter++)
-                {
-                    if (curSpikesCollection.contains(iter.key()))
-                    {
-                        float const diff = qAbs(iter.value() - curSpikesCollection.value(iter.key()));
-                        tempScore += qMax(0.0f, 1.0f - diff);
-                    }
-                }
-                tempScore /= qMax<float>(1.0f, curSpikesCollection.size() + curCachedSpikes.size());
+                tempScore /= qMax<float>(1.0f, curSpikesCollection.size());
                 score += tempScore;
             }
             score /= qMax<float>(1.0f, spikesCollection.size());
