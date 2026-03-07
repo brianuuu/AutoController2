@@ -15,6 +15,7 @@
 #include "Programs/PokemonFRLG/starterreset.h"
 #include "Programs/PokemonLZA/donutmaker.h"
 #include "Programs/PokemonLZA/respawnreset.h"
+#include "Programs/System/camerachecker.h"
 #include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
@@ -75,6 +76,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
+    RegisterProgram<Program::System::CameraChecker>();
     RegisterProgram<Program::System::CommandRecorder>();
     RegisterProgram<Program::System::CustomCommand>();
 
