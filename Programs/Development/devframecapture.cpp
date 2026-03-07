@@ -128,10 +128,11 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     AddSeparator(layout);
 
     m_btnFixedImage = new QPushButton("Set Image");
-    m_btnClearImage = new QPushButton("Clear Image");
-    AddSettings(layout, "Fixed Image:", "", {m_btnFixedImage, m_btnClearImage}, true);
+    m_useFixedImage = new Setting::SettingCheckBox("UseFixImager", "Enabled");
+    AddSettings(layout, "Fixed Image:", "", {m_useFixedImage, m_btnFixedImage}, true);
+    m_useFixedImage->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     connect(m_btnFixedImage, &QPushButton::clicked, this, &DevFrameCapture::OnSetFixedImage);
-    connect(m_btnClearImage, &QPushButton::clicked, this, &DevFrameCapture::OnClearFixedImage);
+    connect(m_useFixedImage, &QCheckBox::clicked, this, &DevFrameCapture::OnToggleFixedImage);
 
     AddSpacer(layout);
 
@@ -524,12 +525,16 @@ void DevFrameCapture::OnSetFixedImage()
     QString file = QFileDialog::getOpenFileName(m_btnFixedImage, tr("Import Image"), "../Screenshots", "PNG file (*.png)");
     if (file.isEmpty()) return;
 
-    m_videoManager->SetFixedImage(QImage(file).convertToFormat(QImage::Format_ARGB32));
+    m_fixedImage = QImage(file).convertToFormat(QImage::Format_ARGB32);
+    if (m_useFixedImage->isChecked())
+    {
+        m_videoManager->SetFixedImage(m_fixedImage);
+    }
 }
 
-void DevFrameCapture::OnClearFixedImage()
+void DevFrameCapture::OnToggleFixedImage()
 {
-    m_videoManager->ClearFixedImage();
+    m_videoManager->SetFixedImage(m_useFixedImage->isChecked() ? m_fixedImage : QImage());
 }
 
 QPoint DevFrameCapture::GetPoint() const

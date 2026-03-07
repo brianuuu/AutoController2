@@ -68,7 +68,7 @@ private slots:
     void OnOCRFinished();
 
     void OnSetFixedImage();
-    void OnClearFixedImage();
+    void OnToggleFixedImage();
 
 private:
     QPoint GetPoint() const;
@@ -110,7 +110,8 @@ private:
     Setting::SettingComboBox* m_database = Q_NULLPTR;
 
     QPushButton* m_btnFixedImage = Q_NULLPTR;
-    QPushButton* m_btnClearImage = Q_NULLPTR;
+    Setting::SettingCheckBox* m_useFixedImage = Q_NULLPTR;
+    QImage m_fixedImage;
 
     Module::Common::FrameCapture* m_moduleCapture = Q_NULLPTR;
 };
