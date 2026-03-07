@@ -341,6 +341,7 @@ void ProgramManager::OnProgramStartStop()
             m_logManager->SetCurrentLogName(m_program->GetInternalName());
         }
 
+        m_logManager->OnShow();
         m_logManager->OnClearLog();
         m_logManager->PrintLog(m_program->GetInternalName(), "Program started");
         StartProgram();
