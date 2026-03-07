@@ -128,7 +128,7 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     AddSeparator(layout);
 
     m_btnFixedImage = new QPushButton("Set Image");
-    m_useFixedImage = new Setting::SettingCheckBox("UseFixImager", "Enabled");
+    m_useFixedImage = new Setting::SettingCheckBox("UseFixImage", "Enabled");
     AddSettings(layout, "Fixed Image:", "", {m_useFixedImage, m_btnFixedImage}, true);
     m_useFixedImage->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     connect(m_btnFixedImage, &QPushButton::clicked, this, &DevFrameCapture::OnSetFixedImage);
