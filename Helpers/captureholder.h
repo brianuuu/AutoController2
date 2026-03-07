@@ -106,7 +106,7 @@ private:
 protected:
     // init data
     QColor  m_displayColor;
-    Mode    m_mode;
+    Mode    m_mode = Mode::Invalid;
     QString m_preset;
     qreal   m_targetMean = 0.0;
 
