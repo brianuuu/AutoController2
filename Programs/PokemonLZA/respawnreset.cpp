@@ -29,7 +29,7 @@ void RespawnReset::Start()
 {
     ProgramBase::Start();
 
-    m_shinySoundID = m_audioManager->AddDetection("PokemonLA/ShinySFX", 0.19f, 5000);
+    m_shinySoundID = m_audioManager->AddDetection("PokemonLA/ShinySFX", 0.24f);
     if (m_shinySoundID == 0)
     {
         emit notifyFinished(false);
