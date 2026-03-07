@@ -271,17 +271,19 @@ void AudioManager::DoDetection()
     for (QVector<float> const& spectrogramData : std::as_const(m_spectrogramData))
     {
         // Get spikes for the current spectrogram
-        QVector<float> convData;
-        AudioConversionUtils::spikeConvolution(0, spectrogramData.size(), spectrogramData, convData);
-
-        SpikeIDScore spikes;
-        PeakFinder::findPeaks(convData, spikes, 0, false);
-
-        if (m_cachedSpikes.size() == MAX_DETECTION_WINDOW)
         {
-            m_cachedSpikes.pop_front();
+            QVector<float> convData;
+            AudioConversionUtils::spikeConvolution(0, spectrogramData.size(), spectrogramData, convData);
+
+            SpikeIDScore spikes;
+            PeakFinder::findPeaks(convData, spikes, 0, false);
+
+            if (m_cachedSpikes.size() == MAX_DETECTION_WINDOW)
+            {
+                m_cachedSpikes.pop_front();
+            }
+            m_cachedSpikes.push_back(spikes);
         }
-        m_cachedSpikes.push_back(spikes);
 
         for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
         {
@@ -300,12 +302,13 @@ void AudioManager::DoDetection()
                 continue;
             }
 
-            // Get the score by finding if current windows contains the template's spikes
-            // If so add the score by the magnitude of the spike and average to no. in the window
+            // calculate matching score
             float score = 0.0f;
             QVector<SpikeIDScore> const& spikesCollection = holder->getSpikesCollection();
             for (int i = 0; i < spikesCollection.size(); i++)
             {
+                // compare the difference is value, the less difference, the higher the score
+                // need to compare both ways for unmatching results
                 float tempScore = 0.0f;
                 SpikeIDScore const& curCachedSpikes = m_cachedSpikes[m_cachedSpikes.size() - spikesCollection.size() + i];
                 SpikeIDScore const& curSpikesCollection = spikesCollection[i];
@@ -313,16 +316,25 @@ void AudioManager::DoDetection()
                 {
                     if (curCachedSpikes.contains(iter.key()))
                     {
-                        tempScore += iter.value();
+                        float const diff = qAbs(iter.value() - curCachedSpikes.value(iter.key()));
+                        tempScore += qMax(0.0f, 1.0f - diff);
                     }
                 }
-                tempScore /= curSpikesCollection.size();
+                for (auto iter = curCachedSpikes.begin(); iter != curCachedSpikes.end(); iter++)
+                {
+                    if (curSpikesCollection.contains(iter.key()))
+                    {
+                        float const diff = qAbs(iter.value() - curSpikesCollection.value(iter.key()));
+                        tempScore += qMax(0.0f, 1.0f - diff);
+                    }
+                }
+                tempScore /= qMax<float>(1.0f, curSpikesCollection.size() + curCachedSpikes.size());
                 score += tempScore;
             }
-            score /= spikesCollection.size();
+            score /= qMax<float>(1.0f, spikesCollection.size());
             holder->setScore(score);
 
-            if (score > holder->getMinScore())
+            if (score >= holder->getMinScore())
             {
                 m_logManager->PrintLog("Audio", holder->getFileName() + " detected with score " + QString::number(score) + " > " + QString::number(holder->getMinScore()), LOG_Success);
                 emit notifySoundDetected(holder->getID());

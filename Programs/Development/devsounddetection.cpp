@@ -22,12 +22,12 @@ void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
     connect(m_file, &QLineEdit::textChanged, this, &DevSoundDetection::OnFileChanged);
     m_btnPlay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    m_minScore = new Setting::SettingDoubleSpinBox("MinScore", 0.0, 10.0, 0.19);
+    m_minScore = new Setting::SettingDoubleSpinBox("MinScore", 0.0, 1.0, 0.5);
     m_minScore->setDecimals(3);
     m_savedSettings.insert(m_minScore);
     AddSetting(layout, "Min Score:", "", m_minScore, true);
 
-    m_lowPassFilter = new Setting::SettingSpinBox("LowPassFilter", 0, 19000, 5000);
+    m_lowPassFilter = new Setting::SettingSpinBox("LowPassFilter", 0, 19000, 1000);
     m_lowPassFilter->setSingleStep(100);
     m_savedSettings.insert(m_lowPassFilter);
     AddSetting(layout, "Low Pass Filter:", "", m_lowPassFilter, true);

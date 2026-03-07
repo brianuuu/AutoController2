@@ -37,7 +37,7 @@ public:
     static void ifft(int sampleSize, fftwf_complex *in, fftwf_complex *out);
     static void debugComplex(fftwf_complex *c, int size);
     static void fftOutToSpectrogram(int sampleSize, fftwf_complex const* in, QVector<float>& out);
-    static void spikeConvolution(int indexStart, int indexEnd, QVector<float> const& in, QVector<float>& out, float threshold = 1.0f);
+    static void spikeConvolution(int indexStart, int indexEnd, QVector<float> const& in, QVector<float>& out, float threshold = 0.25f);
 
 private:
     // Byte swap template functions
