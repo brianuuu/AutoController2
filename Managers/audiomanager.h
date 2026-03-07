@@ -51,6 +51,7 @@ public:
     void StopDetection(int id = 0);
     bool HasDetection(int id);
     void DoDetection();
+    void SetShowMaxScore(bool show) { m_displayMaxScore = show; }
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -136,6 +137,7 @@ private:
     QSet<AudioFileHolder*>              m_detectingSounds;
     QVector<SpikeIDScore>               m_cachedSpikes;
     int                                 m_detectedWindowSize = 0;
+    bool                                m_displayMaxScore = false;
 };
 
 #endif // AUDIOMANAGER_H

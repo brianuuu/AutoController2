@@ -19,7 +19,8 @@ public:
 
     // Interface
     bool loadWaveFile(QString const & filename, QAudioFormat const& audioFormat, float minScore, int lowFreqFilter, QString& errorStr);
-    void setScore(float score) { m_score = score; }
+    void setScore(float score) { m_score = score; m_maxScore = qMax(m_maxScore, score); }
+    void setMaxScore(float maxScore) { m_maxScore = maxScore; }
     void setMinScore(float minScore) { m_minScore = minScore; }
     void setFreqStart(int freqStart) { m_freqStart = freqStart; }
 
@@ -29,6 +30,7 @@ public:
     void getFrequencyRange(int& start, int& end) const;
     int getWindowCount() const;
     QString const& getFileName() const { return m_fileName; }
+    float getMaxScore() const { return m_maxScore; }
     float getMinScore() const { return m_minScore; }
     float getFreqStart() const { return m_freqStart; }
     int& getWindowSkipCounter() { return m_windowSkipCounter; }
@@ -46,6 +48,7 @@ private:
     int         m_freqEnd;
 
     float       m_score;    // last detected score, for drawing only
+    float       m_maxScore; // max score detected, for debug only
     float       m_minScore;
     int         m_windowSkipCounter;
     QVector<SpikeIDScore> m_spikesCollection;

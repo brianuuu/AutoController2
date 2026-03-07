@@ -212,6 +212,7 @@ void AudioManager::StartDetection(int id)
         if (holder->getID() == id)
         {
             holder->getWindowSkipCounter() = 0;
+            holder->setMaxScore(0.0f);
             m_detectingSounds.insert(holder);
             qDebug() << "Started detecting" << holder->getFileName();
             return;
@@ -492,7 +493,12 @@ void AudioManager::paintEvent(QPaintEvent *event)
                 int textPos = height - 4;
                 for (AudioFileHolder* holder : std::as_const(m_detectingSounds))
                 {
-                    QString text = holder->getFileName() + ": " + QString::number(holder->getScore());
+                    QString text = holder->getFileName() + ": " + QString::number(holder->getScore(), 'f', 3) + "/" + QString::number(holder->getMinScore(), 'f', 3);
+                    if (m_displayMaxScore)
+                    {
+                        text += " (Max = " + QString::number(holder->getMaxScore(), 'f', 3) + ")";
+                    }
+
                     painter.setPen(Qt::black);
                     painter.drawText(QPoint(4, textPos), text);
                     painter.setPen(Qt::red);

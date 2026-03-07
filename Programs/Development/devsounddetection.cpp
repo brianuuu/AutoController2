@@ -54,11 +54,13 @@ void DevSoundDetection::Start()
     else
     {
         m_audioManager->StartDetection(m_soundID);
+        m_audioManager->SetShowMaxScore(true);
     }
 }
 
 void DevSoundDetection::Stop()
 {
+    m_audioManager->SetShowMaxScore(false);
     ProgramBase::Stop();
 }
 
