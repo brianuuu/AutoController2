@@ -24,9 +24,6 @@ public:
     bool RequireVideo() const override { return false; }
     bool RequireAudio() const override { return false; }
 
-    bool CanControlWhileRunning() const override { return false; }
-    bool CanEditWhileRunning() const override { return false; }
-
     void Start() override;
     void Stop() override;
 
