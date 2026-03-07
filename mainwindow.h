@@ -30,6 +30,8 @@ private:
     void LoadSettings();
     void SaveSettings() const;
 
+    void CheckFirstUse();
+
 private slots:
     void OnNetworkManagerFinished(QNetworkReply *reply);
 

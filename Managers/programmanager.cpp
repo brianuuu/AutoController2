@@ -19,7 +19,6 @@
 #include "Programs/System/commandrecorder.h"
 #include "Programs/System/customcommand.h"
 
-#define PROGRAM_MANUAL_PATH "../Manuals/"
 #define PROGRAM_STATS_JSON "../Stats.json"
 #define STREAM_COUNTER_PATH "../StreamCounters/"
 
@@ -256,7 +255,7 @@ void ProgramManager::OnProgramChanged(const QString &name)
     m_program->LoadSettings();
     m_program->RegisterStats();
 
-    m_btnManual->setEnabled(QFile::exists(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
+    m_btnManual->setEnabled(QFile::exists(MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_labelDescription->setText(m_program->GetDescription());
 
@@ -398,7 +397,7 @@ void ProgramManager::OnResetDefault()
 void ProgramManager::OnManualOpen()
 {
     if (!m_program) return;
-    QDesktopServices::openUrl(QUrl::fromLocalFile(PROGRAM_MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(MANUAL_PATH + m_program->GetInternalName() + ".pdf"));
 }
 
 void ProgramManager::OnUpTimeUpdate()

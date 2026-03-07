@@ -8,6 +8,7 @@
 #define SERIAL_VERSION 3
 
 #define RESOURCES_PATH QString("../Resources/")
+#define MANUAL_PATH QString("../Manuals/")
 #define OCR_PATH RESOURCES_PATH + "Tesseract/"
 
 #define CUSTOM_SELECTION QString("(Custom)")

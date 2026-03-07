@@ -184,6 +184,25 @@ void MainWindow::SaveSettings() const
     JsonHelper::WriteSetting("MainWindow", settings);
 }
 
+void MainWindow::CheckFirstUse()
+{
+    if (QFile::exists(SETTINGS_FILE)) return;
+
+    QString const title = "Getting Started";
+
+    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+    QString message = "Welcome to Auto Controller 2!";
+    message += "\nDo you want to read the manual to get started?";
+    resBtn = QMessageBox::question(this, title, message, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+    if (resBtn == QMessageBox::Yes)
+    {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(MANUAL_PATH + "#GettingStarted.pdf"));
+    }
+
+    QMessageBox::information(this, title, "Once you finished setting up, please run System/Camera Checker to make sure everything is working correctly.", QMessageBox::Ok);
+}
+
 void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
 {
     QString link = "https://github.com/brianuuu/AutoController2/releases";
@@ -202,6 +221,7 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
         }
 
         ui->L_Update->setText("Update Check Failed");
+        CheckFirstUse();
         return;
     }
     else if (m_lastestVersion.isEmpty())
@@ -239,6 +259,7 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
         else
         {
             ui->L_Update->setText("Program Up to Date!");
+            CheckFirstUse();
         }
     }
     else
@@ -256,5 +277,7 @@ void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)
             QDesktopServices::openUrl(QUrl(link));
             this->close();
         }
+
+        CheckFirstUse();
     }
 }
