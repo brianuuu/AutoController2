@@ -22,7 +22,6 @@ AudioFileHolder::~AudioFileHolder()
 {
     if (m_wavFile)
     {
-        m_wavFile->close();
         delete m_wavFile;
         m_wavFile = nullptr;
     }
@@ -145,6 +144,7 @@ bool AudioFileHolder::loadWaveFile(const QString &filename, const QAudioFormat &
     qDebug() << "Finished adding" << m_fileName << "with" << windowCount << "windows";
 
     m_minScore = minScore;
+    m_wavFile->close();
     return true;
 }
 
