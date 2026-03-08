@@ -200,9 +200,9 @@ void DevCommand::VerifyCommand()
 {
     m_validCommand = true;
 
-    QString errorMsg;
     for (int i = 0; i < m_commandSettings.size(); i++)
     {
+        QString errorMsg;
         bool valid = true;
 
         CommandSettings& settings = m_commandSettings[i];
