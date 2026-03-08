@@ -49,6 +49,7 @@ public:
 
     // Development
     bool GetHasDebugConsole() const { return m_debugConsole->isChecked(); }
+    bool GetSwapRedBlue() const { return m_swapRedBlue->isChecked(); }
 
     // Utils
     static bool OCRTrainedDataExist(LanguageType type);
@@ -110,6 +111,7 @@ private:
 
     // Development
     Setting::SettingCheckBox* m_debugConsole = Q_NULLPTR;
+    Setting::SettingCheckBox* m_swapRedBlue = Q_NULLPTR;
 };
 
 #endif // PROFILEMANAGER_H

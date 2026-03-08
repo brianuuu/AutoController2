@@ -151,7 +151,11 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         m_debugConsole = new Setting::SettingCheckBox("DebugConsole", "", false);
         Program::ProgramBase::AddSetting(section.m_layout, "Enable Debug Console:", "Display additional debug logs that doesn't show in output log (Require restart)", m_debugConsole, true);
 
+        m_swapRedBlue = new Setting::SettingCheckBox("SwapRedBlue", "", false);
+        Program::ProgramBase::AddSetting(section.m_layout, "Swap Red/Blue Video Channel:", "Some capture card may require swapping Red & Blue channel to display correctly (Require restarting camera)", m_swapRedBlue, true);
+
         section.m_settings.insert(m_debugConsole);
+        section.m_settings.insert(m_swapRedBlue);
         AddResetButtonToSection(section);
     }
 

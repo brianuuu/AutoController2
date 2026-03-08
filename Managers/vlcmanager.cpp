@@ -391,7 +391,7 @@ void VlcManager::Start()
 
     // Set the callback to extract the frame or display it on the screen
     libvlc_video_set_callbacks(m_mediaPlayer, cbVideoLock, cbVideoUnlock, nullptr, &ctxVideo);
-    libvlc_video_set_format(m_mediaPlayer, "BGRA", resolution.width(), resolution.height(), resolution.width() * 4);
+    libvlc_video_set_format(m_mediaPlayer, m_profileManager->GetSwapRedBlue() ? "RGBA" : "BGRA", resolution.width(), resolution.height(), resolution.width() * 4);
 
     // Set callback to extract raw PCM data
     QAudioFormat const format = ctxAudio.m_manager->GetAudioFormat();
