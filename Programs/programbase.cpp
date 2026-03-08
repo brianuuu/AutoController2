@@ -45,6 +45,13 @@ void ProgramBase::LoadSettings()
 {
     QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
     QJsonObject settings = JsonHelper::ReadObject(allSettings, GetInternalName());
+
+    QVariant hasRun;
+    if (JsonHelper::ReadValue(settings, "HasRun", hasRun) && hasRun.toBool())
+    {
+        m_hasRun = true;
+    }
+
     for (Setting::SettingBase* setting : std::as_const(m_savedSettings))
     {
         setting->Load(settings);
@@ -54,6 +61,7 @@ void ProgramBase::LoadSettings()
 void ProgramBase::SaveSettings() const
 {
     QJsonObject settings;
+    settings.insert("HasRun", m_hasRun);
     for (Setting::SettingBase* setting : m_savedSettings)
     {
         setting->Save(settings);

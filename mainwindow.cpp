@@ -200,7 +200,7 @@ void MainWindow::CheckFirstUse()
         QDesktopServices::openUrl(QUrl::fromLocalFile(MANUAL_PATH + "#GettingStarted.pdf"));
     }
 
-    QMessageBox::information(this, title, "Once you finished setting up, please run System/Camera Checker to make sure everything is working correctly.", QMessageBox::Ok);
+    QMessageBox::information(this, title, "Once you finished setting up, please run 'System/Camera Checker' to make sure everything is working correctly.", QMessageBox::Ok);
 }
 
 void MainWindow::OnNetworkManagerFinished(QNetworkReply *reply)

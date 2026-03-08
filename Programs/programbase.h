@@ -52,6 +52,7 @@ public:
 
     bool IsRunning() const { return m_started; }
     bool HaveSavedSettings() const { return !m_savedSettings.empty(); }
+    void SetHasRun() { m_hasRun = true; }
 
     bool ValidSerial() const;
     bool ValidVideo() const;
@@ -138,6 +139,7 @@ protected:
     VlcManager*         m_vlcManager = Q_NULLPTR;
 
     bool m_started = false;
+    bool m_hasRun = false; // only set if this program has successfully finished before
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
     QSet<Setting::SettingBase*> m_savedSettings;

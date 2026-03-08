@@ -242,6 +242,15 @@ void ProgramManager::OnCategoryChanged(const QString &category)
     {
         m_programList->setCurrentRow(0);
     }
+
+    if (category == CategoryToString(CT_FRLG))
+    {
+        if (!HasProgramRun("System-CameraChecker"))
+        {
+            QString message = "To run programs for " + category + ",\nplease run 'System/Camera Checker' first to make sure everything is working correctly.";
+            QMessageBox::warning(this, "Warning", message, QMessageBox::Ok);
+        }
+    }
 }
 
 void ProgramManager::OnProgramChanged(const QString &name)
@@ -360,6 +369,7 @@ void ProgramManager::OnProgramFinished(bool success, QString msg)
         QString const upTime = " (Up time = " + m_labelUpTime->text() + ")";
         if (success)
         {
+            m_program->SetHasRun();
             m_logManager->PrintLog(m_program->GetInternalName(), "Program finished successfully!" + upTime, LOG_Success);
             if (sendDiscordMessage)
             {
@@ -546,4 +556,13 @@ void ProgramManager::RemoveProgram()
     m_program = Q_NULLPTR;
 
     m_btnResetDefault->setEnabled(false);
+}
+
+bool ProgramManager::HasProgramRun(const QString &name) const
+{
+    QJsonObject allSettings = JsonHelper::ReadSetting("ProgramSettings");
+    QJsonObject settings = JsonHelper::ReadObject(allSettings, name);
+
+    QVariant hasRun;
+    return JsonHelper::ReadValue(settings, "HasRun", hasRun) && hasRun.toBool();
 }

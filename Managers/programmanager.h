@@ -62,6 +62,7 @@ private:
     template<class T>
     void RegisterProgram();
     void RemoveProgram();
+    bool HasProgramRun(QString const& name) const;
 
     void UpdateStats() const;
     void SaveStats();
