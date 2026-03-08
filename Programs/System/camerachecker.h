@@ -2,6 +2,7 @@
 #define SYSTEM_CAMERACHECKER_H
 
 #include "../programbase.h"
+#include "Types/categorytype.h"
 
 namespace Program::System
 {
@@ -10,7 +11,7 @@ class CameraChecker : public ProgramBase
 public:
     explicit CameraChecker(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "System"; }
+    static CategoryType GetCategory() { return CT_System; }
     static QString GetName() { return "Camera Checker"; }
 
     // from ProgramBase

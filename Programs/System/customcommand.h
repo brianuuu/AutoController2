@@ -11,6 +11,7 @@
 #include "Settings/settingcombobox.h"
 #include "Settings/settinglineedit.h"
 #include "Settings/settingtextedit.h"
+#include "Types/categorytype.h"
 
 namespace Program::System
 {
@@ -20,7 +21,7 @@ class CustomCommand : public ProgramBase
 public:
     explicit CustomCommand(QObject* parent = nullptr);
 
-    static QString GetCategory() { return "System"; }
+    static CategoryType GetCategory() { return CT_System; }
     static QString GetName() { return "Custom Command"; }
 
     // from ProgramBase

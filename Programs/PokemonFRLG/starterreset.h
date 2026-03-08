@@ -1,6 +1,7 @@
 #ifndef FRLG_STARTERRESET_H
 #define FRLG_STARTERRESET_H
 
+#include "Types/categorytype.h"
 #include "permutationbase.h"
 #include "Settings/settingspinbox.h"
 
@@ -11,7 +12,7 @@ class StarterReset : public PermutationBase
 public:
     explicit StarterReset(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "Pokemon Fire Red/Leaf Green"; }
+    static CategoryType GetCategory() { return CT_FRLG; }
     static QString GetName() { return "Starter Reset"; }
 
     // from ProgramBase

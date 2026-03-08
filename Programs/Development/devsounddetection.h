@@ -9,6 +9,7 @@
 #include "Settings/settingdoublespinbox.h"
 #include "Settings/settinglineedit.h"
 #include "Settings/settingspinbox.h"
+#include "Types/categorytype.h"
 
 namespace Program::Development
 {
@@ -17,7 +18,7 @@ class DevSoundDetection : public ProgramBase
 public:
     explicit DevSoundDetection(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "Development"; }
+    static CategoryType GetCategory() { return CT_Development; }
     static QString GetName() { return "Sound Detection"; }
 
     // from ProgramBase

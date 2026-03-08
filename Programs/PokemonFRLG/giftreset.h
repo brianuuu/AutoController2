@@ -1,6 +1,7 @@
 #ifndef FRLG_GIFTRESET_H
 #define FRLG_GIFTRESET_H
 
+#include "Types/categorytype.h"
 #include "permutationbase.h"
 #include "Settings/settingcheckbox.h"
 
@@ -11,7 +12,7 @@ class GiftReset : public PermutationBase
 public:
     explicit GiftReset(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "Pokemon Fire Red/Leaf Green"; }
+    static CategoryType GetCategory() { return CT_FRLG; }
     static QString GetName() { return "Gift Reset"; }
 
     // from ProgramBase

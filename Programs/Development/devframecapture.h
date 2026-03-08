@@ -14,6 +14,7 @@
 #include "Settings/settingcombobox.h"
 #include "Settings/settingdoublespinbox.h"
 #include "Settings/settingspinbox.h"
+#include "Types/categorytype.h"
 
 namespace Program::Development
 {
@@ -24,7 +25,7 @@ public:
     explicit DevFrameCapture(QObject* parent = nullptr);
     ~DevFrameCapture();
 
-    static QString GetCategory() { return "Development"; }
+    static CategoryType GetCategory() { return CT_Development; }
     static QString GetName() { return "Frame Capture"; }
 
     // from ProgramBase

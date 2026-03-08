@@ -3,6 +3,7 @@
 
 #include "../programbase.h"
 #include "Settings/settingdoublespinbox.h"
+#include "Types/categorytype.h"
 
 namespace Program::PokemonLZA
 {
@@ -11,7 +12,7 @@ class RespawnReset : public ProgramBase
 public:
     explicit RespawnReset(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "Pokemon Legends: Z-A"; }
+    static CategoryType GetCategory() { return CT_PLZA; }
     static QString GetName() { return "Respawn Reset"; }
 
     // from ProgramBase

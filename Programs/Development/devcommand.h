@@ -11,6 +11,7 @@
 #include "../programbase.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settinglineedit.h"
+#include "Types/categorytype.h"
 
 namespace Program::Development
 {
@@ -20,7 +21,7 @@ class DevCommand : public ProgramBase
 public:
     explicit DevCommand(QObject* parent = nullptr);
 
-    static QString GetCategory() { return "Development"; }
+    static CategoryType GetCategory() { return CT_Development; }
     static QString GetName() { return "Command Maker"; }
 
     // from ProgramBase

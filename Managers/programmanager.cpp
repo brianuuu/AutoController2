@@ -513,7 +513,7 @@ void ProgramManager::StopProgram()
 template<class T>
 void ProgramManager::RegisterProgram()
 {
-    QString const category = T::GetCategory();
+    QString const category = CategoryToString(T::GetCategory());
     QString const name = T::GetName();
 
     QStringList& list = m_categoryToPrograms[category];

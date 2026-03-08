@@ -133,6 +133,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Settings/settingtextedit.h Settings/settingtextedit.cpp
         Settings/settingthreadpriority.h Settings/settingthreadpriority.cpp
         Types/buttontype.h
+        Types/categorytype.h
         Types/languagetype.h
         Types/logtype.h
         Types/stat.h

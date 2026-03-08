@@ -2,6 +2,7 @@
 #define TEMPLATE_H
 
 #include "../programbase.h"
+#include "Types/categorytype.h"
 
 namespace Program::CATEGORY
 {
@@ -10,7 +11,7 @@ class NAME_NO_SPACE : public ProgramBase
 public:
     explicit NAME_NO_SPACE(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "CATEGORY"; }
+    static CategoryType GetCategory() { return CT_CATEGORY; }
     static QString GetName() { return "NAME_SPACE"; }
 
     // from ProgramBase

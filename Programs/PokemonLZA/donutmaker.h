@@ -5,6 +5,7 @@
 #include "Settings/settinglineedit.h"
 #include "Settings/settingspinbox.h"
 #include "Settings/PokemonLZA/settingflavorpower.h"
+#include "Types/categorytype.h"
 
 namespace Program::PokemonLZA
 {
@@ -14,7 +15,7 @@ class DonutMaker : public ProgramBase
 public:
     explicit DonutMaker(QObject* parent = nullptr);
 
-    static QString GetCategory() { return "Pokemon Legends: Z-A"; }
+    static CategoryType GetCategory() { return CT_PLZA; }
     static QString GetName() { return "Donut Maker"; }
 
     // from ProgramBase

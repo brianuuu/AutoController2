@@ -4,6 +4,7 @@
 #include "../programbase.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settingtextbrowser.h"
+#include "Types/categorytype.h"
 
 namespace Program::System
 {
@@ -12,7 +13,7 @@ class CommandRecorder : public ProgramBase
 public:
     explicit CommandRecorder(QObject *parent = nullptr);
 
-    static QString GetCategory() { return "System"; }
+    static CategoryType GetCategory() { return CT_System; }
     static QString GetName() { return "Command Recorder"; }
 
     // from ProgramBase
