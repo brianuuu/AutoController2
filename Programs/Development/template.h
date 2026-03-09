@@ -29,13 +29,20 @@ public:
     void Stop() override;
 
 private slots:
+	void OnCommandFinished() override;
+    void OnFrameCaptureMatched(bool matched) override;
 
+private: // types
+    enum class State
+    {
+
+    };
 
 private: // function
 
 
 private: // members
-
+	State m_state;
 };
 }
 
