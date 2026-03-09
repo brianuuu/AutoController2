@@ -11,7 +11,7 @@ NAME_NO_SPACE::NAME_NO_SPACE(QObject *parent)
 
 void NAME_NO_SPACE::PopulateSettings(QBoxLayout *layout)
 {
-    
+    AddSpacer(layout);
 }
 
 void NAME_NO_SPACE::Start()
