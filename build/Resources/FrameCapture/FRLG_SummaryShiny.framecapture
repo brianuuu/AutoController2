@@ -6,7 +6,7 @@
     "MaxV": 255,
     "Mean": 0.15,
     "MinH": 15,
-    "MinS": 150,
+    "MinS": 100,
     "MinV": 200,
     "Mode": 3,
     "Top": 156,
