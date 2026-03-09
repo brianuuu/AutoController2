@@ -9,7 +9,7 @@ namespace Program::CATEGORY
 class NAME_NO_SPACE : public ProgramBase
 {
 public:
-    explicit NAME_NO_SPACE(QObject *parent = nullptr);
+    explicit NAME_NO_SPACE(QObject *parent = nullptr) : ProgramBase{parent} {}
 
     static CategoryType GetCategory() { return CT_CATEGORY; }
     static QString GetName() { return "NAME_SPACE"; }
