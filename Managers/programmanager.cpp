@@ -12,6 +12,7 @@
 #include "Programs/Development/devframecapture.h"
 #include "Programs/Development/devsounddetection.h"
 #include "Programs/PokemonFRLG/giftreset.h"
+#include "Programs/PokemonFRLG/overworldshiny.h"
 #include "Programs/PokemonFRLG/starterreset.h"
 #include "Programs/PokemonLZA/donutmaker.h"
 #include "Programs/PokemonLZA/respawnreset.h"
@@ -72,6 +73,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::Development::DevFrameCapture>();
     RegisterProgram<Program::Development::DevSoundDetection>();
     RegisterProgram<Program::PokemonFRLG::GiftReset>();
+    RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
