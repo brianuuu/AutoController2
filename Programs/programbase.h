@@ -88,19 +88,21 @@ protected:
     void ClearModules();
 
     template<typename... Args>
-    void AddRunCommand(Args... args)
+    Module::Common::RunCommand* AddRunCommand(Args... args)
     {
         Module::Common::RunCommand* module = new Module::Common::RunCommand(args...);
         connect(module, &Module::Common::RunCommand::notifyFinished, this, &ProgramBase::OnCommandFinished);
         AddModule(module);
+        return module;
     }
 
     template<typename... Args>
-    void AddFrameCapture(Args... args)
+    Module::Common::FrameCapture* AddFrameCapture(Args... args)
     {
         Module::Common::FrameCapture* module = new Module::Common::FrameCapture(args...);
         connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
         AddModule(module);
+        return module;
     }
 
     void UnhandedStateRunCommand();
