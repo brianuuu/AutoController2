@@ -285,7 +285,7 @@ void DevFrameCapture::OnListChanged(const QString &str)
             m_minS->setValue(value.toInt());
             m_minS->blockSignals(false);
         }
-        if (JsonHelper::ReadValue(object, "MinS", value))
+        if (JsonHelper::ReadValue(object, "MinV", value))
         {
             m_minV->blockSignals(true);
             m_minV->setValue(value.toInt());
