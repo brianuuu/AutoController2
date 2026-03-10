@@ -3,12 +3,6 @@
 namespace Program::CATEGORY
 {
 
-NAME_NO_SPACE::NAME_NO_SPACE(QObject *parent)
-    : ProgramBase{parent}
-{
-    
-}
-
 void NAME_NO_SPACE::PopulateSettings(QBoxLayout *layout)
 {
     AddSpacer(layout);
