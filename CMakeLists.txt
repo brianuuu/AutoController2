@@ -111,6 +111,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
         Programs/Development/devsounddetection.h Programs/Development/devsounddetection.cpp
         Programs/PokemonFRLG/giftreset.cpp Programs/PokemonFRLG/giftreset.h
+        Programs/PokemonFRLG/nuggetfarmer.cpp Programs/PokemonFRLG/nuggetfarmer.h
         Programs/PokemonFRLG/overworldshiny.cpp Programs/PokemonFRLG/overworldshiny.h
         Programs/PokemonFRLG/permutationbase.h Programs/PokemonFRLG/permutationbase.cpp
         Programs/PokemonFRLG/starterreset.cpp Programs/PokemonFRLG/starterreset.h
