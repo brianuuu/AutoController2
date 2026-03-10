@@ -152,7 +152,7 @@ void GiftReset::OnFrameCaptureMatched(bool matched)
         ClearModules();
         if (matched)
         {
-            PrintLog("Starter No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
+            PrintLog("Gift No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
 
             m_state = SetState(State::Capture, "Taking screenshot");
             AddRunCommand("Capture|50,Nothing|100");
@@ -162,7 +162,7 @@ void GiftReset::OnFrameCaptureMatched(bool matched)
         }
         else
         {
-            PrintLog("Starter No." + m_statReset.GetString() + " is not shiny...", LOG_Warning);
+            PrintLog("Gift No." + m_statReset.GetString() + " is not shiny...", LOG_Warning);
             GetNextPermutation();
             StateSoftReset();
         }
