@@ -97,6 +97,7 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
             ClearModule(sender());
             m_elapsedTimer.restart();
 
+            ++m_statNuggets;
             m_state = SetState(State::BattleLose, "Battle " + QString::number(m_currentCount + 1) + " started, spamming A until returning to PC");
             AddFrameCapture("FRLG_DialogBox");
         }
@@ -104,7 +105,7 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
     }
     case State::BattleLose:
     {
-        if (m_elapsedTimer.elapsed() > 60000)
+        if (m_elapsedTimer.elapsed() > 120000)
         {
             emit notifyFinished(false, "Unable to detect returning to PC for too long");
             return;
@@ -128,8 +129,6 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
         {
             // dialogue finished
             ClearModules();
-
-            ++m_statNuggets;
             if (++m_currentCount == m_count->value())
             {
                 emit notifyFinished(true);
