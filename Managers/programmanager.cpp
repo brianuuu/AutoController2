@@ -115,7 +115,7 @@ void ProgramManager::RegisterStat(Stat &stat)
     QVariant value;
     if (JsonHelper::ReadValue(stats, stat.GetName(), value))
     {
-        stat.SetValue(value.toInt());
+        stat.SetTotal(value.toInt());
     }
 
     connect(&stat, &Stat::notifyStatChanged, this, [this]{ UpdateStats(); SaveStats(); });
@@ -138,7 +138,7 @@ void ProgramManager::UpdateStats() const
     int i = 0;
     for (Stat const* stat : std::as_const(m_stats))
     {
-        if (stat->GetValue() == 0 && stat->GetHideZero())
+        if (stat->GetTotal() == 0 && stat->GetHideZero())
         {
             continue;
         }
@@ -149,7 +149,7 @@ void ProgramManager::UpdateStats() const
             statsStr += ", ";
         }
 
-        statsStr += key + ": " + stat->GetString();
+        statsStr += key + ": " + stat->GetString() + " (" + stat->GetTotalString() + ")";
 
         // Write to individual files for each stat
         if (m_profileManager->StreamCounterEnabled())
@@ -162,7 +162,7 @@ void ProgramManager::UpdateStats() const
                 {
                     stream << key + ": ";
                 }
-                stream << stat->GetValue();
+                stream << stat->GetTotal();
                 file.close();
             }
         }
@@ -182,7 +182,7 @@ void ProgramManager::SaveStats()
     QJsonObject stats;
     for (Stat const* stat : std::as_const(m_stats))
     {
-        stats.insert(stat->GetName(), stat->GetValue());
+        stats.insert(stat->GetName(), stat->GetTotal());
     }
 
     json.insert(m_program->GetInternalName(), stats);
@@ -447,7 +447,7 @@ void ProgramManager::OnStatsReset()
         for (Stat* const stat : std::as_const(m_stats))
         {
             // this sends UpdateStats() signal
-            stat->ResetValue();
+            stat->Reset();
         }
     }
 }

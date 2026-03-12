@@ -16,30 +16,28 @@ public:
     QString GetName() const { return m_name; }
 
     int GetValue() const { return m_value; }
+    int GetTotal() const { return m_total; }
     bool GetHideZero() const { return m_hideZero; }
     QString GetString() const { return QString::number(m_value); }
+    QString GetTotalString() const { return QString::number(m_total); }
 
-    void ResetValue()
+    void Reset()
     {
         m_value = 0;
+        m_total = 0;
         emit notifyStatChanged();
     }
 
-    void SetValue(int value)
+    void SetTotal(int total)
     {
-        m_value = value;
-        emit notifyStatChanged();
-    }
-
-    void AddValue(int add)
-    {
-        m_value = qMax(0, m_value + add);
+        m_total = total;
         emit notifyStatChanged();
     }
 
     Stat& operator++() // Prefix increment operator.
     {
         ++m_value;
+        ++m_total;
         emit notifyStatChanged();
         return *this;
     }
@@ -50,6 +48,7 @@ signals:
 private:
     QString m_name;
     int m_value = 0;
+    int m_total = 0;
     bool m_hideZero = false;
 };
 
