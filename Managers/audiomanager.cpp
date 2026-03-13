@@ -570,7 +570,15 @@ void AudioManager::OnRefreshOutputList()
     // keep the previous output
     if (foundPreviousOutput)
     {
-        m_listOutput->setCurrentText(previousOutput);
+        if (previousOutput == "Default")
+        {
+            // default device might be changed
+            OnOutputChanged(previousOutput);
+        }
+        else
+        {
+            m_listOutput->setCurrentText(previousOutput);
+        }
     }
 }
 
@@ -593,6 +601,11 @@ void AudioManager::OnOutputChanged(QString const& str)
     {
         if (device.description() == str || (device.isDefault() && m_listOutput->currentText() == "Default"))
         {
+            if (m_audioOutput.device() == device)
+            {
+                return;
+            }
+
             m_audioOutput.setDevice(device);
 
             // device changed, may have to start audio again
