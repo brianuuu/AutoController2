@@ -108,7 +108,14 @@ void ProgramManager::RegisterStat(Stat &stat)
     if (!m_program) return;
 
     m_stats.push_back(&stat);
+    ReadStat(stat);
 
+    connect(&stat, &Stat::notifyStatChanged, this, [this]{ UpdateStats(); SaveStats(); });
+    UpdateStats();
+}
+
+void ProgramManager::ReadStat(Stat &stat)
+{
     QJsonObject json = JsonHelper::ReadJson(PROGRAM_STATS_JSON);
     QJsonObject stats = JsonHelper::ReadObject(json, m_program->GetInternalName());
 
@@ -117,9 +124,6 @@ void ProgramManager::RegisterStat(Stat &stat)
     {
         stat.SetTotal(value.toInt());
     }
-
-    connect(&stat, &Stat::notifyStatChanged, this, [this]{ UpdateStats(); SaveStats(); });
-    UpdateStats();
 }
 
 void ProgramManager::UpdateStats() const
@@ -490,6 +494,13 @@ void ProgramManager::SaveSettings() const
 void ProgramManager::StartProgram()
 {
     if (!m_program || m_program->IsRunning() || !m_program->CanRun()) return;
+
+    // make sure stat matches json and reset value for current run
+    for (Stat* stat : std::as_const(m_stats))
+    {
+        ReadStat(*stat);
+        stat->SetValue(0);
+    }
 
     m_btnStart->setText("Stop Program (F5)");
     m_btnResetDefault->setEnabled(false);

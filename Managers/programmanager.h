@@ -64,6 +64,7 @@ private:
     void RemoveProgram();
     bool HasProgramRun(QString const& name) const;
 
+    void ReadStat(Stat& stat);
     void UpdateStats() const;
     void SaveStats();
     void ClearStats();

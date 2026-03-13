@@ -28,6 +28,12 @@ public:
         emit notifyStatChanged();
     }
 
+    void SetValue(int value)
+    {
+        m_value = value;
+        emit notifyStatChanged();
+    }
+
     void SetTotal(int total)
     {
         m_total = total;
