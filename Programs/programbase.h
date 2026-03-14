@@ -78,7 +78,7 @@ protected slots:
     virtual void OnSoundDetected(int id) {}
 
 protected:
-    void RegisterStat(Stat& stat, QString const& name);
+    void RegisterStat(Stat& stat, QString const& name, bool hideZero = false);
 
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
 

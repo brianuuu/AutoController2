@@ -15,10 +15,13 @@ public:
     void SetName(QString const& name) { m_name = name; }
     QString GetName() const { return m_name; }
 
-    int GetValue() const { return m_value; }
-    int GetTotal() const { return m_total; }
+    void SetHideZero(bool hideZero) { m_hideZero = hideZero; }
     bool GetHideZero() const { return m_hideZero; }
+
+    int GetValue() const { return m_value; }
     QString GetString() const { return QString::number(m_value); }
+
+    int GetTotal() const { return m_total; }
     QString GetTotalString() const { return QString::number(m_total); }
 
     void Reset()

@@ -170,9 +170,10 @@ bool ProgramBase::OnModuleErrorQuit()
     return false;
 }
 
-void ProgramBase::RegisterStat(Stat &stat, const QString &name)
+void ProgramBase::RegisterStat(Stat &stat, const QString &name, bool hideZero)
 {
     stat.SetName(name);
+    stat.SetHideZero(hideZero);
     m_programManager->RegisterStat(stat);
 }
 
