@@ -76,16 +76,16 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
         ClearModules();
 
         bool matchSystemType = true;
-        if (m_color == ThemeLight)
+        if (CaptureHolder::GetColorMatch(m_color, ThemeLight))
         {
             PrintLog("Light Theme detected (Make sure System type in Global Settings is set correctly)", LOG_Important);
         }
-        else if (m_color == ThemeDark1)
+        else if (CaptureHolder::GetColorMatch(m_color, ThemeDark1))
         {
             PrintLog("Nintendo Switch 1 Dark Theme detected", LOG_Important);
             matchSystemType = m_profileManager->GetSystemType() == ST_Swtich1;
         }
-        else if (m_color == ThemeDark2)
+        else if (CaptureHolder::GetColorMatch(m_color, ThemeDark2))
         {
             PrintLog("Nintendo Switch 2 Dark Theme detected", LOG_Important);
             matchSystemType = m_profileManager->GetSystemType() == ST_Swtich2;
@@ -109,7 +109,7 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
     case State::ButtonTest:
     {
         QColor const color = module->GetResultColor();
-        if (color != m_color)
+        if (!CaptureHolder::GetColorMatch(color, m_color))
         {
             ClearModules();
 
