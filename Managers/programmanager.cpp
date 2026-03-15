@@ -75,7 +75,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::Development::DevSoundDetection>();
     RegisterProgram<Program::PokemonFRLG::GiftReset>();
     RegisterProgram<Program::PokemonFRLG::NuggetFarmer>();
-    RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
+    RegisterProgram<Program::PokemonFRLG::OverworldShiny>(true);
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
@@ -536,8 +536,12 @@ void ProgramManager::StopProgram()
 }
 
 template<class T>
-void ProgramManager::RegisterProgram()
+void ProgramManager::RegisterProgram(bool beta)
 {
+#ifndef QT_DEBUG
+    if (beta && !IS_BETA) return;
+#endif
+
     QString const category = CategoryToString(T::GetCategory());
     QString const name = T::GetName();
 

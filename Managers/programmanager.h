@@ -60,7 +60,7 @@ private:
     void StopProgram();
 
     template<class T>
-    void RegisterProgram();
+    void RegisterProgram(bool beta = false);
     void RemoveProgram();
     bool HasProgramRun(QString const& name) const;
 
