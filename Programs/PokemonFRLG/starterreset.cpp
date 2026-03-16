@@ -137,8 +137,8 @@ void StarterReset::OnFrameCaptureMatched(bool matched)
         {
             PrintLog("Starter No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
 
-            m_state = SetState(State::Capture, "Taking screenshot");
-            AddRunCommand("Capture|50,Nothing|100");
+            m_state = SetState(State::Capture, "Capturing video");
+            AddRunCommand("System_CaptureHome", 0);
             ++m_statShiny;
 
             SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
