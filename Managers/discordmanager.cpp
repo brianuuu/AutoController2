@@ -9,6 +9,7 @@ void DiscordManager::Initialize()
     connect(m_btnTestUser, &QPushButton::clicked, this, &DiscordManager::OnTestUser);
     connect(m_btnTestChannel, &QPushButton::clicked, this, &DiscordManager::OnTestChannel);
     connect(m_btnStartStop, &QPushButton::clicked, this, &DiscordManager::OnToggled);
+    connect(this, &DiscordManager::notifySendMessage, this, &DiscordManager::OnSendMessage);
 }
 
 void DiscordManager::SetEnabled(bool enabled)
@@ -23,31 +24,45 @@ void DiscordManager::SendMessage(const Discord::Embed &embed, bool isMention, bo
 {
     if (!m_enabled) return;
 
-    // create attachment
-    Discord::UploadAttachment u;
+    m_message = Message();
+    m_message.embed = embed;
+    m_message.isMention = isMention;
+    m_message.dmOnly = dmOnly;
+    m_message.image = img ? (*img) : QImage();
+
     if (img)
     {
-        u.type = Discord::UploadImageSupportedExtension::PNG;
-        u.name = "attachment.png";
-        QBuffer buffer(&u.file);
-        buffer.open(QIODevice::WriteOnly);
-        (*img).save(&buffer, "PNG");
+        auto future = QtConcurrent::run([this]{
+            m_message.u.type = Discord::UploadImageSupportedExtension::PNG;
+            m_message.u.name = "attachment.png";
+            QBuffer buffer(&m_message.u.file);
+            buffer.open(QIODevice::WriteOnly);
+            m_message.image.save(&buffer, "PNG");
+            emit notifySendMessage();
+        });
     }
+    else
+    {
+        OnSendMessage();
+    }
+}
 
+void DiscordManager::OnSendMessage()
+{
     // mention
-    QString const mention = isMention ? GetUserMention() : "";
+    QString const mention = m_message.isMention ? GetUserMention() : "";
 
     // send to channel
-    if (!m_settingChannel->text().isEmpty() && !dmOnly)
+    if (!m_settingChannel->text().isEmpty() && !m_message.dmOnly)
     {
         snowflake_t id = m_settingChannel->text().toULongLong();
-        if (img)
+        if (!m_message.image.isNull())
         {
-            m_client->createImageMessage(id, u, embed, mention);
+            m_client->createImageMessage(id, m_message.u, m_message.embed, mention);
         }
         else
         {
-            m_client->createMessage(id, embed, mention);
+            m_client->createMessage(id, m_message.embed, mention);
         }
     }
 
@@ -56,15 +71,15 @@ void DiscordManager::SendMessage(const Discord::Embed &embed, bool isMention, bo
     {
         snowflake_t id = m_settingUser->text().toULongLong();
         m_client->createDm(id).then(
-            [this, img, u, embed, mention](Discord::Channel const& c)
+            [this, mention](Discord::Channel const& c)
             {
-                if (img)
+                if (!m_message.image.isNull())
                 {
-                    m_client->createImageMessage(c.id(), u, embed, mention);
+                    m_client->createImageMessage(c.id(), m_message.u, m_message.embed, mention);
                 }
                 else
                 {
-                    m_client->createMessage(c.id(), embed, mention);
+                    m_client->createMessage(c.id(), m_message.embed, mention);
                 }
             }
         );

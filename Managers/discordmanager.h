@@ -3,6 +3,7 @@
 
 #include <QBuffer>
 #include <QPushButton>
+#include <QtConcurrent>
 #include <QWidget>
 
 #include "External/QDiscord/Discord/Client.h"
@@ -37,11 +38,15 @@ public:
     QPushButton* m_btnTestChannel = Q_NULLPTR;
     QPushButton* m_btnStartStop = Q_NULLPTR;
 
+signals:
+    void notifySendMessage();
+
 private slots:
     void OnSettingChanged();
     void OnTestUser();
     void OnTestChannel();
     void OnToggled();
+    void OnSendMessage();
 
 private:
     QString GetUserMention() const;
@@ -50,6 +55,15 @@ private:
     // QDiscord
     Discord::Client* m_client;
     bool m_enabled = false;
+
+    struct Message
+    {
+        Discord::Embed embed;
+        Discord::UploadAttachment u;
+        QImage image;
+        bool isMention = false;
+        bool dmOnly = false;
+    } m_message;
 };
 
 #endif // DISCORDMANAGER_H
