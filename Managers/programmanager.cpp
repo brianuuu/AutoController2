@@ -543,7 +543,7 @@ void ProgramManager::RegisterProgram(bool beta)
 #endif
 
     QString const category = CategoryToString(T::GetCategory());
-    QString const name = T::GetName();
+    QString const name = T::GetName() + (beta ? " (BETA)" : "");
 
     QStringList& list = m_categoryToPrograms[category];
     list.push_back(name);
