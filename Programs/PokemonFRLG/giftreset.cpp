@@ -44,7 +44,7 @@ void GiftReset::StateWaitDialogue()
 {
     m_state = SetState(State::WaitDialogue, "Press A and spam B until all dialogue finishes");
     QString command = "(A|50,None|50)2,B|Spam|10000";
-    if (m_advanceFrame->value() > 0)
+    if (!m_accept->isChecked() && m_advanceFrame->value() > 0) // gift with accept already waited
     {
         command = "None|" + QString::number(m_advanceFrame->value() * 20) + "," + command;
     }
