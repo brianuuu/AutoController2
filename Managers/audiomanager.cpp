@@ -302,12 +302,12 @@ void AudioManager::DoDetection()
                 continue;
             }
 
-            // calculate matching score
+            // Get the score by finding if current windows contains the template's spikes
+            // If so add the score by the magnitude of the spike and average to no. in the window
             float score = 0.0f;
             QVector<SpikeIDScore> const& spikesCollection = holder->getSpikesCollection();
             for (int i = 0; i < spikesCollection.size(); i++)
             {
-                // compare the difference is value, the less difference, the higher the score
                 float tempScore = 0.0f;
                 SpikeIDScore const& curCachedSpikes = m_cachedSpikes[m_cachedSpikes.size() - spikesCollection.size() + i];
                 SpikeIDScore const& curSpikesCollection = spikesCollection[i];
@@ -315,8 +315,7 @@ void AudioManager::DoDetection()
                 {
                     if (curCachedSpikes.contains(iter.key()))
                     {
-                        float const diff = qAbs(iter.value() - curCachedSpikes.value(iter.key()));
-                        tempScore += qMax(0.0f, 1.0f - diff);
+                        tempScore += iter.value();
                     }
                 }
                 tempScore /= qMax<float>(1.0f, curSpikesCollection.size());

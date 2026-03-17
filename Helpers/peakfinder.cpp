@@ -1,6 +1,5 @@
 // PeakFinder.cpp
 #include "peakfinder.h"
-#define PEAK_FINDER_SAVE_ALL_VALUES true
 
 void diff(std::vector<float> in, std::vector<float>& out)
 {
@@ -78,19 +77,6 @@ void scalarProduct(float scalar, std::vector<float> in, std::vector<float>& out)
 
 void PeakFinder::findPeaks(QVector<float> const& in, SpikeIDScore& peakInds, int indexStart, bool includeEndpoints, float extrema)
 {
-    if (PEAK_FINDER_SAVE_ALL_VALUES)
-    {
-        for (int i = 0; i < in.size(); i++)
-        {
-            float value = in.at(i);
-            if (value > 0.0f)
-            {
-                peakInds[i + indexStart] = value;
-            }
-        }
-        return;
-    }
-
     std::vector<float> x0 = std::vector<float>(in.begin(), in.end());
     std::vector<int> peakIndsStd;
 
@@ -287,6 +273,8 @@ void PeakFinder::findPeaks(QVector<float> const& in, SpikeIDScore& peakInds, int
 
     for (int index : peakIndsStd)
     {
+        if (index - 1 > 0) peakInds[index - 1 + indexStart] = in[index - 1];
         peakInds[index + indexStart] = in[index];
+        if (index + 1 < in.size()) peakInds[index + 1 + indexStart] = in[index + 1];
     }
 }
