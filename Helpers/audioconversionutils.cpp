@@ -18,8 +18,8 @@ AudioConversionUtils::AudioConversionUtils()
     m_spikeConvFunction.resize(18);
     for (int i = 0; i < 9; i++)
     {
-        m_spikeConvFunction[i] = (-4.0f + 8.f * i * 0.125f) * 0.25f;
-        m_spikeConvFunction[17 - i];
+        m_spikeConvFunction[i] = (-4.0f + i) * 0.25f;
+        m_spikeConvFunction[17 - i] = m_spikeConvFunction[i];
     }
 }
 
