@@ -92,7 +92,6 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(section.m_layout, "Bot Token:", "Token of your discord bot, do not share this with anyone and keep it safe", m_discordManager->m_settingToken, true);
 
         m_discordManager->m_settingUser = new Setting::SettingLineEdit("UserID");
-        m_discordManager->m_settingUser->setEnabled(false);
         m_discordManager->m_btnTestUser = new QPushButton("Send Test DM");
         m_discordManager->m_btnTestUser->setEnabled(false);
         m_discordManager->m_btnTestUser->setFixedWidth(130);
@@ -100,7 +99,6 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         m_discordManager->m_btnTestUser->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
         m_discordManager->m_settingChannel = new Setting::SettingLineEdit("ChannelID");
-        m_discordManager->m_settingChannel->setEnabled(false);
         m_discordManager->m_btnTestChannel = new QPushButton("Send Test Message");
         m_discordManager->m_btnTestChannel->setEnabled(false);
         m_discordManager->m_btnTestChannel->setFixedWidth(130);

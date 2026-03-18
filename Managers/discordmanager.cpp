@@ -6,6 +6,8 @@ void DiscordManager::Initialize()
     m_client = new Discord::Client("bot", this);
 
     connect(m_settingToken, &QLineEdit::textChanged, this, &DiscordManager::OnSettingChanged);
+    connect(m_settingUser, &QLineEdit::textChanged, this, &DiscordManager::OnSettingChanged);
+    connect(m_settingChannel, &QLineEdit::textChanged, this, &DiscordManager::OnSettingChanged);
     connect(m_btnTestUser, &QPushButton::clicked, this, &DiscordManager::OnTestUser);
     connect(m_btnTestChannel, &QPushButton::clicked, this, &DiscordManager::OnTestChannel);
     connect(m_btnStartStop, &QPushButton::clicked, this, &DiscordManager::OnToggled);
@@ -88,14 +90,11 @@ void DiscordManager::OnSendMessage()
 
 void DiscordManager::OnSettingChanged()
 {
-    bool const hasToken = !m_settingToken->text().isEmpty();
     m_settingToken->setEnabled(!m_enabled);
-    m_settingUser->setEnabled(hasToken && !m_enabled);
-    m_settingChannel->setEnabled(hasToken && !m_enabled);
 
     m_btnTestUser->setEnabled(m_enabled && !m_settingUser->text().isEmpty());
     m_btnTestChannel->setEnabled(m_enabled && !m_settingChannel->text().isEmpty());
-    m_btnStartStop->setEnabled(hasToken && (!m_settingUser->text().isEmpty() || !m_settingChannel->text().isEmpty()));
+    m_btnStartStop->setEnabled(!m_settingToken->text().isEmpty());
     m_btnStartStop->setText(m_enabled ? "Stop Bot" : "Start Bot");
 }
 
@@ -127,7 +126,7 @@ void DiscordManager::OnToggled()
         m_client->logout();
         m_enabled = false;
     }
-    else if (!m_settingToken->text().isEmpty() && (!m_settingUser->text().isEmpty() || !m_settingChannel->text().isEmpty()))
+    else if (!m_settingToken->text().isEmpty())
     {
         Discord::Token token;
         token.generate(m_settingToken->text(), Discord::Token::Type::BOT);
