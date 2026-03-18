@@ -29,6 +29,7 @@ void OverworldShiny::Start()
 {
     ProgramBase::Start();
 
+    m_battleDelay = 0;
     m_shinySoundID = m_audioManager->AddDetection("PokemonRSE/ShinySFX", 0.2f, 1500);
     if (m_shinySoundID == 0)
     {
@@ -127,6 +128,25 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
     {
         if (matched)
         {
+            qint64 const elapsed = m_elapsedTimer.elapsed();
+            if (m_battleDelay == 0 || m_battleDelay > elapsed)
+            {
+                // get minimum delay
+                m_battleDelay = elapsed;
+            }
+
+            QString log = "Battle selection delay = " + QString::number(elapsed) + "ms";
+            if (elapsed > m_battleDelay + 500)
+            {
+                PrintLog(log + " > " + QString::number(m_battleDelay) + "ms + 500ms", LOG_Success);
+                OnSoundDetected(m_shinySoundID);
+                break;
+            }
+            else
+            {
+                PrintLog(log, LOG_Important);
+            }
+
             ClearModules();
             m_state = SetState(State::RunAway, "No shiny detected, running away");
             m_audioManager->StopDetection(m_shinySoundID);
@@ -152,6 +172,12 @@ void OverworldShiny::OnWaitTimeout()
         m_audioManager->StartDetection(m_shinySoundID);
         AddRunCommand("B|Spam|10000");
         AddFrameCapture("FRLG_BattleBox");
+
+        m_elapsedTimer.restart();
+        if (m_battleDelay == 0)
+        {
+            PrintLog("Calibrating battle selection delay...");
+        }
         break;
     }
     default:
