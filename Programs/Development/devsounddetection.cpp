@@ -22,7 +22,7 @@ void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
     connect(m_file, &QLineEdit::textChanged, this, &DevSoundDetection::OnFileChanged);
     m_btnPlay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    m_minScore = new Setting::SettingDoubleSpinBox("MinScore", 0.0, 1.0, 0.5);
+    m_minScore = new Setting::SettingDoubleSpinBox("MinScore", 0.0, 10.0, 0.5);
     m_minScore->setDecimals(3);
     m_savedSettings.insert(m_minScore);
     AddSetting(layout, "Min Score:", "", m_minScore, true);
