@@ -120,7 +120,7 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
             ClearModules();
             m_state = SetState(State::RunAway, "No shiny detected, running away");
             m_audioManager->StopDetection(m_shinySoundID);
-            AddRunCommand("LRight|50,None|50,LDown|50,None|50,A|Spam|1000,None|2000");
+            AddRunCommand("FRLG_RunFromEncounter", 0);
         }
         break;
     }
