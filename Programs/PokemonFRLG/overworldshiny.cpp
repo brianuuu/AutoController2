@@ -6,8 +6,9 @@ namespace Program::PokemonFRLG
 
 void OverworldShiny::PopulateSettings(QBoxLayout *layout)
 {
-    m_type = new Setting::SettingComboBox("Type", {"Up/Down", "Left/Right"});
-    AddSetting(layout, "Type:", "Move Up and Down, or Left and Right", m_type, true);
+    m_type = new Setting::SettingComboBox("Type", {"Up/Down", "Left/Right", "Spin in Place"});
+    AddSetting(layout, "Type:", "Move Up and Down, Left and Right, or Spin in Place", m_type, true);
+    connect(m_type, &QComboBox::currentIndexChanged, this, &OverworldShiny::OnTypeChanged);
 
     m_moveTime = new Setting::SettingSpinBox("MoveTime", 100, 60000, 1000);
     AddSetting(layout, "Move Time:", "Move for this many milliseconds before turning around", m_moveTime, true);
@@ -41,6 +42,11 @@ void OverworldShiny::Start()
 void OverworldShiny::Stop()
 {
     ProgramBase::Stop();
+}
+
+void OverworldShiny::OnTypeChanged(int index)
+{
+    m_moveTime->setEnabled((Type)index != Type::SpinInPlace);
 }
 
 void OverworldShiny::OnCommandFinished()
@@ -92,7 +98,11 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
     {
     case State::Move:
     {
-        if (m_blackTop && m_blackBottom)
+        if (m_elapsedTimer.elapsed() > 60000)
+        {
+            emit notifyFinished(false, "Unable to detect encounter for too long");
+        }
+        else if (m_blackTop && m_blackBottom)
         {
             ClearModule(m_moduleMove);
             m_moduleMove = Q_NULLPTR;
@@ -169,21 +179,24 @@ void OverworldShiny::StateMove()
     m_state = SetState(State::Move, "Moving back and forth until encounter");
 
     QString const moveTime = QString::number(m_moveTime->value());
-    QString command;
-    if (m_type->currentIndex() == (int)Type::UpDown)
+    switch ((Type)m_type->currentIndex())
     {
-        command = "(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0";
+    case Type::UpDown:
+        m_moduleMove = AddRunCommand("(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0");
+        break;
+    case Type::LeftRight:
+        m_moduleMove = AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
+        break;
+    case Type::SpinInPlace:
+        m_moduleMove = AddRunCommand("FRLG_SpinInPlace", 0);
+        break;
     }
-    else
-    {
-        command = "(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0";
-    }
-    m_moduleMove = AddRunCommand(command);
 
     m_moduleTop = AddFrameCapture("FRLG_EncounterTop");
     m_moduleBottom = AddFrameCapture("FRLG_EncounterBottom");
     m_blackTop = false;
     m_blackBottom = false;
+    m_elapsedTimer.restart();
 }
 
 }

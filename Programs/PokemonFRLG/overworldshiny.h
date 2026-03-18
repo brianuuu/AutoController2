@@ -35,6 +35,7 @@ public:
     void Stop() override;
 
 private slots:
+    void OnTypeChanged(int index);
     void OnCommandFinished() override;
     void OnFrameCaptureMatched(bool matched) override;
     void OnWaitTimeout() override;
@@ -55,6 +56,7 @@ private: // types
     {
         UpDown,
         LeftRight,
+        SpinInPlace,
     };
 
 private: // function
