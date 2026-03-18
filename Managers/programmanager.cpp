@@ -295,17 +295,17 @@ void ProgramManager::OnCanRunChanged(bool canRun)
         StopProgram();
     }
 
-    auto fnSetPalette = [](QLabel* label, bool valid)
+    auto fnSetPalette = [](QLabel* label, bool required, bool valid)
     {
         QPalette palette = label->palette();
-        palette.setColor(QPalette::WindowText, valid ? QGuiApplication::palette().windowText().color() : LogTypeToColor(LOG_Error));
+        palette.setColor(QPalette::WindowText, required ? (valid ? LogTypeToColor(LOG_Success) : LogTypeToColor(LOG_Error)) : QGuiApplication::palette().windowText().color());
         label->setPalette(palette);
     };
 
     // highlight required elements
-    fnSetPalette(m_labelSerial, m_program->ValidSerial());
-    fnSetPalette(m_labelCamera, m_program->ValidVideo());
-    fnSetPalette(m_labelAudio, m_program->ValidAudio());
+    fnSetPalette(m_labelSerial, m_program->RequireSerial(), m_program->ValidSerial());
+    fnSetPalette(m_labelCamera, m_program->RequireVideo(), m_program->ValidVideo());
+    fnSetPalette(m_labelAudio, m_program->RequireAudio(), m_program->ValidAudio());
 
     m_btnStart->setEnabled(canRun);
 }
