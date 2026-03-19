@@ -92,7 +92,8 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
         }
         else
         {
-            PrintLog("Unable to determine Nintendo Switch theme from color " + m_color.name() + ", display color from capture card maybe inaccurate. (Is HDR option turned off for Nintendo Switch 2?)", LOG_Warning);
+            PrintLog("Unable to determine Nintendo Switch theme from color " + m_color.name() + ", display color from capture card maybe inaccurate. "
+                "(Is HDR option turned off for Nintendo Switch 2? Both Console Screen’s HDR Output AND HDR Output setting below)", LOG_Warning);
         }
 
         if (!matchSystemType)
