@@ -75,7 +75,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::Development::DevSoundDetection>();
     RegisterProgram<Program::PokemonFRLG::GiftReset>();
     RegisterProgram<Program::PokemonFRLG::NuggetFarmer>();
-    RegisterProgram<Program::PokemonFRLG::OverworldShiny>(true);
+    RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
