@@ -54,7 +54,7 @@ private:
     QPushButton* m_btnPlay = Q_NULLPTR;
     Setting::SettingLineEdit* m_file = Q_NULLPTR;
     Setting::SettingDoubleSpinBox* m_minScore = Q_NULLPTR;
-    Setting::SettingSpinBox* m_lowPassFilter = Q_NULLPTR;
+    Setting::SettingSpinBox* m_lowFreqFilter = Q_NULLPTR;
 };
 }
 

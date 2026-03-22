@@ -27,10 +27,10 @@ void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_minScore);
     AddSetting(layout, "Min Score:", "", m_minScore, true);
 
-    m_lowPassFilter = new Setting::SettingSpinBox("LowPassFilter", 0, 19000, 1000);
-    m_lowPassFilter->setSingleStep(100);
-    m_savedSettings.insert(m_lowPassFilter);
-    AddSetting(layout, "Low Pass Filter:", "", m_lowPassFilter, true);
+    m_lowFreqFilter = new Setting::SettingSpinBox("LowFreqFilter", 0, 19000, 1000);
+    m_lowFreqFilter->setSingleStep(100);
+    m_savedSettings.insert(m_lowFreqFilter);
+    AddSetting(layout, "Low Frequency Filter:", "", m_lowFreqFilter, true);
 
     AddSpacer(layout);
 
@@ -46,7 +46,7 @@ void DevSoundDetection::Start()
 {
     ProgramBase::Start();
 
-    m_soundID = m_audioManager->AddDetection(m_file->text(), m_minScore->value(), m_lowPassFilter->value());
+    m_soundID = m_audioManager->AddDetection(m_file->text(), m_minScore->value(), m_lowFreqFilter->value());
     if (m_soundID == 0)
     {
         emit notifyFinished(false);
