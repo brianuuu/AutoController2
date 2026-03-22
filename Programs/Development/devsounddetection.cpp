@@ -13,16 +13,7 @@ DevSoundDetection::DevSoundDetection(QObject *parent)
 
 void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
 {
-    QDir const directory(AudioManager::GetDirectory());
-    QStringList const files = directory.entryList({"*" + AudioManager::GetExtension()}, QDir::Files);
-
-    QStringList names = { CUSTOM_SELECTION };
-    for (QString const& file : files)
-    {
-        names << file.mid(0, file.size() - AudioManager::GetExtension().size());
-    }
-
-    m_list = new Setting::SettingComboBox("Preset", names);
+    m_list = new Setting::System::SettingPreset("Preset", AudioManager::GetDirectory(), AudioManager::GetExtension(), true);
     m_savedSettings.insert(m_list);
     AddSetting(layout, "Preset Select:", "Select sound detection preset", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &DevSoundDetection::OnListChanged);
@@ -50,8 +41,8 @@ void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
     m_btnDirectory = new QPushButton("Open Directory");
     AddSettings(layout, "", "", {m_btnSave, m_btnDelete, m_btnDirectory}, true);
     connect(m_btnSave, &QPushButton::clicked, this, &DevSoundDetection::OnSave);
-    connect(m_btnDelete, &QPushButton::clicked, this, &DevSoundDetection::OnDelete);
-    connect(m_btnDirectory, &QPushButton::clicked, this, &DevSoundDetection::OnOpenDirectory);
+    connect(m_btnDelete, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnDelete);
+    connect(m_btnDirectory, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnOpenDirectory);
 
     AddSpacer(layout);
 
@@ -182,22 +173,6 @@ void DevSoundDetection::OnSave()
     }
 
     m_list->setCurrentText(name);
-}
-
-void DevSoundDetection::OnDelete()
-{
-    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-    resBtn = QMessageBox::warning(m_btnDelete, "Warning", "Are you sure you want to delete current preset?\nThis cannot be undone.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes)
-    {
-        QFile::remove(AudioManager::GetDirectory() + m_list->currentText() + AudioManager::GetExtension());
-        m_list->removeItem(m_list->currentIndex());
-    }
-}
-
-void DevSoundDetection::OnOpenDirectory()
-{
-    QDesktopServices::openUrl(QUrl::fromLocalFile(AudioManager::GetDirectory()));
 }
 
 QString DevSoundDetection::GetFileName() const

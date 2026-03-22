@@ -1,14 +1,12 @@
 #ifndef DEVCOMMAND_H
 #define DEVCOMMAND_H
 
-#include <QDesktopServices>
-#include <QDir>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 
 #include "../programbase.h"
+#include "Settings/System/settingpreset.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settinglineedit.h"
 #include "Types/categorytype.h"
@@ -45,14 +43,12 @@ private slots:
     void OnCommandChanged();
     void OnCommandEdited();
     void OnCommandSave();
-    void OnCommandDelete();
-    void OnOpenDirectory();
 
 private:
     void VerifyCommand();
 
 private:
-    Setting::SettingComboBox* m_list = Q_NULLPTR;
+    Setting::System::SettingPreset* m_list = Q_NULLPTR;
 
     struct CommandSettings
     {

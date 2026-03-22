@@ -1,14 +1,13 @@
 #ifndef DEVFRAMECAPTURE_H
 #define DEVFRAMECAPTURE_H
 
-#include <QDesktopServices>
-#include <QDir>
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QLineEdit>
 
 #include "../programbase.h"
 #include "Modules/Common/framecapture.h"
+#include "Settings/System/settingpreset.h"
 #include "Settings/settingcolor.h"
 #include "Settings/settingcheckbox.h"
 #include "Settings/settingcombobox.h"
@@ -62,8 +61,6 @@ private slots:
     void OnMouseMoved(QPoint pos);
 
     void OnSave();
-    void OnDelete();
-    void OnOpenDirectory();
 
     void OnRunOCR();
     void OnOCRFinished();
@@ -84,7 +81,7 @@ private:
 private:
     VideoManager* m_videoManager = Q_NULLPTR;
 
-    Setting::SettingComboBox* m_list = Q_NULLPTR;
+    Setting::System::SettingPreset* m_list = Q_NULLPTR;
     Setting::SettingComboBox* m_mode = Q_NULLPTR;
 
     Setting::SettingSpinBox* m_left = Q_NULLPTR;

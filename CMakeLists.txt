@@ -123,6 +123,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/programbase.h Programs/programbase.cpp
         Settings/PokemonLZA/settingflavorpower.h Settings/PokemonLZA/settingflavorpower.cpp
         Settings/System/settinglanguage.h Settings/System/settinglanguage.cpp
+        Settings/System/settingpreset.cpp Settings/System/settingpreset.h
         Settings/System/settingthreadpriority.h Settings/System/settingthreadpriority.cpp
         Settings/settingbase.h
         Settings/settingcheckbox.cpp Settings/settingcheckbox.h

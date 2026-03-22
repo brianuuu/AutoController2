@@ -25,16 +25,7 @@ DevFrameCapture::~DevFrameCapture()
 void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
 {
     {
-        QDir const directory(CaptureHolder::GetDirectory());
-        QStringList const files = directory.entryList({"*" + CaptureHolder::GetFormat()}, QDir::Files);
-
-        QStringList names = { CUSTOM_SELECTION };
-        for (QString const& file : files)
-        {
-            names << file.mid(0, file.size() - CaptureHolder::GetFormat().size());
-        }
-
-        m_list = new Setting::SettingComboBox("CaptureType", names);
+        m_list = new Setting::System::SettingPreset("CaptureType", CaptureHolder::GetDirectory(), CaptureHolder::GetFormat(), true);
         m_savedSettings.insert(m_list);
         AddSetting(layout, "Capture Preset:", "", m_list, true);
         connect(m_list, &QComboBox::currentTextChanged, this, &DevFrameCapture::OnListChanged);
@@ -92,8 +83,8 @@ void DevFrameCapture::PopulateSettings(QBoxLayout *layout)
     m_btnDirectory = new QPushButton("Open Directory");
     AddSettings(layout, "", "", {m_btnSave, m_btnDelete, m_btnDirectory}, true);
     connect(m_btnSave, &QPushButton::clicked, this, &DevFrameCapture::OnSave);
-    connect(m_btnDelete, &QPushButton::clicked, this, &DevFrameCapture::OnDelete);
-    connect(m_btnDirectory, &QPushButton::clicked, this, &DevFrameCapture::OnOpenDirectory);
+    connect(m_btnDelete, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnDelete);
+    connect(m_btnDirectory, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnOpenDirectory);
 
     AddSeparator(layout);
 
@@ -469,22 +460,6 @@ void DevFrameCapture::OnSave()
     }
 
     m_list->setCurrentText(name);
-}
-
-void DevFrameCapture::OnDelete()
-{
-    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-    resBtn = QMessageBox::warning(m_btnDelete, "Warning", "Are you sure you want to delete current capture?\nThis cannot be undone.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes)
-    {
-        QFile::remove(CaptureHolder::GetDirectory() + m_list->currentText() + CaptureHolder::GetFormat());
-        m_list->removeItem(m_list->currentIndex());
-    }
-}
-
-void DevFrameCapture::OnOpenDirectory()
-{
-    QDesktopServices::openUrl(QUrl::fromLocalFile(CaptureHolder::GetDirectory()));
 }
 
 void DevFrameCapture::OnRunOCR()
