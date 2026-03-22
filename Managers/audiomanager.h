@@ -46,6 +46,7 @@ public:
 
     // Sound detection
     void ToggleSpectrogram(bool enabled);
+    int AddDetection(QString const& preset);
     int AddDetection(QString const& fileName, float minScore, int lowFreqFilter = 1000);
     void StartDetection(int id);
     void StopDetection(int id = 0);

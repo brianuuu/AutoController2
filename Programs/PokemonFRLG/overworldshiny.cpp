@@ -30,7 +30,7 @@ void OverworldShiny::Start()
     ProgramBase::Start();
 
     m_battleDelay = 0;
-    m_shinySoundID = m_audioManager->AddDetection("PokemonRSE/ShinySFX", 0.2f, 1500);
+    m_shinySoundID = m_audioManager->AddDetection("FRLG_Shiny");
     if (m_shinySoundID == 0)
     {
         emit notifyFinished(false);

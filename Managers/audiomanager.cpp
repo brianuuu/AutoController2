@@ -164,6 +164,29 @@ void AudioManager::ToggleSpectrogram(bool enabled)
     }
 }
 
+int AudioManager::AddDetection(const QString &preset)
+{
+    QString const name = GetDirectory() + preset + GetExtension();
+    QJsonObject const object = JsonHelper::ReadJson(name);
+    if (object.isEmpty()) return 0;
+
+    QString fileName;
+    float minScore = 0.0f;
+    int lowFreqFilter = 0;
+
+    QVariant value;
+    if (!JsonHelper::ReadValue(object, "File", value)) return 0;
+    fileName = value.toString();
+
+    if (!JsonHelper::ReadValue(object, "MinScore", value)) return 0;
+    minScore = value.toFloat();
+
+    if (!JsonHelper::ReadValue(object, "LowFreqFilter", value)) return 0;
+    lowFreqFilter = value.toInt();
+
+    return AddDetection(fileName, minScore, lowFreqFilter);
+}
+
 int AudioManager::AddDetection(const QString &fileName, float minScore, int lowFreqFilter)
 {
     AudioFileHolder* holder = nullptr;
