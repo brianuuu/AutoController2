@@ -17,16 +17,7 @@ CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 
 void CustomCommand::PopulateSettings(QBoxLayout *layout)
 {
-    QDir const directory(CUSTOM_COMMAND_DIRECTORY);
-    QStringList const files = directory.entryList({"*" + CUSTOM_COMMAND_FORMAT}, QDir::Files);
-
-    QStringList names = { CUSTOM_SELECTION };
-    for (QString const& file : files)
-    {
-        names << file.mid(0, file.size() - CUSTOM_COMMAND_FORMAT.size());
-    }
-
-    m_list = new Setting::SettingComboBox("CommandType", names);
+    m_list = new Setting::System::SettingPreset("CommandType", CUSTOM_COMMAND_DIRECTORY, CUSTOM_COMMAND_FORMAT, true);
     m_savedSettings.insert(m_list);
     AddSetting(layout, "Command Select:", "Select a pre-made command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
@@ -51,8 +42,8 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_btnDirectory = new QPushButton("Open Directory");
     AddSettings(layout, "", "", {m_btnSave, m_btnDelete, m_btnDirectory}, true);
     connect(m_btnSave, &QPushButton::clicked, this, &CustomCommand::OnCommandSave);
-    connect(m_btnDelete, &QPushButton::clicked, this, &CustomCommand::OnCommandDelete);
-    connect(m_btnDirectory, &QPushButton::clicked, this, &CustomCommand::OnOpenDirectory);
+    connect(m_btnDelete, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnDelete);
+    connect(m_btnDirectory, &QPushButton::clicked, m_list, &Setting::System::SettingPreset::OnOpenDirectory);
 
     // set initial text
     OnListChanged(m_list->currentText());
@@ -159,22 +150,6 @@ void CustomCommand::OnCommandSave()
     }
 
     m_list->setCurrentText(name);
-}
-
-void CustomCommand::OnCommandDelete()
-{
-    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-    resBtn = QMessageBox::warning(m_btnDelete, "Warning", "Are you sure you want to delete current command?\nThis cannot be undone.", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes)
-    {
-        QFile::remove(CUSTOM_COMMAND_DIRECTORY + m_list->currentText() + CUSTOM_COMMAND_FORMAT);
-        m_list->removeItem(m_list->currentIndex());
-    }
-}
-
-void CustomCommand::OnOpenDirectory()
-{
-    QDesktopServices::openUrl(QUrl::fromLocalFile(CUSTOM_COMMAND_DIRECTORY));
 }
 
 void CustomCommand::VerifyCommand()

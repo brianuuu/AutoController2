@@ -1,14 +1,12 @@
 #ifndef SYSTEM_CUSTOMCOMMAND_H
 #define SYSTEM_CUSTOMCOMMAND_H
 
-#include <QDesktopServices>
-#include <QDir>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 
 #include "../programbase.h"
-#include "Settings/settingcombobox.h"
+#include "Settings/System/settingpreset.h"
 #include "Settings/settinglineedit.h"
 #include "Settings/settingtextedit.h"
 #include "Types/categorytype.h"
@@ -45,14 +43,12 @@ private slots:
     void OnCommandChanged();
     void OnCommandEdited();
     void OnCommandSave();
-    void OnCommandDelete();
-    void OnOpenDirectory();
 
 private:
     void VerifyCommand();
 
 private:
-    Setting::SettingComboBox* m_list = Q_NULLPTR;
+    Setting::System::SettingPreset* m_list = Q_NULLPTR;
     Setting::SettingLineEdit* m_command = Q_NULLPTR;
     Setting::SettingTextEdit* m_description = Q_NULLPTR;
     QLabel* m_labelStatus = Q_NULLPTR;
