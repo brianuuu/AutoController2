@@ -17,6 +17,10 @@ SettingPreset::SettingPreset(const QString &name, const QString &directory, cons
     {
         names << CUSTOM_SELECTION;
     }
+    else
+    {
+        names << "None";
+    }
 
     for (QString const& file : files)
     {
@@ -24,6 +28,12 @@ SettingPreset::SettingPreset(const QString &name, const QString &directory, cons
     }
 
     this->addItems(names);
+}
+
+void SettingPreset::OnEdited()
+{
+    // user input only
+    this->setCurrentIndex(0);
 }
 
 void SettingPreset::OnDelete()

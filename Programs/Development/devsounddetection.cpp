@@ -25,7 +25,7 @@ void DevSoundDetection::PopulateSettings(QBoxLayout *layout)
     AddSettings(layout, "Sound File:", "File must be located in Resources folder and .wav format", {m_btnPlay, m_file}, true);
     connect(m_btnPlay, &QPushButton::clicked, this, &DevSoundDetection::OnPlaySound);
     connect(m_file, &QLineEdit::textChanged, this, &DevSoundDetection::OnFileChanged);
-    connect(m_file, &QLineEdit::textEdited, this, &DevSoundDetection::OnFileEdited);
+    connect(m_file, &QLineEdit::textEdited, m_list, &Setting::System::SettingPreset::OnEdited);
     m_btnPlay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     m_minScore = new Setting::SettingDoubleSpinBox("MinScore", 0.0, 10.0, 0.5);
@@ -84,12 +84,6 @@ void DevSoundDetection::OnFileChanged()
     m_btnPlay->setEnabled(m_validSound);
     m_btnSave->setEnabled(m_validSound);
     OnCanRunChanged();
-}
-
-void DevSoundDetection::OnFileEdited()
-{
-    // user input only
-    m_list->setCurrentText(CUSTOM_SELECTION);
 }
 
 void DevSoundDetection::OnPlaySound()

@@ -26,7 +26,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
     AddSetting(layout, "Current Command:", "", m_command, false);
     connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandChanged);
-    connect(m_command, &QLineEdit::textEdited, this, &CustomCommand::OnCommandEdited);
+    connect(m_command, &QLineEdit::textEdited, m_list, &Setting::System::SettingPreset::OnEdited);
 
     // add error message label and move it to the layout above, horribly
     m_labelStatus = AddText(layout, "", true);
@@ -35,7 +35,7 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_description = new Setting::SettingTextEdit("Description");
     AddSetting(layout, "Description:", "", m_description, false);
     m_description->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(m_description, &QTextEdit::textChanged, this, &CustomCommand::OnCommandEdited);
+    connect(m_description, &QTextEdit::textChanged, m_list, &Setting::System::SettingPreset::OnEdited);
 
     m_btnSave = new QPushButton("Save As...");
     m_btnDelete = new QPushButton("Delete");
@@ -115,12 +115,6 @@ void CustomCommand::OnCommandChanged()
 {
     // user input or programmatic change
     VerifyCommand();
-}
-
-void CustomCommand::OnCommandEdited()
-{
-    // user input only
-    m_list->setCurrentText(CUSTOM_SELECTION);
 }
 
 void CustomCommand::OnCommandSave()

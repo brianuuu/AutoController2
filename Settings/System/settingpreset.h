@@ -16,6 +16,7 @@ public:
     explicit SettingPreset(QString const& name, QString const& directory, QString const& extension, bool addCustom);
 
 public slots:
+    void OnEdited();
     void OnDelete();
     void OnOpenDirectory();
 

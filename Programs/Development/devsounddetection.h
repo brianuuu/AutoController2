@@ -42,7 +42,6 @@ public:
 
 private slots:
     void OnFileChanged();
-    void OnFileEdited();
     void OnPlaySound();
     void OnListChanged(QString const& str);
     void OnSave();

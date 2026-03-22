@@ -41,7 +41,6 @@ public:
 private slots:
     void OnListChanged(QString const& str);
     void OnCommandChanged();
-    void OnCommandEdited();
     void OnCommandSave();
 
 private:

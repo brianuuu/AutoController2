@@ -33,7 +33,7 @@ void DevCommand::PopulateSettings(QBoxLayout *layout)
         settings.m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
         AddSetting(layout, fullName + " Command:", "", settings.m_command, false);
         connect(settings.m_command, &QLineEdit::textChanged, this, &DevCommand::OnCommandChanged);
-        connect(settings.m_command, &QLineEdit::textEdited, this, &DevCommand::OnCommandEdited);
+        connect(settings.m_command, &QLineEdit::textEdited, m_list, &Setting::System::SettingPreset::OnEdited);
 
         // add error message label and move it to the layout above, horribly
         settings.m_labelStatus = AddText(layout, "", true);
@@ -130,12 +130,6 @@ void DevCommand::OnCommandChanged()
 {
     // user input or programmatic change
     VerifyCommand();
-}
-
-void DevCommand::OnCommandEdited()
-{
-    // user input only
-    m_list->setCurrentText(CUSTOM_SELECTION);
 }
 
 void DevCommand::OnCommandSave()
