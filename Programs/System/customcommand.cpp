@@ -1,6 +1,7 @@
 #include "customcommand.h"
 
 #include "Helpers/jsonhelper.h"
+#include "Managers/audiomanager.h"
 #include "Managers/serialmanager.h"
 #include "Modules/Common/runcommand.h"
 #include "defines.h"
@@ -21,6 +22,14 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_list);
     AddSetting(layout, "Command Select:", "Select a pre-made command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &CustomCommand::OnListChanged);
+
+    m_btnPlay = new QPushButton("Play");
+    m_btnPlay->setEnabled(false);
+    m_sound = new Setting::System::SettingPreset("SoundType", AudioManager::GetDirectory(), AudioManager::GetExtension(), false);
+    AddSettings(layout, "Sound Detection:", "If this sound is detected, a capture is taken and stops the program at Home screen", {m_btnPlay, m_sound}, true);
+    connect(m_btnPlay, &QPushButton::clicked, this, &CustomCommand::OnPlaySound);
+    connect(m_sound, &QComboBox::currentTextChanged, this, &CustomCommand::OnSoundChanged);
+    m_btnPlay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     m_command = new Setting::SettingLineEdit("CommandEdit");
     m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
@@ -60,6 +69,19 @@ void CustomCommand::Start()
     Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->text());
     AddModule(module, true);
     m_btnDelete->setEnabled(false);
+
+    if (m_sound->currentIndex() > 0)
+    {
+        m_soundID = m_audioManager->AddDetection(m_sound->currentText());
+        if (m_soundID == 0)
+        {
+            emit notifyFinished(false);
+        }
+        else
+        {
+            m_audioManager->StartDetection(m_soundID);
+        }
+    }
 }
 
 void CustomCommand::Stop()
@@ -74,6 +96,7 @@ void CustomCommand::OnListChanged(const QString &str)
     if (str == CUSTOM_SELECTION)
     {
         // should save custom command
+        m_savedSettings.insert(m_sound);
         m_savedSettings.insert(m_command);
         m_savedSettings.insert(m_description);
         return;
@@ -81,12 +104,23 @@ void CustomCommand::OnListChanged(const QString &str)
     else
     {
         // don't save
+        m_savedSettings.remove(m_sound);
         m_savedSettings.remove(m_command);
         m_savedSettings.remove(m_description);
     }
 
     QString const name = CUSTOM_COMMAND_DIRECTORY + str + CUSTOM_COMMAND_FORMAT;
     QJsonObject const object = JsonHelper::ReadJson(name);
+
+    QVariant sound;
+    if (JsonHelper::ReadValue(object, "Sound", sound))
+    {
+        m_sound->setCurrentText(sound.toString());
+    }
+    else
+    {
+        m_sound->setCurrentIndex(0);
+    }
 
     QVariant command;
     if (JsonHelper::ReadValue(object, "Command", command))
@@ -111,6 +145,34 @@ void CustomCommand::OnListChanged(const QString &str)
     }
 }
 
+void CustomCommand::OnSoundChanged()
+{
+    m_btnPlay->setEnabled(m_sound->currentIndex() > 0);
+    m_list->OnEdited();
+    OnCanRunChanged();
+}
+
+void CustomCommand::OnPlaySound()
+{
+    if (m_mediaPlayer)
+    {
+        m_mediaPlayer->stop();
+        delete m_mediaPlayer;
+    }
+
+    QString const name = AudioManager::GetDirectory() + m_sound->currentText() + AudioManager::GetExtension();
+    QJsonObject const object = JsonHelper::ReadJson(name);
+    if (object.isEmpty()) return;
+
+    QVariant value;
+    if (!JsonHelper::ReadValue(object, "File", value)) return;
+
+    m_mediaPlayer = new QMediaPlayer(this);
+    m_mediaPlayer->setAudioOutput(m_audioManager->GetAudioOutput());
+    m_mediaPlayer->setSource(QUrl::fromLocalFile(RESOURCES_PATH + value.toString() + ".wav"));
+    m_mediaPlayer->play();
+}
+
 void CustomCommand::OnCommandChanged()
 {
     // user input or programmatic change
@@ -133,6 +195,7 @@ void CustomCommand::OnCommandSave()
     }
 
     QJsonObject object;
+    object.insert("Sound", m_sound->currentText());
     object.insert("Command", m_command->text());
     object.insert("Description", m_description->toPlainText());
     JsonHelper::WriteJson(file, object);
@@ -144,6 +207,19 @@ void CustomCommand::OnCommandSave()
     }
 
     m_list->setCurrentText(name);
+}
+
+void CustomCommand::OnCommandFinished()
+{
+    // only used when sound was detected
+    emit notifyFinished(true);
+}
+
+void CustomCommand::OnSoundDetected(int id)
+{
+    // interrupt current command
+    ClearModules();
+    AddRunCommand("System_CaptureHome", 0);
 }
 
 void CustomCommand::VerifyCommand()

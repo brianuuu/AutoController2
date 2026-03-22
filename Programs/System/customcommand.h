@@ -2,6 +2,7 @@
 #define SYSTEM_CUSTOMCOMMAND_H
 
 #include <QFileDialog>
+#include <QMediaPlayer>
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 
@@ -31,7 +32,7 @@ public:
 
     bool RequireSerial() const override { return true; }
     bool RequireVideo() const override { return false; }
-    bool RequireAudio() const override { return false; }
+    bool RequireAudio() const override { return m_sound->currentIndex() > 0; }
 
     bool CanRun() const override;
 
@@ -40,21 +41,30 @@ public:
 
 private slots:
     void OnListChanged(QString const& str);
+    void OnSoundChanged();
+    void OnPlaySound();
     void OnCommandChanged();
     void OnCommandSave();
+
+    void OnCommandFinished() override;
+    void OnSoundDetected(int id) override;
 
 private:
     void VerifyCommand();
 
 private:
     Setting::System::SettingPreset* m_list = Q_NULLPTR;
+    Setting::System::SettingPreset* m_sound = Q_NULLPTR;
     Setting::SettingLineEdit* m_command = Q_NULLPTR;
     Setting::SettingTextEdit* m_description = Q_NULLPTR;
     QLabel* m_labelStatus = Q_NULLPTR;
+    QPushButton* m_btnPlay = Q_NULLPTR;
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;
     QPushButton* m_btnDirectory = Q_NULLPTR;
 
+    QMediaPlayer* m_mediaPlayer = Q_NULLPTR;
+    int m_soundID = 0;
     bool m_validCommand = false;
 };
 }
