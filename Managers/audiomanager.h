@@ -18,6 +18,7 @@
 
 #include "Helpers/audiofileholder.h"
 #include "Managers/managercollection.h"
+#include "defines.h"
 
 namespace Ui { class MainWindow; }
 
@@ -53,6 +54,8 @@ public:
     bool HasDetection(int id);
     void DoDetection();
     void SetShowMaxScore(bool show) { m_displayMaxScore = show; }
+    static QString GetDirectory() { return RESOURCES_PATH + "SoundDetection/"; }
+    static QString GetExtension() { return ".sounddetection"; }
 
 protected:
     void paintEvent(QPaintEvent* event) override;

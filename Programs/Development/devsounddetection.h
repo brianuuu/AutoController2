@@ -1,11 +1,15 @@
 #ifndef DEVSOUNDDETECTION_H
 #define DEVSOUNDDETECTION_H
 
-#include <QFile>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileDialog>
 #include <QMediaPlayer>
+#include <QMessageBox>
 #include <QPushButton>
 
 #include "../programbase.h"
+#include "Settings/settingcombobox.h"
 #include "Settings/settingdoublespinbox.h"
 #include "Settings/settinglineedit.h"
 #include "Settings/settingspinbox.h"
@@ -41,7 +45,12 @@ public:
 
 private slots:
     void OnFileChanged();
+    void OnFileEdited();
     void OnPlaySound();
+    void OnListChanged(QString const& str);
+    void OnSave();
+    void OnDelete();
+    void OnOpenDirectory();
 
 private:
     QString GetFileName() const;
@@ -51,10 +60,15 @@ private:
     int m_soundID = 0;
     bool m_validSound = false;
 
+    Setting::SettingComboBox* m_list = Q_NULLPTR;
     QPushButton* m_btnPlay = Q_NULLPTR;
     Setting::SettingLineEdit* m_file = Q_NULLPTR;
     Setting::SettingDoubleSpinBox* m_minScore = Q_NULLPTR;
     Setting::SettingSpinBox* m_lowFreqFilter = Q_NULLPTR;
+
+    QPushButton* m_btnSave = Q_NULLPTR;
+    QPushButton* m_btnDelete = Q_NULLPTR;
+    QPushButton* m_btnDirectory = Q_NULLPTR;
 };
 }
 
