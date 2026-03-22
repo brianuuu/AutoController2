@@ -1,0 +1,12 @@
+- Added FRLG Nugget Farmer program
+- Added FRLG Overworld Shiny program
+- Added FRLG Gift Reset program
+- FRLG Starter Reset now records video when shiny is found
+- Added FRLG - Underground Path Cycle custom command for grinding EXP/hatching eggs
+- Using FRLG program will require using Camera Checker first
+- Custom Command program now allows sound detection
+- Added Camera Checker program
+- Added Getting Started manual
+- Added Development Setting to swap Red/Blue channel for camera
+- Stats now show total added up from previous runs
+- Allow changing User/Channel ID even if Discord bot is enabled
