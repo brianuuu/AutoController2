@@ -32,7 +32,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     {
         Section& section = CreateSection(scrollLayout, "System");
 
-        m_language = new Setting::SettingLanguage("Language");
+        m_language = new Setting::System::SettingLanguage("Language");
         Program::ProgramBase::AddSetting(section.m_layout, "Language:", "Language of the Nintendo Switch system or the current game. Required for OCR (Text Recognition)", m_language, true);
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
 
@@ -127,13 +127,13 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
     {
         Section& section = CreateSection(scrollLayout, "Performance");
 
-        m_mainPriority = new Setting::SettingThreadPriority("MainPriority", QThread::HighestPriority);
+        m_mainPriority = new Setting::System::SettingThreadPriority("MainPriority", QThread::HighestPriority);
         Program::ProgramBase::AddSetting(section.m_layout, "Main Thread Priority:", "Thread priority for main GUI thread, include drawing video & audio feed (Require restart)", m_mainPriority, true);
 
-        m_modulePriority = new Setting::SettingThreadPriority("ModulePriority", QThread::HighPriority);
+        m_modulePriority = new Setting::System::SettingThreadPriority("ModulePriority", QThread::HighPriority);
         Program::ProgramBase::AddSetting(section.m_layout, "Module Thread Priority:", "Thread priority for modules used when running programs", m_modulePriority, true);
 
-        m_serialPriority = new Setting::SettingThreadPriority("SerialPriority", QThread::NormalPriority);
+        m_serialPriority = new Setting::System::SettingThreadPriority("SerialPriority", QThread::NormalPriority);
         Program::ProgramBase::AddSetting(section.m_layout, "Serial Thread Priority:", "Thread priority for serial holder in charge of dispatching commands (Require restart)", m_serialPriority, true);
 
         section.m_settings.insert(m_mainPriority);

@@ -2,9 +2,9 @@
 #define SETTINGTHREADPRIORITY_H
 
 #include <QThread>
-#include "settingcombobox.h"
+#include "../settingcombobox.h"
 
-namespace Setting
+namespace Setting::System
 {
 
 class SettingThreadPriority : public SettingComboBox

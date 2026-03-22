@@ -1,6 +1,6 @@
 #include "settingthreadpriority.h"
 
-namespace Setting {
+namespace Setting::System {
 
 SettingThreadPriority::SettingThreadPriority(const QString &name, QThread::Priority defaultPriority)
     : SettingComboBox(name, GetAvailableList())

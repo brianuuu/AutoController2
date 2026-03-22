@@ -7,7 +7,7 @@
 #include <cstdio>
 
 #include "Helpers/jsonhelper.h"
-#include "Settings/settingthreadpriority.h"
+#include "Settings/System/settingthreadpriority.h"
 
 int main(int argc, char *argv[])
 {
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
         if (JsonHelper::ReadValue(performance, "MainPriority", text))
         {
-            QThread::currentThread()->setPriority(Setting::SettingThreadPriority::StringToPriority(text.toString()));
+            QThread::currentThread()->setPriority(Setting::System::SettingThreadPriority::StringToPriority(text.toString()));
         }
         else
         {

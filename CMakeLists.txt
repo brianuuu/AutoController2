@@ -122,18 +122,18 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/System/customcommand.h Programs/System/customcommand.cpp
         Programs/programbase.h Programs/programbase.cpp
         Settings/PokemonLZA/settingflavorpower.h Settings/PokemonLZA/settingflavorpower.cpp
+        Settings/System/settinglanguage.h Settings/System/settinglanguage.cpp
+        Settings/System/settingthreadpriority.h Settings/System/settingthreadpriority.cpp
         Settings/settingbase.h
         Settings/settingcheckbox.cpp Settings/settingcheckbox.h
         Settings/settingcolor.h Settings/settingcolor.cpp
         Settings/settingcombobox.h Settings/settingcombobox.cpp
         Settings/settingdoublespinbox.h Settings/settingdoublespinbox.cpp
-        Settings/settinglanguage.h Settings/settinglanguage.cpp
         Settings/settinglineedit.h Settings/settinglineedit.cpp
         Settings/settingspinbox.h Settings/settingspinbox.cpp
         Settings/settingsystem.h Settings/settingsystem.cpp
         Settings/settingtextbrowser.h Settings/settingtextbrowser.cpp
         Settings/settingtextedit.h Settings/settingtextedit.cpp
-        Settings/settingthreadpriority.h Settings/settingthreadpriority.cpp
         Types/buttontype.h
         Types/categorytype.h
         Types/languagetype.h

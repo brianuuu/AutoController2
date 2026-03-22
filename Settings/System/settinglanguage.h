@@ -1,9 +1,9 @@
 #ifndef SETTINGLANGUAGE_H
 #define SETTINGLANGUAGE_H
 
-#include "settingcombobox.h"
+#include "../settingcombobox.h"
 
-namespace Setting
+namespace Setting::System
 {
 class SettingLanguage : public SettingComboBox
 {

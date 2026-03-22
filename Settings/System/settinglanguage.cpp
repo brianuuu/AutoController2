@@ -2,7 +2,7 @@
 
 #include "Types/languagetype.h"
 
-namespace Setting
+namespace Setting::System
 {
 
 SettingLanguage::SettingLanguage(const QString &name)

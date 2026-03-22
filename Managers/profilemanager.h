@@ -10,13 +10,13 @@
 #include <QWidget>
 
 #include "Managers/managercollection.h"
+#include "Settings/System/settinglanguage.h"
+#include "Settings/System/settingthreadpriority.h"
 #include "Settings/settingcheckbox.h"
 #include "Settings/settingcombobox.h"
-#include "Settings/settinglanguage.h"
 #include "Settings/settinglineedit.h"
 #include "Settings/settingspinbox.h"
 #include "Settings/settingsystem.h"
-#include "Settings/settingthreadpriority.h"
 #include "Types/languagetype.h"
 #include "Types/systemtype.h"
 
@@ -91,7 +91,7 @@ private:
     std::map<QString, Section> m_sections;
 
     // System
-    Setting::SettingLanguage* m_language = Q_NULLPTR;
+    Setting::System::SettingLanguage* m_language = Q_NULLPTR;
     Setting::SettingSystem* m_system = Q_NULLPTR;
 
     // Program
@@ -105,9 +105,9 @@ private:
     Setting::SettingComboBox* m_streamCounter = Q_NULLPTR;
 
     // Performance
-    Setting::SettingThreadPriority* m_mainPriority = Q_NULLPTR;
-    Setting::SettingThreadPriority* m_modulePriority = Q_NULLPTR;
-    Setting::SettingThreadPriority* m_serialPriority = Q_NULLPTR;
+    Setting::System::SettingThreadPriority* m_mainPriority = Q_NULLPTR;
+    Setting::System::SettingThreadPriority* m_modulePriority = Q_NULLPTR;
+    Setting::System::SettingThreadPriority* m_serialPriority = Q_NULLPTR;
 
     // Development
     Setting::SettingCheckBox* m_debugConsole = Q_NULLPTR;
