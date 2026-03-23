@@ -130,9 +130,8 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
         if (matched)
         {
             qint64 const elapsed = m_elapsedTimer.elapsed();
-            if (m_battleDelay == 0 || m_battleDelay > elapsed)
+            if (m_battleDelay == 0)
             {
-                // get minimum delay
                 m_battleDelay = elapsed;
             }
 
