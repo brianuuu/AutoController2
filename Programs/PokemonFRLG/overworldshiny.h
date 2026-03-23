@@ -75,6 +75,7 @@ private: // members
     State m_state;
     int m_shinySoundID = 0;
     qint64 m_battleDelay = 0;
+    bool m_isUp = true;
 
     Stat m_statEncounter;
     Stat m_statShiny;

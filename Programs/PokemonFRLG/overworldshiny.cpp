@@ -37,6 +37,7 @@ void OverworldShiny::Start()
         return;
     }
 
+    m_isUp = true;
     StateMove();
 }
 
@@ -214,7 +215,8 @@ void OverworldShiny::StateMove()
         m_moduleMove = AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
         break;
     case Type::SpinInPlace:
-        m_moduleMove = AddRunCommand("FRLG_SpinInPlace", 0);
+        m_moduleMove = AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
+        m_isUp = !m_isUp;
         break;
     }
 
