@@ -14,6 +14,7 @@
 #include "Programs/PokemonFRLG/giftreset.h"
 #include "Programs/PokemonFRLG/nuggetfarmer.h"
 #include "Programs/PokemonFRLG/overworldshiny.h"
+#include "Programs/PokemonFRLG/rngmanipulation.h"
 #include "Programs/PokemonFRLG/starterreset.h"
 #include "Programs/PokemonLZA/donutmaker.h"
 #include "Programs/PokemonLZA/respawnreset.h"
@@ -76,6 +77,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::PokemonFRLG::GiftReset>();
     RegisterProgram<Program::PokemonFRLG::NuggetFarmer>();
     RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
+    RegisterProgram<Program::PokemonFRLG::RNGManipulation>(true);
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
