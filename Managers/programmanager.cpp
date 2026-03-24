@@ -122,7 +122,8 @@ void ProgramManager::ReadStat(Stat &stat)
     QVariant value;
     if (JsonHelper::ReadValue(stats, stat.GetName(), value))
     {
-        stat.SetTotal(value.toInt());
+        // avoid emit signal so it doesn't trigger save
+        stat.SetTotal(value.toInt(), false);
     }
 }
 
@@ -195,8 +196,6 @@ void ProgramManager::SaveStats()
 
 void ProgramManager::ClearStats()
 {
-    SaveStats();
-
     // Delete all stream counter text files
     QDirIterator it(QString(STREAM_COUNTER_PATH));
     while (it.hasNext())
@@ -499,8 +498,9 @@ void ProgramManager::StartProgram()
     for (Stat* stat : std::as_const(m_stats))
     {
         ReadStat(*stat);
-        stat->SetValue(0);
+        stat->SetValue(0, false);
     }
+    UpdateStats();
 
     m_btnStart->setText("Stop Program (F5)");
     m_btnResetDefault->setEnabled(false);

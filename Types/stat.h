@@ -31,16 +31,22 @@ public:
         emit notifyStatChanged();
     }
 
-    void SetValue(int value)
+    void SetValue(int value, bool signal = true)
     {
         m_value = value;
-        emit notifyStatChanged();
+        if (signal)
+        {
+            emit notifyStatChanged();
+        }
     }
 
-    void SetTotal(int total)
+    void SetTotal(int total, bool signal = true)
     {
         m_total = total;
-        emit notifyStatChanged();
+        if (signal)
+        {
+            emit notifyStatChanged();
+        }
     }
 
     Stat& operator++() // Prefix increment operator.
