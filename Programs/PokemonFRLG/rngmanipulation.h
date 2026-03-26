@@ -34,6 +34,7 @@ public:
 
 private slots:
 	void OnCommandFinished() override;
+    void OnWaitTimeout() override;
 
 private: // types
     enum class State
@@ -42,7 +43,6 @@ private: // types
         ContinueScreen,
         Flashback,
         CommandFlashback,
-        OverworldWait,
         CommandComplete,
     };
 

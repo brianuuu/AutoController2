@@ -27,7 +27,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 
     m_continueCalibrate = new Setting::SettingSpinBox("ContinueCalibrate", -10000, 10000, 0);
     m_savedSettings.insert(m_continueCalibrate);
-    AddSetting(layout, "Continue Screen Frames:", "How many frames off from your selected continue screen frames and hit frame (selected - hit)", m_continueCalibrate);
+    AddSetting(layout, "Continue Calibrate:", "How many frames off from your selected continue screen frames and hit frame (selected - hit)", m_continueCalibrate);
 
     m_overworldFrames = new Setting::SettingSpinBox("OverworldFrames", 230, INT_MAX, 600);
     m_savedSettings.insert(m_overworldFrames);
@@ -35,12 +35,12 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 
     m_commandFlashback = new Setting::System::SettingCommand("CommandFlashback", true);
     m_savedSettings.insert(m_commandFlashback);
-    AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, the time to complete this command must be less than overworld frames. Use Custom Command program to record this", m_commandFlashback, false);
+    AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, use this for going through gift Pokemon dialogues or head to Sweet Scent button, the time to complete this command must be less than overworld frames. Use Command Recorder program to record this", m_commandFlashback, false);
     connect(m_commandFlashback, &Setting::System::SettingCommand::notifyValid, this, &ProgramBase::OnCanRunChanged);
 
     m_commandComplete = new Setting::System::SettingCommand("CommandComplete", true);
     m_savedSettings.insert(m_commandComplete);
-    AddSetting(layout, "Command after Pokemon:", "(Optional) Command used after the final A press, you can use this to catch Pokemon with Master Ball or navigate to Pokemon summary screen. Use Custom Command program to record this", m_commandComplete, false);
+    AddSetting(layout, "Command after Pokemon:", "(Optional) Command used after the final A press, you can use this to catch Pokemon with Master Ball or navigate to Pokemon summary screen. Use Command Recorder program to record this", m_commandComplete, false);
     connect(m_commandComplete, &Setting::System::SettingCommand::notifyValid, this, &ProgramBase::OnCanRunChanged);
 
     AddSpacer(layout);
@@ -55,8 +55,11 @@ void RNGManipulation::Start()
 {
     ProgramBase::Start();
 
-    m_state = SetState(State::TitleScreen, "Waiting for " + QString::number(m_seedTime->value()) + "ms at Title Screen");
-    AddRunCommand("A|50,None|" + QString::number(m_seedTime->value() - 50));
+    int const waitTime = m_seedTime->value() + m_seedCalibrate->value();
+    m_timer.start(waitTime);
+
+    m_state = SetState(State::TitleScreen, "Waiting for " + QString::number(waitTime) + "ms at Title Screen");
+    AddRunCommand("A|100");
 }
 
 void RNGManipulation::Stop()
@@ -72,22 +75,69 @@ void RNGManipulation::OnCommandFinished()
 	switch (m_state)
     {
     case State::TitleScreen:
+    case State::ContinueScreen:
+    case State::CommandFlashback:
     {
-        int const extraFrames = m_continueFrames->value() - 180;
-        m_state = SetState(State::ContinueScreen, "Hold A for 3s (180F) then wait " + QString::number(extraFrames) + "F at Continue Screen");
-        AddRunCommand("A|3000,None|" + QString::number(extraFrames * 1000 / 60));
+        // nothing, waiting for timeout
         break;
     }
-    case State::ContinueScreen:
+    case State::Flashback:
     {
-        m_state = SetState(State::Flashback, "Skipping flashback (222F)");
-        AddRunCommand("A|Spam|200,B|Spam|3500");
+        m_state = SetState(State::CommandFlashback, "Running user command after flashback");
+        AddRunCommand(m_commandFlashback->GetText());
+        break;
+    }
+    case State::CommandComplete:
+    {
+        emit notifyFinished(true);
         break;
     }
     default:
     {
         UnhandedStateRunCommand();
         return;
+    }
+    }
+}
+
+void RNGManipulation::OnWaitTimeout()
+{
+    switch (m_state)
+    {
+    case State::TitleScreen:
+    {
+        int const advanceFrames = m_continueFrames->value() + m_continueCalibrate->value();
+        m_timer.start(advanceFrames * 1000 / 60);
+
+        m_state = SetState(State::ContinueScreen, "Hold A for 3s (180F) then wait " + QString::number(advanceFrames - 180) + "F at Continue Screen");
+        AddRunCommand("A|3000");
+        break;
+    }
+    case State::ContinueScreen:
+    {
+        int const overworldFrames = m_overworldFrames->value();
+        m_timer.start(overworldFrames * 1000 / 60);
+
+        m_state = SetState(m_commandFlashback->GetText().isEmpty() ? State::CommandFlashback : State::Flashback, "Skipping flashback");
+        AddRunCommand("A|Spam|200,B|Spam|3500");
+        break;
+    }
+    case State::Flashback:
+    {
+        emit notifyFinished(false, "Overworld Frames is not enough after running user command");
+        break;
+    }
+    case State::CommandFlashback:
+    {
+        m_state = SetState(State::CommandComplete, "Final A press and running user command if provided");
+        QString const userCommand = m_commandComplete->GetText();
+        AddRunCommand("A|50,None|50" + (userCommand.isEmpty() ? "" : "," + userCommand));
+        break;
+    }
+    default:
+    {
+        emit notifyFinished(false);
+        break;
     }
     }
 }
