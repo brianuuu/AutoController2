@@ -22,6 +22,7 @@ public:
     void ResetDefault() override;
 
     bool IsValid() const { return m_valid; }
+    QString GetText() const { return m_command->text(); }
 
 signals:
     void notifyValid(bool valid);
