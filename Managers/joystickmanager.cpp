@@ -14,6 +14,7 @@ void JoystickManager::Initialize(Ui::MainWindow *ui)
     m_logManager = ManagerCollection::GetManager<LogManager>();
 
     // detect joystick
+    m_watchTimer.setTimerType(Qt::PreciseTimer);
     connect(&m_watchTimer, &QTimer::timeout, this, &JoystickManager::OnWatchTimeout);
 
     KeyboardManager* keyboardManager = ManagerCollection::GetManager<KeyboardManager>();

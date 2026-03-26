@@ -327,6 +327,7 @@ void VlcManager::OnEventCallback()
     {
         // give some time to check if there are any video/audio feedback
         m_startVerifyTimer.setSingleShot(true);
+        m_startVerifyTimer.setTimerType(Qt::PreciseTimer);
         m_startVerifyTimer.start(2000);
         break;
     }

@@ -30,6 +30,7 @@ ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
     connect(m_vlcManager, &VlcManager::notifyHasVideo, this, &ProgramBase::OnCanRunChanged);
 
     m_timer.setSingleShot(true);
+    m_timer.setTimerType(Qt::PreciseTimer);
     connect(&m_timer, &QTimer::timeout, this, &ProgramBase::OnWaitTimeout);
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();

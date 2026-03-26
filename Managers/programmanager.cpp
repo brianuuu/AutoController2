@@ -46,6 +46,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_labelUpTime = ui->L_UpTime;
 
     m_upTimer.setInterval(200);
+    m_upTimer.setTimerType(Qt::PreciseTimer);
 
     m_btnStatsEdit = ui->PB_StatsEdit;
     m_btnStatsReset = ui->PB_StatsReset;

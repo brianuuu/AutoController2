@@ -21,6 +21,7 @@ SerialHolder::SerialHolder(QObject *parent)
 
     m_commandTimer.setSingleShot(true);
     m_commandTimer.moveToThread(this);
+    m_commandTimer.setTimerType(Qt::PreciseTimer);
     connect(&m_commandTimer, &QTimer::timeout, this, [this] { SendCurrentCommand(); });
 
     this->moveToThread(this);
