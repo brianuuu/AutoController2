@@ -113,6 +113,7 @@ void ProgramBase::Stop()
 {
     m_audioManager->StopDetection();
     m_audioManager->ToggleSpectrogram(false);
+    m_timer.stop();
 
     ClearModules();
     m_started = false;
