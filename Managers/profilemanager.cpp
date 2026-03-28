@@ -152,8 +152,12 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         m_swapRedBlue = new Setting::SettingCheckBox("SwapRedBlue", "", false);
         Program::ProgramBase::AddSetting(section.m_layout, "Swap Red/Blue Video Channel:", "Some capture card may require swapping Red & Blue channel to display correctly (Require restarting camera)", m_swapRedBlue, true);
 
+        m_debugButton = new Setting::SettingCheckBox("DebugButton", "", false);
+        Program::ProgramBase::AddSetting(section.m_layout, "Debug Button Presses:", "Show debug log for each button press (Can get spammy)", m_debugButton, true);
+
         section.m_settings.insert(m_debugConsole);
         section.m_settings.insert(m_swapRedBlue);
+        section.m_settings.insert(m_debugButton);
         AddResetButtonToSection(section);
     }
 

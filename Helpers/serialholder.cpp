@@ -2,13 +2,15 @@
 
 #include "Managers/keyboardmanager.h"
 #include "Managers/logmanager.h"
-#include "Managers/managercollection.h"
+#include "Managers/profileManager.h"
 #include "Types/buttontype.h"
 #include "defines.h"
 
 SerialHolder::SerialHolder(QObject *parent)
     : QThread{parent}
 {
+    m_profileManager = ManagerCollection::GetManager<ProfileManager>();
+
     connect(&m_serialPort, &QSerialPort::readyRead, this, &SerialHolder::OnReadyRead);
     connect(&m_serialPort, &QSerialPort::errorOccurred, this, &SerialHolder::OnErrorOccured);
     m_serialPort.moveToThread(this);
@@ -98,7 +100,7 @@ void SerialHolder::OnConnectTimeout()
     if (m_serialState == SerialState::FeedbackOK)
     {
         m_serialState = SerialState::Connected;
-        emit notifyLog("Global", "Serial Connected (Version = " + QString::number(m_serialVersion) + ")", LOG_Success);
+        emit notifyLog("Serial", "Serial Connected (Version = " + QString::number(m_serialVersion) + ")", LOG_Success);
         emit notifySerialStatus();
         emit notifyConnectTimeout(false);
         return;
@@ -120,7 +122,7 @@ void SerialHolder::OnDisconnectTimeout()
     if (m_serialPort.isOpen())
     {
         m_serialPort.close();
-        emit notifyLog("Global", "Serial Disconnected", LOG_Warning);
+        emit notifyLog("Serial", "Serial Disconnected", LOG_Warning);
     }
 
     m_serialState = SerialState::Disconnected;
@@ -340,7 +342,11 @@ void SerialHolder::SendCurrentCommand(bool isLoopCount)
     }
     else
     {
-        //PrintLog("Button: \"" + str + "\"");
+        if (m_profileManager->GetDebugButton())
+        {
+            emit notifyLog("Serial", "Button: \"" + str + "\"");
+        }
+
         OnSendButton(buttonFlag, lStick, rStick);
         emit notifyDisplayButton(buttonFlag, lStick, rStick);
         m_commandTimer.start(duration);

@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QTimer>
 
+#include "Managers/managercollection.h"
 #include "Types/logtype.h"
 
 class SerialHolder : public QThread
@@ -68,6 +69,8 @@ private: // types
     };
 
 private:
+    ProfileManager* m_profileManager = Q_NULLPTR;
+
     mutable QRecursiveMutex m_mutex;
     QSerialPort     m_serialPort;
     SerialState     m_serialState = SerialState::Disconnected;
