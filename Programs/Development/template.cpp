@@ -21,7 +21,7 @@ void NAME_NO_SPACE::Stop()
 void NAME_NO_SPACE::OnCommandFinished(Module::Common::RunCommand* module)
 {
 	if (OnModuleErrorQuit(module)) return;
-    ClearModule(module);
+    m_moduleHolder->ClearModule(module);
 	
 	switch (m_state)
     {
