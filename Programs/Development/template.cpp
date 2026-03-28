@@ -18,10 +18,10 @@ void NAME_NO_SPACE::Stop()
     ProgramBase::Stop();
 }
 
-void NAME_NO_SPACE::OnCommandFinished()
+void NAME_NO_SPACE::OnCommandFinished(Module::Common::RunCommand* module)
 {
-	if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+	if (OnModuleErrorQuit(module)) return;
+    ClearModule(module);
 	
 	switch (m_state)
     {
@@ -33,9 +33,9 @@ void NAME_NO_SPACE::OnCommandFinished()
     }
 }
 
-void NAME_NO_SPACE::OnFrameCaptureMatched(bool matched)
+void NAME_NO_SPACE::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-	if (OnModuleErrorQuit()) return;
+	if (OnModuleErrorQuit(module)) return;
 	
 	switch (m_state)
     {
