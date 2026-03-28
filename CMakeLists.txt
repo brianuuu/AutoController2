@@ -106,8 +106,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Modules/Common/framecapture.h Modules/Common/framecapture.cpp
         Modules/Common/ocr.h Modules/Common/ocr.cpp
         Modules/Common/runcommand.h Modules/Common/runcommand.cpp
+        Modules/PokemonFRLG/blackscreen.h Modules/PokemonFRLG/blackscreen.cpp
         Modules/modulebase.h Modules/modulebase.cpp
         Modules/moduleholder.h Modules/moduleholder.cpp
+        Modules/submodulebase.h Modules/submodulebase.cpp
         Programs/Development/devcommand.h Programs/Development/devcommand.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
         Programs/Development/devsounddetection.h Programs/Development/devsounddetection.cpp

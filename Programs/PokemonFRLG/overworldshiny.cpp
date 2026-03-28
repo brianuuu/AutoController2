@@ -1,5 +1,6 @@
 #include "overworldshiny.h"
 #include "Managers/audiomanager.h"
+#include "Modules/PokemonFRLG/blackscreen.h"
 
 namespace Program::PokemonFRLG
 {
@@ -51,10 +52,10 @@ void OverworldShiny::OnTypeChanged(int index)
     m_moveTime->setEnabled((Type)index != Type::SpinInPlace);
 }
 
-void OverworldShiny::OnCommandFinished()
+void OverworldShiny::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -82,47 +83,12 @@ void OverworldShiny::OnCommandFinished()
     }
 }
 
-void OverworldShiny::OnFrameCaptureMatched(bool matched)
+void OverworldShiny::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (OnModuleErrorQuit()) return;
-
-    Module::Common::FrameCapture* module = qobject_cast<Module::Common::FrameCapture*>(sender());
-    if (module == m_moduleTop)
-    {
-        m_blackTop = module->GetResultMatched();
-    }
-    else if (module == m_moduleBottom)
-    {
-        m_blackBottom = module->GetResultMatched();
-    }
+    if (OnModuleErrorQuit(module)) return;
 
     switch (m_state)
     {
-    case State::Move:
-    {
-        if (m_elapsedTimer.elapsed() > 60000)
-        {
-            emit notifyFinished(false, "Unable to detect encounter for too long");
-        }
-        else if (m_blackTop && m_blackBottom)
-        {
-            m_moduleHolder->ClearRunCommand();
-            ++m_statEncounter;
-            m_state = SetState(State::EncounterStart, "Encounter " + m_statEncounter.GetString() + " started");
-            m_elapsedTimer.restart();
-        }
-        break;
-    }
-    case State::EncounterStart:
-    {
-        if (!m_blackTop && !m_blackBottom && m_elapsedTimer.elapsed() > 500)
-        {
-            m_moduleHolder->ClearModules();
-            m_state = SetState(State::EncounterWait, "Wait 1 second");
-            m_timer.start(1000);
-        }
-        break;
-    }
     case State::Listen:
     {
         if (matched)
@@ -155,6 +121,45 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
     default:
     {
         UnhandedStateFrameCapture();
+        return;
+    }
+    }
+}
+
+void OverworldShiny::OnSubModuleResult(Module::SubModuleBase *module, int result)
+{
+    if (OnModuleErrorQuit(module)) return;
+
+    switch (m_state)
+    {
+    case State::Move:
+    {
+        if (m_elapsedTimer.elapsed() > 60000)
+        {
+            emit notifyFinished(false, "Unable to detect encounter for too long");
+        }
+        else if (result == 0)
+        {
+            m_moduleHolder->ClearRunCommand();
+            ++m_statEncounter;
+            m_state = SetState(State::EncounterStart, "Encounter " + m_statEncounter.GetString() + " started");
+            m_elapsedTimer.restart();
+        }
+        break;
+    }
+    case State::EncounterStart:
+    {
+        if (result == 1 && m_elapsedTimer.elapsed() > 500)
+        {
+            m_moduleHolder->ClearModules();
+            m_state = SetState(State::EncounterWait, "Wait 1 second");
+            m_timer.start(1000);
+        }
+        break;
+    }
+    default:
+    {
+        UnhandedStateSubModule();
         return;
     }
     }
@@ -217,10 +222,9 @@ void OverworldShiny::StateMove()
         break;
     }
 
-    m_moduleTop = m_moduleHolder->AddFrameCapture("FRLG_EncounterTop");
-    m_moduleBottom = m_moduleHolder->AddFrameCapture("FRLG_EncounterBottom");
-    m_blackTop = false;
-    m_blackBottom = false;
+    auto* module = new Module::PokemonFRLG::BlackScreen();
+    connect(module, &Module::PokemonFRLG::BlackScreen::notifyResult, this, &OverworldShiny::OnSubModuleResult);
+    m_moduleHolder->AddModule(module);
     m_elapsedTimer.restart();
 }
 

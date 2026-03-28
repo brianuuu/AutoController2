@@ -36,8 +36,9 @@ public:
 
 private slots:
     void OnTypeChanged(int index);
-    void OnCommandFinished() override;
-    void OnFrameCaptureMatched(bool matched) override;
+    void OnCommandFinished(Module::Common::RunCommand* module) override;
+    void OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched) override;
+    void OnSubModuleResult(Module::SubModuleBase* module, int result) override;
     void OnWaitTimeout() override;
     void OnSoundDetected(int id) override;
 
