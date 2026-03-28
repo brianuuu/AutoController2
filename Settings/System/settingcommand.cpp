@@ -18,7 +18,7 @@ SettingCommand::SettingCommand(const QString &name, bool allowEmpty)
     m_command = new QLineEdit();
     m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
     connect(m_command, &QLineEdit::textChanged, this, &SettingCommand::VerifyCommand);
-    connect(m_command, &QLineEdit::textEdited, this, [this]{ emit notifyEdited(); });
+    connect(m_command, &QLineEdit::textEdited, this, &SettingCommand::notifyEdited);
     vBoxLayout->addWidget(m_command);
 
     m_status = Program::ProgramBase::AddText(vBoxLayout, "", true);
