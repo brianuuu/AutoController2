@@ -62,7 +62,7 @@ void CustomCommand::Start()
 {
     ProgramBase::Start();
     Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->GetText());
-    AddModule(module, true);
+    m_moduleHolder->AddModule(module, true);
     m_btnDelete->setEnabled(false);
 
     if (m_sound->currentIndex() > 0)
@@ -215,8 +215,8 @@ void CustomCommand::OnCommandFinished()
 void CustomCommand::OnSoundDetected(int id)
 {
     // interrupt current command
-    ClearModules();
-    AddRunCommand("System_CaptureHome", 0);
+    m_moduleHolder->ClearModules();
+    m_moduleHolder->AddRunCommand("System_CaptureHome", 0);
 }
 
 }

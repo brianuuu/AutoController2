@@ -37,7 +37,7 @@ void RespawnReset::Start()
     }
 
     m_state = SetState(State::Restart, "Restarting game");
-    AddRunCommand("System_RestartGame", 0);
+    m_moduleHolder->AddRunCommand("System_RestartGame", 0);
     ++m_statReset;
 }
 
@@ -49,14 +49,14 @@ void RespawnReset::Stop()
 void RespawnReset::OnCommandFinished()
 {
     if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 
     switch (m_state)
     {
     case State::Restart:
     case State::GameLoadStart:
     {
-        AddFrameCapture("PLZA_LoadingBlackScreen");
+        m_moduleHolder->AddFrameCapture("PLZA_LoadingBlackScreen");
         break;
     }
     case State::Capture:
@@ -96,11 +96,11 @@ void RespawnReset::OnFrameCaptureMatched(bool matched)
         // wait for black screen to be not black anymore + buffer from black detection
         if (!matched && m_elapsedTimer.elapsed() > 300)
         {
-            ClearModule(sender());
+            m_moduleHolder->ClearModule(sender());
             if (m_state == State::TitleScreen)
             {
                 m_state = SetState(State::GameLoadStart, "Title screen detected, entering game");
-                AddRunCommand("A|Spam|2500");
+                m_moduleHolder->AddRunCommand("A|Spam|2500");
             }
             else if (m_state == State::GameLoadWait)
             {
@@ -123,7 +123,7 @@ void RespawnReset::OnWaitTimeout()
 {
     m_state = SetState(State::Restart, "No shiny detected, restarting game");
     m_audioManager->StopDetection(m_shinySoundID);
-    AddRunCommand("System_RestartGame", 0);
+    m_moduleHolder->AddRunCommand("System_RestartGame", 0);
     ++m_statReset;
 }
 
@@ -133,7 +133,7 @@ void RespawnReset::OnSoundDetected(int id)
     PrintLog("SHINY POKEMON FOUND!", LOG_Success);
 
     m_state = SetState(State::Capture, "Capturing video");
-    AddRunCommand("PLZA_CaptureHome", 0);
+    m_moduleHolder->AddRunCommand("PLZA_CaptureHome", 0);
     ++m_statShiny;
 
     SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);

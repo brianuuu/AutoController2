@@ -33,7 +33,7 @@ void NuggetFarmer::Stop()
 void NuggetFarmer::OnCommandFinished()
 {
 	if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 	
 	switch (m_state)
     {
@@ -69,16 +69,16 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
             PrintLog("Dialogue started with Team Rocket grunt");
             m_elapsedTimer.restart();
             m_dialogCount++;
-            AddRunCommand("(A|Spam|10000)0");
+            m_moduleHolder->AddRunCommand("(A|Spam|10000)0");
         }
         else if (m_dialogCount == 1 && !matched && m_elapsedTimer.elapsed() > 300)
         {
             // dialogue finished
-            ClearModule(sender());
+            m_moduleHolder->ClearModule(sender());
             m_elapsedTimer.restart();
 
             m_state = SetState(State::BattleBox, "Detecting black screen for battle start");
-            AddFrameCapture("FRLG_EncounterBottom");
+            m_moduleHolder->AddFrameCapture("FRLG_EncounterBottom");
         }
         break;
     }
@@ -92,12 +92,12 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
 
         if (matched)
         {
-            ClearModule(sender());
+            m_moduleHolder->ClearModule(sender());
             m_elapsedTimer.restart();
 
             ++m_statNuggets;
             m_state = SetState(State::BattleLose, "Battle " + QString::number(m_currentCount + 1) + " started, spamming A until returning to PC");
-            AddFrameCapture("FRLG_DialogBox");
+            m_moduleHolder->AddFrameCapture("FRLG_DialogBox");
         }
         break;
     }
@@ -116,7 +116,7 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
             m_dialogCount++;
 
             m_state = SetState(State::ReturnToPC, "Returned to PC, spamming B to finish dialogue");
-            AddRunCommand("B|Spam|10000");
+            m_moduleHolder->AddRunCommand("B|Spam|10000");
         }
         break;
     }
@@ -125,7 +125,7 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
         if (!matched && m_elapsedTimer.elapsed() > 300)
         {
             // dialogue finished
-            ClearModules();
+            m_moduleHolder->ClearModules();
             if (++m_currentCount == m_count->value())
             {
                 emit notifyFinished(true);
@@ -149,8 +149,8 @@ void NuggetFarmer::StateToNuggetBridge()
 {
     PrintLog("Loop " + QString::number(m_currentCount + 1), LOG_Important);
     m_state = SetState(State::ToNuggetBridge, "Heading to Nugget Bridge");
-    AddRunCommand("FRLG_ToNuggetBridge", 0);
-    AddFrameCapture("FRLG_DialogBox");
+    m_moduleHolder->AddRunCommand("FRLG_ToNuggetBridge", 0);
+    m_moduleHolder->AddFrameCapture("FRLG_DialogBox");
     m_dialogCount = 0;
 }
 

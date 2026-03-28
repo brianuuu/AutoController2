@@ -159,12 +159,12 @@ void DevFrameCapture::Start()
     default: break;
     }
 
-    AddModule(m_moduleCapture);
+    m_moduleHolder->AddModule(m_moduleCapture);
 }
 
 void DevFrameCapture::Stop()
 {
-    ClearModule(m_moduleCapture);
+    m_moduleHolder->ClearModule(m_moduleCapture);
     m_moduleCapture = Q_NULLPTR;
 
     m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_SELECTION);
@@ -482,14 +482,14 @@ void DevFrameCapture::OnRunOCR()
         }
     }
 
-    AddModule(module);
+    m_moduleHolder->AddModule(module);
 }
 
 void DevFrameCapture::OnOCRFinished()
 {
     if (OnModuleErrorQuit()) return;
 
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
     m_btnOCR->setEnabled(true);
     m_number->setEnabled(true);
     m_database->setEnabled(true);

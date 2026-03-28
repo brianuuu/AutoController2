@@ -47,7 +47,7 @@ public:
         return module;
     }
 
-protected:
+public:
     QSet<Module::ModuleBase*> m_modules;
 };
 }

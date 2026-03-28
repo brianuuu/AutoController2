@@ -35,7 +35,7 @@ void GiftReset::StateSoftReset()
 {
     PrintLog("Permutation: " + QString::number(m_seedFrame->value()) + "-" + QString::number(m_advanceFrame->value()), LOG_Important);
     m_state = SetState(State::SoftReset, "Restarting game");
-    AddRunCommand("FRLG_SoftReset", 0);
+    m_moduleHolder->AddRunCommand("FRLG_SoftReset", 0);
     ++m_statReset;
     m_dialogCount = 0;
 }
@@ -48,21 +48,21 @@ void GiftReset::StateWaitDialogue()
     {
         command = "None|" + QString::number(m_advanceFrame->value() * 20) + "," + command;
     }
-    AddRunCommand(command);
-    AddFrameCapture("FRLG_DialogBox");
+    m_moduleHolder->AddRunCommand(command);
+    m_moduleHolder->AddFrameCapture("FRLG_DialogBox");
 }
 
 void GiftReset::OnCommandFinished()
 {
     if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 
     switch (m_state)
     {
     case State::SoftReset:
     {
         m_state = SetState(State::TitleScreen, "Waiting for " + QString::number(m_seedFrame->value()) + " frames and enter title screen");
-        AddRunCommand("FRLG_EnterGame", m_seedFrame->value() * 20);
+        m_moduleHolder->AddRunCommand("FRLG_EnterGame", m_seedFrame->value() * 20);
         break;
     }
     case State::TitleScreen:
@@ -77,8 +77,8 @@ void GiftReset::OnCommandFinished()
             {
                 command = "None|" + QString::number(m_advanceFrame->value() * 20) + "," + command;
             }
-            AddRunCommand(command);
-            AddFrameCapture("FRLG_YesNoBox");
+            m_moduleHolder->AddRunCommand(command);
+            m_moduleHolder->AddFrameCapture("FRLG_YesNoBox");
         }
         else
         {
@@ -98,7 +98,7 @@ void GiftReset::OnCommandFinished()
     }
     case State::CheckPokemon:
     {
-        AddFrameCapture("FRLG_SummaryShiny");
+        m_moduleHolder->AddFrameCapture("FRLG_SummaryShiny");
         break;
     }
     case State::Capture:
@@ -125,7 +125,7 @@ void GiftReset::OnFrameCaptureMatched(bool matched)
     {
         if (matched)
         {
-            ClearModules();
+            m_moduleHolder->ClearModules();
             StateWaitDialogue();
         }
         break;
@@ -141,21 +141,21 @@ void GiftReset::OnFrameCaptureMatched(bool matched)
         else if (m_dialogCount == 1 && !matched && m_elapsedTimer.elapsed() > 300)
         {
             // dialogue finished
-            ClearModules();
+            m_moduleHolder->ClearModules();
             m_state = SetState(State::CheckPokemon, "Go to gift Pokemon's summary and check if it's shiny");
-            AddRunCommand("FRLG_LastPartyCheck", 0);
+            m_moduleHolder->AddRunCommand("FRLG_LastPartyCheck", 0);
         }
         break;
     }
     case State::CheckPokemon:
     {
-        ClearModules();
+        m_moduleHolder->ClearModules();
         if (matched)
         {
             PrintLog("Gift No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
 
             m_state = SetState(State::Capture, "Taking screenshot");
-            AddRunCommand("Capture|50,Nothing|100");
+            m_moduleHolder->AddRunCommand("Capture|50,Nothing|100");
             ++m_statShiny;
 
             SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);

@@ -14,7 +14,7 @@
 
 namespace Program
 {
-ProgramBase::ProgramBase(QObject *parent) : Module::ModuleHolder(parent)
+ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
 {
     m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
@@ -33,10 +33,11 @@ ProgramBase::ProgramBase(QObject *parent) : Module::ModuleHolder(parent)
     m_timer.setTimerType(Qt::PreciseTimer);
     connect(&m_timer, &QTimer::timeout, this, &ProgramBase::OnWaitTimeout);
 
-    connect(this, &Module::ModuleHolder::notifyCommandFinished, this, &ProgramBase::OnCommandFinished);
-    connect(this, &Module::ModuleHolder::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
-    connect(this, &Module::ModuleHolder::notifyFinishQuit, this, &ProgramBase::OnModuleFinishQuit);
-    connect(this, &Module::ModuleHolder::notifyErrorQuit, this, &ProgramBase::OnModuleErrorQuit);
+    m_moduleHolder = new Module::ModuleHolder(this);
+    connect(m_moduleHolder, &Module::ModuleHolder::notifyCommandFinished, this, &ProgramBase::OnCommandFinished);
+    connect(m_moduleHolder, &Module::ModuleHolder::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
+    connect(m_moduleHolder, &Module::ModuleHolder::notifyFinishQuit, this, &ProgramBase::OnModuleFinishQuit);
+    connect(m_moduleHolder, &Module::ModuleHolder::notifyErrorQuit, this, &ProgramBase::OnModuleErrorQuit);
 
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ProgramBase::notifyLog, logManager, &LogManager::PrintLog);
@@ -120,7 +121,7 @@ void ProgramBase::Stop()
     m_audioManager->ToggleSpectrogram(false);
     m_timer.stop();
 
-    ClearModules();
+    m_moduleHolder->ClearModules();
     m_started = false;
 }
 
@@ -165,7 +166,7 @@ bool ProgramBase::OnModuleErrorQuit()
     if (!module) return true;
 
     // module was already deleted
-    if (!m_modules.contains(module)) return true;
+    if (!m_moduleHolder->m_modules.contains(module)) return true;
 
     int const result = module->GetResult();
     if (result < 0)

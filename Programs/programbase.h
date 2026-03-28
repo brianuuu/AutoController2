@@ -18,7 +18,7 @@
 
 namespace Program
 {
-class ProgramBase : public Module::ModuleHolder
+class ProgramBase : public QObject
 {
     Q_OBJECT
 public:
@@ -120,6 +120,7 @@ protected:
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
     QSet<Setting::SettingBase*> m_savedSettings;
+    Module::ModuleHolder* m_moduleHolder = Q_NULLPTR;
 };
 }
 

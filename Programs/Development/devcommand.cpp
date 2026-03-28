@@ -68,7 +68,7 @@ void DevCommand::Start()
         module = new Module::Common::RunCommand(m_list->currentText(), 0);
     }
 
-    AddModule(module, true);
+    m_moduleHolder->AddModule(module, true);
     m_btnDelete->setEnabled(false);
 }
 

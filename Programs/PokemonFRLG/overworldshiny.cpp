@@ -54,7 +54,7 @@ void OverworldShiny::OnTypeChanged(int index)
 void OverworldShiny::OnCommandFinished()
 {
     if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 
     switch (m_state)
     {
@@ -106,7 +106,7 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
         }
         else if (m_blackTop && m_blackBottom)
         {
-            ClearRunCommand();
+            m_moduleHolder->ClearRunCommand();
             ++m_statEncounter;
             m_state = SetState(State::EncounterStart, "Encounter " + m_statEncounter.GetString() + " started");
             m_elapsedTimer.restart();
@@ -117,7 +117,7 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
     {
         if (!m_blackTop && !m_blackBottom && m_elapsedTimer.elapsed() > 500)
         {
-            ClearModules();
+            m_moduleHolder->ClearModules();
             m_state = SetState(State::EncounterWait, "Wait 1 second");
             m_timer.start(1000);
         }
@@ -145,10 +145,10 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
                 PrintLog(log, LOG_Important);
             }
 
-            ClearModules();
+            m_moduleHolder->ClearModules();
             m_state = SetState(State::RunAway, "No shiny detected, running away");
             m_audioManager->StopDetection(m_shinySoundID);
-            AddRunCommand("FRLG_RunFromEncounter", 0);
+            m_moduleHolder->AddRunCommand("FRLG_RunFromEncounter", 0);
         }
         break;
     }
@@ -168,8 +168,8 @@ void OverworldShiny::OnWaitTimeout()
     {
         m_state = SetState(State::Listen, "Listening for shiny sound");
         m_audioManager->StartDetection(m_shinySoundID);
-        AddRunCommand("B|Spam|10000");
-        AddFrameCapture("FRLG_BattleBox");
+        m_moduleHolder->AddRunCommand("B|Spam|10000");
+        m_moduleHolder->AddFrameCapture("FRLG_BattleBox");
 
         m_elapsedTimer.restart();
         if (m_battleDelay == 0)
@@ -190,9 +190,9 @@ void OverworldShiny::OnSoundDetected(int id)
 {
     PrintLog("SHINY POKEMON FOUND!", LOG_Success);
 
-    ClearModules();
+    m_moduleHolder->ClearModules();
     m_state = SetState(State::Capture, "Capturing video");
-    AddRunCommand("System_CaptureHome", 0);
+    m_moduleHolder->AddRunCommand("System_CaptureHome", 0);
     ++m_statShiny;
 
     SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
@@ -206,19 +206,19 @@ void OverworldShiny::StateMove()
     switch ((Type)m_type->currentIndex())
     {
     case Type::UpDown:
-        AddRunCommand("(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0");
+        m_moduleHolder->AddRunCommand("(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0");
         break;
     case Type::LeftRight:
-        AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
+        m_moduleHolder->AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
         break;
     case Type::SpinInPlace:
-        AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
+        m_moduleHolder->AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
         m_isUp = !m_isUp;
         break;
     }
 
-    m_moduleTop = AddFrameCapture("FRLG_EncounterTop");
-    m_moduleBottom = AddFrameCapture("FRLG_EncounterBottom");
+    m_moduleTop = m_moduleHolder->AddFrameCapture("FRLG_EncounterTop");
+    m_moduleBottom = m_moduleHolder->AddFrameCapture("FRLG_EncounterBottom");
     m_blackTop = false;
     m_blackBottom = false;
     m_elapsedTimer.restart();

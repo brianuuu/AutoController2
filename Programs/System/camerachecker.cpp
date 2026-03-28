@@ -18,7 +18,7 @@ void CameraChecker::Start()
     m_delay = 0;
 
     m_state = SetState(State::DetectTheme, "Checking Nintendo Switch type and theme");
-    AddFrameCapture("System_HomeTheme");
+    m_moduleHolder->AddFrameCapture("System_HomeTheme");
 }
 
 void CameraChecker::Stop()
@@ -29,14 +29,14 @@ void CameraChecker::Stop()
 void CameraChecker::OnCommandFinished()
 {
     if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 
     switch (m_state)
     {
     case State::SystemSetting:
     {
         m_state = SetState(State::ButtonMenu, "Go to button test menu");
-        AddRunCommand("System_ButtonTest", 0);
+        m_moduleHolder->AddRunCommand("System_ButtonTest", 0);
         break;
     }
     case State::ButtonMenu:
@@ -73,7 +73,7 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
     case State::DetectTheme:
     {
         m_color = module->GetResultColor();
-        ClearModules();
+        m_moduleHolder->ClearModules();
 
         bool matchSystemType = true;
         if (CaptureHolder::GetColorMatch(m_color, ThemeLight))
@@ -103,7 +103,7 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
         else
         {
             m_state = SetState(State::SystemSetting, "Go to system settings");
-            AddRunCommand("System_Settings", 0);
+            m_moduleHolder->AddRunCommand("System_Settings", 0);
         }
         break;
     }
@@ -112,7 +112,7 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
         QColor const color = module->GetResultColor();
         if (!CaptureHolder::GetColorMatch(color, m_color))
         {
-            ClearModules();
+            m_moduleHolder->ClearModules();
 
             qint64 const elapsed = m_elapsedTimer.elapsed();
             m_delay += elapsed;
@@ -128,7 +128,7 @@ void CameraChecker::OnFrameCaptureMatched(bool matched)
                 }
 
                 m_state = SetState(State::ReturnHome);
-                AddRunCommand("Home|50,None|100");
+                m_moduleHolder->AddRunCommand("Home|50,None|100");
             }
             else
             {
@@ -159,8 +159,8 @@ void CameraChecker::StateButtonTest()
     ++m_button;
     m_elapsedTimer.restart();
 
-    AddRunCommand("A|50");
-    AddFrameCapture(prefix + QString::number(m_button));
+    m_moduleHolder->AddRunCommand("A|50");
+    m_moduleHolder->AddFrameCapture(prefix + QString::number(m_button));
 }
 
 }

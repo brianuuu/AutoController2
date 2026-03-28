@@ -59,7 +59,7 @@ void RNGManipulation::Start()
     m_timer.start(waitTime);
 
     m_state = SetState(State::TitleScreen, "Waiting for " + QString::number(waitTime) + "ms at Title Screen");
-    AddRunCommand("A|100");
+    m_moduleHolder->AddRunCommand("A|100");
 }
 
 void RNGManipulation::Stop()
@@ -70,7 +70,7 @@ void RNGManipulation::Stop()
 void RNGManipulation::OnCommandFinished()
 {
 	if (OnModuleErrorQuit()) return;
-    ClearModule(sender());
+    m_moduleHolder->ClearModule(sender());
 	
 	switch (m_state)
     {
@@ -84,7 +84,7 @@ void RNGManipulation::OnCommandFinished()
     case State::Flashback:
     {
         m_state = SetState(State::CommandFlashback, "Running user command after flashback");
-        AddRunCommand(m_commandFlashback->GetText());
+        m_moduleHolder->AddRunCommand(m_commandFlashback->GetText());
         break;
     }
     case State::CommandComplete:
@@ -110,7 +110,7 @@ void RNGManipulation::OnWaitTimeout()
         m_timer.start(advanceFrames * 1000 / 60);
 
         m_state = SetState(State::ContinueScreen, "Hold A for 3s (180F) then wait " + QString::number(advanceFrames - 180) + "F at Continue Screen");
-        AddRunCommand("A|3000");
+        m_moduleHolder->AddRunCommand("A|3000");
         break;
     }
     case State::ContinueScreen:
@@ -119,7 +119,7 @@ void RNGManipulation::OnWaitTimeout()
         m_timer.start(overworldFrames * 1000 / 60);
 
         m_state = SetState(m_commandFlashback->GetText().isEmpty() ? State::CommandFlashback : State::Flashback, "Skipping flashback");
-        AddRunCommand("A|Spam|200,B|Spam|3500");
+        m_moduleHolder->AddRunCommand("A|Spam|200,B|Spam|3500");
         break;
     }
     case State::Flashback:
@@ -131,7 +131,7 @@ void RNGManipulation::OnWaitTimeout()
     {
         m_state = SetState(State::CommandComplete, "Final A press and running user command if provided");
         QString const userCommand = m_commandComplete->GetText();
-        AddRunCommand("A|50,None|50" + (userCommand.isEmpty() ? "" : "," + userCommand));
+        m_moduleHolder->AddRunCommand("A|50,None|50" + (userCommand.isEmpty() ? "" : "," + userCommand));
         break;
     }
     default:
