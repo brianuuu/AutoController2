@@ -106,9 +106,7 @@ void OverworldShiny::OnFrameCaptureMatched(bool matched)
         }
         else if (m_blackTop && m_blackBottom)
         {
-            ClearModule(m_moduleMove);
-            m_moduleMove = Q_NULLPTR;
-
+            ClearRunCommand();
             ++m_statEncounter;
             m_state = SetState(State::EncounterStart, "Encounter " + m_statEncounter.GetString() + " started");
             m_elapsedTimer.restart();
@@ -208,13 +206,13 @@ void OverworldShiny::StateMove()
     switch ((Type)m_type->currentIndex())
     {
     case Type::UpDown:
-        m_moduleMove = AddRunCommand("(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0");
+        AddRunCommand("(B|LUp|" + moveTime + ",B|LDown|" + moveTime + ")0");
         break;
     case Type::LeftRight:
-        m_moduleMove = AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
+        AddRunCommand("(B|LLeft|" + moveTime + ",B|LRight|" + moveTime + ")0");
         break;
     case Type::SpinInPlace:
-        m_moduleMove = AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
+        AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
         m_isUp = !m_isUp;
         break;
     }

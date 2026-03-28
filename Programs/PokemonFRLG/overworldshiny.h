@@ -66,7 +66,6 @@ private: // members
     Setting::SettingComboBox* m_type = Q_NULLPTR;
     Setting::SettingSpinBox* m_moveTime = Q_NULLPTR;
 
-    Module::Common::RunCommand* m_moduleMove = Q_NULLPTR;
     Module::Common::FrameCapture* m_moduleTop = Q_NULLPTR;
     Module::Common::FrameCapture* m_moduleBottom = Q_NULLPTR;
     bool m_blackTop = false;

@@ -16,6 +16,7 @@ public:
 
     virtual QString GetName() const = 0;
     uint GetID() const { return m_id; }
+    virtual bool IsCommand() const { return false; }
 
     // try stopping module, not thread safe
     virtual void stop() { m_terminate = true; quit(); }

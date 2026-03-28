@@ -14,7 +14,7 @@
 
 namespace Program
 {
-ProgramBase::ProgramBase(QObject *parent) : QObject(parent)
+ProgramBase::ProgramBase(QObject *parent) : ModuleHolder(parent)
 {
     m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
@@ -182,53 +182,6 @@ void ProgramBase::RegisterStat(Stat &stat, const QString &name, bool hideZero)
 void ProgramBase::PrintLog(const QString &log, LogType type) const
 {
     emit notifyLog(GetInternalName(), log, type);
-}
-
-void ProgramBase::AddModule(Module::ModuleBase *module, bool finish)
-{
-    if (!module) return;
-
-    if (finish)
-    {
-        connect(module, &QThread::finished, this, &ProgramBase::OnModuleFinishQuit);
-    }
-    else
-    {
-        connect(module, &QThread::finished, this, &ProgramBase::OnModuleErrorQuit);
-    }
-
-    m_modules.insert(module);
-    module->moveToThread(module);
-    module->start(module->GetPriority());
-}
-
-void ProgramBase::ClearModule(QObject *sender)
-{
-    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender);
-    ClearModule(module);
-}
-
-void ProgramBase::ClearModule(Module::ModuleBase *module)
-{
-    if (!module || !m_modules.contains(module)) return;
-    m_modules.remove(module);
-
-    module->stop();
-    module->wait();
-    delete module;
-}
-
-void ProgramBase::ClearModules()
-{
-    auto temp = m_modules;
-    m_modules.clear();
-
-    for (Module::ModuleBase* module : std::as_const(temp))
-    {
-        module->stop();
-        module->wait();
-        delete module;
-    }
 }
 
 void ProgramBase::UnhandedStateRunCommand()

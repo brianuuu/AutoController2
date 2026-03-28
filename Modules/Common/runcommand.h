@@ -20,6 +20,7 @@ public:
 
     // from ModuleBase
     QString GetName() const override { return "Common-RunCommand"; }
+    bool IsCommand() const override { return true; }
 
     // from QThread
     void run() override;

@@ -10,6 +10,7 @@
 #include <QTimer>
 
 #include "External/QDiscord/Discord/Objects/Embed.h"
+#include "Modules/moduleholder.h"
 #include "Types/logtype.h"
 #include "Types/stat.h"
 #include "Managers/managercollection.h"
@@ -20,7 +21,7 @@
 
 namespace Program
 {
-class ProgramBase : public QObject
+class ProgramBase : public ModuleHolder
 {
     Q_OBJECT
 public:
@@ -68,12 +69,10 @@ signals:
 
 public slots:
     void OnCanRunChanged();
-    void OnModuleFinishQuit();
-    bool OnModuleErrorQuit();
+    void OnModuleFinishQuit() override;
+    bool OnModuleErrorQuit() override;
 
 protected slots:
-    virtual void OnCommandFinished() {}
-    virtual void OnFrameCaptureMatched(bool matched) {}
     virtual void OnWaitTimeout() {}
     virtual void OnSoundDetected(int id) {}
 
@@ -81,29 +80,6 @@ protected:
     void RegisterStat(Stat& stat, QString const& name, bool hideZero = false);
 
     void PrintLog(QString const& log, LogType type = LOG_Normal) const;
-
-    void AddModule(Module::ModuleBase* module, bool finish = false);
-    void ClearModule(QObject* sender);
-    void ClearModule(Module::ModuleBase* module);
-    void ClearModules();
-
-    template<typename... Args>
-    Module::Common::RunCommand* AddRunCommand(Args... args)
-    {
-        Module::Common::RunCommand* module = new Module::Common::RunCommand(args...);
-        connect(module, &Module::Common::RunCommand::notifyFinished, this, &ProgramBase::OnCommandFinished);
-        AddModule(module);
-        return module;
-    }
-
-    template<typename... Args>
-    Module::Common::FrameCapture* AddFrameCapture(Args... args)
-    {
-        Module::Common::FrameCapture* module = new Module::Common::FrameCapture(args...);
-        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
-        AddModule(module);
-        return module;
-    }
 
     void UnhandedStateRunCommand();
     void UnhandedStateFrameCapture();
@@ -145,7 +121,6 @@ protected:
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
     QSet<Setting::SettingBase*> m_savedSettings;
-    QSet<Module::ModuleBase*> m_modules;
 };
 }
 
