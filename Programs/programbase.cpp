@@ -145,24 +145,22 @@ void ProgramBase::OnCanRunChanged()
     emit notifyCanRun(CanRun());
 }
 
-void ProgramBase::OnModuleFinishQuit()
+void ProgramBase::OnModuleFinishQuit(Module::ModuleBase *module)
 {
     if (!m_started) return;
 
     // finish program if this module is finished
-    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
     if (!module) return;
 
     int const result = module->GetResult();
     emit notifyFinished(result == 0);
 }
 
-bool ProgramBase::OnModuleErrorQuit()
+bool ProgramBase::OnModuleErrorQuit(Module::ModuleBase *module)
 {
     if (!m_started) return true;
 
     // finish program if this module is errored out
-    Module::ModuleBase* module = qobject_cast<Module::ModuleBase*>(sender());
     if (!module) return true;
 
     // module was already deleted
@@ -198,6 +196,11 @@ void ProgramBase::UnhandedStateRunCommand()
 void ProgramBase::UnhandedStateFrameCapture()
 {
     emit notifyFinished(false, "Unhandled state after frame capture has result");
+}
+
+void ProgramBase::UnhandedStateSubModule()
+{
+    emit notifyFinished(false, "Unhandled state after sub module has result");
 }
 
 bool ProgramBase::EnsureOCRDatabase(const QString &database)

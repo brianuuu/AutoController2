@@ -30,10 +30,10 @@ void NuggetFarmer::Stop()
     ProgramBase::Stop();
 }
 
-void NuggetFarmer::OnCommandFinished()
+void NuggetFarmer::OnCommandFinished(Module::Common::RunCommand* module)
 {
-	if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 	
 	switch (m_state)
     {
@@ -55,9 +55,9 @@ void NuggetFarmer::OnCommandFinished()
     }
 }
 
-void NuggetFarmer::OnFrameCaptureMatched(bool matched)
+void NuggetFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-	if (OnModuleErrorQuit()) return;
+    if (OnModuleErrorQuit(module)) return;
 	
 	switch (m_state)
     {

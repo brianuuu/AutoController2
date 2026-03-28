@@ -206,7 +206,7 @@ void CustomCommand::OnCommandSave()
     m_list->setCurrentText(name);
 }
 
-void CustomCommand::OnCommandFinished()
+void CustomCommand::OnCommandFinished(Module::Common::RunCommand* module)
 {
     // only used when sound was detected
     emit notifyFinished(true);

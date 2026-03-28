@@ -26,10 +26,10 @@ void CameraChecker::Stop()
     ProgramBase::Stop();
 }
 
-void CameraChecker::OnCommandFinished()
+void CameraChecker::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -63,10 +63,9 @@ void CameraChecker::OnCommandFinished()
     }
 }
 
-void CameraChecker::OnFrameCaptureMatched(bool matched)
+void CameraChecker::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (OnModuleErrorQuit()) return;
-    Module::Common::FrameCapture* module = qobject_cast<Module::Common::FrameCapture*>(sender());
+    if (OnModuleErrorQuit(module)) return;;
 
     switch (m_state)
     {

@@ -46,7 +46,7 @@ private slots:
     void OnCommandChanged(bool valid);
     void OnCommandSave();
 
-    void OnCommandFinished() override;
+    void OnCommandFinished(Module::Common::RunCommand* module) override;
     void OnSoundDetected(int id) override;
 
 private:

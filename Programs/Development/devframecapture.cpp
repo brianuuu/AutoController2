@@ -487,9 +487,11 @@ void DevFrameCapture::OnRunOCR()
 
 void DevFrameCapture::OnOCRFinished()
 {
-    if (OnModuleErrorQuit()) return;
+    // TODO: move to module holder
+    Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
+    if (OnModuleErrorQuit(ocr)) return;
 
-    m_moduleHolder->ClearModule(sender());
+    m_moduleHolder->ClearModule(ocr);
     m_btnOCR->setEnabled(true);
     m_number->setEnabled(true);
     m_database->setEnabled(true);

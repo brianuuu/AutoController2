@@ -11,6 +11,7 @@
 
 #include "External/QDiscord/Discord/Objects/Embed.h"
 #include "Modules/moduleholder.h"
+#include "Modules/submodulebase.h"
 #include "Types/logtype.h"
 #include "Types/stat.h"
 #include "Managers/managercollection.h"
@@ -66,12 +67,13 @@ signals:
 
 public slots:
     void OnCanRunChanged();
-    void OnModuleFinishQuit();
-    bool OnModuleErrorQuit();
+    void OnModuleFinishQuit(Module::ModuleBase *module);
+    bool OnModuleErrorQuit(Module::ModuleBase* module);
 
 protected slots:
-    virtual void OnCommandFinished() {}
-    virtual void OnFrameCaptureMatched(bool matched) {}
+    virtual void OnCommandFinished(Module::Common::RunCommand* module) {}
+    virtual void OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched) {}
+    virtual void OnSubModuleResult(Module::SubModuleBase* module, int result) {}
     virtual void OnWaitTimeout() {}
     virtual void OnSoundDetected(int id) {}
 
@@ -82,6 +84,7 @@ protected:
 
     void UnhandedStateRunCommand();
     void UnhandedStateFrameCapture();
+    void UnhandedStateSubModule();
 
     template<typename T>
     T SetState(T state, QString const& log = "")

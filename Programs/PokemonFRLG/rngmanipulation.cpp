@@ -67,10 +67,10 @@ void RNGManipulation::Stop()
     ProgramBase::Stop();
 }
 
-void RNGManipulation::OnCommandFinished()
+void RNGManipulation::OnCommandFinished(Module::Common::RunCommand* module)
 {
-	if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 	
 	switch (m_state)
     {

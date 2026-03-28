@@ -63,8 +63,8 @@ private:
 
 private slots:
     void OnOrderChanged(QString const& str);
-    void OnCommandFinished() override;
-    void OnFrameCaptureMatched(bool matched) override;
+    void OnCommandFinished(Module::Common::RunCommand* module) override;
+    void OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched) override;
     void OnOCRFinished();
 
 private:

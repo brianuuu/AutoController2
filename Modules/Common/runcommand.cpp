@@ -89,7 +89,7 @@ void RunCommand::run()
     }
     else
     {
-        emit notifyFinished();
+        emit notifyFinished(this);
     }
 }
 

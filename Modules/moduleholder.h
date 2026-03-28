@@ -17,10 +17,10 @@ public:
     ~ModuleHolder() { ClearModules(); }
 
 signals:
-    void notifyCommandFinished();
-    void notifyResultMatched(bool matched);
-    void notifyFinishQuit();
-    void notifyErrorQuit();
+    void notifyCommandFinished(Module::Common::RunCommand* module);
+    void notifyResultMatched(Module::Common::FrameCapture* module, bool matched);
+    void notifyFinishQuit(Module::ModuleBase* module);
+    void notifyErrorQuit(Module::ModuleBase* module);
 
 public:
     void AddModule(Module::ModuleBase* module, bool finish = false);
@@ -42,7 +42,7 @@ public:
     Module::Common::FrameCapture* AddFrameCapture(Args... args)
     {
         Module::Common::FrameCapture* module = new Module::Common::FrameCapture(args...);
-        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ModuleHolder::notifyResultMatched);
+        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this,&ModuleHolder::notifyResultMatched);
         AddModule(module);
         return module;
     }

@@ -40,10 +40,10 @@ void StarterReset::StateSoftReset()
     m_dialogCount = 0;
 }
 
-void StarterReset::OnCommandFinished()
+void StarterReset::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -90,9 +90,9 @@ void StarterReset::OnCommandFinished()
     }
 }
 
-void StarterReset::OnFrameCaptureMatched(bool matched)
+void StarterReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (OnModuleErrorQuit()) return;
+    if (OnModuleErrorQuit(module)) return;
 
     switch (m_state)
     {

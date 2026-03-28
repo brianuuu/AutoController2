@@ -14,11 +14,11 @@ void ModuleHolder::AddModule(Module::ModuleBase *module, bool finish)
 
     if (finish)
     {
-        connect(module, &QThread::finished, this, &ModuleHolder::notifyFinishQuit);
+        connect(module, &QThread::finished, this, [this, module]{ emit notifyFinishQuit(module); });
     }
     else
     {
-        connect(module, &QThread::finished, this, &ModuleHolder::notifyErrorQuit);
+        connect(module, &QThread::finished, this, [this, module]{ emit notifyErrorQuit(module); });
     }
 
     m_modules.insert(module);

@@ -80,7 +80,7 @@ void FrameCapture::run()
 
                 lock.unlock();
                 if (m_terminate) return;
-                emit notifyResultMatched(m_resultMatched);
+                emit notifyResultMatched(this, m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::PointRangeMatch:
@@ -92,7 +92,7 @@ void FrameCapture::run()
 
                 lock.unlock();
                 if (m_terminate) return;
-                emit notifyResultMatched(m_resultMatched);
+                emit notifyResultMatched(this, m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::AreaColorMatch:
@@ -104,7 +104,7 @@ void FrameCapture::run()
 
                 lock.unlock();
                 if (m_terminate) return;
-                emit notifyResultMatched(m_resultMatched);
+                emit notifyResultMatched(this, m_resultMatched);
                 break;
             }
             case CaptureHolder::Mode::AreaRangeMatch:
@@ -116,7 +116,7 @@ void FrameCapture::run()
 
                 lock.unlock();
                 if (m_terminate) return;
-                emit notifyResultMatched(m_resultMatched);
+                emit notifyResultMatched(this, m_resultMatched);
                 emit notifyResultMean(m_resultMean, m_resultMasked);
                 break;
             }

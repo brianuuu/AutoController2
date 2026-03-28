@@ -52,10 +52,10 @@ void GiftReset::StateWaitDialogue()
     m_moduleHolder->AddFrameCapture("FRLG_DialogBox");
 }
 
-void GiftReset::OnCommandFinished()
+void GiftReset::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -115,9 +115,9 @@ void GiftReset::OnCommandFinished()
     }
 }
 
-void GiftReset::OnFrameCaptureMatched(bool matched)
+void GiftReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (OnModuleErrorQuit()) return;
+    if (OnModuleErrorQuit(module)) return;
 
     switch (m_state)
     {

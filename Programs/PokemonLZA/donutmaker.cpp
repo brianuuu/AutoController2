@@ -70,10 +70,10 @@ void DonutMaker::OnOrderChanged(const QString &str)
     VerifyOrder();
 }
 
-void DonutMaker::OnCommandFinished()
+void DonutMaker::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -153,9 +153,9 @@ void DonutMaker::OnCommandFinished()
     }
 }
 
-void DonutMaker::OnFrameCaptureMatched(bool matched)
+void DonutMaker::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (!sender()) return;
+    if (OnModuleErrorQuit(module)) return;
 
     switch (m_state)
     {
@@ -222,10 +222,10 @@ void DonutMaker::OnFrameCaptureMatched(bool matched)
 void DonutMaker::OnOCRFinished()
 {
     // only expecting State::PowerCapture
-    if (OnModuleErrorQuit()) return;
+    Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
+    if (OnModuleErrorQuit(ocr)) return;
 
     // wait until there are three OCR results
-    Module::Common::OCR* ocr = qobject_cast<Module::Common::OCR*>(sender());
     m_powerEntries.push_back(ocr->GetResultEntry());
 
     if (m_powerEntries.size() == 3)

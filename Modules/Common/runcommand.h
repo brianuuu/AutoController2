@@ -31,7 +31,7 @@ public:
 
 signals:
     void notifyCommand(QString const& command);
-    void notifyFinished();
+    void notifyFinished(Module::Common::RunCommand* module);
     void notifyClear();
 
 private:

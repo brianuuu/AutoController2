@@ -24,7 +24,7 @@ public:
     void run() override;
 
 signals:
-    void notifyResultMatched(bool);
+    void notifyResultMatched(Module::Common::FrameCapture*, bool);
     void notifyResultMean(qreal, QImage);
 };
 

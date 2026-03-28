@@ -33,7 +33,7 @@ public:
     void Stop() override;
 
 private slots:
-	void OnCommandFinished() override;
+	void OnCommandFinished(Module::Common::RunCommand* module) override;
     void OnWaitTimeout() override;
 
 private: // types

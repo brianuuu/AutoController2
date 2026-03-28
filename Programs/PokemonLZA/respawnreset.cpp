@@ -46,10 +46,10 @@ void RespawnReset::Stop()
     ProgramBase::Stop();
 }
 
-void RespawnReset::OnCommandFinished()
+void RespawnReset::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    if (OnModuleErrorQuit()) return;
-    m_moduleHolder->ClearModule(sender());
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
 
     switch (m_state)
     {
@@ -73,9 +73,9 @@ void RespawnReset::OnCommandFinished()
     }
 }
 
-void RespawnReset::OnFrameCaptureMatched(bool matched)
+void RespawnReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched)
 {
-    if (!sender()) return;
+    if (OnModuleErrorQuit(module)) return;
 
     switch (m_state)
     {
