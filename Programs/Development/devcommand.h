@@ -6,6 +6,7 @@
 #include <QRegularExpressionValidator>
 
 #include "../programbase.h"
+#include "Settings/System/settingcommand.h"
 #include "Settings/System/settingpreset.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settinglineedit.h"
@@ -48,13 +49,7 @@ private:
 
 private:
     Setting::System::SettingPreset* m_list = Q_NULLPTR;
-
-    struct CommandSettings
-    {
-        Setting::SettingLineEdit* m_command = Q_NULLPTR;
-        QLabel* m_labelStatus = Q_NULLPTR;
-    };
-    QList<CommandSettings> m_commandSettings;
+    QList<Setting::System::SettingCommand*> m_commandSettings;
 
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;

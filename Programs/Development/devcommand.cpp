@@ -27,17 +27,10 @@ void DevCommand::PopulateSettings(QBoxLayout *layout)
     {
         QString const name = i == ST_COUNT ? "Default" : SystemToString((SystemType)i);
         QString const fullName = i == ST_COUNT ? "Default" : SystemToFullString((SystemType)i);
-        CommandSettings& settings = m_commandSettings[i];
-
-        settings.m_command = new Setting::SettingLineEdit(name);
-        settings.m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
-        AddSetting(layout, fullName + " Command:", "", settings.m_command, false);
-        connect(settings.m_command, &QLineEdit::textChanged, this, &DevCommand::OnCommandChanged);
-        connect(settings.m_command, &QLineEdit::textEdited, m_list, &Setting::System::SettingPreset::OnEdited);
-
-        // add error message label and move it to the layout above, horribly
-        settings.m_labelStatus = AddText(layout, "", true);
-        layout->itemAt(layout->count() - 2)->widget()->layout()->addWidget(settings.m_labelStatus);
+        m_commandSettings[i] = new Setting::System::SettingCommand(name, i != ST_COUNT);
+        AddSetting(layout, fullName + " Command:", "", m_commandSettings[i], false);
+        connect(m_commandSettings[i], &Setting::System::SettingCommand::notifyValid, this, &DevCommand::OnCommandChanged);
+        connect(m_commandSettings[i], &Setting::System::SettingCommand::notifyEdited, m_list, &Setting::System::SettingPreset::OnEdited);
     }
 
     m_btnSave = new QPushButton("Save As...");
@@ -67,8 +60,8 @@ void DevCommand::Start()
     if (m_list->currentText() == CUSTOM_SELECTION)
     {
         SystemType const systemType = m_profileManager->GetSystemType();
-        QString const systemCommand = m_commandSettings[systemType].m_command->text();
-        module = new Module::Common::RunCommand(systemCommand.isEmpty() ? m_commandSettings[ST_COUNT].m_command->text() : systemCommand);
+        QString const systemCommand = m_commandSettings[systemType]->GetText();
+        module = new Module::Common::RunCommand(systemCommand.isEmpty() ? m_commandSettings[ST_COUNT]->GetText() : systemCommand);
     }
     else
     {
@@ -91,18 +84,18 @@ void DevCommand::OnListChanged(const QString &str)
     if (str == CUSTOM_SELECTION)
     {
         // should save custom command
-        for (CommandSettings& settings : m_commandSettings)
+        for (auto& command : m_commandSettings)
         {
-            m_savedSettings.insert(settings.m_command);
+            m_savedSettings.insert(command);
         }
         return;
     }
     else
     {
         // don't save
-        for (CommandSettings& settings : m_commandSettings)
+        for (auto& command : m_commandSettings)
         {
-            m_savedSettings.remove(settings.m_command);
+            m_savedSettings.remove(command);
         }
     }
 
@@ -111,17 +104,16 @@ void DevCommand::OnListChanged(const QString &str)
 
     for (int i = 0; i <= ST_COUNT; i++)
     {
-        CommandSettings& settings = m_commandSettings[i];
         QString const key = i == ST_COUNT ? "Default" : SystemToString((SystemType)i);
 
         QVariant command;
         if (JsonHelper::ReadValue(object, key, command))
         {
-            settings.m_command->setText(command.toString());
+            m_commandSettings[i]->SetText(command.toString());
         }
         else
         {
-            settings.m_command->clear();
+            m_commandSettings[i]->SetText("");
         }
     }
 }
@@ -150,9 +142,8 @@ void DevCommand::OnCommandSave()
     QJsonObject object;
     for (int i = 0; i <= ST_COUNT; i++)
     {
-        CommandSettings const& settings = m_commandSettings[i];
         QString const key = i == ST_COUNT ? "Default" : SystemToString((SystemType)i);
-        object.insert(key, settings.m_command->text());
+        object.insert(key, m_commandSettings[i]->GetText());
     }
     JsonHelper::WriteJson(file, object);
 
@@ -171,29 +162,7 @@ void DevCommand::VerifyCommand()
 
     for (int i = 0; i < m_commandSettings.size(); i++)
     {
-        QString errorMsg;
-        bool valid = true;
-
-        CommandSettings& settings = m_commandSettings[i];
-        if (i < ST_COUNT && settings.m_command->text().isEmpty())
-        {
-            // Default cannot be empty
-            settings.m_labelStatus->setText("Valid!");
-        }
-        else if (SerialManager::VerifyCommand(settings.m_command->text(), errorMsg))
-        {
-            settings.m_labelStatus->setText(errorMsg.isEmpty() ? "Valid!" : errorMsg);
-        }
-        else
-        {
-            settings.m_labelStatus->setText(errorMsg);
-            m_validCommand = false;
-            valid = false;
-        }
-
-        QPalette palette = settings.m_labelStatus->palette();
-        palette.setColor(QPalette::WindowText, LogTypeToColor(valid ? (errorMsg.isEmpty() ? LOG_Success : LOG_Warning) : LOG_Error));
-        settings.m_labelStatus->setPalette(palette);
+        m_validCommand &= m_commandSettings[i]->IsValid();
     }
 
     m_btnSave->setEnabled(m_validCommand);

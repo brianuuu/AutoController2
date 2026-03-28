@@ -23,9 +23,11 @@ public:
 
     bool IsValid() const { return m_valid; }
     QString GetText() const { return m_command->text(); }
+    void SetText(QString const& text) { return m_command->setText(text); }
 
 signals:
     void notifyValid(bool valid);
+    void notifyEdited();
 
 private slots:
     void VerifyCommand();
