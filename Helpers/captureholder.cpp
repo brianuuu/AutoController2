@@ -37,9 +37,10 @@ CaptureHolder::CaptureHolder(QRect rect, QColor targetColor, QColor displayColor
     Register();
 }
 
-CaptureHolder::CaptureHolder(QRect rect, HsvRange range, QColor displayColor)
+CaptureHolder::CaptureHolder(QRect rect, HsvRange range, qreal mean, QColor displayColor)
     : m_rect(rect)
     , m_range(range)
+    , m_targetMean(mean)
     , m_displayColor(displayColor)
     , m_mode(Mode::AreaRangeMatch)
 {
@@ -137,6 +138,12 @@ void CaptureHolder::SetTargetColor(QColor target)
 {
     std::unique_lock lock(m_mutex);
     m_targetColor = target;
+}
+
+void CaptureHolder::SetTargetMean(qreal mean)
+{
+    std::unique_lock lock(m_mutex);
+    m_targetMean = mean;
 }
 
 void CaptureHolder::SetHsvRange(HsvRange range)

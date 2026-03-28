@@ -18,9 +18,9 @@ FrameCapture::FrameCapture(QRect rect, QColor testColor, QColor displayColor, QO
     , CaptureHolder(rect, testColor, displayColor)
 {}
 
-FrameCapture::FrameCapture(QRect rect, HsvRange range, QColor displayColor, QObject *parent)
+FrameCapture::FrameCapture(QRect rect, HsvRange range, qreal mean, QColor displayColor, QObject *parent)
     : ModuleBase(parent)
-    , CaptureHolder(rect, range, displayColor)
+    , CaptureHolder(rect, range, mean, displayColor)
 {}
 
 FrameCapture::FrameCapture(const QString &preset, QColor displayColor, QObject *parent)

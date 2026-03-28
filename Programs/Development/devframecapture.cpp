@@ -151,7 +151,7 @@ void DevFrameCapture::Start()
         m_moduleCapture = new Module::Common::FrameCapture(GetRect(), m_color->GetColor());
         break;
     case CaptureHolder::Mode::AreaRangeMatch:
-        m_moduleCapture = new Module::Common::FrameCapture(GetRect(), GetRange());
+        m_moduleCapture = new Module::Common::FrameCapture(GetRect(), GetRange(), m_mean->value());
         m_btnOCR->setEnabled(true);
         m_number->setEnabled(true);
         m_database->setEnabled(true);
@@ -377,6 +377,10 @@ void DevFrameCapture::OnColorChanged(QColor color)
 void DevFrameCapture::OnMeanChanged(double value)
 {
     SwitchToCustom();
+    if (m_moduleCapture)
+    {
+        m_moduleCapture->SetTargetMean(value);
+    }
 }
 
 void DevFrameCapture::OnMousePressed(QPoint pos)

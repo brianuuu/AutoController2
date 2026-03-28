@@ -54,7 +54,7 @@ public:
     CaptureHolder(QPoint point, QColor targetColor, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QPoint point, HsvRange range, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QRect rect, QColor targetColor, QColor displayColor = QColor(0,255,0));
-    CaptureHolder(QRect rect, HsvRange range, QColor displayColor = QColor(0,255,0));
+    CaptureHolder(QRect rect, HsvRange range, qreal mean, QColor displayColor = QColor(0,255,0));
     CaptureHolder(QString const& preset, QColor displayColor = QColor(0,255,0));
     ~CaptureHolder();
 
@@ -67,6 +67,7 @@ public:
     void SetArea(QRect rect);
     void SetPoint(QPoint point);
     void SetTargetColor(QColor target);
+    void SetTargetMean(qreal mean);
     void SetHsvRange(HsvRange range);
 
     // get data for analysis

@@ -211,7 +211,7 @@ void VideoManager::paintEvent(QPaintEvent *event)
                     if (stringWidth > 0)
                     {
                         painter.fillRect(QRect(topLeft,QSize(stringWidth,16)), Qt::black);
-                        painter.setPen(Qt::white);
+                        painter.setPen(holder->GetResultMatched() ? Qt::green : Qt::white);
                         painter.drawText(topLeft + QPoint(4,14), resultString);
                     }
                     painter.drawImage(captureRect, holder->GetResultMasked());
