@@ -14,14 +14,11 @@
 #include "Types/logtype.h"
 #include "Types/stat.h"
 #include "Managers/managercollection.h"
-#include "Modules/modulebase.h"
-#include "Modules/Common/framecapture.h"
-#include "Modules/Common/runcommand.h"
 #include "Settings/settingbase.h"
 
 namespace Program
 {
-class ProgramBase : public ModuleHolder
+class ProgramBase : public Module::ModuleHolder
 {
     Q_OBJECT
 public:
@@ -69,10 +66,12 @@ signals:
 
 public slots:
     void OnCanRunChanged();
-    void OnModuleFinishQuit() override;
-    bool OnModuleErrorQuit() override;
+    void OnModuleFinishQuit();
+    bool OnModuleErrorQuit();
 
 protected slots:
+    virtual void OnCommandFinished() {}
+    virtual void OnFrameCaptureMatched(bool matched) {}
     virtual void OnWaitTimeout() {}
     virtual void OnSoundDetected(int id) {}
 

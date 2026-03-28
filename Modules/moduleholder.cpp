@@ -1,5 +1,7 @@
 #include "moduleholder.h"
 
+namespace Module
+{
 void ModuleHolder::AddModule(Module::ModuleBase *module, bool finish)
 {
     if (!module) return;
@@ -12,11 +14,11 @@ void ModuleHolder::AddModule(Module::ModuleBase *module, bool finish)
 
     if (finish)
     {
-        connect(module, &QThread::finished, this, &ModuleHolder::OnModuleFinishQuit);
+        connect(module, &QThread::finished, this, &ModuleHolder::notifyFinishQuit);
     }
     else
     {
-        connect(module, &QThread::finished, this, &ModuleHolder::OnModuleErrorQuit);
+        connect(module, &QThread::finished, this, &ModuleHolder::notifyErrorQuit);
     }
 
     m_modules.insert(module);
@@ -63,4 +65,5 @@ void ModuleHolder::ClearRunCommand()
             break;
         }
     }
+}
 }

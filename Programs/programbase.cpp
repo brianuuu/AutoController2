@@ -14,7 +14,7 @@
 
 namespace Program
 {
-ProgramBase::ProgramBase(QObject *parent) : ModuleHolder(parent)
+ProgramBase::ProgramBase(QObject *parent) : Module::ModuleHolder(parent)
 {
     m_programManager = ManagerCollection::GetManager<ProgramManager>();
     m_profileManager = ManagerCollection::GetManager<ProfileManager>();
@@ -33,13 +33,18 @@ ProgramBase::ProgramBase(QObject *parent) : ModuleHolder(parent)
     m_timer.setTimerType(Qt::PreciseTimer);
     connect(&m_timer, &QTimer::timeout, this, &ProgramBase::OnWaitTimeout);
 
+    connect(this, &Module::ModuleHolder::notifyCommandFinished, this, &ProgramBase::OnCommandFinished);
+    connect(this, &Module::ModuleHolder::notifyResultMatched, this, &ProgramBase::OnFrameCaptureMatched);
+    connect(this, &Module::ModuleHolder::notifyFinishQuit, this, &ProgramBase::OnModuleFinishQuit);
+    connect(this, &Module::ModuleHolder::notifyErrorQuit, this, &ProgramBase::OnModuleErrorQuit);
+
     LogManager* logManager = ManagerCollection::GetManager<LogManager>();
     connect(this, &ProgramBase::notifyLog, logManager, &LogManager::PrintLog);
 }
 
 ProgramBase::~ProgramBase()
 {
-    ClearModules();
+
 }
 
 void ProgramBase::LoadSettings()

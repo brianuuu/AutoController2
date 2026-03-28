@@ -7,6 +7,8 @@
 #include "Modules/Common/runcommand.h"
 #include "Modules/modulebase.h"
 
+namespace Module
+{
 class ModuleHolder : public QObject
 {
     Q_OBJECT
@@ -14,14 +16,13 @@ public:
     explicit ModuleHolder(QObject *parent = nullptr) : QObject(parent) {}
     ~ModuleHolder() { ClearModules(); }
 
-protected slots:
-    virtual void OnModuleFinishQuit() {}
-    virtual bool OnModuleErrorQuit() { return true; }
+signals:
+    void notifyCommandFinished();
+    void notifyResultMatched(bool matched);
+    void notifyFinishQuit();
+    void notifyErrorQuit();
 
-    virtual void OnCommandFinished() {}
-    virtual void OnFrameCaptureMatched(bool matched) {}
-
-protected:
+public:
     void AddModule(Module::ModuleBase* module, bool finish = false);
     void ClearModule(QObject* sender);
     void ClearModule(Module::ModuleBase* module);
@@ -32,7 +33,7 @@ protected:
     Module::Common::RunCommand* AddRunCommand(Args... args)
     {
         Module::Common::RunCommand* module = new Module::Common::RunCommand(args...);
-        connect(module, &Module::Common::RunCommand::notifyFinished, this, &ModuleHolder::OnCommandFinished);
+        connect(module, &Module::Common::RunCommand::notifyFinished, this, &ModuleHolder::notifyCommandFinished);
         AddModule(module);
         return module;
     }
@@ -41,7 +42,7 @@ protected:
     Module::Common::FrameCapture* AddFrameCapture(Args... args)
     {
         Module::Common::FrameCapture* module = new Module::Common::FrameCapture(args...);
-        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ModuleHolder::OnFrameCaptureMatched);
+        connect(module, &Module::Common::FrameCapture::notifyResultMatched, this, &ModuleHolder::notifyResultMatched);
         AddModule(module);
         return module;
     }
@@ -49,5 +50,6 @@ protected:
 protected:
     QSet<Module::ModuleBase*> m_modules;
 };
+}
 
 #endif // MODULEHOLDER_H
