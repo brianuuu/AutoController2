@@ -52,8 +52,6 @@ private: // function
 private: // members
     Setting::SettingSpinBox* m_count;
     int m_currentCount = 0;
-
-    Module::Common::RunCommand* m_moduleCommand = Q_NULLPTR;
     int m_dialogCount = 0;
 
 	State m_state;

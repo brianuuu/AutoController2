@@ -67,11 +67,9 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
         {
             // dialogue started
             PrintLog("Dialogue started with Team Rocket grunt");
-            ClearModule(m_moduleCommand);
             m_elapsedTimer.restart();
             m_dialogCount++;
-
-            m_moduleCommand = AddRunCommand("(A|Spam|10000)0");
+            AddRunCommand("(A|Spam|10000)0");
         }
         else if (m_dialogCount == 1 && !matched && m_elapsedTimer.elapsed() > 300)
         {
@@ -114,12 +112,11 @@ void NuggetFarmer::OnFrameCaptureMatched(bool matched)
         if (matched)
         {
             // dialogue started
-            ClearModule(m_moduleCommand);
             m_elapsedTimer.restart();
             m_dialogCount++;
 
             m_state = SetState(State::ReturnToPC, "Returned to PC, spamming B to finish dialogue");
-            m_moduleCommand = AddRunCommand("B|Spam|10000");
+            AddRunCommand("B|Spam|10000");
         }
         break;
     }
@@ -152,7 +149,7 @@ void NuggetFarmer::StateToNuggetBridge()
 {
     PrintLog("Loop " + QString::number(m_currentCount + 1), LOG_Important);
     m_state = SetState(State::ToNuggetBridge, "Heading to Nugget Bridge");
-    m_moduleCommand = AddRunCommand("FRLG_ToNuggetBridge", 0);
+    AddRunCommand("FRLG_ToNuggetBridge", 0);
     AddFrameCapture("FRLG_DialogBox");
     m_dialogCount = 0;
 }
