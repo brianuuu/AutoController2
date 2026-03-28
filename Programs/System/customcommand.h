@@ -7,8 +7,8 @@
 #include <QRegularExpressionValidator>
 
 #include "../programbase.h"
+#include "Settings/System/settingcommand.h"
 #include "Settings/System/settingpreset.h"
-#include "Settings/settinglineedit.h"
 #include "Settings/settingtextedit.h"
 #include "Types/categorytype.h"
 
@@ -43,21 +43,17 @@ private slots:
     void OnListChanged(QString const& str);
     void OnSoundChanged();
     void OnPlaySound();
-    void OnCommandChanged();
+    void OnCommandChanged(bool valid);
     void OnCommandSave();
 
     void OnCommandFinished() override;
     void OnSoundDetected(int id) override;
 
 private:
-    void VerifyCommand();
-
-private:
     Setting::System::SettingPreset* m_list = Q_NULLPTR;
     Setting::System::SettingPreset* m_sound = Q_NULLPTR;
-    Setting::SettingLineEdit* m_command = Q_NULLPTR;
+    Setting::System::SettingCommand* m_command = Q_NULLPTR;
     Setting::SettingTextEdit* m_description = Q_NULLPTR;
-    QLabel* m_labelStatus = Q_NULLPTR;
     QPushButton* m_btnPlay = Q_NULLPTR;
     QPushButton* m_btnSave = Q_NULLPTR;
     QPushButton* m_btnDelete = Q_NULLPTR;

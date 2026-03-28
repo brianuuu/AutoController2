@@ -31,15 +31,10 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
     connect(m_sound, &QComboBox::currentTextChanged, this, &CustomCommand::OnSoundChanged);
     m_btnPlay->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    m_command = new Setting::SettingLineEdit("CommandEdit");
-    m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
+    m_command = new Setting::System::SettingCommand("CommandEdit", false);
     AddSetting(layout, "Current Command:", "", m_command, false);
-    connect(m_command, &QLineEdit::textChanged, this, &CustomCommand::OnCommandChanged);
-    connect(m_command, &QLineEdit::textEdited, m_list, &Setting::System::SettingPreset::OnEdited);
-
-    // add error message label and move it to the layout above, horribly
-    m_labelStatus = AddText(layout, "", true);
-    layout->itemAt(layout->count() - 2)->widget()->layout()->addWidget(m_labelStatus);
+    connect(m_command, &Setting::System::SettingCommand::notifyValid, this, &CustomCommand::OnCommandChanged);
+    connect(m_command, &Setting::System::SettingCommand::notifyEdited, m_list, &Setting::System::SettingPreset::OnEdited);
 
     m_description = new Setting::SettingTextEdit("Description");
     AddSetting(layout, "Description:", "", m_description, false);
@@ -66,7 +61,7 @@ bool CustomCommand::CanRun() const
 void CustomCommand::Start()
 {
     ProgramBase::Start();
-    Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->text());
+    Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->GetText());
     AddModule(module, true);
     m_btnDelete->setEnabled(false);
 
@@ -125,11 +120,11 @@ void CustomCommand::OnListChanged(const QString &str)
     QVariant command;
     if (JsonHelper::ReadValue(object, "Command", command))
     {
-        m_command->setText(command.toString());
+        m_command->SetText(command.toString());
     }
     else
     {
-        m_command->clear();
+        m_command->SetText("");
     }
 
     QVariant description;
@@ -173,10 +168,12 @@ void CustomCommand::OnPlaySound()
     m_mediaPlayer->play();
 }
 
-void CustomCommand::OnCommandChanged()
+void CustomCommand::OnCommandChanged(bool valid)
 {
     // user input or programmatic change
-    VerifyCommand();
+    m_validCommand = valid;
+    m_btnSave->setEnabled(m_validCommand);
+    OnCanRunChanged();
 }
 
 void CustomCommand::OnCommandSave()
@@ -196,7 +193,7 @@ void CustomCommand::OnCommandSave()
 
     QJsonObject object;
     object.insert("Sound", m_sound->currentText());
-    object.insert("Command", m_command->text());
+    object.insert("Command", m_command->GetText());
     object.insert("Description", m_description->toPlainText());
     JsonHelper::WriteJson(file, object);
 
@@ -220,28 +217,6 @@ void CustomCommand::OnSoundDetected(int id)
     // interrupt current command
     ClearModules();
     AddRunCommand("System_CaptureHome", 0);
-}
-
-void CustomCommand::VerifyCommand()
-{
-    QString errorMsg;
-    if (SerialManager::VerifyCommand(m_command->text(), errorMsg))
-    {
-        m_labelStatus->setText(errorMsg.isEmpty() ? "Valid!" : errorMsg);
-        m_validCommand = true;
-    }
-    else
-    {
-        m_labelStatus->setText(errorMsg);
-        m_validCommand = false;
-    }
-
-    QPalette palette = m_labelStatus->palette();
-    palette.setColor(QPalette::WindowText, LogTypeToColor(m_validCommand ? (errorMsg.isEmpty() ? LOG_Success : LOG_Warning) : LOG_Error));
-    m_labelStatus->setPalette(palette);
-
-    m_btnSave->setEnabled(m_validCommand);
-    OnCanRunChanged();
 }
 
 }
