@@ -11,6 +11,7 @@ SettingComboBox::SettingComboBox
     : SettingBase(name)
 {
     this->addItems(list);
+    this->setFocusPolicy(Qt::StrongFocus);
 }
 
 void SettingComboBox::Load(QJsonObject &object)
@@ -30,5 +31,17 @@ void SettingComboBox::Save(QJsonObject &object) const
 void SettingComboBox::ResetDefault()
 {
     this->setCurrentIndex(0);
+}
+
+void SettingComboBox::wheelEvent(QWheelEvent *event)
+{
+    if (hasFocus())
+    {
+        QComboBox::wheelEvent(event);
+    }
+    else
+    {
+        event->ignore();
+    }
 }
 }

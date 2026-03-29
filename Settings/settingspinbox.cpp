@@ -16,6 +16,7 @@ SettingSpinBox::SettingSpinBox
     this->setMinimum(min);
     this->setMaximum(max);
     this->setValue(defaultValue);
+    this->setFocusPolicy(Qt::StrongFocus);
 }
 
 void SettingSpinBox::Load(QJsonObject &object)
@@ -35,5 +36,17 @@ void SettingSpinBox::Save(QJsonObject &object) const
 void SettingSpinBox::ResetDefault()
 {
     this->setValue(m_defaultValue);
+}
+
+void SettingSpinBox::wheelEvent(QWheelEvent *event)
+{
+    if (hasFocus())
+    {
+        QSpinBox::wheelEvent(event);
+    }
+    else
+    {
+        event->ignore();
+    }
 }
 }

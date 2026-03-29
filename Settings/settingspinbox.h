@@ -18,6 +18,9 @@ public:
     void Save(QJsonObject &object) const override;
     void ResetDefault() override;
 
+protected:
+    void wheelEvent(QWheelEvent *event) override;
+
 private:
     int m_defaultValue = 0;
 };

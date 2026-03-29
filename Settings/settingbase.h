@@ -3,6 +3,7 @@
 
 #include <QJsonObject>
 #include <QObject>
+#include <QWheelEvent>
 
 namespace Setting
 {

@@ -17,6 +17,9 @@ public:
     void Load(QJsonObject &object) override;
     void Save(QJsonObject &object) const override;
     void ResetDefault() override;
+
+protected:
+    void wheelEvent(QWheelEvent *event) override;
 };
 }
 

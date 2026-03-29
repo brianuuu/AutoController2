@@ -16,6 +16,7 @@ SettingDoubleSpinBox::SettingDoubleSpinBox
     this->setMinimum(min);
     this->setMaximum(max);
     this->setValue(defaultValue);
+    this->setFocusPolicy(Qt::StrongFocus);
 }
 
 void SettingDoubleSpinBox::Load(QJsonObject &object)
@@ -35,5 +36,17 @@ void SettingDoubleSpinBox::Save(QJsonObject &object) const
 void SettingDoubleSpinBox::ResetDefault()
 {
     this->setValue(m_defaultValue);
+}
+
+void SettingDoubleSpinBox::wheelEvent(QWheelEvent *event)
+{
+    if (hasFocus())
+    {
+        QDoubleSpinBox::wheelEvent(event);
+    }
+    else
+    {
+        event->ignore();
+    }
 }
 }
