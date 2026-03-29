@@ -51,6 +51,10 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_overworldFrames);
     AddSetting(layout, "Overworld Frames:", "How many frames to wait in the overworld before pressing A, 2 advances per frame", m_overworldFrames);
 
+    m_moveUp = new Setting::SettingCheckBox("MoveUp");
+    m_savedSettings.insert(m_moveUp);
+    AddSetting(layout, "Move Up instead of Press A:", "Replaces final A press with Up move, for Ho-Oh only", m_moveUp);
+
     m_commandFlashback = new Setting::System::SettingCommand("CommandFlashback", true);
     m_savedSettings.insert(m_commandFlashback);
     AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, use this for going through gift Pokemon dialogues or head to Sweet Scent button, the time to complete this command must be less than overworld frames. Use Command Recorder program to record this", m_commandFlashback, false);
@@ -151,7 +155,7 @@ void RNGManipulation::OnWaitTimeout()
     {
         m_state = SetState(State::CommandComplete, "Final A press and running user command if provided");
         QString const userCommand = m_commandComplete->GetText();
-        m_moduleHolder->AddRunCommand("A|50,None|50" + (userCommand.isEmpty() ? "" : "," + userCommand));
+        m_moduleHolder->AddRunCommand((m_moveUp->isChecked() ? "LUp|50,None|50" : "A|50,None|50") + (userCommand.isEmpty() ? "" : "," + userCommand));
         break;
     }
     default:

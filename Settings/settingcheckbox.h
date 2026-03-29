@@ -11,7 +11,7 @@ class SettingCheckBox : public QCheckBox, public SettingBase
     Q_OBJECT
 
 public:
-    explicit SettingCheckBox(QString const& name, QString const& text, bool defaultValue = false);
+    explicit SettingCheckBox(QString const& name, QString const& text = "", bool defaultValue = false);
 
     // from SettingBase
     void Load(QJsonObject &object) override;

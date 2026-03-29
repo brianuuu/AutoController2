@@ -5,6 +5,7 @@
 
 #include "../programbase.h"
 #include "Settings/System/settingcommand.h"
+#include "Settings/settingcheckbox.h"
 #include "Settings/settingspinbox.h"
 #include "Types/categorytype.h"
 
@@ -66,6 +67,7 @@ private: // members
     QLineEdit* m_continueHit = Q_NULLPTR;
     QPushButton* m_btnContinueUpdate = Q_NULLPTR;
     Setting::SettingSpinBox* m_overworldFrames = Q_NULLPTR;
+    Setting::SettingCheckBox* m_moveUp = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandFlashback = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandComplete = Q_NULLPTR;
 
