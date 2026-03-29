@@ -29,6 +29,7 @@ public:
     bool IsConnected() const { return m_serialHolder && m_serialHolder->IsConnected(); }
     SerialHolder* GetHolder() const { return m_serialHolder; }
 
+    void SetDebugLoop(bool enable) { if (m_serialHolder) { m_serialHolder->SetDebugLoop(enable); } }
     static bool VerifyCommand(QString const& command, QString& errorMsg);
 
 signals:

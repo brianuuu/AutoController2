@@ -61,6 +61,8 @@ bool CustomCommand::CanRun() const
 void CustomCommand::Start()
 {
     ProgramBase::Start();
+    m_serialManager->SetDebugLoop(true);
+
     Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->GetText());
     m_moduleHolder->AddModule(module, true);
     m_btnDelete->setEnabled(false);
@@ -82,6 +84,7 @@ void CustomCommand::Start()
 void CustomCommand::Stop()
 {
     m_btnDelete->setEnabled(m_list->currentText() != CUSTOM_SELECTION);
+    m_serialManager->SetDebugLoop(false);
     ProgramBase::Stop();
 }
 

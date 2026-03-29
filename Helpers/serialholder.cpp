@@ -135,6 +135,7 @@ void SerialHolder::OnSendCommand(const QString &command)
     m_command = command;
     m_commandIndex = 0;
     m_commandLoopCounts.clear();
+    m_infiniteLoopCount = 0;
 
     SendCurrentCommand();
 }
@@ -147,6 +148,7 @@ void SerialHolder::OnClearCommand()
     m_commandIndex = 0;
     m_commandTimer.stop();
     m_commandLoopCounts.clear();
+    m_infiniteLoopCount = 0;
 
     SendButton(0);
     emit notifyDisplayButton(0);
@@ -313,6 +315,19 @@ void SerialHolder::SendCurrentCommand(bool isLoopCount)
             {
                 // if loopCount is 0 it loops forever
                 loopLeft--;
+            }
+
+            if (m_debugLoop || m_profileManager->GetDebugButton())
+            {
+                if (loopLeft == 0)
+                {
+                    m_infiniteLoopCount++;
+                    emit notifyLog("Serial", "Infinite Loop Count: " + QString::number(m_infiniteLoopCount));
+                }
+                else
+                {
+                    emit notifyLog("Serial", "Loop Left: " + QString::number(loopLeft) + " (Nest " + QString::number(m_commandLoopCounts.size() - 1) + ")");
+                }
             }
 
             // roll back to '('

@@ -21,6 +21,8 @@ public:
     bool IsOpen() const;
     bool IsConnected() const;
 
+    void SetDebugLoop(bool enable) { m_debugLoop = enable; }
+
 signals:
     void notifyErrorOccured();
     void notifySerialStatus();
@@ -80,6 +82,9 @@ private:
     int             m_commandIndex = 0;
     QTimer          m_commandTimer;
     QVector<int>    m_commandLoopCounts;
+
+    int             m_infiniteLoopCount = 0;
+    bool            m_debugLoop = false;
 };
 
 #endif // SERIALHOLDER_H
