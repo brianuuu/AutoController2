@@ -27,6 +27,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_seedCalibrate);
     AddSettings(layout, "Seed Calibrate:", "How many ms off from your selected seed and hit seed, set the hit seed on the right and press Update", {m_seedCalibrate, m_seedHit, m_btnSeedUpdate});
     m_btnSeedUpdate->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    connect(m_seedTime, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_seedCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_btnSeedUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateSeedCalibrate);
 
@@ -42,6 +43,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_continueCalibrate);
     AddSettings(layout, "Continue Calibrate:", "How many frames off from your selected continue screen frames and hit frame, set the hit frame on the right and press Update", {m_continueCalibrate, m_continueHit, m_btnContinueUpdate});
     m_btnContinueUpdate->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    connect(m_continueFrames, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_continueCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_btnContinueUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateContinueCalibrate);
 
