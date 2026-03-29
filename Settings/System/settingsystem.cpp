@@ -2,7 +2,7 @@
 
 #include "Types/systemtype.h"
 
-namespace Setting
+namespace Setting::System
 {
 
 SettingSystem::SettingSystem(const QString &name)

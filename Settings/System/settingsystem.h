@@ -1,9 +1,9 @@
 #ifndef SETTINGSYSTEM_H
 #define SETTINGSYSTEM_H
 
-#include "settingcombobox.h"
+#include "../settingcombobox.h"
 
-namespace Setting
+namespace Setting::System
 {
 class SettingSystem : public SettingComboBox
 {

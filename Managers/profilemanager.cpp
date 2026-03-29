@@ -36,7 +36,7 @@ void ProfileManager::Initialize(Ui::MainWindow *ui)
         Program::ProgramBase::AddSetting(section.m_layout, "Language:", "Language of the Nintendo Switch system or the current game. Required for OCR (Text Recognition)", m_language, true);
         connect(m_language, &QComboBox::currentIndexChanged, this, &ProfileManager::OnLanguageChanged);
 
-        m_system = new Setting::SettingSystem("System");
+        m_system = new Setting::System::SettingSystem("System");
         Program::ProgramBase::AddSetting(section.m_layout, "System:", "Type of the current Nintendo Switch system. This can affect what command to be used", m_system, true);
 
         section.m_settings.insert(m_language);

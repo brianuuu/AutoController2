@@ -129,6 +129,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Settings/System/settingcommand.h Settings/System/settingcommand.cpp
         Settings/System/settinglanguage.h Settings/System/settinglanguage.cpp
         Settings/System/settingpreset.cpp Settings/System/settingpreset.h
+        Settings/System/settingsystem.h Settings/System/settingsystem.cpp
         Settings/System/settingthreadpriority.h Settings/System/settingthreadpriority.cpp
         Settings/settingbase.h
         Settings/settingcheckbox.cpp Settings/settingcheckbox.h
@@ -137,7 +138,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Settings/settingdoublespinbox.h Settings/settingdoublespinbox.cpp
         Settings/settinglineedit.h Settings/settinglineedit.cpp
         Settings/settingspinbox.h Settings/settingspinbox.cpp
-        Settings/settingsystem.h Settings/settingsystem.cpp
         Settings/settingtextbrowser.h Settings/settingtextbrowser.cpp
         Settings/settingtextedit.h Settings/settingtextedit.cpp
         Types/buttontype.h
