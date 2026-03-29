@@ -1,6 +1,8 @@
 #ifndef FRLG_RNGMANIPULATION_H
 #define FRLG_RNGMANIPULATION_H
 
+#include <QPushButton>
+
 #include "../programbase.h"
 #include "Settings/System/settingcommand.h"
 #include "Settings/settingspinbox.h"
@@ -36,6 +38,9 @@ private slots:
 	void OnCommandFinished(Module::Common::RunCommand* module) override;
     void OnWaitTimeout() override;
 
+    void OnUpdateSeedCalibrate();
+    void OnUpdateContinueCalibrate();
+
 private: // types
     enum class State
     {
@@ -54,8 +59,12 @@ private: // members
     Setting::SettingSpinBox* m_sid = Q_NULLPTR;
     Setting::SettingSpinBox* m_seedTime = Q_NULLPTR;
     Setting::SettingSpinBox* m_seedCalibrate = Q_NULLPTR;
+    QLineEdit* m_seedHit = Q_NULLPTR;
+    QPushButton* m_btnSeedUpdate = Q_NULLPTR;
     Setting::SettingSpinBox* m_continueFrames = Q_NULLPTR;
     Setting::SettingSpinBox* m_continueCalibrate = Q_NULLPTR;
+    QLineEdit* m_continueHit = Q_NULLPTR;
+    QPushButton* m_btnContinueUpdate = Q_NULLPTR;
     Setting::SettingSpinBox* m_overworldFrames = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandFlashback = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandComplete = Q_NULLPTR;

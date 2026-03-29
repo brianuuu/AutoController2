@@ -19,17 +19,31 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_seedTime);
     AddSetting(layout, "Seed Time:", "How many ms to wait from Home screen until pressing A at title screen", m_seedTime);
 
-    m_seedCalibrate = new Setting::SettingSpinBox("SeedCalibrate", -10000, 10000, 0);
+    m_seedCalibrate = new Setting::SettingSpinBox("SeedCalibrate", -INT_MAX, INT_MAX, 0);
+    m_seedHit = new QLineEdit();
+    m_seedHit->setPlaceholderText("Enter Hit Seed");
+    m_seedHit->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9]*")));
+    m_btnSeedUpdate = new QPushButton("Update");
     m_savedSettings.insert(m_seedCalibrate);
-    AddSetting(layout, "Seed Calibrate:", "How many ms off from your selected seed and hit seed (selected - hit)", m_seedCalibrate);
+    AddSettings(layout, "Seed Calibrate:", "How many ms off from your selected seed and hit seed, set the hit seed on the right and press Update", {m_seedCalibrate, m_seedHit, m_btnSeedUpdate});
+    m_btnSeedUpdate->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    connect(m_seedCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
+    connect(m_btnSeedUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateSeedCalibrate);
 
     m_continueFrames = new Setting::SettingSpinBox("ContinueFrames", 190, INT_MAX, 0);
     m_savedSettings.insert(m_continueFrames);
     AddSetting(layout, "Continue Screen Frames:", "How many frames to wait at continue screen before pressing A, 1 advance per frame", m_continueFrames);
 
-    m_continueCalibrate = new Setting::SettingSpinBox("ContinueCalibrate", -10000, 10000, 0);
+    m_continueCalibrate = new Setting::SettingSpinBox("ContinueCalibrate", -INT_MAX, INT_MAX, 0);
+    m_continueHit = new QLineEdit();
+    m_continueHit->setPlaceholderText("Enter Hit Frame");
+    m_continueHit->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9]*")));
+    m_btnContinueUpdate = new QPushButton("Update");
     m_savedSettings.insert(m_continueCalibrate);
-    AddSetting(layout, "Continue Calibrate:", "How many frames off from your selected continue screen frames and hit frame (selected - hit)", m_continueCalibrate);
+    AddSettings(layout, "Continue Calibrate:", "How many frames off from your selected continue screen frames and hit frame, set the hit frame on the right and press Update", {m_continueCalibrate, m_continueHit, m_btnContinueUpdate});
+    m_btnContinueUpdate->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    connect(m_continueCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
+    connect(m_btnContinueUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateContinueCalibrate);
 
     m_overworldFrames = new Setting::SettingSpinBox("OverworldFrames", 230, INT_MAX, 600);
     m_savedSettings.insert(m_overworldFrames);
@@ -50,7 +64,9 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 
 bool RNGManipulation::CanRun() const
 {
-    return ProgramBase::CanRun() && m_commandFlashback->IsValid() && m_commandComplete->IsValid();
+    return ProgramBase::CanRun() && m_commandFlashback->IsValid() && m_commandComplete->IsValid()
+           && (m_seedTime->value() + m_seedCalibrate->value()) > 0
+           && (m_continueFrames->value() + m_continueCalibrate->value()) > 0;
 }
 
 void RNGManipulation::Start()
@@ -142,6 +158,28 @@ void RNGManipulation::OnWaitTimeout()
         break;
     }
     }
+}
+
+void RNGManipulation::OnUpdateSeedCalibrate()
+{
+    QString const hit = m_seedHit->text();
+    if (hit.isEmpty()) return;
+
+    int value = m_seedCalibrate->value();
+    value += m_seedTime->value() - hit.toInt();
+    m_seedCalibrate->setValue(value);
+    m_seedHit->clear();
+}
+
+void RNGManipulation::OnUpdateContinueCalibrate()
+{
+    QString const hit = m_continueHit->text();
+    if (hit.isEmpty()) return;
+
+    int value = m_continueCalibrate->value();
+    value += m_continueFrames->value() - hit.toInt();
+    m_continueCalibrate->setValue(value);
+    m_continueHit->clear();
 }
 
 }
