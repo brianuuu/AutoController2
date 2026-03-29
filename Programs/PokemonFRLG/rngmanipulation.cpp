@@ -6,12 +6,14 @@ namespace Program::PokemonFRLG
 void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 {
     m_tid = new Setting::SettingSpinBox("TID", 0, 99999);
+    m_tid->m_noReset = true;
     m_savedSettings.insert(m_tid);
-    AddSetting(layout, "Trainer ID:", "Saves your TID, does not affect the program", m_tid);
+    AddSetting(layout, "Trainer ID:", "Saves your TID, does not affect the program\n(Ignores Restoring Default Settings)", m_tid);
 
     m_sid = new Setting::SettingSpinBox("SID", 0, 99999);
+    m_sid->m_noReset = true;
     m_savedSettings.insert(m_sid);
-    AddSetting(layout, "Secret ID:", "Saves your SID, does not affect the program\n(WARNING: Restoring Default Settings will clear this)", m_sid);
+    AddSetting(layout, "Secret ID:", "Saves your SID, does not affect the program\n(Ignores Restoring Default Settings)", m_sid);
 
     m_seedTime = new Setting::SettingSpinBox("SeedTime", 29500, INT_MAX, 0);
     m_savedSettings.insert(m_seedTime);

@@ -17,6 +17,7 @@ public:
 
 public:
     QString m_name; // for save & load reference
+    bool m_noReset = false; // can save this setting but no reset default
 };
 }
 
