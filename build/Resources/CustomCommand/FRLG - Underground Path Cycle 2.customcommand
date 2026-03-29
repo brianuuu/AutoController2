@@ -1,0 +1,5 @@
+{
+    "Command": "(LRight|7500,LLeft|7500)0",
+    "Description": "Cycle left and right in Underground Path forever, for hatching eggs or gaining EXP if you have Pokemon in Day Care. Each direction has 75 steps = 75 EXP\n\nAdjust 0 loop if you want this to run a set amount of loops",
+    "Sound": "None"
+}
