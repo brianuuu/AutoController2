@@ -350,10 +350,13 @@ void ProgramBase::AddSettings
     {
         QHBoxLayout* hBoxLayout = new QHBoxLayout(widget);
         hBoxLayout->addLayout(vBoxLayout);
+        QHBoxLayout* hBoxLayout2 = new QHBoxLayout();
+        hBoxLayout->addLayout(hBoxLayout2);
         for (QWidget* setting : settings)
         {
-            hBoxLayout->addWidget(setting);
+            hBoxLayout2->addWidget(setting);
         }
+        hBoxLayout2->setContentsMargins(0,0,0,0);
         hBoxLayout->setContentsMargins(0,0,0,0);
     }
 }
