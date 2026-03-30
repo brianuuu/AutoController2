@@ -11,11 +11,11 @@ StarterReset::StarterReset(QObject *parent)
 
 void StarterReset::PopulateSettings(QBoxLayout *layout)
 {
-    PermutationBase::PopulateSettings(layout);
-
     m_confirmDelay = new Setting::SettingSpinBox("ConfirmDelay", 0, 9999, 1000);
     m_savedSettings.insert(m_confirmDelay);
     AddSetting(layout, "Confirm Delay:", "Delay in ms between pressing yes and generating starter Pokemon before adding Advance Frame, you shouldn't have to change this", m_confirmDelay, true);
+
+    PermutationBase::PopulateSettings(layout);
 
     AddSpacer(layout);
 }

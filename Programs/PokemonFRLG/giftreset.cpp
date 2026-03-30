@@ -11,11 +11,11 @@ GiftReset::GiftReset(QObject *parent)
 
 void GiftReset::PopulateSettings(QBoxLayout *layout)
 {
-    PermutationBase::PopulateSettings(layout);
-
     m_accept = new Setting::SettingCheckBox("Accept", "", true);
     m_savedSettings.insert(m_accept);
     AddSetting(layout, "Accept Gift:", "Check this if gift Pokemon requires pressing Yes (Eevee doesn't need this)", m_accept, true);
+
+    PermutationBase::PopulateSettings(layout);
 
     AddSpacer(layout);
 }
