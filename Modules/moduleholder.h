@@ -28,6 +28,7 @@ public:
     void ClearModule(Module::ModuleBase* module);
     void ClearModules();
     void ClearRunCommand();
+    bool HasRunCommand() const;
 
     template<typename... Args>
     Module::Common::RunCommand* AddRunCommand(Args... args)

@@ -66,4 +66,17 @@ void ModuleHolder::ClearRunCommand()
         }
     }
 }
+
+bool ModuleHolder::HasRunCommand() const
+{
+    for (Module::ModuleBase* module : std::as_const(m_modules))
+    {
+        if (module->IsCommand())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 }

@@ -153,7 +153,13 @@ void RNGManipulation::OnWaitTimeout()
     }
     case State::CommandFlashback:
     {
-        m_state = SetState(State::CommandComplete, "Final A press and running user command if provided");
+        if (m_moduleHolder->HasRunCommand())
+        {
+            emit notifyFinished(false, "Flashback command not finished before final action, please increase Overworld Frames");
+            return;
+        }
+
+        m_state = SetState(State::CommandComplete, "Final action (A/Up press) and running user command if provided");
         QString const userCommand = m_commandComplete->GetText();
         m_moduleHolder->AddRunCommand((m_moveUp->isChecked() ? "LUp|50,None|50" : "A|50,None|50") + (userCommand.isEmpty() ? "" : "," + userCommand));
         break;
