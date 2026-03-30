@@ -143,7 +143,7 @@ void RNGManipulation::OnWaitTimeout()
         m_timer.start(overworldFrames * 1000 / 60);
 
         m_state = SetState(m_commandFlashback->GetText().isEmpty() ? State::CommandFlashback : State::Flashback, "Skipping flashback");
-        m_moduleHolder->AddRunCommand("A|Spam|200,B|Spam|3500");
+        m_moduleHolder->AddRunCommand("FRLG_ContinueGame", 0);
         break;
     }
     case State::Flashback:
