@@ -154,8 +154,8 @@ void GiftReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool
         {
             PrintLog("Gift No." + m_statReset.GetString() + " is SHINY!", LOG_Success);
 
-            m_state = SetState(State::Capture, "Taking screenshot");
-            m_moduleHolder->AddRunCommand("Capture|50,Nothing|100");
+            m_state = SetState(State::Capture, "Capturing video");
+            m_moduleHolder->AddRunCommand("System_CaptureHome", 0);
             ++m_statShiny;
 
             SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
