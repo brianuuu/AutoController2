@@ -22,6 +22,8 @@ public:
         return "Soft reset static Pokemon until a shiny is found, including Legendary Pokemon, Snorlax etc.";
     }
 
+    bool RequireAudio() const override { return true; }
+
     void Start() override;
     void Stop() override;
 

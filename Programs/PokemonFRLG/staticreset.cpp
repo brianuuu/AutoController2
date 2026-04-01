@@ -133,6 +133,7 @@ void StaticReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, bo
 
             PrintLog("No shiny detected");
             m_moduleHolder->ClearModules();
+            m_audioManager->StopDetection(m_shinySoundID);
             GetNextPermutation();
             StateSoftReset();
         }
