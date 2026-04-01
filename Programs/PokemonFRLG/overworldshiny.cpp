@@ -14,10 +14,14 @@ void OverworldShiny::PopulateSettings(QBoxLayout *layout)
     m_moveTime = new Setting::SettingSpinBox("MoveTime", 100, 60000, 1000);
     AddSetting(layout, "Move Time:", "Move for this many milliseconds before turning around", m_moveTime, true);
 
+    m_useDialogDelay = new Setting::SettingCheckBox("UseDialogDelay", "", true);
+    AddSetting(layout, "Use Dialog Delay:", "Compare differece is dialog delay to detect shiny as a backup, only works AFTER 2nd battle. (WARNING: If there are Pokemon with Intimidate it will be treated as false positive, disable this option for those routes)", m_useDialogDelay, true);
+
     AddSpacer(layout);
 
     m_savedSettings.insert(m_type);
     m_savedSettings.insert(m_moveTime);
+    m_savedSettings.insert(m_useDialogDelay);
 }
 
 void OverworldShiny::RegisterStats()
@@ -93,22 +97,25 @@ void OverworldShiny::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
     {
         if (matched)
         {
-            qint64 const elapsed = m_elapsedTimer.elapsed();
-            if (m_battleDelay == 0)
+            if (m_useDialogDelay->isChecked())
             {
-                m_battleDelay = elapsed;
-            }
+                qint64 const elapsed = m_elapsedTimer.elapsed();
+                if (m_battleDelay == 0)
+                {
+                    m_battleDelay = elapsed;
+                }
 
-            QString log = "Battle selection delay = " + QString::number(elapsed) + "ms";
-            if (elapsed > m_battleDelay + 500)
-            {
-                PrintLog(log + " > " + QString::number(m_battleDelay) + "ms + 500ms", LOG_Success);
-                OnSoundDetected(m_shinySoundID);
-                break;
-            }
-            else
-            {
-                PrintLog(log, LOG_Important);
+                QString log = "Battle selection delay = " + QString::number(elapsed) + "ms";
+                if (elapsed > m_battleDelay + 500)
+                {
+                    PrintLog(log + " > " + QString::number(m_battleDelay) + "ms + 500ms", LOG_Success);
+                    OnSoundDetected(m_shinySoundID);
+                    break;
+                }
+                else
+                {
+                    PrintLog(log, LOG_Important);
+                }
             }
 
             m_moduleHolder->ClearModules();
@@ -176,10 +183,13 @@ void OverworldShiny::OnWaitTimeout()
         m_moduleHolder->AddRunCommand("B|Spam|10000");
         m_moduleHolder->AddFrameCapture("FRLG_BattleBox");
 
-        m_elapsedTimer.restart();
-        if (m_battleDelay == 0)
+        if (m_useDialogDelay->isChecked())
         {
-            PrintLog("Calibrating battle selection delay...");
+            m_elapsedTimer.restart();
+            if (m_battleDelay == 0)
+            {
+                PrintLog("Calibrating battle selection delay...");
+            }
         }
         break;
     }

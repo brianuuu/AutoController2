@@ -2,6 +2,7 @@
 #define FRLG_OVERWORLDSHINY_H
 
 #include "../programbase.h"
+#include "Settings/settingcheckbox.h"
 #include "Settings/settingcombobox.h"
 #include "Settings/settingspinbox.h"
 #include "Types/categorytype.h"
@@ -66,11 +67,7 @@ private: // function
 private: // members
     Setting::SettingComboBox* m_type = Q_NULLPTR;
     Setting::SettingSpinBox* m_moveTime = Q_NULLPTR;
-
-    Module::Common::FrameCapture* m_moduleTop = Q_NULLPTR;
-    Module::Common::FrameCapture* m_moduleBottom = Q_NULLPTR;
-    bool m_blackTop = false;
-    bool m_blackBottom = false;
+    Setting::SettingCheckBox* m_useDialogDelay = Q_NULLPTR;
 
     State m_state;
     int m_shinySoundID = 0;
