@@ -81,7 +81,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::PokemonFRLG::NuggetFarmer>();
     RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
     RegisterProgram<Program::PokemonFRLG::PrizeCornerReset>();
-    RegisterProgram<Program::PokemonFRLG::RNGManipulation>(true);
+    RegisterProgram<Program::PokemonFRLG::RNGManipulation>();
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
     RegisterProgram<Program::PokemonFRLG::StaticReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
