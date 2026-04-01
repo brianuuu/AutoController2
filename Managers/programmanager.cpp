@@ -17,6 +17,7 @@
 #include "Programs/PokemonFRLG/prizecornerreset.h"
 #include "Programs/PokemonFRLG/rngmanipulation.h"
 #include "Programs/PokemonFRLG/starterreset.h"
+#include "Programs/PokemonFRLG/staticreset.h"
 #include "Programs/PokemonLZA/donutmaker.h"
 #include "Programs/PokemonLZA/respawnreset.h"
 #include "Programs/System/camerachecker.h"
@@ -82,6 +83,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::PokemonFRLG::PrizeCornerReset>();
     RegisterProgram<Program::PokemonFRLG::RNGManipulation>(true);
     RegisterProgram<Program::PokemonFRLG::StarterReset>();
+    RegisterProgram<Program::PokemonFRLG::StaticReset>();
     RegisterProgram<Program::PokemonLZA::DonutMaker>();
     RegisterProgram<Program::PokemonLZA::RespawnReset>();
     RegisterProgram<Program::System::CameraChecker>();

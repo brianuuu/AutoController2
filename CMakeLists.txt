@@ -120,6 +120,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/PokemonFRLG/prizecornerreset.cpp Programs/PokemonFRLG/prizecornerreset.h
         Programs/PokemonFRLG/rngmanipulation.cpp Programs/PokemonFRLG/rngmanipulation.h
         Programs/PokemonFRLG/starterreset.cpp Programs/PokemonFRLG/starterreset.h
+        Programs/PokemonFRLG/staticreset.cpp Programs/PokemonFRLG/staticreset.h
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
         Programs/PokemonLZA/respawnreset.cpp Programs/PokemonLZA/respawnreset.h
         Programs/System/camerachecker.h Programs/System/camerachecker.cpp
