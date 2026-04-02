@@ -47,18 +47,20 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     connect(m_continueCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_btnContinueUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateContinueCalibrate);
 
-    m_overworldFrames = new Setting::SettingSpinBox("OverworldFrames", 230, INT_MAX, 600);
+    m_overworldFrames = new Setting::SettingSpinBox("OverworldFrames", 220, INT_MAX, 600);
+    m_overworldTime = AddText(layout, "", true);
     m_savedSettings.insert(m_overworldFrames);
-    AddSetting(layout, "Overworld Frames:", "How many frames to wait in the overworld before pressing A, 2 advances per frame", m_overworldFrames);
+    AddSettings(layout, "Overworld Frames:", "How many frames to wait in the overworld before pressing A, 2 advances per frame", {m_overworldFrames, m_overworldTime});
+    connect(m_overworldFrames, &QSpinBox::valueChanged, this, &RNGManipulation::OnOverallFrameChanged);
 
     m_moveUp = new Setting::SettingCheckBox("MoveUp");
     m_savedSettings.insert(m_moveUp);
     AddSetting(layout, "Move Up instead of Press A:", "Replaces final A press with Up move, for Ho-Oh only", m_moveUp);
 
-    m_commandFlashback = new Setting::System::SettingCommand("CommandFlashback", true);
+    m_commandFlashback = new Setting::System::SettingCommand("CommandFlashback", true, false);
     m_savedSettings.insert(m_commandFlashback);
     AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, use this for going through gift Pokemon dialogues or head to Sweet Scent button, the time to complete this command must be less than overworld frames. Use Command Recorder program to record this", m_commandFlashback, false);
-    connect(m_commandFlashback, &Setting::System::SettingCommand::notifyValid, this, &ProgramBase::OnCanRunChanged);
+    connect(m_commandFlashback, &Setting::System::SettingCommand::notifyValid, this, &RNGManipulation::OnCommandFlashbackValid);
 
     m_commandComplete = new Setting::System::SettingCommand("CommandComplete", true);
     m_savedSettings.insert(m_commandComplete);
@@ -66,11 +68,14 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     connect(m_commandComplete, &Setting::System::SettingCommand::notifyValid, this, &ProgramBase::OnCanRunChanged);
 
     AddSpacer(layout);
+
+    OnOverallFrameChanged(m_overworldFrames->value());
 }
 
 bool RNGManipulation::CanRun() const
 {
-    return ProgramBase::CanRun() && m_commandFlashback->IsValid() && m_commandComplete->IsValid()
+    return ProgramBase::CanRun() && m_commandFlashbackFits
+           && m_commandFlashback->IsValid() && m_commandComplete->IsValid()
            && (m_seedTime->value() + m_seedCalibrate->value()) > 0
            && (m_continueFrames->value() + m_continueCalibrate->value()) > 0;
 }
@@ -192,6 +197,38 @@ void RNGManipulation::OnUpdateContinueCalibrate()
     value += m_continueFrames->value() - hit.toInt();
     m_continueCalibrate->setValue(value);
     m_continueHit->clear();
+}
+
+void RNGManipulation::OnOverallFrameChanged(int value)
+{
+    OnCommandFlashbackValid(m_commandFlashback->IsValid());
+}
+
+void RNGManipulation::OnCommandFlashbackValid(bool valid)
+{
+    int diff = 0;
+    if (valid)
+    {
+        int const duration = m_commandFlashback->GetDuration();
+        diff = duration * 60 / 1000 - (m_overworldFrames->value() - m_overworldFrames->minimum());
+    }
+
+    QPalette palette = m_overworldTime->palette();
+    if (diff > 0)
+    {
+        m_commandFlashbackFits = false;
+        m_overworldTime->setText("+" + QString::number(diff) + " frames required");
+        palette.setColor(QPalette::WindowText, LogTypeToColor(LOG_Error));
+    }
+    else
+    {
+        m_commandFlashbackFits = true;
+        m_overworldTime->setText("= " + QString::number(m_overworldFrames->value() * 1000 / 60) + "ms");
+        palette.setColor(QPalette::WindowText, QGuiApplication::palette().windowText().color());
+    }
+    m_overworldTime->setPalette(palette);
+
+    OnCanRunChanged();
 }
 
 }

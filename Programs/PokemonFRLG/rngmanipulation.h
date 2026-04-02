@@ -41,6 +41,8 @@ private slots:
 
     void OnUpdateSeedCalibrate();
     void OnUpdateContinueCalibrate();
+    void OnOverallFrameChanged(int value);
+    void OnCommandFlashbackValid(bool valid);
 
 private: // types
     enum class State
@@ -67,9 +69,11 @@ private: // members
     QLineEdit* m_continueHit = Q_NULLPTR;
     QPushButton* m_btnContinueUpdate = Q_NULLPTR;
     Setting::SettingSpinBox* m_overworldFrames = Q_NULLPTR;
+    QLabel* m_overworldTime = Q_NULLPTR;
     Setting::SettingCheckBox* m_moveUp = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandFlashback = Q_NULLPTR;
     Setting::System::SettingCommand* m_commandComplete = Q_NULLPTR;
+    bool m_commandFlashbackFits = false;
 
     State m_state;
 };
