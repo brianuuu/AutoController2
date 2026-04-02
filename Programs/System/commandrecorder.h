@@ -36,6 +36,7 @@ public:
 
 private slots:
     void OnUserInput(quint32 buttonFlag, QPointF lStick, QPointF rStick);
+    void OnTextChanged();
 
 private:
     void AppendCommand(QString const& command);
@@ -43,6 +44,7 @@ private:
 private:
     Setting::SettingComboBox* m_nothing = Q_NULLPTR;
     Setting::SettingTextBrowser* m_browser = Q_NULLPTR;
+    QLabel* m_duration = Q_NULLPTR;
 
     quint32 m_buttonFlags = 0;
     QPointF m_lStick = QPointF();

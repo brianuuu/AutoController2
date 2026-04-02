@@ -1,5 +1,6 @@
 #include "commandrecorder.h"
 #include "Managers/keyboardmanager.h"
+#include "Managers/serialmanager.h"
 #include "Managers/vlcmanager.h"
 
 namespace Program::System
@@ -22,7 +23,10 @@ void CommandRecorder::PopulateSettings(QBoxLayout *layout)
     m_browser = new Setting::SettingTextBrowser("ResultCommand");
     m_savedSettings.insert(m_browser);
     AddSetting(layout, "Result Command:", "Note: Starting program will clear previous command", m_browser, false);
+    connect(m_browser, &QTextBrowser::textChanged, this, &CommandRecorder::OnTextChanged);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    m_duration = AddText(layout, "", true);
 }
 
 void CommandRecorder::Start()
@@ -122,6 +126,12 @@ void CommandRecorder::OnUserInput(quint32 buttonFlag, QPointF lStick, QPointF rS
     m_buttonFlags = buttonFlag;
     m_lStick = lStick;
     m_rStick = rStick;
+}
+
+void CommandRecorder::OnTextChanged()
+{
+    int const duration = SerialManager::GetCommandDuration(m_browser->toPlainText());
+    m_duration->setText("Command Duration: " + QString::number(duration) + "ms");
 }
 
 void CommandRecorder::AppendCommand(const QString &command)

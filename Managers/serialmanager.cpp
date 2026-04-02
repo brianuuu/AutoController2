@@ -220,6 +220,140 @@ bool SerialManager::VerifyCommand(const QString &command, QString &errorMsg)
     return true;
 }
 
+int SerialManager::GetCommandDuration(const QString &command)
+{
+    int totalDuration = 0;
+
+    bool isLoopCount = false;
+    int commandIndex = 0;
+    QVector<int> commandLoopCounts;
+
+    while (commandIndex != -1)
+    {
+        qsizetype endIndex = command.indexOf(',', commandIndex + 1);
+        QString str = command.mid(commandIndex, endIndex == -1 ? -1 : endIndex - commandIndex);
+
+        // look for loop start
+        qsizetype const loopStartIndex = str.indexOf('(');
+        if (loopStartIndex == 0)
+        {
+            commandIndex++;
+            commandLoopCounts.push_back(-1);
+            continue;
+        }
+
+        // look for loop end
+        qsizetype const loopEndIndex = str.indexOf(')');
+        if (loopEndIndex >= 0)
+        {
+            if (loopEndIndex == 0)
+            {
+                // first index is ')' expecting loop count next
+                commandIndex++;
+                isLoopCount = true;
+                continue;
+            }
+            else
+            {
+                // remove all char after ')' so number remains
+                str = str.mid(0, loopEndIndex);
+                endIndex = commandIndex + loopEndIndex - 1;
+            }
+        }
+
+        QStringList const buttons = str.split('|');
+        int duration = buttons.back().toInt();
+        if (isLoopCount)
+        {
+            isLoopCount = false;
+
+            if (duration == 0)
+            {
+                // infinite loop
+                return -1;
+            }
+
+            // found a loop count
+            int& loopLeft = commandLoopCounts.back();
+            if (loopLeft == -1)
+            {
+                loopLeft = duration;
+            }
+
+            if (loopLeft == 1)
+            {
+                // immediately run next command if loop finished
+                commandLoopCounts.pop_back();
+
+                if (endIndex == -1)
+                {
+                    commandIndex = -1;
+                }
+                else
+                {
+                    commandIndex = endIndex + 1;
+                }
+
+                continue;
+            }
+            else
+            {
+                commandIndex--;
+                if (loopLeft > 1)
+                {
+                    // if loopCount is 0 it loops forever
+                    loopLeft--;
+                }
+
+                // roll back to '('
+                int loopEndCount = 0;
+                bool nextCommand = false;
+                while (commandIndex > 0)
+                {
+                    commandIndex--;
+                    if (command[commandIndex] == ')')
+                    {
+                        loopEndCount++;
+                    }
+                    else if (command[commandIndex] == '(')
+                    {
+                        if (loopEndCount == 0)
+                        {
+                            commandIndex++;
+                            nextCommand = true;
+                            break;
+                        }
+                        else
+                        {
+                            loopEndCount--;
+                        }
+                    }
+                }
+
+                if (nextCommand)
+                {
+                    continue;
+                }
+            }
+        }
+        else
+        {
+            totalDuration += duration;
+        }
+
+        if (endIndex == -1)
+        {
+            commandIndex = -1;
+        }
+        else
+        {
+            commandIndex = endIndex + 1;
+        }
+    }
+
+    return totalDuration;
+}
+
 //-----------------------------------------------------------
 // Slots
 //-----------------------------------------------------------

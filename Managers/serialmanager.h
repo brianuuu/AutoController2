@@ -31,6 +31,7 @@ public:
 
     void SetDebugLoop(bool enable) { if (m_serialHolder) { m_serialHolder->SetDebugLoop(enable); } }
     static bool VerifyCommand(QString const& command, QString& errorMsg);
+    static int GetCommandDuration(QString const& command);
 
 signals:
     void notifyClose();

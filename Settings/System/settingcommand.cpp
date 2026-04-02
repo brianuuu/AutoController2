@@ -54,7 +54,10 @@ void SettingCommand::VerifyCommand()
     }
     else if (SerialManager::VerifyCommand(m_command->text(), errorMsg))
     {
-        m_status->setText(errorMsg.isEmpty() ? "Valid!" : errorMsg);
+        int const duration = SerialManager::GetCommandDuration(m_command->text());
+        QString text = errorMsg.isEmpty() ? "Valid!" : errorMsg;
+        text += " (Duration: " + (duration > 0 ? QString::number(duration) + "ms)" : "Indefinite)");
+        m_status->setText(text);
         m_valid = true;
     }
     else
