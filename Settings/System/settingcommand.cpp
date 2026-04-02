@@ -7,9 +7,10 @@
 
 namespace Setting::System {
 
-SettingCommand::SettingCommand(const QString &name, bool allowEmpty)
+SettingCommand::SettingCommand(const QString &name, bool allowEmpty, bool allowInfiniteLoop)
     : SettingBase(name)
     , m_allowEmpty(allowEmpty)
+    , m_allowInfiniteLoop(allowInfiniteLoop)
 {
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     vBoxLayout->setContentsMargins(0,0,0,0);
@@ -49,19 +50,29 @@ void SettingCommand::VerifyCommand()
     QString errorMsg;
     if (m_command->text().isEmpty() && m_allowEmpty)
     {
+        m_duration = 0;
         m_status->setText("Valid!");
         m_valid = true;
     }
     else if (SerialManager::VerifyCommand(m_command->text(), errorMsg))
     {
-        int const duration = SerialManager::GetCommandDuration(m_command->text());
-        QString text = errorMsg.isEmpty() ? "Valid!" : errorMsg;
-        text += " (Duration: " + (duration > 0 ? QString::number(duration) + "ms)" : "Indefinite)");
-        m_status->setText(text);
-        m_valid = true;
+        m_duration = SerialManager::GetCommandDuration(m_command->text());
+        if (m_duration < 0 && !m_allowInfiniteLoop)
+        {
+            m_status->setText("Infinite Loop not allowed");
+            m_valid = false;
+        }
+        else
+        {
+            QString text = errorMsg.isEmpty() ? "Valid!" : errorMsg;
+            text += " (Duration: " + (m_duration > 0 ? QString::number(m_duration) + "ms)" : "Indefinite)");
+            m_status->setText(text);
+            m_valid = true;
+        }
     }
     else
     {
+        m_duration = 0;
         m_status->setText(errorMsg);
         m_valid = false;
     }
