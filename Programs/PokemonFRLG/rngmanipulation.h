@@ -41,6 +41,7 @@ private slots:
 
     void OnUpdateSeedCalibrate();
     void OnUpdateContinueCalibrate();
+    void OnContinueFrameChanged(int value);
     void OnOverallFrameChanged(int value);
     void OnCommandFlashbackValid(bool valid);
 
@@ -65,6 +66,7 @@ private: // members
     QLineEdit* m_seedHit = Q_NULLPTR;
     QPushButton* m_btnSeedUpdate = Q_NULLPTR;
     Setting::SettingSpinBox* m_continueFrames = Q_NULLPTR;
+    QLabel* m_continueTime = Q_NULLPTR;
     Setting::SettingSpinBox* m_continueCalibrate = Q_NULLPTR;
     QLineEdit* m_continueHit = Q_NULLPTR;
     QPushButton* m_btnContinueUpdate = Q_NULLPTR;

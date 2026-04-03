@@ -32,8 +32,10 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     connect(m_btnSeedUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateSeedCalibrate);
 
     m_continueFrames = new Setting::SettingSpinBox("ContinueFrames", 190, INT_MAX, 0);
+    m_continueTime = AddText(layout, "", true);
     m_savedSettings.insert(m_continueFrames);
-    AddSetting(layout, "Continue Screen Frames:", "How many frames to wait at continue screen before pressing A, 1 advance per frame", m_continueFrames);
+    AddSettings(layout, "Continue Screen Frames:", "How many frames to wait at continue screen before pressing A, 1 advance per frame", {m_continueFrames, m_continueTime});
+    connect(m_continueFrames, &QSpinBox::valueChanged, this, &RNGManipulation::OnContinueFrameChanged);
 
     m_continueCalibrate = new Setting::SettingSpinBox("ContinueCalibrate", -INT_MAX, INT_MAX, 0);
     m_continueHit = new QLineEdit();
@@ -43,7 +45,6 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_savedSettings.insert(m_continueCalibrate);
     AddSettings(layout, "Continue Calibrate:", "How many frames off from your selected continue screen frames and hit frame, set the hit frame on the right and press Update", {m_continueCalibrate, m_continueHit, m_btnContinueUpdate});
     m_btnContinueUpdate->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    connect(m_continueFrames, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_continueCalibrate, &QSpinBox::valueChanged, this, &RNGManipulation::OnCanRunChanged);
     connect(m_btnContinueUpdate, &QPushButton::pressed, this, &RNGManipulation::OnUpdateContinueCalibrate);
 
@@ -69,6 +70,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 
     AddSpacer(layout);
 
+    OnContinueFrameChanged(m_continueFrames->value());
     OnOverallFrameChanged(m_overworldFrames->value());
 }
 
@@ -197,6 +199,12 @@ void RNGManipulation::OnUpdateContinueCalibrate()
     value += m_continueFrames->value() - hit.toInt();
     m_continueCalibrate->setValue(value);
     m_continueHit->clear();
+}
+
+void RNGManipulation::OnContinueFrameChanged(int value)
+{
+    m_continueTime->setText("= " + QString::number(m_continueFrames->value() * 1000 / 60) + "ms");
+    OnCanRunChanged();
 }
 
 void RNGManipulation::OnOverallFrameChanged(int value)
