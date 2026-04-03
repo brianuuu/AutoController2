@@ -16,7 +16,7 @@ void PermutationBase::PopulateSettings(QBoxLayout *layout)
 
     m_advanceFrame = new Setting::SettingSpinBox("AdvanceFrame", 0, 9999);
     m_savedSettings.insert(m_advanceFrame);
-    AddSetting(layout, "Advance Frame:", "Wait this many frames (not accurate) before finishing dialogue after picking starter. This setting is changed by the program while running", m_advanceFrame, true);
+    AddSetting(layout, "Advance Frame:", "Wait this many frames (not accurate) before encountering/accepting Pokemon. This setting is changed by the program while running", m_advanceFrame, true);
 }
 
 void PermutationBase::RegisterStats()
