@@ -1,0 +1,11 @@
+- Added FRLG RNG Manipulation program
+- Added FRLG Static Reset program
+- Added FRLG Prize Corner Reset program
+- Added FRLG - Underground Path Cycle 2 (left-right)
+- FRLG Overworld Shiny now has option to disable dialog delay shiny detection
+- Display loop count in Custom Command program
+- Command now use precise timer, this should reduced time drifts
+- Command now also show its duration
+- Prevent scrolling from changing settings by accident
+- Fixed FRLG Overworld Encounter Spin In Place may drift up
+- Fixed starting a program not updating to latest stats

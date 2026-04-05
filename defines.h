@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define VERSION QString("0.4.2")
+#define VERSION QString("0.5.0")
 #define IS_BETA false
 
 // matches the version in AutoController2.hex
