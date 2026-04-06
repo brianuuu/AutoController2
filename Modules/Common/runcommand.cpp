@@ -8,17 +8,19 @@
 namespace Module::Common
 {
 
-RunCommand::RunCommand(const QString &command)
+RunCommand::RunCommand(const QString &nameOrCommand, uint startDelay)
     : ModuleBase(nullptr)
-    , m_command(command)
-{
-}
-
-RunCommand::RunCommand(const QString &name, uint startDelay)
-    : ModuleBase(nullptr)
-    , m_name(name)
     , m_startDelay(startDelay)
 {
+    if (nameOrCommand.contains('|'))
+    {
+        m_command = nameOrCommand;
+    }
+    else
+    {
+        m_name = nameOrCommand;
+    }
+
     ProfileManager* profileManager = ManagerCollection::GetManager<ProfileManager>();
     m_systemType = profileManager->GetSystemType();
 }

@@ -15,8 +15,7 @@ class RunCommand : public ModuleBase
 {
     Q_OBJECT
 public:
-    explicit RunCommand(QString const& command);
-    explicit RunCommand(QString const& name, uint startDelay);
+    explicit RunCommand(QString const& nameOrCommand, uint startDelay = 0);
 
     // from ModuleBase
     QString GetName() const override { return "Common-RunCommand"; }
@@ -39,7 +38,7 @@ private:
 
     QString         m_name;
     QString         m_command;
-    uint            m_startDelay;
+    uint            m_startDelay = 0;
 };
 } // namespace Module
 
