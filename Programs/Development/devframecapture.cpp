@@ -232,18 +232,21 @@ void DevFrameCapture::OnListChanged(const QString &str)
     bool const isArea = (mode == 2 || mode == 3);
     bool const isRange = (mode == 1 || mode == 3);
     bool const isColor = (mode == 0 || mode == 2);
+    QSize const captureRes = CaptureHolder::GetCaptureResolution();
 
     if (JsonHelper::ReadValue(object, "Left", value))
     {
         m_left->blockSignals(true);
         m_left->setValue(value.toInt());
         m_left->blockSignals(false);
+        m_width->setMaximum(captureRes.width() - value.toInt());
     }
     if (JsonHelper::ReadValue(object, "Top", value))
     {
         m_top->blockSignals(true);
         m_top->setValue(value.toInt());
         m_top->blockSignals(false);
+        m_height->setMaximum(captureRes.height() - value.toInt());
     }
 
     if (isArea)
