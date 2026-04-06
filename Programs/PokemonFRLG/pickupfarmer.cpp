@@ -9,10 +9,14 @@ void PickupFarmer::PopulateSettings(QBoxLayout *layout)
     m_maxPP = new Setting::SettingSpinBox("MaxPP", 5, 40);
     AddSetting(layout, "Max PP:", "Max PP for the first move of the first Pokemon, must be divisible by 5", m_maxPP);
 
+    m_stopForNewMove = new Setting::SettingCheckBox("StopForNewMove", "", false);
+    AddSetting(layout, "Stop for New Move:", "Stop the program if the first Pokemon is learning a new move, otherwise the move will be forgotten", m_stopForNewMove);
+
     m_stopForShiny = new Setting::SettingCheckBox("StopForShiny", "", false);
-    AddSetting(layout, "Stop For Shiny:", "Stop the program if a shiny is detected, it will still detect shiny and send discord message even if unchecked but the program will continue", m_stopForShiny);
+    AddSetting(layout, "Stop for Shiny:", "Stop the program if a shiny is detected, it will still detect shiny and send discord message even if unchecked but the program will continue", m_stopForShiny);
 
     m_savedSettings.insert(m_maxPP);
+    m_savedSettings.insert(m_stopForNewMove);
     m_savedSettings.insert(m_stopForShiny);
 
     AddSpacer(layout);
@@ -132,9 +136,9 @@ void PickupFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
             {
                 m_battleCount++;
                 m_state = SetState(State::BattleFinish, "Defeating Pokemon (PP Left: " + QString::number(m_maxPP->value() - m_battleCount) + ")");
-                m_moduleHolder->AddRunCommand("A|Spam|500,B|Spam|10000");
+                m_moduleHolder->AddRunCommand("A|Spam|500,B|Spam|20000");
                 m_moduleHolder->AddFrameCapture("FRLG_CenterBlack");
-                // TODO: learn new move
+                m_moduleNewMove = m_moduleHolder->AddFrameCapture("FRLG_YesNoBoxInBattle", Qt::red);
             }
         }
         break;
@@ -143,6 +147,24 @@ void PickupFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
     {
         if (matched)
         {
+            if (module == m_moduleNewMove)
+            {
+                m_moduleHolder->ClearModule(m_moduleNewMove);
+                m_moduleNewMove = Q_NULLPTR;
+
+                if (m_stopForNewMove->isChecked())
+                {
+                    PrintLog("Pokemon trying to learn a new move, stopping", LOG_Important);
+                    emit notifyFinished(true);
+                }
+                else
+                {
+                    m_moduleHolder->AddRunCommand("B|Spam|100,A|Spam|10000");
+                    PrintLog("Pokemon trying to learn a new move, ignoring", LOG_Important);
+                }
+                break;
+            }
+
             m_moduleHolder->ClearModules();
             m_timer.start(2000);
         }

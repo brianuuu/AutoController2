@@ -61,7 +61,9 @@ private: // function
 
 private: // members
     Setting::SettingSpinBox* m_maxPP = Q_NULLPTR;
+    Setting::SettingCheckBox* m_stopForNewMove = Q_NULLPTR;
     Setting::SettingCheckBox* m_stopForShiny = Q_NULLPTR;
+    Module::ModuleBase* m_moduleNewMove = Q_NULLPTR;
 
 	State m_state;
     qint64 m_battleDelay = 0;
