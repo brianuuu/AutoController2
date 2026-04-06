@@ -74,7 +74,7 @@ void NuggetFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
         else if (m_dialogCount == 1 && !matched && m_elapsedTimer.elapsed() > 300)
         {
             // dialogue finished
-            m_moduleHolder->ClearModule(sender());
+            m_moduleHolder->ClearModule(module);
             m_elapsedTimer.restart();
 
             m_state = SetState(State::BattleBox, "Detecting black screen for battle start");
@@ -92,7 +92,7 @@ void NuggetFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
 
         if (matched)
         {
-            m_moduleHolder->ClearModule(sender());
+            m_moduleHolder->ClearModule(module);
             m_elapsedTimer.restart();
 
             ++m_statNuggets;

@@ -96,7 +96,7 @@ void RespawnReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
         // wait for black screen to be not black anymore + buffer from black detection
         if (!matched && m_elapsedTimer.elapsed() > 300)
         {
-            m_moduleHolder->ClearModule(sender());
+            m_moduleHolder->ClearModule(module);
             if (m_state == State::TitleScreen)
             {
                 m_state = SetState(State::GameLoadStart, "Title screen detected, entering game");
