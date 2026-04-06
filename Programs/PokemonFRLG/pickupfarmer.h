@@ -57,6 +57,7 @@ private: // function
     void Restart();
     void StateHeal();
     void StateMove();
+    void StateFetchItem();
 
 private: // members
     Setting::SettingSpinBox* m_maxPP = Q_NULLPTR;

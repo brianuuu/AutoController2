@@ -29,8 +29,8 @@ void PickupFarmer::Start()
     ProgramBase::Start();
 
     // always heal at start
-    m_battleCount = m_maxPP->value();
-    Restart();
+    m_battleCount = 9999;
+    StateFetchItem();
 }
 
 void PickupFarmer::Stop()
@@ -221,12 +221,12 @@ void PickupFarmer::OnWaitTimeout()
     {
         if (m_battleCount % 5 == 0)
         {
-            m_state = SetState(State::FetchItem, "Fetching items after 5 battles");
-            m_moduleHolder->AddRunCommand("FRLG_FetchPickupItems");
-            break;
+            StateFetchItem();
         }
-
-        Restart();
+        else
+        {
+            Restart();
+        }
         break;
     }
     default:
@@ -239,7 +239,7 @@ void PickupFarmer::OnWaitTimeout()
 
 void PickupFarmer::Restart()
 {
-    if (m_battleCount == m_maxPP->value())
+    if (m_battleCount >= m_maxPP->value())
     {
         StateHeal();
     }
@@ -265,6 +265,12 @@ void PickupFarmer::StateMove()
     m_state = SetState(State::Move, "Spinning in place until encounter");
     m_moduleHolder->AddRunCommand("FRLG_SpinInPlaceDown");
     m_elapsedTimer.restart();
+}
+
+void PickupFarmer::StateFetchItem()
+{
+    m_state = SetState(State::FetchItem, "Fetching items");
+    m_moduleHolder->AddRunCommand("FRLG_FetchPickupItems");
 }
 
 }
