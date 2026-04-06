@@ -31,6 +31,11 @@ void RunCommand::run()
 
     if (m_name.isEmpty())
     {
+        if (m_startDelay > 0)
+        {
+            m_command = "None|" + QString::number(m_startDelay) + "," + m_command;
+        }
+
         PrintLog("Running command = " + m_command);
     }
     else
