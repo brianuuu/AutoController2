@@ -117,6 +117,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/PokemonFRLG/nuggetfarmer.cpp Programs/PokemonFRLG/nuggetfarmer.h
         Programs/PokemonFRLG/overworldshiny.cpp Programs/PokemonFRLG/overworldshiny.h
         Programs/PokemonFRLG/permutationbase.h Programs/PokemonFRLG/permutationbase.cpp
+        Programs/PokemonFRLG/pickupfarmer.cpp Programs/PokemonFRLG/pickupfarmer.h
         Programs/PokemonFRLG/prizecornerreset.cpp Programs/PokemonFRLG/prizecornerreset.h
         Programs/PokemonFRLG/rngmanipulation.cpp Programs/PokemonFRLG/rngmanipulation.h
         Programs/PokemonFRLG/starterreset.cpp Programs/PokemonFRLG/starterreset.h
