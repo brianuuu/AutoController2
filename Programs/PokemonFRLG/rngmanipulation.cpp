@@ -51,7 +51,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
     m_overworldFrames = new Setting::SettingSpinBox("OverworldFrames", 220, INT_MAX, 600);
     m_overworldTime = AddText(layout, "", true);
     m_savedSettings.insert(m_overworldFrames);
-    AddSettings(layout, "Overworld Frames:", "How many frames to wait in the overworld before pressing A, 2 advances per frame", {m_overworldFrames, m_overworldTime});
+    AddSettings(layout, "Overworld Frames:", "How many frames to wait in the overworld before pressing A, 2 advances per frame. Minimum is 220 to skip flashback sequence", {m_overworldFrames, m_overworldTime});
     connect(m_overworldFrames, &QSpinBox::valueChanged, this, &RNGManipulation::OnOverallFrameChanged);
 
     m_moveUp = new Setting::SettingCheckBox("MoveUp");
@@ -60,7 +60,7 @@ void RNGManipulation::PopulateSettings(QBoxLayout *layout)
 
     m_commandFlashback = new Setting::System::SettingCommand("CommandFlashback", true, false);
     m_savedSettings.insert(m_commandFlashback);
-    AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, use this for going through gift Pokemon dialogues or head to Sweet Scent button, the time to complete this command must be less than overworld frames. Use Command Recorder program to record this", m_commandFlashback, false);
+    AddSetting(layout, "Command after Flashback:", "(Optional) Command used after flashback, use this for going through gift Pokemon dialogues or head to Sweet Scent button, this command must fit after flashback and before final A press. Use Command Recorder program to record this", m_commandFlashback, false);
     connect(m_commandFlashback, &Setting::System::SettingCommand::notifyValid, this, &RNGManipulation::OnCommandFlashbackValid);
 
     m_commandComplete = new Setting::System::SettingCommand("CommandComplete", true);

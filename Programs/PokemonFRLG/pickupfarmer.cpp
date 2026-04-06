@@ -10,7 +10,7 @@ void PickupFarmer::PopulateSettings(QBoxLayout *layout)
     AddSetting(layout, "Max PP:", "Max PP for the first move of the first Pokemon, must be divisible by 5", m_maxPP);
 
     m_stopForShiny = new Setting::SettingCheckBox("StopForShiny", "", false);
-    AddSetting(layout, "Stop For Shiny:", "Stop the program is a shiny is detected", m_stopForShiny);
+    AddSetting(layout, "Stop For Shiny:", "Stop the program if a shiny is detected, it will still detect shiny and send discord message even if unchecked but the program will continue", m_stopForShiny);
 
     m_savedSettings.insert(m_maxPP);
     m_savedSettings.insert(m_stopForShiny);
@@ -134,6 +134,7 @@ void PickupFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
                 m_state = SetState(State::BattleFinish, "Defeating Pokemon (PP Left: " + QString::number(m_maxPP->value() - m_battleCount) + ")");
                 m_moduleHolder->AddRunCommand("A|Spam|500,B|Spam|10000");
                 m_moduleHolder->AddFrameCapture("FRLG_CenterBlack");
+                // TODO: learn new move
             }
         }
         break;
