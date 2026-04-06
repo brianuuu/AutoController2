@@ -38,6 +38,7 @@ private slots:
 	void OnCommandFinished(Module::Common::RunCommand* module) override;
     void OnFrameCaptureMatched(Module::Common::FrameCapture* module, bool matched) override;
     void OnSubModuleResult(Module::SubModuleBase* module, int result) override;
+    void OnWaitTimeout() override;
 
 private: // types
     enum class State
@@ -47,12 +48,15 @@ private: // types
         EncounterStart,
         EncounterWait,
         BattleSelection,
-        RunAway,
+        BattleFinish,
+        FetchItem,
         Capture,
     };
 
 private: // function
+    void Restart();
     void StateHeal();
+    void StateMove();
 
 private: // members
     Setting::SettingSpinBox* m_maxPP = Q_NULLPTR;

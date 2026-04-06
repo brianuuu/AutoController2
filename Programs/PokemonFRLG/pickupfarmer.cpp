@@ -7,10 +7,13 @@ namespace Program::PokemonFRLG
 void PickupFarmer::PopulateSettings(QBoxLayout *layout)
 {
     m_maxPP = new Setting::SettingSpinBox("MaxPP", 5, 40);
-    AddSetting(layout, "Max PP:", "Max PP for the first move of the first Pokemon", m_maxPP);
+    AddSetting(layout, "Max PP:", "Max PP for the first move of the first Pokemon, must be divisible by 5", m_maxPP);
 
     m_stopForShiny = new Setting::SettingCheckBox("StopForShiny", "", false);
     AddSetting(layout, "Stop For Shiny:", "Stop the program is a shiny is detected", m_stopForShiny);
+
+    m_savedSettings.insert(m_maxPP);
+    m_savedSettings.insert(m_stopForShiny);
 
     AddSpacer(layout);
 }
@@ -24,7 +27,10 @@ void PickupFarmer::RegisterStats()
 void PickupFarmer::Start()
 {
     ProgramBase::Start();
-    StateHeal();
+
+    // always heal at start
+    m_battleCount = m_maxPP->value();
+    Restart();
 }
 
 void PickupFarmer::Stop()
@@ -41,9 +47,7 @@ void PickupFarmer::OnCommandFinished(Module::Common::RunCommand* module)
     {
     case State::Heal:
     {
-        m_state = SetState(State::Move, "Spinning in place until encounter");
-        m_moduleHolder->AddRunCommand("FRLG_SpinInPlaceDown", 0);
-        m_elapsedTimer.restart();
+        StateMove();
         break;
     }
     case State::BattleSelection:
@@ -51,9 +55,14 @@ void PickupFarmer::OnCommandFinished(Module::Common::RunCommand* module)
         emit notifyFinished(false, "Unable to detect battle selection for too long");
         break;
     }
-    case State::RunAway:
+    case State::BattleFinish:
     {
-        StateHeal();
+        emit notifyFinished(false, "Unable to detect battle finishing for too long");
+        break;
+    }
+    case State::FetchItem:
+    {
+        Restart();
         break;
     }
     case State::Capture:
@@ -97,7 +106,7 @@ void PickupFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
                     PrintLog("SHINY POKEMON FOUND!", LOG_Success);
                     m_moduleHolder->ClearModules();
                     m_state = SetState(State::Capture, "Capturing video");
-                    m_moduleHolder->AddRunCommand("System_CaptureHome", 0);
+                    m_moduleHolder->AddRunCommand("System_CaptureHome");
                     SendDiscordMessage("Shiny Found!", true, false, true, LOG_Shiny);
                     break;
                 }
@@ -115,13 +124,26 @@ void PickupFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
             m_moduleHolder->ClearModules();
             if (m_shouldRun)
             {
-                m_state = SetState(State::RunAway, "Running away");
-                m_moduleHolder->AddRunCommand("FRLG_RunFromEncounter", 0);
+                m_state = SetState(State::BattleFinish, "Running away");
+                m_moduleHolder->AddRunCommand("FRLG_RunFromEncounter");
+                m_moduleHolder->AddFrameCapture("FRLG_CenterBlack");
             }
             else
             {
                 m_battleCount++;
+                m_state = SetState(State::BattleFinish, "Defeating Pokemon (PP Left: " + QString::number(m_maxPP->value() - m_battleCount) + ")");
+                m_moduleHolder->AddRunCommand("A|Spam|500,B|Spam|10000");
+                m_moduleHolder->AddFrameCapture("FRLG_CenterBlack");
             }
+        }
+        break;
+    }
+    case State::BattleFinish:
+    {
+        if (matched)
+        {
+            m_moduleHolder->ClearModules();
+            m_timer.start(2000);
         }
         break;
     }
@@ -191,16 +213,58 @@ void PickupFarmer::OnSubModuleResult(Module::SubModuleBase *module, int result)
     }
 }
 
-void PickupFarmer::StateHeal()
+void PickupFarmer::OnWaitTimeout()
 {
-    m_battleCount = 0;
+    switch (m_state)
+    {
+    case State::BattleFinish:
+    {
+        if (m_battleCount % 5 == 0)
+        {
+            m_state = SetState(State::FetchItem, "Fetching items after 5 battles");
+            m_moduleHolder->AddRunCommand("FRLG_FetchPickupItems");
+            break;
+        }
 
-    m_state = SetState(State::Heal, "Healing Pokemon");
-    m_moduleHolder->AddRunCommand("FRLG_PokemonTowerHeal", 0);
+        Restart();
+        break;
+    }
+    default:
+    {
+        emit notifyFinished(false);
+        return;
+    }
+    }
+}
+
+void PickupFarmer::Restart()
+{
+    if (m_battleCount == m_maxPP->value())
+    {
+        StateHeal();
+    }
+    else
+    {
+        StateMove();
+    }
 
     auto* module = new Module::PokemonFRLG::BlackScreen();
     connect(module, &Module::PokemonFRLG::BlackScreen::notifyResult, this, &PickupFarmer::OnSubModuleResult);
     m_moduleHolder->AddModule(module);
+}
+
+void PickupFarmer::StateHeal()
+{
+    m_battleCount = 0;
+    m_state = SetState(State::Heal, "Healing Pokemon");
+    m_moduleHolder->AddRunCommand("FRLG_PokemonTowerHeal");
+}
+
+void PickupFarmer::StateMove()
+{
+    m_state = SetState(State::Move, "Spinning in place until encounter");
+    m_moduleHolder->AddRunCommand("FRLG_SpinInPlaceDown");
+    m_elapsedTimer.restart();
 }
 
 }
