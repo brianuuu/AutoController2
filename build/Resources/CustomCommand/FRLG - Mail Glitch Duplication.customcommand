@@ -1,0 +1,5 @@
+{
+    "Command": "A|50,None|50,(LUp|50,None|50,LUp|50,None|50,A|50,None|50,A|50,None|1200,A|2000,None|50,A|1000,None|50,A|1000,None|50,B|50,None|50,LUp|50,None|50,A|50,None|1500)60",
+    "Description": "Duplicate items with mail glitch 5 times, edit the number of loops at the end of command.\n\n1. Save the game in case anything goes wrong\n2. Enable Mail Glitch: https://youtu.be/JYbFSvdWEgY\n3. You MUST have enough Retro Mail to use this command\n4. Ensure 5 of the party is holding Retro Mail\n5. Give the item you want to duplicate to the remaining Pokemon\n6. Click give item and hover cursor to Retro Mail, quit bag\n7. Close the option box, start the command when it's highlighting the Pokemon, the command will bring up the selection box again",
+    "Sound": "None"
+}
