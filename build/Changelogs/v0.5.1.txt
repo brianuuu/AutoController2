@@ -1,0 +1,5 @@
+- Added FRLG Pickup Farmer program
+- Added FRLG - Mail Glitch Duplication custom command
+- Fixed FRLG Nugget Farmer sometimes failing
+- Fixed SpinInPlace command drifting
+- Fixed various program broken from module refactoring
