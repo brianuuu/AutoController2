@@ -7,8 +7,8 @@ namespace Program::PokemonFRLG
 
 void OverworldShiny::PopulateSettings(QBoxLayout *layout)
 {
-    m_type = new Setting::SettingComboBox("Type", {"Up/Down", "Left/Right", "Spin in Place"});
-    AddSetting(layout, "Type:", "Move Up and Down, Left and Right, or Spin in Place", m_type, true);
+    m_type = new Setting::SettingComboBox("Type", {"Up/Down", "Left/Right", "Spin in Place", "Fishing"});
+    AddSetting(layout, "Type:", "Choose movement type or fishing", m_type, true);
     connect(m_type, &QComboBox::currentIndexChanged, this, &OverworldShiny::OnTypeChanged);
 
     m_moveTime = new Setting::SettingSpinBox("MoveTime", 100, 60000, 1000);
@@ -53,7 +53,16 @@ void OverworldShiny::Stop()
 
 void OverworldShiny::OnTypeChanged(int index)
 {
-    m_moveTime->setEnabled((Type)index != Type::SpinInPlace);
+    switch ((Type)index)
+    {
+    case Type::SpinInPlace:
+    case Type::Fishing:
+        m_moveTime->setEnabled(false);
+        break;
+    default:
+        m_moveTime->setEnabled(true);
+        break;
+    }
 }
 
 void OverworldShiny::OnCommandFinished(Module::Common::RunCommand* module)
@@ -93,6 +102,30 @@ void OverworldShiny::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
 
     switch (m_state)
     {
+    case State::Move:
+    {
+        if ((Type)m_type->currentIndex() == Type::Fishing)
+        {
+            if (!m_isUp && matched)
+            {
+                m_isUp = true;
+                m_elapsedTimer.restart();
+            }
+            else if (m_isUp && !matched && m_elapsedTimer.elapsed() > 300)
+            {
+                // reel again
+                m_isUp = false;
+                m_moduleHolder->AddRunCommand("FRLG_Fishing");
+            }
+        }
+        break;
+    }
+    case State::EncounterStart:
+    {
+        // clears the dialog module
+        m_moduleHolder->ClearModule(module);
+        break;
+    }
     case State::Listen:
     {
         if (matched)
@@ -215,7 +248,7 @@ void OverworldShiny::OnSoundDetected(int id)
 
 void OverworldShiny::StateMove()
 {
-    m_state = SetState(State::Move, "Moving back and forth until encounter");
+    m_state = SetState(State::Move, (Type)m_type->currentIndex() == Type::Fishing ? "Started fishing" : "Moving back and forth until encounter");
 
     QString const moveTime = QString::number(m_moveTime->value());
     switch ((Type)m_type->currentIndex())
@@ -229,6 +262,11 @@ void OverworldShiny::StateMove()
     case Type::SpinInPlace:
         m_moduleHolder->AddRunCommand(m_isUp ? "FRLG_SpinInPlaceUp" : "FRLG_SpinInPlaceDown", 0);
         m_isUp = !m_isUp;
+        break;
+    case Type::Fishing:
+        m_isUp = false;
+        m_moduleHolder->AddRunCommand("FRLG_Fishing");
+        m_moduleHolder->AddFrameCapture("FRLG_DialogBox", Qt::red);
         break;
     }
 

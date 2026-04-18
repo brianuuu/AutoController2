@@ -59,6 +59,7 @@ private: // types
         UpDown,
         LeftRight,
         SpinInPlace,
+        Fishing,
     };
 
 private: // function
