@@ -62,10 +62,7 @@ void CustomCommand::Start()
 {
     ProgramBase::Start();
     m_serialManager->SetDebugLoop(true);
-
-    Module::Common::RunCommand* module = new Module::Common::RunCommand(m_command->GetText());
-    m_moduleHolder->AddModule(module, true);
-    m_btnDelete->setEnabled(false);
+    m_moduleHolder->AddRunCommand(m_command->GetText());
 
     if (m_sound->currentIndex() > 0)
     {
@@ -211,7 +208,9 @@ void CustomCommand::OnCommandSave()
 
 void CustomCommand::OnCommandFinished(Module::Common::RunCommand* module)
 {
-    // only used when sound was detected
+    if (OnModuleErrorQuit(module)) return;
+    m_moduleHolder->ClearModule(module);
+
     emit notifyFinished(true);
 }
 
