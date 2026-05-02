@@ -25,6 +25,7 @@ public:
 
     // from ProgramBase
     void PopulateSettings(QBoxLayout* layout) override;
+    void RegisterStats() override;
     QString GetInternalName() const override { return "System-CustomCommand"; }
     QString GetDescription() const override {
         return "Runs a pre-made command, or make custom commands.";
@@ -46,6 +47,7 @@ private slots:
     void OnCommandChanged(bool valid);
     void OnCommandSave();
 
+    void OnInfiniteLoop();
     void OnCommandFinished(Module::Common::RunCommand* module) override;
     void OnSoundDetected(int id) override;
 
@@ -62,6 +64,8 @@ private:
     QMediaPlayer* m_mediaPlayer = Q_NULLPTR;
     int m_soundID = 0;
     bool m_validCommand = false;
+
+    Stat m_statLoop;
 };
 }
 

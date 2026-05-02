@@ -37,6 +37,7 @@ signals:
     // run command
     void notifyCommandFinished();
     void notifyDisplayButton(quint32 buttonFlag, QPointF lStick = QPointF(), QPointF rStick = QPointF());
+    void notifyInfiniteLoop();
 
 public slots:
     // serial

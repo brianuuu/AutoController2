@@ -14,6 +14,7 @@ namespace Program::System
 
 CustomCommand::CustomCommand(QObject *parent) : ProgramBase(parent)
 {
+    connect(m_serialManager->GetHolder(), &SerialHolder::notifyInfiniteLoop, this, &CustomCommand::OnInfiniteLoop);
 }
 
 void CustomCommand::PopulateSettings(QBoxLayout *layout)
@@ -51,6 +52,11 @@ void CustomCommand::PopulateSettings(QBoxLayout *layout)
 
     // set initial text
     OnListChanged(m_list->currentText());
+}
+
+void CustomCommand::RegisterStats()
+{
+    RegisterStat(m_statLoop, "Loop");
 }
 
 bool CustomCommand::CanRun() const
@@ -204,6 +210,11 @@ void CustomCommand::OnCommandSave()
     }
 
     m_list->setCurrentText(name);
+}
+
+void CustomCommand::OnInfiniteLoop()
+{
+    ++m_statLoop;
 }
 
 void CustomCommand::OnCommandFinished(Module::Common::RunCommand* module)

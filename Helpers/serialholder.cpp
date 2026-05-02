@@ -323,6 +323,7 @@ void SerialHolder::SendCurrentCommand(bool isLoopCount)
                 {
                     m_infiniteLoopCount++;
                     emit notifyLog("Serial", "Infinite Loop Count: " + QString::number(m_infiniteLoopCount));
+                    emit notifyInfiniteLoop();
                 }
                 else
                 {
