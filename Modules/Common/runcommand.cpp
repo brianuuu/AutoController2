@@ -72,6 +72,7 @@ void RunCommand::run()
     if (!SerialManager::VerifyCommand(m_command, m_error))
     {
         m_result = -1;
+        return;
     }
 
     SerialManager* serialManager = ManagerCollection::GetManager<SerialManager>();
@@ -79,6 +80,7 @@ void RunCommand::run()
     {
         m_result = -1;
         m_error = "Serial not connected";
+        return;
     }
 
     connect(this, &RunCommand::notifyCommand, serialManager->GetHolder(), &SerialHolder::OnSendCommand);
