@@ -219,6 +219,8 @@ void CustomCommand::OnSoundDetected(int id)
     // interrupt current command
     m_moduleHolder->ClearModules();
     m_moduleHolder->AddRunCommand("System_CaptureHome", 0);
+
+    SendDiscordMessage("Sound Detected!", true, false, true, LOG_Shiny);
 }
 
 }
