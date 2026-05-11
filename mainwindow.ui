@@ -484,27 +484,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="CB_ProgramCategory"/>
-        </item>
-        <item>
-         <widget class="QListWidget" name="LW_ProgramList">
+         <widget class="QComboBox" name="CB_ProgramCategory">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="LW_ProgramList">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="frameShape">
            <enum>QFrame::Shape::Box</enum>
@@ -732,7 +727,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>574</width>
+             <width>518</width>
              <height>305</height>
             </rect>
            </property>

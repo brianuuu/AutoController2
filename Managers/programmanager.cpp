@@ -11,6 +11,7 @@
 #include "Programs/Development/devcommand.h"
 #include "Programs/Development/devframecapture.h"
 #include "Programs/Development/devsounddetection.h"
+#include "Programs/MMSFLC/ciphercollector.h"
 #include "Programs/PokemonFRLG/giftreset.h"
 #include "Programs/PokemonFRLG/nuggetfarmer.h"
 #include "Programs/PokemonFRLG/overworldshiny.h"
@@ -78,6 +79,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::Development::DevCommand>();
     RegisterProgram<Program::Development::DevFrameCapture>();
     RegisterProgram<Program::Development::DevSoundDetection>();
+    RegisterProgram<Program::MMSFLC::CipherCollector>(true);
     RegisterProgram<Program::PokemonFRLG::GiftReset>();
     RegisterProgram<Program::PokemonFRLG::NuggetFarmer>();
     RegisterProgram<Program::PokemonFRLG::OverworldShiny>();
