@@ -2,8 +2,8 @@
 
 #include "Helpers/jsonhelper.h"
 #include "Programs/programbase.h"
+#include "Helpers/commandcollection.h"
 #include "Managers/serialmanager.h"
-#include "Modules/Common/runcommand.h"
 
 namespace Setting::System {
 
@@ -17,7 +17,7 @@ SettingCommand::SettingCommand(const QString &name, bool allowEmpty, bool allowI
     vBoxLayout->setSpacing(0);
 
     m_command = new QLineEdit();
-    m_command->setValidator(new QRegularExpressionValidator(Module::Common::RunCommand::GetRegularExpression()));
+    m_command->setValidator(new QRegularExpressionValidator(CommandCollection::GetRegularExpression()));
     connect(m_command, &QLineEdit::textChanged, this, &SettingCommand::VerifyCommand);
     connect(m_command, &QLineEdit::textEdited, this, &SettingCommand::notifyEdited);
     vBoxLayout->addWidget(m_command);

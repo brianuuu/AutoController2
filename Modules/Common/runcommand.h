@@ -3,7 +3,6 @@
 
 #include <QElapsedTimer>
 #include <QPointF>
-#include <QRegularExpression>
 
 #include "../modulebase.h"
 #include "Types/systemtype.h"
@@ -23,10 +22,6 @@ public:
 
     // from QThread
     void run() override;
-
-    static QString GetDirectory() { return RESOURCES_PATH + "CommandCollection/"; }
-    static QString GetExtension() { return ".command"; }
-    static QRegularExpression GetRegularExpression() { return QRegularExpression("[A-Za-z0-9()|,\-\.]*"); }
 
 signals:
     void notifyCommand(QString const& command);

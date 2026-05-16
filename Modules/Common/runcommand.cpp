@@ -1,6 +1,6 @@
 #include "runcommand.h"
 
-#include "Helpers/jsonhelper.h"
+#include "Helpers/commandcollection.h"
 #include "Managers/managercollection.h"
 #include "Managers/profilemanager.h"
 #include "Managers/serialmanager.h"
@@ -40,20 +40,14 @@ void RunCommand::run()
     }
     else
     {
-        QString const fullName = Module::Common::RunCommand::GetDirectory() + m_name + Module::Common::RunCommand::GetExtension();
-        QJsonObject const object = JsonHelper::ReadJson(fullName);
-
-        QVariant command;
-        if (JsonHelper::ReadValue(object, SystemToString(m_systemType), command) && !command.toString().isEmpty())
-        {
-            m_command = command.toString();
-        }
-        else if (JsonHelper::ReadValue(object, "Default", command))
+        m_command = CommandCollection::GetCommand(m_name, m_systemType);
+        if (m_command.isEmpty())
         {
             m_systemType = ST_COUNT;
-            m_command = command.toString();
+            m_command = CommandCollection::GetCommand(m_name, ST_COUNT);
         }
-        else
+
+        if (m_command.isEmpty())
         {
             m_error = "Command \"" + m_name + "\" not found";
             m_result = -1;

@@ -1,8 +1,8 @@
 #include "devcommand.h"
 
+#include "Helpers/commandcollection.h"
 #include "Helpers/jsonhelper.h"
 #include "Managers/profilemanager.h"
-#include "Managers/serialmanager.h"
 #include "Modules/Common/runcommand.h"
 #include "Types/systemtype.h"
 #include "defines.h"
@@ -17,7 +17,7 @@ DevCommand::DevCommand(QObject *parent) : ProgramBase(parent)
 
 void DevCommand::PopulateSettings(QBoxLayout *layout)
 {
-    m_list = new Setting::System::SettingPreset("CommandType", Module::Common::RunCommand::GetDirectory(), Module::Common::RunCommand::GetExtension(), true);
+    m_list = new Setting::System::SettingPreset("CommandType", CommandCollection::GetDirectory(), CommandCollection::GetExtension(), true);
     m_savedSettings.insert(m_list);
     AddSetting(layout, "Command Select:", "Select command to run", m_list, true);
     connect(m_list, &QComboBox::currentTextChanged, this, &DevCommand::OnListChanged);
@@ -99,22 +99,9 @@ void DevCommand::OnListChanged(const QString &str)
         }
     }
 
-    QString const name = Module::Common::RunCommand::GetDirectory() + str + Module::Common::RunCommand::GetExtension();
-    QJsonObject const object = JsonHelper::ReadJson(name);
-
     for (int i = 0; i <= ST_COUNT; i++)
     {
-        QString const key = i == ST_COUNT ? "Default" : SystemToString((SystemType)i);
-
-        QVariant command;
-        if (JsonHelper::ReadValue(object, key, command))
-        {
-            m_commandSettings[i]->SetText(command.toString());
-        }
-        else
-        {
-            m_commandSettings[i]->SetText("");
-        }
+        m_commandSettings[i]->SetText(CommandCollection::GetCommand(str, (SystemType)i));
     }
 }
 
@@ -126,12 +113,12 @@ void DevCommand::OnCommandChanged()
 
 void DevCommand::OnCommandSave()
 {
-    QString const file = QFileDialog::getSaveFileName(m_btnSave, tr("Save Command As"), Module::Common::RunCommand::GetDirectory(), "Command (*" + Module::Common::RunCommand::GetExtension() + ")");
+    QString const file = QFileDialog::getSaveFileName(m_btnSave, tr("Save Command As"), CommandCollection::GetDirectory(), "Command (*" + CommandCollection::GetExtension() + ")");
     if (file == Q_NULLPTR) return;
 
     QFileInfo const info(file);
     QString name = info.fileName();
-    name = name.mid(0, name.size() - Module::Common::RunCommand::GetExtension().size());
+    name = name.mid(0, name.size() - CommandCollection::GetExtension().size());
 
     if (name == CUSTOM_SELECTION)
     {
@@ -145,7 +132,9 @@ void DevCommand::OnCommandSave()
         QString const key = i == ST_COUNT ? "Default" : SystemToString((SystemType)i);
         object.insert(key, m_commandSettings[i]->GetText());
     }
+
     JsonHelper::WriteJson(file, object);
+    CommandCollection::CacheCommand(name);
 
     if (m_list->findText(name) == -1)
     {
