@@ -1,0 +1,5 @@
+{
+    "Command": "(A|50,None|50)5,(LDown|50,None|50,(A|50,None|50)5)17,LDown|50,None|50,A|50",
+    "Description": "Go to Wave Cards menu in MMSF1 and start program from the top. This will collect 5 Lunar Knights cards each and Andromeda.",
+    "Sound": "None"
+}
