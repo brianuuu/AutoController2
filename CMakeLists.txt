@@ -85,6 +85,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Helpers/audioconversionutils.cpp Helpers/audioconversionutils.h
         Helpers/audiofileholder.cpp Helpers/audiofileholder.h
         Helpers/captureholder.h Helpers/captureholder.cpp
+        Helpers/commandcollection.h Helpers/commandcollection.cpp
         Helpers/jsonhelper.h Helpers/jsonhelper.cpp
         Helpers/mediadiscoverer.h Helpers/mediadiscoverer.cpp
         Helpers/ocrentrydatabase.h Helpers/ocrentrydatabase.cpp
