@@ -43,7 +43,7 @@ private: // types
     };
 
 private: // function
-    void StateToCipherList();
+    void StateStart();
 
 private: // members
     Setting::SettingComboBox* m_game = Q_NULLPTR;

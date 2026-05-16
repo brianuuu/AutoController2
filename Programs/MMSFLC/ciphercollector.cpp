@@ -1,5 +1,7 @@
 #include "ciphercollector.h"
 
+#include "Helpers/commandcollection.h"
+
 namespace Program::MMSFLC
 {
 
@@ -23,7 +25,7 @@ void CipherCollector::Start()
     ProgramBase::Start();
 
     m_index = 0;
-    StateToCipherList();
+    StateStart();
 }
 
 void CipherCollector::Stop()
@@ -69,7 +71,7 @@ void CipherCollector::OnCommandFinished(Module::Common::RunCommand* module)
         }
         else
         {
-            StateToCipherList();
+            StateStart();
         }
         break;
     }
@@ -127,10 +129,26 @@ void CipherCollector::OnFrameCaptureMatched(Module::Common::FrameCapture* module
     }
 }
 
-void CipherCollector::StateToCipherList()
+void CipherCollector::StateStart()
 {
-    m_state = SetState(State::ToCipherList, "Go to Cipher List");
-    m_moduleHolder->AddRunCommand("MMSF1_ToCipherList");
+    if (m_macroOnly->isChecked())
+    {
+        QString command = CommandCollection::GetCommand("MMSF1_ToCipherList");
+        command += ",None|1000";
+        if (m_index > 0)
+        {
+            command += ",(LDown|50,None|50)" + QString::number(m_index);
+        }
+        command += ",A|50,B|Spam|5500";
+
+        m_state = SetState(State::Collect, "Collecting cipher no." + QString::number(m_index + 1));
+        m_moduleHolder->AddRunCommand(command);
+    }
+    else
+    {
+        m_state = SetState(State::ToCipherList, "Go to Cipher List");
+        m_moduleHolder->AddRunCommand("MMSF1_ToCipherList");
+    }
 }
 
 }
