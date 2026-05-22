@@ -7,16 +7,12 @@ namespace Program::MMSFLC
 
 void CipherCollector::PopulateSettings(QBoxLayout *layout)
 {
-    m_game = new Setting::SettingComboBox("Game", {"Mega Man Star Force 1", "Mega Man Star Force 2"});
-    AddSetting(layout, "Game:", "Choose game", m_game);
-
     m_macroOnly = new Setting::SettingCheckBox("MacroOnly", "", false);
     AddSetting(layout, "Use Macro Only:", "Allows running program without camera, but goes through ciphers that has already been collected", m_macroOnly);
     connect(m_macroOnly, &QCheckBox::clicked, this, [this]{ OnCanRunChanged(); } );
 
     AddSpacer(layout);
 
-    m_savedSettings.insert(m_game);
     m_savedSettings.insert(m_macroOnly);
 }
 
