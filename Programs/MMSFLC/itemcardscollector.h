@@ -13,7 +13,7 @@ public:
     explicit ItemCardsCollector(QObject *parent = nullptr) : ProgramBase{parent} {}
 
     static CategoryType GetCategory() { return CT_MMSFLC; }
-    static QString GetName() { return "MMSF2: Item Cards Collector"; }
+    static QString GetName() { return "Item Cards Collector"; }
 
     // from ProgramBase
     void PopulateSettings(QBoxLayout* layout) override;

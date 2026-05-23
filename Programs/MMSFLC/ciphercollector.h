@@ -3,6 +3,7 @@
 
 #include "../programbase.h"
 #include "Settings/settingcheckbox.h"
+#include "Settings/settingcombobox.h"
 #include "Types/categorytype.h"
 
 namespace Program::MMSFLC
@@ -13,13 +14,13 @@ public:
     explicit CipherCollector(QObject *parent = nullptr) : ProgramBase{parent} {}
 
     static CategoryType GetCategory() { return CT_MMSFLC; }
-    static QString GetName() { return "MMSF1: Cipher Collector"; }
+    static QString GetName() { return "Cipher Collector"; }
 
     // from ProgramBase
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "MMSFLC-CipherCollector"; }
     QString GetDescription() const override {
-        return "Auto collecting all Cipher rewards for MMSF1\nStart the program in the overworld";
+        return "Auto collecting all Cipher rewards for MMSF1 or MMSF2\nStart the program in the overworld";
     }
 
     bool RequireSerial() const override { return true; }
@@ -43,8 +44,10 @@ private: // types
 
 private: // function
     void StateStart();
+    QString GetDelayCommand() const;
 
 private: // members
+    Setting::SettingComboBox* m_game = Q_NULLPTR;
     Setting::SettingCheckBox* m_macroOnly = Q_NULLPTR;
 
 	State m_state;

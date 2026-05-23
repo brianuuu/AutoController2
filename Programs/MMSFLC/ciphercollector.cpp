@@ -7,12 +7,16 @@ namespace Program::MMSFLC
 
 void CipherCollector::PopulateSettings(QBoxLayout *layout)
 {
+    m_game = new Setting::SettingComboBox("Game", {"Mega Man Star Force 1", "Mega Man Star Force 2"});
+    AddSetting(layout, "Game:", "Choose game", m_game);
+
     m_macroOnly = new Setting::SettingCheckBox("MacroOnly", "", false);
     AddSetting(layout, "Use Macro Only:", "Allows running program without camera, but goes through ciphers that has already been collected", m_macroOnly);
     connect(m_macroOnly, &QCheckBox::clicked, this, [this]{ OnCanRunChanged(); } );
 
     AddSpacer(layout);
 
+    m_savedSettings.insert(m_game);
     m_savedSettings.insert(m_macroOnly);
 }
 
@@ -113,7 +117,7 @@ void CipherCollector::OnFrameCaptureMatched(Module::Common::FrameCapture* module
         {
             m_state = SetState(State::Collect, "Black screen detected, collecting reward");
             m_moduleHolder->ClearModules();
-            m_moduleHolder->AddRunCommand("B|Spam|5500");
+            m_moduleHolder->AddRunCommand(GetDelayCommand());
         }
         break;
     }
@@ -127,15 +131,16 @@ void CipherCollector::OnFrameCaptureMatched(Module::Common::FrameCapture* module
 
 void CipherCollector::StateStart()
 {
+    QString const name = m_game->currentIndex() == 0 ? "MMSF1_ToCipherList" : "MMSF2_ToCipherList";
     if (m_macroOnly->isChecked())
     {
-        QString command = CommandCollection::GetCommand("MMSF1_ToCipherList");
+        QString command = CommandCollection::GetCommand(name);
         command += ",None|1000";
         if (m_index > 0)
         {
             command += ",(LDown|50,None|50)" + QString::number(m_index);
         }
-        command += ",A|50,B|Spam|5500";
+        command += ",A|50," + GetDelayCommand();
 
         m_state = SetState(State::Collect, "Collecting cipher no." + QString::number(m_index + 1));
         m_moduleHolder->AddRunCommand(command);
@@ -143,8 +148,16 @@ void CipherCollector::StateStart()
     else
     {
         m_state = SetState(State::ToCipherList, "Go to Cipher List");
-        m_moduleHolder->AddRunCommand("MMSF1_ToCipherList");
+        m_moduleHolder->AddRunCommand(name);
     }
+}
+
+QString CipherCollector::GetDelayCommand() const
+{
+    // MMSF2 first cipher has extra email
+    QString command = "B|Spam|";
+    command += m_game->currentIndex() == 0 ? "5500" : (m_index == 0 ? "9000" : "6000");
+    return command;
 }
 
 }
