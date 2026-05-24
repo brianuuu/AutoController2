@@ -52,6 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_networkRequest.setUrl(QUrl("https://raw.githubusercontent.com/brianuuu/AutoController2/refs/heads/main/build/UpdateVersion.ini"));
     m_networkManager->get(m_networkRequest);
     ui->L_Update->setText("Checking for Update...");
+
+    // check where the application located
+    QString const path = QDir().absolutePath();
+    if (path.contains("/Downloads") || path.contains("/OneDrive"))
+    {
+        QMessageBox::critical(this, "Error", "Do not run this application inside Downloads or OneDrive folder.\nPlease extract contents to elsewhere.", QMessageBox::Ok);
+    }
 }
 
 MainWindow::~MainWindow()
