@@ -19,7 +19,7 @@ public:
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "FRLG-GiftReset"; }
     QString GetDescription() const override {
-        return "Soft reset gift Pokemon until a shiny is found";
+        return "Soft reset gift Pokemon (including fossil) until a shiny is found";
     }
 
     void Start() override;
