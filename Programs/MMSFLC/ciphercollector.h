@@ -20,7 +20,7 @@ public:
     void PopulateSettings(QBoxLayout* layout) override;
     QString GetInternalName() const override { return "MMSFLC-CipherCollector"; }
     QString GetDescription() const override {
-        return "Auto collecting all Cipher rewards for MMSF1 or MMSF2\nStart the program in the overworld";
+        return "Auto collecting all Cipher rewards for all 3 games\n(MMSF1/MMSF2) Start the program in the overworld\n(MMSF3) Stand in front of Ken's wizard, Hang Ten";
     }
 
     bool RequireSerial() const override { return true; }
@@ -45,6 +45,7 @@ private: // types
 private: // function
     void StateStart();
     QString GetDelayCommand() const;
+    int GetMaxCount() const;
 
 private: // members
     Setting::SettingComboBox* m_game = Q_NULLPTR;

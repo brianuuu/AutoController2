@@ -7,7 +7,7 @@ namespace Program::MMSFLC
 
 void CipherCollector::PopulateSettings(QBoxLayout *layout)
 {
-    m_game = new Setting::SettingComboBox("Game", {"Mega Man Star Force 1", "Mega Man Star Force 2"});
+    m_game = new Setting::SettingComboBox("Game", {"Mega Man Star Force 1", "Mega Man Star Force 2", "Mega Man Star Force 3"});
     AddSetting(layout, "Game:", "Choose game", m_game);
 
     m_macroOnly = new Setting::SettingCheckBox("MacroOnly", "", false);
@@ -51,7 +51,7 @@ void CipherCollector::OnCommandFinished(Module::Common::RunCommand* module)
         PrintLog("No black screen detected, cipher may have been collected already", LOG_Warning);
 
         ++m_index;
-        if (m_index == 60)
+        if (m_index == GetMaxCount())
         {
             emit notifyFinished(true);
         }
@@ -65,7 +65,7 @@ void CipherCollector::OnCommandFinished(Module::Common::RunCommand* module)
     case State::Collect:
     {
         ++m_index;
-        if (m_index == 60)
+        if (m_index == GetMaxCount())
         {
             emit notifyFinished(true);
         }
@@ -131,11 +131,11 @@ void CipherCollector::OnFrameCaptureMatched(Module::Common::FrameCapture* module
 
 void CipherCollector::StateStart()
 {
-    QString const name = m_game->currentIndex() == 0 ? "MMSF1_ToCipherList" : "MMSF2_ToCipherList";
+    QString const name = m_game->currentIndex() == 0 ? "MMSF1_ToCipherList" : m_game->currentIndex() == 1 ? "MMSF2_ToCipherList" : "MMSF3_ToCipherList";
     if (m_macroOnly->isChecked())
     {
         QString command = CommandCollection::GetCommand(name);
-        command += ",None|1000";
+        command += ",None|1200";
         if (m_index > 0)
         {
             command += ",(LDown|50,None|50)" + QString::number(m_index);
@@ -156,8 +156,19 @@ QString CipherCollector::GetDelayCommand() const
 {
     // MMSF2 first cipher has extra email
     QString command = "B|Spam|";
-    command += m_game->currentIndex() == 0 ? "5500" : (m_index == 0 ? "9000" : "6000");
+    switch (m_game->currentIndex())
+    {
+    case 0: command += "5500"; break;
+    case 1: command += (m_index == 0 ? "9000" : "6000"); break;
+    case 2: command += "14000"; break;
+    }
+
     return command;
+}
+
+int CipherCollector::GetMaxCount() const
+{
+    return m_game->currentIndex() == 2 ? 52 : 60;
 }
 
 }
