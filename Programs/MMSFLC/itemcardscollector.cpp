@@ -8,7 +8,7 @@ namespace Program::MMSFLC
 void ItemCardsCollector::PopulateSettings(QBoxLayout *layout)
 {
     m_macroOnly = new Setting::SettingCheckBox("MacroOnly", "", false);
-    AddSetting(layout, "Use Macro Only:", "Allows running program without camera, but goes through ciphers that has already been collected", m_macroOnly);
+    AddSetting(layout, "Use Macro Only:", "Allows running program without camera, but goes through item cards that has already been collected", m_macroOnly);
     connect(m_macroOnly, &QCheckBox::clicked, this, [this]{ OnCanRunChanged(); } );
 
     AddSpacer(layout);
