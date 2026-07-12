@@ -1,0 +1,5 @@
+{
+    "Command": "(R|4000,Plus|50,None|2000,ZR|LRight|500,ZR|LRight|LUp|1400,A|50,B|2000,None|200,R|300,LLeft|50,A|50,None|2000)0",
+    "Description": "Have assist mode on Hold, set to No Encounters\nStart by standing at Echo Ridge's wave hole\n\nNote: This is very slow, it's better to battle Kung Fo Kid using Zenny Finder and x5 modifier",
+    "Sound": "None"
+}
