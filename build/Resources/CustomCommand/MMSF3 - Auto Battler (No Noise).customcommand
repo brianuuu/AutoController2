@@ -1,5 +1,5 @@
 {
     "Command": "(ZR|LDown|50,ZR|LRight|50,A|3500,Plus|50,DDown|50,DRight|50,A|50,Plus|50,None|400,DDown|50,DRight|50,A|250,Plus|50,A|Spam|9000)0",
-    "Description": "1. Have assist mode on Hold, set to Max Encounters\n2. Remove Ace/Joker program ability\n3. Have Radar Missile as default card in your folder\n4. Start at the bottom right corner of Memorial Tree CC\nOptional: Equip Zenny Finder, you get 1000 Zenny every battle",
+    "Description": "1. Have assist mode on Hold, set to Max Encounters\n2. Remove Ace/Joker program ability\n3. Have Radar Missile as default card in your folder\n4. Start at the bottom corner of School Gate CC\nOptional: Equip Zenny Finder, you get 1000 Zenny every battle",
     "Sound": "None"
 }
