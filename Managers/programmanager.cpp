@@ -11,6 +11,7 @@
 #include "Programs/Development/devcommand.h"
 #include "Programs/Development/devframecapture.h"
 #include "Programs/Development/devsounddetection.h"
+#include "Programs/MMSFLC/autobattlersf3.h"
 #include "Programs/MMSFLC/ciphercollector.h"
 #include "Programs/MMSFLC/itemcardscollector.h"
 #include "Programs/PokemonFRLG/giftreset.h"
@@ -80,6 +81,7 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     RegisterProgram<Program::Development::DevCommand>();
     RegisterProgram<Program::Development::DevFrameCapture>();
     RegisterProgram<Program::Development::DevSoundDetection>();
+    RegisterProgram<Program::MMSFLC::AutoBattlerSF3>();
     RegisterProgram<Program::MMSFLC::CipherCollector>();
     RegisterProgram<Program::MMSFLC::ItemCardsCollector>();
     RegisterProgram<Program::PokemonFRLG::GiftReset>();

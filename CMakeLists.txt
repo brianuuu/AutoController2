@@ -114,6 +114,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/Development/devcommand.h Programs/Development/devcommand.cpp
         Programs/Development/devframecapture.h Programs/Development/devframecapture.cpp
         Programs/Development/devsounddetection.h Programs/Development/devsounddetection.cpp
+        Programs/MMSFLC/autobattlersf3.cpp Programs/MMSFLC/autobattlersf3.h
         Programs/MMSFLC/ciphercollector.cpp Programs/MMSFLC/ciphercollector.h
         Programs/MMSFLC/itemcardscollector.cpp Programs/MMSFLC/itemcardscollector.h
         Programs/PokemonFRLG/giftreset.cpp Programs/PokemonFRLG/giftreset.h
