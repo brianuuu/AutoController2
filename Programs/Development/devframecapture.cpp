@@ -239,14 +239,18 @@ void DevFrameCapture::OnListChanged(const QString &str)
         m_left->blockSignals(true);
         m_left->setValue(value.toInt());
         m_left->blockSignals(false);
+        m_width->blockSignals(true);
         m_width->setMaximum(captureRes.width() - value.toInt());
+        m_width->blockSignals(false);
     }
     if (JsonHelper::ReadValue(object, "Top", value))
     {
         m_top->blockSignals(true);
         m_top->setValue(value.toInt());
         m_top->blockSignals(false);
+        m_height->blockSignals(true);
         m_height->setMaximum(captureRes.height() - value.toInt());
+        m_height->blockSignals(false);
     }
 
     if (isArea)
