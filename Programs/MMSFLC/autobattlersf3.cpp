@@ -5,6 +5,10 @@ namespace Program::MMSFLC
 
 void AutoBattlerSF3::PopulateSettings(QBoxLayout *layout)
 {
+    m_count = new Setting::SettingSpinBox("BattleCount", 0, 999999, 1);
+    AddSetting(layout, "Battle Count:", "How many battles to do, set 0 for infinite", m_count, true);
+    m_savedSettings.insert(m_count);
+
     AddSpacer(layout);
 }
 
@@ -17,7 +21,7 @@ void AutoBattlerSF3::Start()
 {
     ProgramBase::Start();
 
-    m_count = 0;
+    m_currentCount = 0;
     StateStart();
 }
 
@@ -41,6 +45,11 @@ void AutoBattlerSF3::OnCommandFinished(Module::Common::RunCommand* module)
     case State::UseDefaultCard:
     {
         emit notifyFinished(false, "Unable to battle complete for too long");
+        break;
+    }
+    case State::CancelNoise:
+    {
+        emit notifyFinished(false, "Unable to detect noise change cancel dialog for too long");
         break;
     }
     case State::EndBattle:
@@ -83,13 +92,44 @@ void AutoBattlerSF3::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
         {
             if (module == m_top)
             {
-                //m_state = SetState(State::NoiseChange, "Selecting and using default card");
-                emit notifyFinished(false, "Noise Change detected");
+                m_state = SetState(State::NoiseChange, "Noise Change detected");
+                m_moduleHolder->ClearModules();
+                m_moduleHolder->AddFrameCapture("MMSF3_TopDialog");
+                m_elapsedTimer.restart();
             }
             else
             {
                 StateEndBattle();
             }
+        }
+        break;
+    }
+    case State::NoiseChange:
+    {
+        if (m_elapsedTimer.elapsed() > 10000)
+        {
+            emit notifyFinished(false, "Unable to detect noise change dialog for too long");
+        }
+        else if (matched && m_elapsedTimer.elapsed() > 500)
+        {
+            m_state = SetState(State::CancelNoise, "Waiting for dialog to finish");
+            m_moduleHolder->ClearModules();
+            m_moduleHolder->AddFrameCapture("MMSF3_TopMugshot");
+            m_moduleHolder->AddRunCommand("B|5000");
+            m_elapsedTimer.restart();
+        }
+        break;
+    }
+    case State::CancelNoise:
+    {
+        if (!matched && m_elapsedTimer.elapsed() > 500)
+        {
+            m_state = SetState(State::UseDefaultCard, "Cancelling Noise Change");
+            m_moduleHolder->ClearModules();
+            m_moduleHolder->AddFrameCapture("MMSFLC_BottomBlack");
+            m_moduleHolder->AddRunCommand("None|1000,DRight|50,A|Spam|6000");
+
+            ++m_statBattles;
         }
         break;
     }
@@ -103,7 +143,7 @@ void AutoBattlerSF3::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
 
 void AutoBattlerSF3::StateStart()
 {
-    m_state = SetState(State::Encounter, "Starting Encounter no." + QString::number(++m_count));
+    m_state = SetState(State::Encounter, "Starting Encounter no." + QString::number(++m_currentCount));
     m_moduleHolder->ClearModules();
     m_moduleHolder->AddRunCommand("MMSF3_Encounter");
     m_moduleHolder->AddFrameCapture("MMSF3_CustomOK");
@@ -111,6 +151,12 @@ void AutoBattlerSF3::StateStart()
 
 void AutoBattlerSF3::StateEndBattle()
 {
+    if (m_count->value() > 0 && m_currentCount >= m_count->value())
+    {
+        emit notifyFinished(true);
+        return;
+    }
+
     m_state = SetState(State::EndBattle, "Battle ended");
     m_moduleHolder->ClearModules();
     m_moduleHolder->AddRunCommand("None|1500");

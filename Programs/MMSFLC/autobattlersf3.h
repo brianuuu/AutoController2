@@ -2,6 +2,7 @@
 #define AUTOBATTLERSF3_H
 
 #include "../programbase.h"
+#include "Settings/settingspinbox.h"
 #include "Types/categorytype.h"
 
 namespace Program::MMSFLC
@@ -40,6 +41,7 @@ private: // types
         UseDefaultCard,
         EndBattle,
         NoiseChange,
+        CancelNoise,
     };
 
 private: // function
@@ -47,12 +49,13 @@ private: // function
     void StateEndBattle();
 
 private: // members
+    Setting::SettingSpinBox* m_count;
     Module::Common::FrameCapture* m_top = Q_NULLPTR;
     Module::Common::FrameCapture* m_bottom = Q_NULLPTR;
 
 	State m_state;
     Stat m_statBattles;
-    int m_count = 0;
+    int m_currentCount = 0;
 };
 }
 
