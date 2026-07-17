@@ -21,6 +21,8 @@ void AutoBattlerSF3::Start()
 {
     ProgramBase::Start();
 
+    m_top = Q_NULLPTR;
+    m_bottom = Q_NULLPTR;
     m_currentCount = 0;
     StateStart();
 }
@@ -39,12 +41,12 @@ void AutoBattlerSF3::OnCommandFinished(Module::Common::RunCommand* module)
     {
     case State::Encounter:
     {
-        emit notifyFinished(false, "Unable to battle custom screen for too long");
+        emit notifyFinished(false, "Unable to detect battle custom screen for too long");
         break;
     }
     case State::UseDefaultCard:
     {
-        emit notifyFinished(false, "Unable to battle complete for too long");
+        emit notifyFinished(false, "Unable to detect battle complete for too long");
         break;
     }
     case State::CancelNoise:
@@ -101,6 +103,9 @@ void AutoBattlerSF3::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
             {
                 StateEndBattle();
             }
+
+            m_top = Q_NULLPTR;
+            m_bottom = Q_NULLPTR;
         }
         break;
     }
@@ -126,10 +131,9 @@ void AutoBattlerSF3::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
         {
             m_state = SetState(State::UseDefaultCard, "Cancelling Noise Change");
             m_moduleHolder->ClearModules();
-            m_moduleHolder->AddFrameCapture("MMSFLC_BottomBlack");
+            m_top = Q_NULLPTR;
+            m_bottom = m_moduleHolder->AddFrameCapture("MMSFLC_BottomBlack");
             m_moduleHolder->AddRunCommand("None|1000,DRight|50,A|Spam|6000");
-
-            ++m_statBattles;
         }
         break;
     }
