@@ -1,0 +1,10 @@
+- Added Fishing mode to FRLG Overworld Shiny
+- Added Auto Battler for MMSF3
+- Added Cipher Collector for MMSF1, MMSF2 and MMSF3
+- Added Item Cards Collector for MMSF2
+- Added MMSF2 - Zenny Farmer (slow)
+- Virtual Controller now includes Spam button
+- Custom Command now has Loop stat if command loops forever
+- Custom Command sound detection now sends discord message
+- Fixed Custom Command sound detection not taking capture
+- Fixed a rare FRLG encounter detection issue when there is a system notification
