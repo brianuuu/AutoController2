@@ -68,8 +68,8 @@ private:
     // UI
     QCheckBox*      m_cbJoystick = Q_NULLPTR;
     QPushButton*    m_btnRemap = Q_NULLPTR;
-    QPushButton*    m_btnButton[BTN_COUNT - 1]; // skip spam
-    QLabel*         m_labelButton[BTN_COUNT - 1];
+    QPushButton*    m_btnButton[BTN_COUNT];
+    QLabel*         m_labelButton[BTN_COUNT];
     QLabel*         m_labelReset = Q_NULLPTR;
     QLabel*         m_labelStatus = Q_NULLPTR;
     QLabel*         m_labelJoystick = Q_NULLPTR;
