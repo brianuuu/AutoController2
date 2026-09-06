@@ -1,4 +1,0 @@
--Add controller mapping
--Controller fixed 8 directions
--Stats
--black border check
