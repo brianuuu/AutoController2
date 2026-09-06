@@ -49,7 +49,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelReset->setAlignment(Qt::AlignCenter);
     m_labelReset->hide();
 
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         m_btnButton[i] = new QPushButton(this);
         m_btnButton[i]->setFocusPolicy(Qt::FocusPolicy::NoFocus);
@@ -68,7 +68,7 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
         connect(m_btnButton[i], &QPushButton::clicked, this, &KeyboardManager::OnButtonClicked);
     }
 
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         m_labelButton[i] = new QLabel(this);
         m_labelButton[i]->setFixedSize(90,26);
@@ -204,6 +204,13 @@ void KeyboardManager::Initialize(Ui::MainWindow *ui)
     m_labelButton[BTN_RRight]->setText("R-Stick");
     m_labelButton[BTN_RRight]->setAlignment(Qt::AlignCenter);
 
+    x = 299;
+    y = 25;
+    m_btnButton[BTN_Spam]->move(x,y);
+    m_labelButton[BTN_Spam]->move(x-10,y+28);
+    m_labelButton[BTN_Spam]->setText("Spam");
+    m_labelButton[BTN_Spam]->setAlignment(Qt::AlignCenter);
+
     m_cbJoystick = new QCheckBox("Detect Gamepad", this);
     m_cbJoystick->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     m_cbJoystick->setStyleSheet("color: white; font-size: 16px");
@@ -295,7 +302,7 @@ bool KeyboardManager::OnInitShow()
 void KeyboardManager::OnDisplayButton(quint32 buttonFlag, QPointF lStick, QPointF rStick)
 {
     // called by RunCommand module, display what button is currently pressed
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         ButtonType const type = (ButtonType)i;
         quint32 const flag = ButtonToFlag(type);
@@ -370,7 +377,9 @@ void KeyboardManager::OnResetDefault()
     m_typeToKeyMap[BTN_DLeft] = Qt::Key_Left;
     m_typeToKeyMap[BTN_DRight] = Qt::Key_Right;
 
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    m_typeToKeyMap[BTN_Spam] = Qt::Key_Space;
+
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         ButtonType const type = (ButtonType)i;
         int const key = m_typeToKeyMap[type];
@@ -392,7 +401,7 @@ void KeyboardManager::OnButtonClicked()
 
     bool found = false;
     ButtonType type = BTN_None;
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         if (m_btnButton[i] == button)
         {
@@ -495,7 +504,7 @@ void KeyboardManager::UpdateButtonMap(QPushButton *button, int key)
 {
     bool found = false;
     ButtonType type = BTN_None;
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         if (m_btnButton[i] == button)
         {
@@ -585,7 +594,7 @@ void KeyboardManager::ClearButtonFlags()
     }
 
     m_buttonFlag = 0;
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         ButtonReleased(m_btnButton[i]);
     }
@@ -621,7 +630,7 @@ void KeyboardManager::LoadSettings()
         QJsonObject buttonMapping = JsonHelper::ReadObject(settings, "ButtonMapping");
 
         QVariant key;
-        for (int i = 1; i < BTN_COUNT - 1; i++)
+        for (int i = 1; i < BTN_COUNT; i++)
         {
             ButtonType const type = (ButtonType)i;
             if (JsonHelper::ReadValue(buttonMapping, ButtonToString(type), key))
@@ -658,7 +667,7 @@ void KeyboardManager::LoadSettings()
 void KeyboardManager::SaveSettings() const
 {
     QJsonObject buttonMapping;
-    for (int i = 1; i < BTN_COUNT - 1; i++)
+    for (int i = 1; i < BTN_COUNT; i++)
     {
         ButtonType const type = (ButtonType)i;
         buttonMapping.insert(ButtonToString(type), m_typeToKeyMap[type]);
