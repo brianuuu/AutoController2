@@ -128,6 +128,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Programs/PokemonFRLG/staticreset.cpp Programs/PokemonFRLG/staticreset.h
         Programs/PokemonLZA/donutmaker.h Programs/PokemonLZA/donutmaker.cpp
         Programs/PokemonLZA/respawnreset.cpp Programs/PokemonLZA/respawnreset.h
+        Programs/SplatoonRaiders/autotemprahden.cpp Programs/SplatoonRaiders/autotemprahden.h
         Programs/System/camerachecker.h Programs/System/camerachecker.cpp
         Programs/System/commandrecorder.h Programs/System/commandrecorder.cpp
         Programs/System/customcommand.h Programs/System/customcommand.cpp

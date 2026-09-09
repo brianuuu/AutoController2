@@ -11,6 +11,7 @@ enum CategoryType
     CT_PLZA,
     CT_FRLG,
     CT_MMSFLC,
+    CT_Raiders,
 
     CT_COUNT
 };
@@ -24,6 +25,7 @@ static QString CategoryToString(CategoryType category)
     case CT_PLZA:           return "Pokemon Legends: Z-A";
     case CT_FRLG:           return "Pokemon Fire Red/Leaf Green";
     case CT_MMSFLC:         return "Mega Man Star Force Legacy Collection";
+    case CT_Raiders:        return "Splatoon Raiders";
     default:                return "Unknown";
     }
 }
