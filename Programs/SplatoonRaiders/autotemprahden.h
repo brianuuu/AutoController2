@@ -2,6 +2,7 @@
 #define AUTOTEMPRAHDEN_H
 
 #include "../programbase.h"
+#include "Settings/settingcheckbox.h"
 #include "Settings/settingspinbox.h"
 #include "Types/categorytype.h"
 
@@ -40,6 +41,7 @@ private: // types
     {
         StartRaid,
         AutoFire,
+        CollectTreasure,
         FinishRaid,
         CollectLoot,
     };
@@ -47,15 +49,18 @@ private: // types
 private: // function
     // states
     void StateStartRaid();
-    void StateFinishRaid(bool failed);
+    void StateQuitRaid();
+    void StateFinishRaid(bool success);
 
 private: // members
     Setting::SettingSpinBox* m_count = Q_NULLPTR;
+    Setting::SettingCheckBox* m_mash = Q_NULLPTR;
     Module::Common::FrameCapture* m_fail = Q_NULLPTR;
 
 	State m_state;
     int m_raidCount = 0;
     bool m_blackDetected = false;
+    bool m_powerEggDetected = false;
 
     Stat m_statRaids;
     Stat m_statSuccess;

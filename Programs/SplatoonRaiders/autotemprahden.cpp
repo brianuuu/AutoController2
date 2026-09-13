@@ -7,7 +7,11 @@ void AutoTemprahDen::PopulateSettings(QBoxLayout *layout)
 {
     m_count = new Setting::SettingSpinBox("Count", 0, 99999);
     m_savedSettings.insert(m_count);
-    AddSetting(layout, "Raid Count:", "No. of the raids to do (set 0 for infinite)", m_count, true);
+    AddSetting(layout, "Raid Count:", "No. of the raids to do (set 0 for infinite)", m_count);
+
+    m_mash = new Setting::SettingCheckBox("Mash", "", false);
+    m_savedSettings.insert(m_mash);
+    AddSetting(layout, "Mash Fire:", "Mash ZR to fire weapon instead of hold", m_mash);
 
     AddSpacer(layout);
 }
@@ -25,6 +29,7 @@ void AutoTemprahDen::Start()
     m_fail = Q_NULLPTR;
     m_raidCount = 0;
     m_blackDetected = false;
+    m_powerEggDetected = false;
 
     StateStartRaid();
 }
@@ -45,6 +50,11 @@ void AutoTemprahDen::OnCommandFinished(Module::Common::RunCommand* module)
     {
         m_elapsedTimer.restart();
         m_moduleHolder->AddFrameCapture("Raiders_Health", QColor(255,0,0));
+        break;
+    }
+    case State::CollectTreasure:
+    {
+        StateQuitRaid();
         break;
     }
     case State::FinishRaid:
@@ -81,14 +91,17 @@ void AutoTemprahDen::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
         {
             m_state = SetState(State::AutoFire, "Raid started, auto firing weapon and all gadgets");
             m_moduleHolder->ClearModules();
-            m_moduleHolder->AddRunCommand("Raiders_AutoFire");
+            m_moduleHolder->AddRunCommand(m_mash->isChecked() ? "Raiders_AutoFireMash" : "Raiders_AutoFireHold");
 
             // detections
             m_blackDetected = false;
+            m_powerEggDetected = false;
             m_fail = m_moduleHolder->AddFrameCapture("System_CenterBlack", QColor(255,0,0));
+            m_moduleHolder->AddFrameCapture("Raiders_PowerEggGauge");
+            // TODO: detect death
 
             // raid is 90s long, set limit to 120s
-            m_timer.start(12000);
+            m_timer.start(120000);
 
             ++m_raidCount;
             ++m_statRaids;
@@ -97,24 +110,39 @@ void AutoTemprahDen::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
     }
     case State::AutoFire:
     {
-        if (matched)
+        if (module == m_fail)
         {
-            if (module == m_fail)
+            if (matched)
+            {
+                StateFinishRaid(false);
+            }
+        }
+        else
+        {
+            if (matched && !m_powerEggDetected)
             {
                 m_elapsedTimer.restart();
+                m_powerEggDetected = true;
+            }
+            else if (!matched && m_powerEggDetected && m_elapsedTimer.elapsed() > 10000)
+            {
                 m_timer.stop();
-                m_blackDetected = true;
 
-                m_state = SetState(State::FinishRaid, "Raid failed...");
+                m_state = SetState(State::CollectTreasure, "Attempting to collect treasure");
                 m_moduleHolder->ClearModules();
                 m_moduleHolder->AddFrameCapture("System_CenterBlack");
-            }
-            else
-            {
-                // TODO:
-            }
+                m_moduleHolder->AddRunCommand("None|5000,ZL|LUp|15000");
 
-            m_fail = Q_NULLPTR;
+                m_fail = Q_NULLPTR;
+            }
+        }
+        break;
+    }
+    case State::CollectTreasure:
+    {
+        if (matched)
+        {
+            StateFinishRaid(true);
         }
         break;
     }
@@ -161,13 +189,7 @@ void AutoTemprahDen::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
 void AutoTemprahDen::OnWaitTimeout()
 {
     // State::AutoFire only
-    PrintLog("Unable to detect raid completion for too long", LOG_Error);
-    m_state = SetState(State::FinishRaid, "Quitting raid");
-    m_moduleHolder->ClearModules();
-    m_moduleHolder->AddRunCommand("Raiders_QuitRaid");
-    m_moduleHolder->AddFrameCapture("System_CenterBlack");
-
-    m_fail = Q_NULLPTR;
+    StateQuitRaid();
 }
 
 void AutoTemprahDen::StateStartRaid()
@@ -177,21 +199,32 @@ void AutoTemprahDen::StateStartRaid()
     m_moduleHolder->AddRunCommand("Raiders_StartRaid");
 }
 
-void AutoTemprahDen::StateFinishRaid(bool failed)
+void AutoTemprahDen::StateQuitRaid()
+{
+    PrintLog("Unable to detect raid completion for too long", LOG_Error);
+    m_state = SetState(State::FinishRaid, "Quitting raid");
+    m_moduleHolder->ClearModules();
+    m_moduleHolder->AddRunCommand("Raiders_QuitRaid");
+    m_moduleHolder->AddFrameCapture("System_CenterBlack");
+
+    m_fail = Q_NULLPTR;
+}
+
+void AutoTemprahDen::StateFinishRaid(bool success)
 {
     m_elapsedTimer.restart();
     m_timer.stop();
 
-    if (failed)
-    {
-        m_blackDetected = true;
-        PrintLog("Raid failed...", LOG_Warning);
-    }
-    else
+    if (success)
     {
         m_blackDetected = false;
         PrintLog("Raid successful!", LOG_Success);
         ++m_statSuccess;
+    }
+    else
+    {
+        m_blackDetected = true;
+        PrintLog("Raid failed...", LOG_Warning);
     }
 
     m_state = SetState(State::FinishRaid);
