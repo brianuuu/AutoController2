@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QListWidget>
+#include <QPushButton>
 #include <QSettings>
 #include <QShortcut>
 #include <QWidget>
@@ -33,6 +34,7 @@ public:
     QString GetUpTimeString() const { return m_labelUpTime->text(); }
     QString GetStatsString() const { return m_labelStats->text(); }
     qint64 GetUpTime() const { return m_startTime.secsTo(QDateTime::currentDateTime()); }
+    bool GetStopNextCycle() const { return m_btnStopNextCycle->isChecked(); }
 
     void RegisterStat(Stat& stat);
 
@@ -83,6 +85,7 @@ private:
     QWidget*        m_settingsParent = Q_NULLPTR;
     QBoxLayout*     m_settingsLayout = Q_NULLPTR;
     QPushButton*    m_btnStart = Q_NULLPTR;
+    QPushButton*    m_btnStopNextCycle = Q_NULLPTR;
     QPushButton*    m_btnResetDefault = Q_NULLPTR;
     QPushButton*    m_btnManual = Q_NULLPTR;
     QLabel*         m_labelDescription = Q_NULLPTR;

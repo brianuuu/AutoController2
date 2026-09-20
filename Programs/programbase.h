@@ -42,6 +42,7 @@ public:
     virtual bool BypassBorderCheck() const { return false; }
     virtual bool CanControlWhileRunning() const { return false; }
     virtual bool CanEditWhileRunning() const { return false; }
+    virtual bool CanStopNextCycle() const { return false; }
     virtual bool CanRun() const;
 
     virtual void ResetDefault();
@@ -85,6 +86,7 @@ protected:
     void UnhandedStateRunCommand();
     void UnhandedStateFrameCapture();
     void UnhandedStateSubModule();
+    bool StopNextCycle();
 
     template<typename T>
     T SetState(T state, QString const& log = "")

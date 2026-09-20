@@ -206,6 +206,18 @@ void ProgramBase::UnhandedStateSubModule()
     emit notifyFinished(false, "Unhandled state after sub module has result");
 }
 
+bool ProgramBase::StopNextCycle()
+{
+    if (m_programManager->GetStopNextCycle())
+    {
+        PrintLog("Cycle completed, stopping program", LOG_Important);
+        emit notifyFinished(true);
+        return true;
+    }
+
+    return false;
+}
+
 bool ProgramBase::EnsureOCRDatabase(const QString &database)
 {
     LanguageType const language = m_profileManager->GetLanguageType();

@@ -44,6 +44,8 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
     m_settingsParent = ui->BL_ProgramSetting;
     m_settingsLayout = qobject_cast<QBoxLayout*>(ui->BL_ProgramSetting->layout());
     m_btnStart = ui->PB_StartProgram;
+    m_btnStopNextCycle = ui->PB_NextCycle;
+    m_btnStopNextCycle->setVisible(false);
     m_btnResetDefault = ui->PB_RestoreDefault;
     m_btnManual = ui->PB_ProgramManual;
     m_labelDescription = ui->L_ProgramDescription;
@@ -66,6 +68,13 @@ void ProgramManager::Initialize(Ui::MainWindow *ui)
 
     // shortcuts
     new QShortcut(QKeySequence("F5"), this, [this]{ OnProgramStartStop(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence("F6"), this, [this]
+    {
+        if (m_btnStopNextCycle->isVisible())
+        {
+            m_btnStopNextCycle->toggle();
+        }
+    }, Qt::ApplicationShortcut);
 
     // connections
     connect(m_programCategory, &QComboBox::currentTextChanged, this, &ProgramManager::OnCategoryChanged);
@@ -554,7 +563,11 @@ void ProgramManager::StartProgram()
     }
     UpdateStats();
 
+    bool const canStopNextCycle = m_program->CanStopNextCycle();
     m_btnStart->setText("Stop Program (F5)");
+    m_btnStopNextCycle->setVisible(canStopNextCycle);
+    m_btnStopNextCycle->setChecked(false);
+    m_btnResetDefault->setVisible(!canStopNextCycle);
     m_btnResetDefault->setEnabled(false);
     m_btnStatsEdit->setEnabled(false);
     m_programCategory->setEnabled(false);
@@ -578,6 +591,8 @@ void ProgramManager::StopProgram()
     m_program->Stop();
     m_upTimer.stop();
     m_btnStart->setText("Start Program (F5)");
+    m_btnStopNextCycle->setVisible(false);
+    m_btnResetDefault->setVisible(true);
     m_btnResetDefault->setEnabled(m_program->HaveSavedSettings());
     m_btnStatsEdit->setEnabled(true);
     m_programCategory->setEnabled(true);

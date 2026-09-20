@@ -364,6 +364,9 @@
         <property name="text">
          <string>Refresh Devices</string>
         </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="4">
@@ -855,6 +858,25 @@
             </property>
             <property name="text">
              <string>Start Program (F5)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="PB_NextCycle">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Stop Program at Next Cycle (F6)</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
