@@ -30,4 +30,19 @@ static QString CategoryToString(CategoryType category)
     }
 }
 
+static CategoryType StringToCategory(QString const& str)
+{
+    QString const lower = str.toLower();
+    for (int i = 0; i < CT_COUNT; i++)
+    {
+        CategoryType type = (CategoryType)i;
+        if (lower == CategoryToString(type).toLower())
+        {
+            return type;
+        }
+    }
+
+    return CT_COUNT;
+}
+
 #endif // CATEGORYTYPE_H

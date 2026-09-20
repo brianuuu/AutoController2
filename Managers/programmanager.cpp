@@ -253,6 +253,9 @@ void ProgramManager::MigrateStatsToJson()
 
 void ProgramManager::OnCategoryChanged(const QString &category)
 {
+    QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
+    QJsonObject programs = JsonHelper::ReadObject(settings, "CurrentPrograms");
+
     m_programList->clear();
 
     QStringList const& list = m_categoryToPrograms[category];
@@ -261,10 +264,30 @@ void ProgramManager::OnCategoryChanged(const QString &category)
         m_programList->addItem(name);
     }
 
-    // default select 1st item
     if (m_programList->count())
     {
-        m_programList->setCurrentRow(0);
+        bool found = false;
+
+        // get last used program in ths category
+        QVariant program;
+        if (JsonHelper::ReadValue(programs, category, program) && !program.toString().isEmpty())
+        {
+            for (int i = 0; i < m_programList->count(); i++)
+            {
+                if (m_programList->item(i)->text() == program.toString())
+                {
+                    m_programList->setCurrentRow(i);
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            // default select 1st item
+            m_programList->setCurrentRow(0);
+        }
     }
 
     if (category == CategoryToString(CT_FRLG))
@@ -279,10 +302,22 @@ void ProgramManager::OnCategoryChanged(const QString &category)
 
 void ProgramManager::OnProgramChanged(const QString &name)
 {
+    QString const category = m_programCategory->currentText();
+
+    // don't save unless there was a program loaded, prevents saving on initialization
+    if (m_program && !name.isEmpty())
+    {
+        // remember program for current category
+        QJsonObject settings = JsonHelper::ReadSetting("ProgramSettings");
+        QJsonObject programs = JsonHelper::ReadObject(settings, "CurrentPrograms");
+        programs.insert(category, name);
+        settings.insert("CurrentPrograms", programs);
+        JsonHelper::WriteSetting("ProgramSettings", settings);
+    }
+
     RemoveProgram();
     if (name.isEmpty()) return;
 
-    QString const category = m_programCategory->currentText();
     m_program = m_programCtors.value(category + name)();
     m_program->PopulateSettings(m_settingsLayout);
     m_program->LoadSettings();
