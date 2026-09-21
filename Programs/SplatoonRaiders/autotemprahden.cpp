@@ -167,6 +167,11 @@ void AutoTemprahDen::OnFrameCaptureMatched(Module::Common::FrameCapture* module,
     {
         if (matched)
         {
+            if (StopNextCycle())
+            {
+                break;
+            }
+
             if (m_raidCount == m_count->value())
             {
                 emit notifyFinished(true);

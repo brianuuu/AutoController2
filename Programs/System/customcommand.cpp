@@ -215,6 +215,7 @@ void CustomCommand::OnCommandSave()
 void CustomCommand::OnInfiniteLoop()
 {
     ++m_statLoop;
+    StopNextCycle();
 }
 
 void CustomCommand::OnCommandFinished(Module::Common::RunCommand* module)

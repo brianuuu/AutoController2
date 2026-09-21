@@ -34,6 +34,7 @@ public:
     bool RequireSerial() const override { return true; }
     bool RequireVideo() const override { return false; }
     bool RequireAudio() const override { return m_sound->currentIndex() > 0; }
+    bool CanStopNextCycle() const override { return m_command->GetDuration() < 0; }
 
     bool CanRun() const override;
 

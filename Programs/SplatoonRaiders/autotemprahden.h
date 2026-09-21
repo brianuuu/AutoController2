@@ -21,12 +21,13 @@ public:
     void RegisterStats() override;
     QString GetInternalName() const override { return "Raiders-AutoTemprahDen"; }
     QString GetDescription() const override {
-        return "Auto complete Temprah Den raid";
+        return "Auto completes Temprah Den raid for EXP, weapons and materials";
     }
 
     bool RequireSerial() const override { return true; }
     bool RequireVideo() const override { return true; }
     bool RequireAudio() const override { return false; }
+    bool CanStopNextCycle() const override { return true; }
 
     void Start() override;
     void Stop() override;
