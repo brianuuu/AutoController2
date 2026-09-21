@@ -262,6 +262,11 @@ void PickupFarmer::OnWaitTimeout()
 
 void PickupFarmer::Restart()
 {
+    if (StopNextCycle())
+    {
+        return;
+    }
+
     if (m_battleCount >= m_maxPP->value())
     {
         StateHeal();

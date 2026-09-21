@@ -26,6 +26,7 @@ public:
     bool RequireSerial() const override { return true; }
     bool RequireVideo() const override { return true; }
     bool RequireAudio() const override { return false; }
+    bool CanStopNextCycle() const override { return true; }
 
     void Start() override;
     void Stop() override;

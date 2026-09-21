@@ -161,6 +161,11 @@ void AutoBattlerSF3::StateEndBattle()
         return;
     }
 
+    if (StopNextCycle())
+    {
+        return;
+    }
+
     m_state = SetState(State::EndBattle, "Battle ended");
     m_moduleHolder->ClearModules();
     m_moduleHolder->AddRunCommand("None|1500");

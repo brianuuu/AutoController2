@@ -248,6 +248,11 @@ void OverworldShiny::OnSoundDetected(int id)
 
 void OverworldShiny::StateMove()
 {
+    if (StopNextCycle())
+    {
+        return;
+    }
+
     m_state = SetState(State::Move, (Type)m_type->currentIndex() == Type::Fishing ? "Started fishing" : "Moving back and forth until encounter");
 
     QString const moveTime = QString::number(m_moveTime->value());

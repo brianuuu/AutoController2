@@ -275,6 +275,10 @@ void DonutMaker::OnOCRFinished()
                 // finished!
                 emit notifyFinished(true);
             }
+            else if (StopNextCycle())
+            {
+                return;
+            }
             else
             {
                 // correct donut, put down a backup save
@@ -284,6 +288,11 @@ void DonutMaker::OnOCRFinished()
         }
         else
         {
+            if (StopNextCycle())
+            {
+                return;
+            }
+
             // wrong donut, restart game load backup save
             m_state = SetState(State::Restart, "Restarting game");
             m_moduleHolder->AddRunCommand("System_RestartGame", 0);

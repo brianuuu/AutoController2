@@ -121,6 +121,11 @@ void RespawnReset::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
 
 void RespawnReset::OnWaitTimeout()
 {
+    if (StopNextCycle())
+    {
+        return;
+    }
+
     m_state = SetState(State::Restart, "No shiny detected, restarting game");
     m_audioManager->StopDetection(m_shinySoundID);
     m_moduleHolder->AddRunCommand("System_RestartGame", 0);

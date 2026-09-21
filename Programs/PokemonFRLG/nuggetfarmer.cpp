@@ -147,6 +147,11 @@ void NuggetFarmer::OnFrameCaptureMatched(Module::Common::FrameCapture* module, b
 
 void NuggetFarmer::StateToNuggetBridge()
 {
+    if (StopNextCycle())
+    {
+        return;
+    }
+
     PrintLog("Loop " + QString::number(m_currentCount + 1), LOG_Important);
     m_state = SetState(State::ToNuggetBridge, "Heading to Nugget Bridge");
     m_moduleHolder->AddRunCommand("FRLG_ToNuggetBridge", 0);
