@@ -1,0 +1,3 @@
+-Auto Temprah Den release for Splatoon Raiders
+-Some programs now have a button to stop at next cycle
+-Each category now remembers its most recent program
